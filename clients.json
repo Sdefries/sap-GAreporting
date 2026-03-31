@@ -1,0 +1,1077 @@
+[
+  {
+    "slug": "scienceworks",
+    "name": "ScienceWorks Grant Account",
+    "google_ads_id": "932-847-2468",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "museum",
+    "website": "https://scienceworksmuseum.org",
+    "donation_processor": "none",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "radius",
+      "locations": [
+        "Ashland, OR"
+      ],
+      "radius_miles": 50,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "free",
+        "jobs",
+        "careers",
+        "employment",
+        "salary"
+      ],
+      "include_themes": [
+        "science museum",
+        "stem education",
+        "kids activities",
+        "summer camps",
+        "field trips",
+        "birthday parties",
+        "event venue"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Camp Registration",
+        "category": "LEAD",
+        "group": "Registrations",
+        "value": 150.0,
+        "notes": "Summer/spring camp registration form submit"
+      },
+      {
+        "name": "Event Booking Inquiry",
+        "category": "LEAD",
+        "group": "Registrations",
+        "value": 75.0,
+        "notes": "Birthday/venue booking form or contact form"
+      },
+      {
+        "name": "Field Trip Request",
+        "category": "LEAD",
+        "group": "Registrations",
+        "value": 200.0,
+        "notes": "School group field trip inquiry form"
+      },
+      {
+        "name": "Membership Signup",
+        "category": "SIGN_UP",
+        "group": "Memberships",
+        "value": 100.0,
+        "notes": "Annual membership purchase or inquiry"
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "camp",
+          "camps"
+        ],
+        "goal_group": "Registrations"
+      },
+      {
+        "campaign_keywords": [
+          "event",
+          "birthday",
+          "venue"
+        ],
+        "goal_group": "Registrations"
+      },
+      {
+        "campaign_keywords": [
+          "field trip"
+        ],
+        "goal_group": "Registrations"
+      },
+      {
+        "campaign_keywords": [
+          "membership"
+        ],
+        "goal_group": "Memberships"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "ScienceWorks Grant Account \u2014 Ad Grants"
+  },
+  {
+    "slug": "justice-accountability-la",
+    "name": "Justice & Accountability Center of LA",
+    "google_ads_id": "315-976-8484",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "legal_aid",
+    "website": "https://jacla.org",
+    "donation_processor": "none",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "metro",
+      "locations": [
+        "Los Angeles, CA"
+      ],
+      "radius_miles": null,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "attorney salary",
+        "law school",
+        "bar exam",
+        "jobs",
+        "hire a lawyer",
+        "lawyer cost",
+        "how much does a lawyer cost"
+      ],
+      "include_themes": [
+        "expungement",
+        "record clearing",
+        "free legal help",
+        "immigration attorney",
+        "criminal record",
+        "reentry services",
+        "nonprofit legal aid"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Intake Form Submit",
+        "category": "LEAD",
+        "group": "Client Intake",
+        "value": 0.0,
+        "notes": "Primary conversion \u2014 client submits services intake form"
+      },
+      {
+        "name": "Volunteer Application",
+        "category": "SIGN_UP",
+        "group": "Volunteers",
+        "value": 0.0,
+        "notes": "Attorney volunteer application form submit"
+      },
+      {
+        "name": "Expungement Info Page View",
+        "category": "PAGE_VIEW",
+        "group": "Engagement",
+        "value": 0.0,
+        "notes": "Micro-conversion \u2014 visited key service page"
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "expungement",
+          "record",
+          "reentry"
+        ],
+        "goal_group": "Client Intake"
+      },
+      {
+        "campaign_keywords": [
+          "volunteer",
+          "attorney"
+        ],
+        "goal_group": "Volunteers"
+      },
+      {
+        "campaign_keywords": [
+          "awareness",
+          "general"
+        ],
+        "goal_group": "Engagement"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "Justice & Accountability Center of LA \u2014 Ad Grants"
+  },
+  {
+    "slug": "city-dogs-kitties",
+    "name": "City Dogs and City Kitties Rescue",
+    "google_ads_id": "295-631-4618",
+    "ga4_id": "490392378",
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "animal_rescue",
+    "website": "https://citydogsandkitties.org",
+    "donation_processor": "donorbox",
+    "conversion_strategy": "cross_domain_iframe",
+    "geo": {
+      "target_type": "metro",
+      "locations": [
+        "Washington, DC"
+      ],
+      "radius_miles": 30,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "breeders",
+        "buy a dog",
+        "purchase puppy",
+        "dog breeders",
+        "purebred",
+        "kennel",
+        "pet store"
+      ],
+      "include_themes": [
+        "dog adoption DC",
+        "cat adoption DC",
+        "rescue dog",
+        "adopt a pet",
+        "animal rescue",
+        "shelter dog",
+        "foster a dog"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Donation Complete",
+        "category": "PURCHASE",
+        "group": "Donations",
+        "value": 50.0,
+        "notes": "Donorbox iframe \u2014 use Donorbox native Google Ads pixel OR thank-you page redirect. See IFRAME_PROCESSOR_GUIDANCE['donorbox']"
+      },
+      {
+        "name": "Adoption Application Submit",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": "Own-site adoption form \u2014 standard GA4 tracking"
+      },
+      {
+        "name": "Foster Application Submit",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": "Own-site foster form \u2014 standard GA4 tracking"
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adoption",
+          "adopt",
+          "foster"
+        ],
+        "goal_group": "Adoptions"
+      },
+      {
+        "campaign_keywords": [
+          "donate",
+          "donation",
+          "support"
+        ],
+        "goal_group": "Donations"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "City Dogs and City Kitties Rescue \u2014 Ad Grants"
+  },
+  {
+    "slug": "guardian-pet-trust",
+    "name": "Guardian Pet Trust",
+    "google_ads_id": "878-405-5035",
+    "ga4_id": "482775564",
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "pet_care",
+    "website": "https://guardianpettrust.org",
+    "donation_processor": "donorbox",
+    "conversion_strategy": "cross_domain_iframe",
+    "geo": {
+      "target_type": "state",
+      "locations": [
+        "California"
+      ],
+      "radius_miles": null,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "vet jobs",
+        "veterinary school",
+        "free vet care",
+        "low cost spay"
+      ],
+      "include_themes": [
+        "senior pet care",
+        "pet trust",
+        "guardian pet",
+        "veterinary assistance seniors",
+        "low income pet care"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Donation Complete",
+        "category": "PURCHASE",
+        "group": "Donations",
+        "value": 50.0,
+        "notes": "Donorbox \u2014 use native pixel"
+      },
+      {
+        "name": "Program Application",
+        "category": "LEAD",
+        "group": "Program Enrollments",
+        "value": 0.0,
+        "notes": "Apply for pet care assistance program"
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "donate",
+          "support",
+          "fund"
+        ],
+        "goal_group": "Donations"
+      },
+      {
+        "campaign_keywords": [
+          "apply",
+          "program",
+          "assistance",
+          "help"
+        ],
+        "goal_group": "Program Enrollments"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "Guardian Pet Trust \u2014 Ad Grants"
+  },
+  {
+    "slug": "edwin-d-marks",
+    "name": "Edwin D Marks Animal Foundation",
+    "google_ads_id": "632-590-9900",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "animal_rescue",
+    "website": "",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "radius",
+      "locations": [],
+      "radius_miles": 25,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "breeders",
+        "buy",
+        "purchase",
+        "pet store"
+      ],
+      "include_themes": [
+        "animal rescue",
+        "pet adoption",
+        "shelter"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Adoption Inquiry",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adoption",
+          "rescue",
+          "adopt"
+        ],
+        "goal_group": "Adoptions"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "Edwin D Marks Animal Foundation \u2014 Ad Grants"
+  },
+  {
+    "slug": "earth-organization",
+    "name": "The Earth Organization",
+    "google_ads_id": "312-145-7553",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "environment",
+    "website": "",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "national",
+      "locations": [
+        "United States"
+      ],
+      "radius_miles": null,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "jobs",
+        "careers"
+      ],
+      "include_themes": [
+        "environmental nonprofit",
+        "conservation",
+        "climate action"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Donation",
+        "category": "PURCHASE",
+        "group": "Donations",
+        "value": 25.0,
+        "notes": ""
+      },
+      {
+        "name": "Volunteer Signup",
+        "category": "SIGN_UP",
+        "group": "Volunteers",
+        "value": 0.0,
+        "notes": ""
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "donate",
+          "fund",
+          "support"
+        ],
+        "goal_group": "Donations"
+      },
+      {
+        "campaign_keywords": [
+          "volunteer",
+          "join",
+          "act"
+        ],
+        "goal_group": "Volunteers"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "The Earth Organization \u2014 Ad Grants"
+  },
+  {
+    "slug": "ziva",
+    "name": "A Second Chance for Ziva",
+    "google_ads_id": "598-275-9296",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "animal_rescue",
+    "website": "",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "radius",
+      "locations": [],
+      "radius_miles": 30,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "breeders",
+        "buy",
+        "purchase"
+      ],
+      "include_themes": [
+        "dog rescue",
+        "adopt a dog",
+        "animal rescue"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Adoption Application",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adopt",
+          "rescue",
+          "dog"
+        ],
+        "goal_group": "Adoptions"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "A Second Chance for Ziva \u2014 Ad Grants"
+  },
+  {
+    "slug": "pink-paws",
+    "name": "Pink Paws For The Cause",
+    "google_ads_id": "566-368-6847",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "animal_rescue",
+    "website": "",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "radius",
+      "locations": [],
+      "radius_miles": 25,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "breeders",
+        "buy",
+        "pet store"
+      ],
+      "include_themes": [
+        "cat rescue",
+        "dog rescue",
+        "adoption",
+        "foster"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Adoption Inquiry",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      },
+      {
+        "name": "Donation",
+        "category": "PURCHASE",
+        "group": "Donations",
+        "value": 25.0,
+        "notes": ""
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adopt",
+          "rescue",
+          "foster"
+        ],
+        "goal_group": "Adoptions"
+      },
+      {
+        "campaign_keywords": [
+          "donate",
+          "support"
+        ],
+        "goal_group": "Donations"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "Pink Paws For The Cause \u2014 Ad Grants"
+  },
+  {
+    "slug": "angels4paws",
+    "name": "Angels4Paws Animal Rescue",
+    "google_ads_id": "244-756-0541",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "animal_rescue",
+    "website": "",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "radius",
+      "locations": [],
+      "radius_miles": 25,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "breeders",
+        "buy a dog",
+        "puppy mill"
+      ],
+      "include_themes": [
+        "animal rescue",
+        "adopt a pet",
+        "dog adoption"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Adoption Application",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adopt",
+          "rescue",
+          "angel"
+        ],
+        "goal_group": "Adoptions"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "Angels4Paws Animal Rescue \u2014 Ad Grants"
+  },
+  {
+    "slug": "humane-society-nw-montana",
+    "name": "Humane Society of Northwest Montana",
+    "google_ads_id": "471-611-0713",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "humane_society",
+    "website": "",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "radius",
+      "locations": [
+        "Kalispell, MT"
+      ],
+      "radius_miles": 75,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "breeders",
+        "buy",
+        "pet store",
+        "puppy"
+      ],
+      "include_themes": [
+        "humane society",
+        "animal shelter",
+        "adopt a dog Montana",
+        "cat adoption Montana"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Adoption Inquiry",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      },
+      {
+        "name": "Donation",
+        "category": "PURCHASE",
+        "group": "Donations",
+        "value": 25.0,
+        "notes": ""
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adopt",
+          "rescue",
+          "shelter"
+        ],
+        "goal_group": "Adoptions"
+      },
+      {
+        "campaign_keywords": [
+          "donate",
+          "support",
+          "fund"
+        ],
+        "goal_group": "Donations"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "Humane Society of Northwest Montana \u2014 Ad Grants"
+  },
+  {
+    "slug": "paws-and-claws",
+    "name": "Paws and Claws Animal Welfare Society",
+    "google_ads_id": "471-199-5950",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "animal_rescue",
+    "website": "",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "radius",
+      "locations": [],
+      "radius_miles": 30,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "breeders",
+        "buy",
+        "pet store"
+      ],
+      "include_themes": [
+        "animal welfare",
+        "pet rescue",
+        "adopt",
+        "spay neuter"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Adoption Inquiry",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adopt",
+          "rescue",
+          "welfare"
+        ],
+        "goal_group": "Adoptions"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "Paws and Claws Animal Welfare Society \u2014 Ad Grants"
+  },
+  {
+    "slug": "silver-linings",
+    "name": "Silver Linings Rescue Ranch",
+    "google_ads_id": "321-208-5637",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "equine_rescue",
+    "website": "",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "radius",
+      "locations": [],
+      "radius_miles": 100,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "horse for sale",
+        "buy horse",
+        "horse auction",
+        "horse dealer"
+      ],
+      "include_themes": [
+        "horse rescue",
+        "equine rescue",
+        "horse adoption",
+        "ranch volunteer",
+        "horse sanctuary"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Adoption Inquiry",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      },
+      {
+        "name": "Donation",
+        "category": "PURCHASE",
+        "group": "Donations",
+        "value": 50.0,
+        "notes": ""
+      },
+      {
+        "name": "Volunteer Signup",
+        "category": "SIGN_UP",
+        "group": "Volunteers",
+        "value": 0.0,
+        "notes": ""
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adopt",
+          "horse",
+          "rescue"
+        ],
+        "goal_group": "Adoptions"
+      },
+      {
+        "campaign_keywords": [
+          "donate",
+          "sponsor",
+          "fund"
+        ],
+        "goal_group": "Donations"
+      },
+      {
+        "campaign_keywords": [
+          "volunteer",
+          "help",
+          "ranch"
+        ],
+        "goal_group": "Volunteers"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "Silver Linings Rescue Ranch \u2014 Ad Grants"
+  },
+  {
+    "slug": "straydog",
+    "name": "Straydog Inc",
+    "google_ads_id": "583-897-7800",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "animal_rescue",
+    "website": "",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "radius",
+      "locations": [],
+      "radius_miles": 30,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "stray dog removal",
+        "animal control",
+        "pest control"
+      ],
+      "include_themes": [
+        "stray dog rescue",
+        "dog adoption",
+        "animal rescue",
+        "homeless dogs"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Adoption Application",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      },
+      {
+        "name": "Donation",
+        "category": "PURCHASE",
+        "group": "Donations",
+        "value": 25.0,
+        "notes": ""
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adopt",
+          "rescue",
+          "stray"
+        ],
+        "goal_group": "Adoptions"
+      },
+      {
+        "campaign_keywords": [
+          "donate",
+          "support"
+        ],
+        "goal_group": "Donations"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "Straydog Inc \u2014 Ad Grants"
+  },
+  {
+    "slug": "red-clay-ranch",
+    "name": "Red Clay Ranch Equine Rescue & Sanctuary",
+    "google_ads_id": "378-461-6494",
+    "ga4_id": null,
+    "contact_email": "",
+    "contact_name": "",
+    "org_type": "equine_rescue",
+    "website": "",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "radius",
+      "locations": [],
+      "radius_miles": 150,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "horse for sale",
+        "buy horse",
+        "horse dealer",
+        "horse auction",
+        "horse training jobs"
+      ],
+      "include_themes": [
+        "horse rescue",
+        "equine sanctuary",
+        "horse adoption",
+        "horse rehabilitation",
+        "sponsor a horse"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Adoption Inquiry",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      },
+      {
+        "name": "Donation",
+        "category": "PURCHASE",
+        "group": "Donations",
+        "value": 50.0,
+        "notes": ""
+      },
+      {
+        "name": "Horse Sponsorship",
+        "category": "PURCHASE",
+        "group": "Sponsorships",
+        "value": 100.0,
+        "notes": "Monthly horse sponsorship"
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adopt",
+          "horse",
+          "rescue",
+          "ranch"
+        ],
+        "goal_group": "Adoptions"
+      },
+      {
+        "campaign_keywords": [
+          "donate",
+          "fund",
+          "support"
+        ],
+        "goal_group": "Donations"
+      },
+      {
+        "campaign_keywords": [
+          "sponsor",
+          "sponsorship"
+        ],
+        "goal_group": "Sponsorships"
+      }
+    ],
+    "contact_first_name": "",
+    "mailerlite_group": "Red Clay Ranch Equine Rescue & Sanctuary \u2014 Ad Grants"
+  },
+  {
+    "slug": "pup-profile",
+    "name": "Pup Profile",
+    "google_ads_id": "334-205-8352",
+    "ga4_id": "477106491",
+    "contact_email": "pupprofileteam@gmail.com",
+    "contact_name": "Nikki Leonard",
+    "contact_first_name": "Nikki",
+    "mailerlite_group": "Pup Profile \u2014 Ad Grants",
+    "org_type": "animal_rescue",
+    "website": "https://pupprofile.org",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "metro",
+      "locations": [
+        "Los Angeles, CA",
+        "San Diego, CA",
+        "Phoenix, AZ",
+        "Riverside, CA"
+      ],
+      "radius_miles": null,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "breeders",
+        "buy a dog",
+        "purchase puppy",
+        "dog breeders",
+        "puppy mill",
+        "pet store"
+      ],
+      "include_themes": [
+        "dog adoption",
+        "urgent dog rescue",
+        "adopt a dog LA",
+        "rescue dog",
+        "foster a dog",
+        "urgent need dogs"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Adoption Application",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      },
+      {
+        "name": "Donation",
+        "category": "PURCHASE",
+        "group": "Donations",
+        "value": 50.0,
+        "notes": ""
+      },
+      {
+        "name": "Foster Application",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adoption",
+          "adopt",
+          "foster",
+          "urgent need",
+          "shop"
+        ],
+        "goal_group": "Adoptions"
+      },
+      {
+        "campaign_keywords": [
+          "donate",
+          "donation",
+          "pmax"
+        ],
+        "goal_group": "Donations"
+      }
+    ],
+    "mailerlite_group_id": "183135259834976217",
+    "mailerlite_subscriber_id": "137396765079897422"
+  }
+]
