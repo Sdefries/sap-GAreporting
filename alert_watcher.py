@@ -346,21 +346,30 @@ def run(dry_run: bool = False):
 
     print(f"\nResults: {len(milestones)} milestones, {len(criticals)} critical alerts\n")
 
-    # Post criticals
+    # Post criticals — all in ONE Slack message
     if criticals:
-        header = f":rotating_light: *SAP Alert — {len(criticals)} issue(s) detected*\n"
+        lines = [f":rotating_light: *SAP Alert — {len(criticals)} issue(s) detected*\n"]
         for alert in criticals:
-            post_slack(header + alert["slack_msg"], dry_run=dry_run)
+            lines.append(alert["slack_msg"])
             print(f"  CRITICAL: {alert['client']} — {alert['level']}")
+        post_slack("\n".join(lines), dry_run=dry_run)
     else:
         print("  No critical issues")
 
-    # Post milestones
+    # Post milestones — batch into one message if more than 3
     if milestones:
-        for alert in milestones:
-            post_slack(alert["slack_msg"], dry_run=dry_run)
-            send_email(alert, dry_run=dry_run)
-            print(f"  MILESTONE: {alert['client']} — {alert['level']}")
+        if len(milestones) <= 3:
+            for alert in milestones:
+                post_slack(alert["slack_msg"], dry_run=dry_run)
+                send_email(alert, dry_run=dry_run)
+                print(f"  MILESTONE: {alert['client']} — {alert['level']}")
+        else:
+            lines = [f":trophy: *SAP Milestones — {len(milestones)} this run*\n"]
+            for alert in milestones:
+                lines.append(alert["slack_msg"])
+                send_email(alert, dry_run=dry_run)
+                print(f"  MILESTONE: {alert['client']} — {alert['level']}")
+            post_slack("\n".join(lines), dry_run=dry_run)
     else:
         print("  No milestones this run")
 
