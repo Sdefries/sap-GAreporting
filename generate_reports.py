@@ -285,7 +285,7 @@ def build_insights(client, summary, gps, gps_components):
 
 # ── REPORT BUILDER ────────────────────────────────────────────────────────
 
-REPORT_TEMPLATE = open("/home/claude/pup_profile_report_v4.html").read()
+REPORT_TEMPLATE = open("report_template.html").read()
 
 def build_report(client, summary, gps_score, gps_components, insights, report_date):
     html = REPORT_TEMPLATE
