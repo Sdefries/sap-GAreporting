@@ -1,0 +1,799 @@
+{
+  "_meta": {
+    "generated": "2026-04-01",
+    "source": "Windsor.ai Google Ads API \u2014 last 30 days",
+    "purpose": "Feeds into Zakk Bot copy generation and optimization logic",
+    "note": "Update this file weekly via slack_digest.py learning loop"
+  },
+  "portfolio_summary": {
+    "total_accounts": 15,
+    "total_spend_30d": 74823,
+    "total_conversions_30d": 16498,
+    "blind_spend_30d": 13123,
+    "blind_campaigns": 9,
+    "accounts_with_broken_tracking": [
+      "City Dogs",
+      "Paws and Claws",
+      "Earth Organization",
+      "Pup Profile (partial)",
+      "Pink Paws (partial)",
+      "ScienceWorks (partial)",
+      "Serenity Horse Rescue"
+    ],
+    "accounts_needing_ga4": [
+      "City Dogs",
+      "Paws and Claws",
+      "Earth Organization",
+      "ScienceWorks",
+      "Serenity Horse Rescue",
+      "NW Montana",
+      "Angels4Paws"
+    ]
+  },
+  "top_performers": [
+    {
+      "account": "Silver Linings Rescue Ranch",
+      "campaign": "PMax-Adopt",
+      "ctr_pct": 10.48,
+      "conv_rate_pct": 582.12,
+      "cpc": 4.93,
+      "why_it_works": "Horse rescue PMax with strong asset groups. Local equine rescue intent. Very specific audience \u2014 people actively searching for horses to adopt have high purchase intent.",
+      "copy_lesson": "Specificity wins. 'Meet a horse' and 'adopt a rescue horse' themes outperform generic animal copy. Visual assets are the differentiator in PMax."
+    },
+    {
+      "account": "Ziva Dog Rescue",
+      "campaign": "PMax Get Involved",
+      "ctr_pct": 20.36,
+      "conv_rate_pct": 109.48,
+      "cpc": 9.01,
+      "why_it_works": "Highest CTR in entire portfolio at 20.4%. 'Get Involved' framing is broader than just adopt or donate \u2014 captures people at all stages of intent.",
+      "copy_lesson": "Inclusive CTAs ('Get Involved', 'Help Today') outperform narrow CTAs ('Donate Now') for awareness-stage audiences. Ziva's brand identity is strong enough to carry broad copy."
+    },
+    {
+      "account": "Ziva Dog Rescue",
+      "campaign": "PMax-Foster",
+      "ctr_pct": 17.37,
+      "conv_rate_pct": 115.42,
+      "cpc": 7.38,
+      "why_it_works": "Foster campaigns convert extremely well. People searching to foster are highly motivated \u2014 they want to help but aren't ready to adopt. Low barrier to entry = high conversion.",
+      "copy_lesson": "Foster copy should emphasize 'no long-term commitment', 'save a life temporarily', 'foster families needed urgently'. The emotional hook is saving a dog without the forever commitment."
+    },
+    {
+      "account": "Guardian Pet Trust",
+      "campaign": "Search - Blogs",
+      "ctr_pct": 7.44,
+      "conv_rate_pct": 266.54,
+      "cpc": 6.65,
+      "why_it_works": "Blog/content landing pages convert at 2.5x despite lower CTR. Educational content builds trust before the ask. People arrive already understanding the mission.",
+      "copy_lesson": "Content-first approach works for complex missions (pet care assistance for seniors). Don't always lead with the ask \u2014 lead with education, then convert."
+    },
+    {
+      "account": "Pup Profile",
+      "campaign": "Search-Donate",
+      "ctr_pct": 20.73,
+      "conv_rate_pct": 81.25,
+      "cpc": 6.9,
+      "why_it_works": "Highest CTR in search campaigns across portfolio. Donation search with tight keyword focus on urgent dog rescue themes.",
+      "copy_lesson": "Donate search campaigns need urgency + specificity. 'Donate to save dogs' is weaker than 'LA dogs need rescue funds now'. Geographic specificity in donate copy drives CTR."
+    },
+    {
+      "account": "Red Clay Ranch",
+      "campaign": "P Max Meet The Horse",
+      "ctr_pct": 12.84,
+      "conv_rate_pct": 426.33,
+      "cpc": 16.68,
+      "why_it_works": "Experience-based campaign. 'Meet the horse' is low-friction \u2014 people don't have to commit to adoption, just a visit. Once they visit, conversion to adoption/donation is high.",
+      "copy_lesson": "Low-barrier entry campaigns (visit, meet, learn) can outperform direct ask campaigns. Build the relationship first."
+    }
+  ],
+  "copy_patterns_that_work": {
+    "high_ctr_headline_themes": [
+      "Geographic specificity: 'LA Dogs Need You Now', 'Help Arizona Rescue Dogs'",
+      "Urgency with numbers: '12 Dogs Need Homes This Week', '8 Urgent Cases'",
+      "Foster-specific: 'Foster One Dog', 'Be a Temporary Hero', 'Foster Needed Now'",
+      "Question format: 'Could You Save a Dog?', 'Ready to Change a Life?'",
+      "Low-commitment framing: 'Meet a Rescue Horse', 'Visit Our Ranch', 'Get Involved'",
+      "Mission transparency: '100% Goes to Animal Care', 'Your Gift Saves Lives Directly'",
+      "Short power: 'Adopt Today', 'Save a Dog', 'Help Now', 'Foster Now'"
+    ],
+    "high_converting_description_themes": [
+      "Specific impact: 'Your $25 covers one vet visit for a dog in our care'",
+      "Urgency + relief: 'Shelter is full. Your foster home could save a dog this week.'",
+      "Social proof: '347 dogs rescued this year with the help of supporters like you'",
+      "Educational lead-in: 'Millions of pets need care \u2014 here is how you can help today'",
+      "Low barrier: 'Fostering is temporary \u2014 the love lasts forever. Apply in 5 minutes.'"
+    ],
+    "keyword_themes_that_convert": [
+      "rescue dog adoption near me",
+      "adopt a rescue dog",
+      "dog rescue urgent need",
+      "how to help animal shelter",
+      "foster a dog temporarily",
+      "donate to dog rescue",
+      "animal rescue donation",
+      "help dogs in need",
+      "local animal rescue",
+      "support animal shelter"
+    ],
+    "negative_keywords_always_add": [
+      "breeders",
+      "buy a dog",
+      "purchase puppy",
+      "pet store",
+      "puppy mill",
+      "free dog",
+      "jobs",
+      "careers",
+      "salary",
+      "how much does it cost",
+      "dog training",
+      "dog food",
+      "dog toys",
+      "vet near me",
+      "pet insurance"
+    ],
+    "org_model_copy_rules": {
+      "ALWAYS check org_model before writing copy": "Foster network copy should NEVER say 'visit us' or 'come meet'. Location-based copy should ALWAYS include city/county.",
+      "Horse rescue is not dog rescue": "Equine copy needs ranch/sanctuary language, wider geo radius, sponsorship angle. Never use generic 'adopt a dog' templates.",
+      "Foster-first vs adopt-first": "Foster network orgs need foster recruitment as primary CTA, adoption as secondary. Location-based shelters can lead with adoption.",
+      "Urgency calibration": "Foster networks can always use urgency (animals in shelters). Location-based orgs should only use urgency when genuinely warranted."
+    }
+  },
+  "campaign_type_performance": {
+    "Adopt": {
+      "avg_cpa": 1.63,
+      "avg_conv_rate_pct": 389.9,
+      "best_performer": "Silver Linings PMax-Adopt (582% conv rate)",
+      "copy_direction": "Specificity + local signal + low barrier. Show the animal's face in PMax assets. Use breed or species-specific keywords.",
+      "landing_page_must_have": "Individual animal profiles with photo, name, and story. Apply button above fold."
+    },
+    "Donate": {
+      "avg_cpa": 5.92,
+      "avg_conv_rate_pct": 127.4,
+      "best_performer": "Pup Profile Search-Donate (20.7% CTR, 81% conv rate)",
+      "copy_direction": "Urgency + impact + geographic specificity. Lead with what the donation does, not what the org needs.",
+      "landing_page_must_have": "Suggested donation amounts with impact statements. Single-step form. No redirect to third-party processor if possible."
+    },
+    "Foster": {
+      "avg_cpa": 5.36,
+      "avg_conv_rate_pct": 211.7,
+      "best_performer": "Ziva Search-Foster (15.1% CTR, 140% conv rate)",
+      "copy_direction": "Remove fear of commitment. 'Temporary' and 'saves a life' are the two most important concepts.",
+      "landing_page_must_have": "What fostering involves (time, cost, support), success stories from foster families, simple form."
+    },
+    "Get Involved": {
+      "avg_cpa": 8.24,
+      "avg_conv_rate_pct": 109.3,
+      "best_performer": "Ziva PMax Get Involved (20.4% CTR)",
+      "copy_direction": "Broad inclusive language captures awareness-stage audiences. Good top-of-funnel campaign to warm up audiences for retargeting.",
+      "landing_page_must_have": "Multiple ways to help (donate, foster, volunteer, share). Not just one CTA."
+    },
+    "Volunteer": {
+      "avg_cpa": 473.43,
+      "avg_conv_rate_pct": 3.8,
+      "best_performer": "Red Clay Ranch P Max Volunteer (lowest CPA issue)",
+      "copy_direction": "Volunteer campaigns consistently underperform across portfolio. Conversion tracking may be issue. Focus on event-based volunteer asks rather than general.",
+      "landing_page_must_have": "Specific volunteer opportunities with dates, time commitment, and sign-up form."
+    }
+  },
+  "pmax_vs_search": {
+    "pmax": {
+      "avg_ctr_pct": 14.3,
+      "total_conversions": 12646,
+      "avg_cpa": 3.79,
+      "verdict": "PMax wins on conversion volume and CPA. Use for established campaigns with good asset libraries.",
+      "requirements": "Need minimum 3 image sizes (square/landscape/portrait), logo, 5+ headlines, 5+ descriptions, YouTube video if available."
+    },
+    "search": {
+      "avg_ctr_pct": 12.3,
+      "total_conversions": 1638,
+      "avg_cpa": 5.24,
+      "verdict": "Search wins on CTR and intent precision. Use for high-intent keywords and new campaigns where you need control.",
+      "requirements": "Tight ad groups (5-10 keywords max), responsive search ads with 15 headlines, exact and phrase match mix."
+    },
+    "recommendation": "Lead with Search to validate keywords and copy, then scale winners with PMax once you have conversion data."
+  },
+  "retargeting_opportunities": {
+    "overview": "Retargeting (RLSA and Display) is not currently active on any account. Huge missed opportunity given the warm audiences being built.",
+    "audiences_to_build": [
+      {
+        "client": "City Dogs and City Kitties",
+        "audience": "Donate page visitors \u2014 non-converters",
+        "size_estimate": "600+ people from Donate PMax alone last 30 days",
+        "retargeting_message": "You visited our donation page \u2014 these dogs are still waiting. $25 changes everything.",
+        "urgency": "CRITICAL \u2014 $2,913 spend building audiences with zero follow-up"
+      },
+      {
+        "client": "Paws and Claws",
+        "audience": "Medical cases page visitors",
+        "size_estimate": "360 clicks in 30 days",
+        "retargeting_message": "You saw animals that need medical care. They're still waiting for your help.",
+        "urgency": "HIGH \u2014 medical case visitors have high emotional intent"
+      },
+      {
+        "client": "Pup Profile",
+        "audience": "Urgent Need LA/SD campaign visitors",
+        "size_estimate": "169 clicks in 30 days",
+        "retargeting_message": "The dogs you saw are running out of time. Can you help today?",
+        "urgency": "HIGH \u2014 urgency campaigns need retargeting to close the loop"
+      },
+      {
+        "client": "Earth Organization",
+        "audience": "General Awareness visitors",
+        "size_estimate": "80 clicks in 30 days",
+        "retargeting_message": "You learned about our mission. Now help us continue it with a donation.",
+        "urgency": "MEDIUM \u2014 top of funnel, retarget with lower-barrier ask"
+      }
+    ],
+    "how_to_build_retargeting": {
+      "step_1": "GA4 must be connected and tracking site visitors",
+      "step_2": "Create GA4 audience: 'Visited donate page, did not complete donation' (requires GA4 events)",
+      "step_3": "Import GA4 audience into Google Ads via the linked accounts",
+      "step_4": "Create Display or Search campaign with RLSA targeting",
+      "step_5": "Set bid adjustment: +50% for retargeting audiences on existing campaigns",
+      "step_6": "Create separate dedicated retargeting campaign with specific copy"
+    }
+  },
+  "ga4_conversion_tracking_plan": {
+    "priority_1_immediate": {
+      "accounts": [
+        "City Dogs",
+        "Paws and Claws",
+        "Earth Organization"
+      ],
+      "reason": "$13,123/month in blind spend",
+      "conversions_to_track": {
+        "City Dogs": [
+          {
+            "page": "/donate",
+            "event": "donation_complete",
+            "trigger": "form submit or Donorbox thank you"
+          },
+          {
+            "page": "/adopt",
+            "event": "adoption_inquiry",
+            "trigger": "application form submit"
+          },
+          {
+            "page": "/foster",
+            "event": "foster_application",
+            "trigger": "form submit"
+          },
+          {
+            "page": "/event",
+            "event": "event_registration",
+            "trigger": "registration form submit"
+          }
+        ],
+        "Paws and Claws": [
+          {
+            "page": "all pages",
+            "event": "adoption_inquiry",
+            "trigger": "contact form submit"
+          },
+          {
+            "page": "medical pages",
+            "event": "medical_donation",
+            "trigger": "donate button click or form submit"
+          },
+          {
+            "page": "adopt pages",
+            "event": "adoption_application",
+            "trigger": "application form submit"
+          }
+        ],
+        "Earth Organization": [
+          {
+            "page": "all pages",
+            "event": "donation_complete",
+            "trigger": "payment processor confirmation"
+          },
+          {
+            "page": "eco safari page",
+            "event": "safari_inquiry",
+            "trigger": "contact form submit"
+          },
+          {
+            "page": "volunteer page",
+            "event": "volunteer_signup",
+            "trigger": "form submit"
+          }
+        ]
+      }
+    },
+    "priority_2_this_week": {
+      "accounts": [
+        "Pup Profile",
+        "Pink Paws"
+      ],
+      "conversions_to_track": {
+        "Pup Profile": [
+          {
+            "page": "/pups-fund/donate",
+            "event": "donation_complete",
+            "trigger": "Donorbox or payment confirmation"
+          },
+          {
+            "page": "/urgent-need",
+            "event": "urgent_need_click",
+            "trigger": "CTA button click (micro-conversion)"
+          },
+          {
+            "page": "/browse",
+            "event": "dog_profile_view",
+            "trigger": "page view (micro-conversion)"
+          },
+          {
+            "page": "/shop",
+            "event": "purchase",
+            "trigger": "purchase confirmation"
+          }
+        ],
+        "Pink Paws": [
+          {
+            "page": "/adopt",
+            "event": "adoption_application",
+            "trigger": "form submit \u2014 THIS IS BROKEN now"
+          },
+          {
+            "page": "/donate",
+            "event": "donation_complete",
+            "trigger": "payment confirmation"
+          },
+          {
+            "page": "/foster",
+            "event": "foster_application",
+            "trigger": "form submit"
+          }
+        ]
+      }
+    },
+    "priority_3_complete": {
+      "accounts": [
+        "ScienceWorks",
+        "Serenity Horse Rescue",
+        "NW Montana",
+        "Angels4Paws"
+      ],
+      "note": "These accounts have minimal spend currently. Set up GA4 before scaling campaigns."
+    },
+    "ga4_setup_instructions_for_michael": {
+      "for_each_client": [
+        "1. Identify every page where a user completes a meaningful action",
+        "2. Map each page to a conversion event name",
+        "3. Install GA4 tag (via GTM or direct code snippet)",
+        "4. Create custom events for each conversion trigger",
+        "5. Mark events as conversions in GA4 admin",
+        "6. Link GA4 to Google Ads",
+        "7. Import conversions into Google Ads",
+        "8. Wait 48 hours and verify conversions are firing in Google Ads"
+      ],
+      "pages_to_track_for_every_client": [
+        "Thank you / confirmation page after donation",
+        "Application submitted confirmation page",
+        "Contact form submitted confirmation",
+        "Phone number click (mobile)",
+        "Email link click",
+        "Donation button click (micro-conversion)",
+        "Scroll depth 75% on key pages (engagement micro-conversion)"
+      ]
+    }
+  },
+  "account_status": {
+    "City Dogs and City Kitties": {
+      "health": "CRITICAL",
+      "issues": [
+        "$2,913 in donate spend with 0 conversions",
+        "$552 search adopt with 0 conversions",
+        "GA4 not tracking any conversions"
+      ],
+      "action": "Fix GA4 tracking immediately before spending another dollar"
+    },
+    "Paws and Claws": {
+      "health": "CRITICAL",
+      "issues": [
+        "$6,462 total spend with 0 conversions",
+        "All campaigns running blind",
+        "No GA4 connected"
+      ],
+      "action": "Pause all campaigns until GA4 is set up OR accept spend without measurement"
+    },
+    "Earth Organization": {
+      "health": "CRITICAL",
+      "issues": [
+        "$1,785 spend with 0 conversions",
+        "CTR at 7.87% \u2014 close to 5% minimum"
+      ],
+      "action": "GA4 setup + CTR improvement needed"
+    },
+    "Silver Linings Rescue Ranch": {
+      "health": "EXCELLENT",
+      "issues": [],
+      "action": "Scale spend \u2014 this is the best performing account in the portfolio"
+    },
+    "Ziva Dog Rescue": {
+      "health": "EXCELLENT",
+      "issues": [],
+      "action": "Add retargeting campaigns to follow up with non-converters"
+    },
+    "Guardian Pet Trust": {
+      "health": "STRONG",
+      "issues": [
+        "High CPC ($16-20) on PMax campaigns"
+      ],
+      "action": "CTR is below 5% on some campaigns \u2014 monitor. Consider refreshing ad assets."
+    },
+    "Pup Profile": {
+      "health": "MIXED",
+      "issues": [
+        "Urgent Need LA/SD: $1,604 spend, 0 conversions",
+        "Shop: $514 spend, 0 conversions"
+      ],
+      "action": "Fix conversion tracking on Urgent Need and Shop pages. Send traffic directly to /pups-fund/donate."
+    },
+    "Straydog": {
+      "health": "GOOD",
+      "issues": [
+        "PMax-Get Involved: $58 spend, 0 conversions \u2014 small but worth watching"
+      ],
+      "action": "Maintain current campaigns. Consider adding retargeting."
+    },
+    "Pink Paws": {
+      "health": "POOR",
+      "issues": [
+        "Adoption campaigns: $2,924 spend, 1 conversion",
+        "Landing page not converting adoption traffic"
+      ],
+      "action": "Audit adoption landing page. Add donation CTA to adoption page visitors."
+    },
+    "Red Clay Ranch": {
+      "health": "MIXED",
+      "issues": [
+        "Volunteer CPA $473 \u2014 not meaningful conversions",
+        "Search - Donate barely running"
+      ],
+      "action": "Double down on Meet The Horse campaign \u2014 426% conv rate. Reduce volunteer spend."
+    },
+    "ScienceWorks": {
+      "health": "FAIR",
+      "issues": [
+        "0 conversions on Membership and Event campaigns",
+        "Camps only has 1 conversion on $427 spend"
+      ],
+      "action": "Set up GA4 conversion tracking for camp registration, event booking, membership signup"
+    },
+    "Serenity Horse Rescue": {
+      "health": "DORMANT",
+      "issues": [
+        "$82 total spend in 30 days",
+        "0 conversions on all campaigns"
+      ],
+      "action": "Wait for new website before scaling. Set up GA4 on new site from day one."
+    },
+    "NW Montana": {
+      "health": "DORMANT",
+      "issues": [
+        "$0.05 total spend in 30 days"
+      ],
+      "action": "Wait for new website. Build full campaign structure ready to launch."
+    },
+    "Justice and Accountability LA": {
+      "health": "CRITICAL",
+      "issues": [
+        "Account essentially dark \u2014 2 clicks in 30 days",
+        "$0.91 spend"
+      ],
+      "action": "Investigate account suspension or disapproved ads. Needs urgent attention."
+    },
+    "Angels4Paws": {
+      "health": "UNKNOWN",
+      "issues": [
+        "No data available \u2014 Google Ads ID may be incorrect"
+      ],
+      "action": "Verify account ID 244-756-0541 is correct and account is active"
+    }
+  },
+  "org_models": {
+    "_note": "These distinctions drive fundamentally different copy, keywords, landing pages, and conversion events",
+    "location_based": {
+      "description": "Has a physical facility \u2014 shelter, ranch, museum, clinic. People can visit, volunteer in person, attend events.",
+      "examples": [
+        "humane_society",
+        "museum",
+        "health_clinic",
+        "sanctuary",
+        "equine_rescue"
+      ],
+      "current_clients": [
+        "Humane Society NW Montana",
+        "ScienceWorks",
+        "Red Clay Ranch",
+        "Serenity Horse Rescue",
+        "Guardian Pet Trust"
+      ],
+      "copy_principles": [
+        "Geographic targeting is critical \u2014 always include city/county in headlines",
+        "Drive visits and in-person engagement \u2014 'Meet the horses', 'Visit our shelter', 'Come see them'",
+        "Local search intent is strong \u2014 'animal shelter near me', 'horse rescue [city]'",
+        "Event-based campaigns perform well \u2014 open houses, adoption events, fundraiser galas",
+        "Volunteer campaigns are high-value \u2014 on-site volunteers build long-term donors"
+      ],
+      "campaign_types": [
+        "Adopt",
+        "Visit",
+        "Donate",
+        "Volunteer",
+        "Event",
+        "Foster",
+        "Sponsor an Animal"
+      ],
+      "conversion_events": [
+        "Adoption application submitted",
+        "Visit/tour request submitted",
+        "Event registration completed",
+        "Donation form submitted",
+        "Volunteer application submitted",
+        "Contact form submitted"
+      ],
+      "keywords": {
+        "include": [
+          "animal shelter near me",
+          "rescue [city]",
+          "adopt a [species] in [city]",
+          "visit horse rescue",
+          "local animal shelter",
+          "horse sanctuary [state]"
+        ],
+        "exclude": [
+          "online only",
+          "ship",
+          "nationwide",
+          "delivery"
+        ]
+      },
+      "landing_page_must_have": [
+        "Physical address and map",
+        "Hours of operation",
+        "Photo gallery of facility",
+        "Individual animal profiles with photos",
+        "Clear visit/tour CTA",
+        "Event calendar"
+      ],
+      "retargeting_strategy": "Retarget visitors with specific animal profiles \u2014 'This horse is still looking for a home'"
+    },
+    "foster_network": {
+      "description": "No physical facility \u2014 operates entirely through foster homes. Animals live with volunteer foster families until adopted. Model depends on continuous foster recruitment.",
+      "examples": [
+        "animal_rescue"
+      ],
+      "current_clients": [
+        "Pup Profile",
+        "Straydog Inc",
+        "A Second Chance for Ziva",
+        "Pink Paws For The Cause",
+        "Angels4Paws",
+        "Paws and Claws"
+      ],
+      "copy_principles": [
+        "Foster recruitment is the #1 priority \u2014 without fosters, rescue cannot operate",
+        "Remove the fear of commitment \u2014 'temporary', 'we handle vet costs', 'we provide support'",
+        "Urgency is always real \u2014 dogs in shelters are on deadlines",
+        "Geographic targeting still matters but broader \u2014 drive to action not visit",
+        "The 'hero' narrative works \u2014 you save a life, not just adopt a pet",
+        "Showcase individual animals with names, photos, stories \u2014 drives emotional connection"
+      ],
+      "campaign_types": [
+        "Foster",
+        "Adopt",
+        "Donate",
+        "Urgent Need",
+        "Get Involved",
+        "Awareness"
+      ],
+      "conversion_events": [
+        "Foster application submitted",
+        "Adoption application submitted",
+        "Donation completed",
+        "Urgent need form submitted",
+        "Newsletter signup",
+        "Dog profile page view (micro-conversion)"
+      ],
+      "keywords": {
+        "include": [
+          "foster a dog",
+          "how to foster a dog",
+          "foster dog temporarily",
+          "dog foster family",
+          "rescue dog foster",
+          "urgent dog rescue",
+          "adopt rescue dog",
+          "foster don't buy"
+        ],
+        "exclude": [
+          "shelter",
+          "visit",
+          "tour",
+          "drop off",
+          "surrender"
+        ]
+      },
+      "foster_specific_copy": [
+        "Headline: 'Foster One Dog This Weekend'",
+        "Headline: 'Be a Temporary Hero'",
+        "Headline: 'No Long-Term Commitment'",
+        "Headline: 'Save a Life From Your Home'",
+        "Description: 'We cover vet costs. You provide love. Foster a rescue dog and save a life.'",
+        "Description: 'No shelter space means dogs die. Your foster home is the solution. Apply today.'"
+      ],
+      "landing_page_must_have": [
+        "Individual dog profiles with photos, names, breed, story",
+        "Clear foster FAQ \u2014 costs, time, support provided",
+        "Foster success stories with photos",
+        "Simple one-page application",
+        "Urgency indicators \u2014 'X dogs need fosters this week'"
+      ],
+      "retargeting_strategy": "Retarget dog profile viewers with that specific dog \u2014 'Bella is still waiting for a foster home'"
+    },
+    "equine_rescue": {
+      "description": "Horse, donkey, mule rescue. Fundamentally different from dog/cat rescue \u2014 horses require land, facilities, specialized care. Higher sponsorship potential, different donor profile.",
+      "current_clients": [
+        "Red Clay Ranch",
+        "Serenity Horse Rescue"
+      ],
+      "copy_principles": [
+        "Horses have names and personalities \u2014 individual horse stories are extremely powerful",
+        "'Meet the horse' campaigns outperform generic rescue campaigns (Red Clay 426% conv rate)",
+        "Sponsorship model is strong \u2014 people sponsor a specific horse monthly",
+        "Equine-specific language: 'sanctuary', 'rescue ranch', 'rehabilitate', 'rehome'",
+        "Audience is horse enthusiasts \u2014 they understand horse care costs, respond to specifics",
+        "Geographic radius must be wider \u2014 people travel for horses (100-150 mile radius normal)",
+        "Event campaigns perform well \u2014 ranch tours, open houses, ride-along days",
+        "Photography of horses in landscapes is the most powerful asset"
+      ],
+      "campaign_types": [
+        "Adopt",
+        "Donate",
+        "Sponsor a Horse",
+        "Visit",
+        "Volunteer",
+        "Urgent Need",
+        "Event"
+      ],
+      "conversion_events": [
+        "Adoption inquiry submitted",
+        "Horse sponsorship started",
+        "Ranch visit requested",
+        "Donation completed",
+        "Volunteer application submitted",
+        "Horse profile page view (micro-conversion)"
+      ],
+      "keywords": {
+        "include": [
+          "horse rescue adoption",
+          "rescue horse for adoption",
+          "equine rescue [state]",
+          "horse sanctuary",
+          "adopt a rescue horse",
+          "horse sponsorship",
+          "sponsor a horse",
+          "horse rescue ranch",
+          "rescued horse near me"
+        ],
+        "exclude": [
+          "horse for sale",
+          "buy horse",
+          "horse auction",
+          "horse dealer",
+          "horse training jobs",
+          "horse boarding"
+        ]
+      },
+      "horse_specific_copy": [
+        "Headline: 'Meet Our Rescue Horses'",
+        "Headline: 'Sponsor a Horse Monthly'",
+        "Headline: 'Rescue Ranch Open House'",
+        "Headline: 'Adopt a Rescue Horse'",
+        "Description: 'Each horse has a name and a story. Sponsor [Horse Name] for $50/month and help cover feed and vet care.'",
+        "Description: 'Visit our ranch to meet horses rescued from neglect and abuse. Tours available weekends.'"
+      ],
+      "landing_page_must_have": [
+        "Individual horse profiles with names, photos, breed, backstory",
+        "Sponsorship levels with specific impact ($25/month = hay, $50/month = vet care)",
+        "Ranch photos and virtual tour",
+        "Map and visiting hours",
+        "Current urgent need horses highlighted"
+      ],
+      "retargeting_strategy": "Retarget horse profile viewers with that specific horse \u2014 'Spirit is still waiting for a sponsor'"
+    },
+    "dog_rescue": {
+      "description": "Dog-specific rescue. Most common type. High emotional engagement, strong urgency potential, broad audience.",
+      "current_clients": [
+        "Pup Profile",
+        "Straydog Inc",
+        "A Second Chance for Ziva",
+        "City Dogs and City Kitties",
+        "Paws and Claws",
+        "Angels4Paws"
+      ],
+      "copy_principles": [
+        "Individual dog stories with names and photos drive the highest engagement",
+        "Breed-specific copy converts well \u2014 'Golden Retriever Rescue', 'Lab Mix Needs Home'",
+        "Urgency is very real and very effective \u2014 shelter deadlines, overcrowding",
+        "The adopt vs buy distinction resonates strongly with this audience",
+        "Foster-to-adopt pathway should always be mentioned",
+        "Medical cases are powerful fundraising hooks"
+      ],
+      "campaign_types": [
+        "Adopt",
+        "Foster",
+        "Donate",
+        "Urgent Need",
+        "Get Involved",
+        "Awareness"
+      ],
+      "breed_specific_keywords": [
+        "golden retriever rescue",
+        "lab rescue",
+        "pittbull rescue",
+        "small dog rescue",
+        "senior dog rescue",
+        "puppy rescue"
+      ],
+      "urgency_copy": [
+        "Headline: 'Urgent: Dogs Need Homes Now'",
+        "Headline: '[X] Dogs Need Rescue This Week'",
+        "Headline: 'Shelter Full \u2014 Help Today'",
+        "Description: '[Dog Name] is running out of time. Your adoption or foster application could save a life today.'"
+      ]
+    },
+    "cat_rescue": {
+      "description": "Cat-specific or cat-inclusive rescue. Different search behavior than dogs \u2014 cat adopters search differently.",
+      "current_clients": [
+        "City Dogs and City Kitties",
+        "Pink Paws For The Cause"
+      ],
+      "copy_principles": [
+        "Cat adopters are often apartment dwellers \u2014 'apartment friendly', 'independent', 'low maintenance' converts",
+        "Senior cats and bonded pairs are harder to place \u2014 make specific asks for these",
+        "TNR (trap-neuter-return) community cat programs have a different audience",
+        "Medical cats are strong fundraising hooks"
+      ],
+      "cat_specific_keywords": [
+        "cat rescue adoption",
+        "adopt a cat",
+        "kitten rescue",
+        "senior cat adoption",
+        "bonded pair cats",
+        "apartment cat"
+      ],
+      "cat_specific_copy": [
+        "Headline: 'Cats Need Homes Near You'",
+        "Headline: 'Adopt a Rescue Cat Today'",
+        "Headline: 'Kittens Ready for Adoption'",
+        "Description: 'Our cats are vet-checked, spayed/neutered, and ready to come home. Find your perfect match.'"
+      ]
+    },
+    "wildlife_rescue": {
+      "description": "Wildlife, birds, marine animals. Very different from domestic animal rescue \u2014 no adoption, focus on release and habitat.",
+      "copy_principles": [
+        "No adoption campaigns \u2014 focus on donate and sponsor",
+        "Education angle is powerful \u2014 awareness of threats, habitat loss",
+        "Specific species campaigns work well \u2014 'Save the sea turtles'",
+        "Release milestones are powerful content \u2014 'X animals released this year'"
+      ],
+      "campaign_types": [
+        "Donate",
+        "Sponsor an Animal",
+        "Awareness",
+        "Volunteer"
+      ],
+      "keywords": [
+        "wildlife rescue donation",
+        "wildlife rehabilitation",
+        "donate to wildlife",
+        "help injured wildlife",
+        "wildlife sanctuary"
+      ]
+    }
+  }
+}
