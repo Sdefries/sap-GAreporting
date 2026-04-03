@@ -1,0 +1,58 @@
+{
+  "city-dogs-kitties": {
+    "ga4_id": "490392378",
+    "client": "City Dogs and City Kitties Rescue",
+    "fetched_at": "2026-04-03T23:05:34.703361",
+    "overview_30d": {},
+    "overview_7d": {},
+    "daily_30d": [],
+    "landing_pages": [],
+    "cities": [],
+    "states": [],
+    "devices": [],
+    "events_all": [],
+    "events_meaningful": [],
+    "new_vs_returning": [],
+    "channels": [],
+    "sources": []
+  },
+  "guardian-pet-trust": {
+    "ga4_id": "482775564",
+    "client": "Guardian Pet Trust",
+    "fetched_at": "2026-04-03T23:05:34.703361",
+    "overview_30d": {},
+    "overview_7d": {},
+    "daily_30d": [],
+    "landing_pages": [],
+    "cities": [],
+    "states": [],
+    "devices": [],
+    "events_all": [],
+    "events_meaningful": [],
+    "new_vs_returning": [],
+    "channels": [],
+    "sources": []
+  },
+  "pup-profile": {
+    "ga4_id": "477106491",
+    "client": "Pup Profile",
+    "fetched_at": "2026-04-03T23:05:34.703361",
+    "overview_30d": {},
+    "overview_7d": {},
+    "daily_30d": [],
+    "landing_pages": [],
+    "cities": [],
+    "states": [],
+    "devices": [],
+    "events_all": [],
+    "events_meaningful": [],
+    "new_vs_returning": [],
+    "channels": [],
+    "sources": []
+  },
+  "_meta": {
+    "fetched_at": "2026-04-03T23:05:34.703361",
+    "clients_fetched": 3,
+    "clients_skipped": 12
+  }
+}
