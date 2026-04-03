@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campaign Request — ScienceWorks Grant Account</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#0F2B5B; --blue:#0083C6; --green:#3DAA69;
+  --cream:#FDF8EE; --amber:#E8A020; --red:#D94F3D;
+  --gray-100:#F4F6F9; --gray-200:#E8ECF2;
+  --gray-400:#9EABBE; --gray-600:#5A6A82;
+  --border:rgba(15,43,91,0.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);min-height:100vh;color:var(--navy)}
+.header{background:var(--navy);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:16px}
+.sap-logo{font-family:'DM Serif Display',serif;font-size:18px;color:white}
+.divider-v{width:1px;height:24px;background:rgba(255,255,255,0.2)}
+.client-badge{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;background:rgba(255,255,255,0.1);border-radius:20px}
+.client-avatar{width:28px;height:28px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white}
+.client-name{font-size:13px;color:rgba(255,255,255,0.85);font-weight:500}
+.powered-by{font-size:11px;color:rgba(255,255,255,0.35)}
+.hero{background:var(--navy);padding:60px 40px 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-100px;top:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,131,198,0.15) 0%,transparent 70%)}
+.hero-label{font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:12px}
+.hero-title{font-family:'DM Serif Display',serif;font-size:42px;color:white;line-height:1.15;margin-bottom:16px;max-width:560px}
+.hero-sub{font-size:15px;color:rgba(255,255,255,0.55);font-weight:300;max-width:480px;line-height:1.6}
+.hero-steps{display:flex;gap:32px;margin-top:36px;flex-wrap:wrap}
+.hero-step{display:flex;align-items:center;gap:10px}
+.step-num{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:rgba(255,255,255,0.7);flex-shrink:0;transition:all 0.3s}
+.step-num.active{background:var(--blue);color:white}
+.step-num.done{background:var(--green);color:white}
+.step-label{font-size:12px;color:rgba(255,255,255,0.45);font-weight:500;transition:color 0.3s}
+.step-label.active{color:rgba(255,255,255,0.85)}
+.main{max-width:780px;margin:-32px auto 80px;padding:0 24px;position:relative;z-index:10}
+.form-card{background:white;border-radius:20px;box-shadow:0 4px 40px rgba(15,43,91,0.12);overflow:hidden}
+.form-section{display:none;padding:40px;animation:fadeSlide 0.3s ease}
+.form-section.active{display:block}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--blue);margin-bottom:8px}
+.section-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--navy);margin-bottom:6px}
+.section-desc{font-size:14px;color:var(--gray-600);line-height:1.6;margin-bottom:28px}
+.campaign-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.camp-card{border:2px solid var(--gray-200);border-radius:14px;padding:20px 16px;cursor:pointer;transition:all 0.2s;text-align:center;position:relative}
+.camp-card:hover{border-color:var(--blue);background:#EBF4FF}
+.camp-card.selected{border-color:var(--blue);background:#EBF4FF}
+.camp-card.selected::after{content:'✓';position:absolute;top:8px;right:10px;font-size:11px;color:var(--blue);font-weight:700}
+.camp-icon{font-size:28px;margin-bottom:8px}
+.camp-name{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.camp-desc{font-size:11px;color:var(--gray-400);line-height:1.4}
+.field{margin-bottom:24px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:8px}
+.field label span{color:var(--gray-400);font-weight:400}
+.field input,.field textarea,.field select{width:100%;padding:12px 16px;border:1.5px solid var(--gray-200);border-radius:10px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--navy);background:white;transition:border-color 0.15s;outline:none}
+.field input:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,131,198,0.08)}
+.field textarea{resize:vertical;min-height:100px}
+.field-hint{font-size:11px;color:var(--gray-400);margin-top:6px;line-height:1.5}
+.radio-group{display:flex;flex-direction:column;gap:10px}
+.radio-option{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:1.5px solid var(--gray-200);border-radius:10px;cursor:pointer;transition:all 0.15s}
+.radio-option:hover{border-color:var(--blue);background:#F7FBFF}
+.radio-option.selected{border-color:var(--blue);background:#EBF4FF}
+.radio-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--gray-200);flex-shrink:0;margin-top:1px;transition:all 0.15s;display:flex;align-items:center;justify-content:center}
+.radio-option.selected .radio-dot{border-color:var(--blue);background:var(--blue)}
+.radio-option.selected .radio-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:white}
+.radio-text strong{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:2px}
+.radio-text span{font-size:12px;color:var(--gray-400);line-height:1.4}
+.urgency-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.urgency-card{border:2px solid var(--gray-200);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.15s}
+.urgency-card:hover{border-color:var(--blue)}
+.urgency-card.selected{border-color:var(--blue);background:#EBF4FF}
+.urgency-card.rush.selected{border-color:var(--amber);background:#FEF6E6}
+.urgency-label{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.urgency-desc{font-size:11px;color:var(--gray-400);line-height:1.4}
+.asset-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+.asset-box{border:2px dashed var(--gray-200);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative}
+.asset-box:hover{border-color:var(--blue);background:#F7FBFF}
+.asset-box.has-file{border-color:var(--green);background:#F0FFF6;border-style:solid}
+.asset-icon{font-size:24px;margin-bottom:8px}
+.asset-label{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.asset-size{font-size:11px;color:var(--gray-400)}
+.asset-box input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.asset-done{font-size:11px;color:var(--green);font-weight:600;margin-top:4px;display:none}
+.summary-row{display:flex;justify-content:space-between;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--gray-100)}
+.summary-row:last-child{border-bottom:none}
+.summary-label{font-size:12px;color:var(--gray-400);font-weight:500;min-width:140px}
+.summary-val{font-size:13px;color:var(--navy);font-weight:600;text-align:right;flex:1}
+.form-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-top:1px solid var(--gray-100);background:var(--gray-100)}
+.btn{padding:12px 28px;border-radius:10px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.15s;border:none;display:flex;align-items:center;gap:8px}
+.btn-ghost{background:transparent;color:var(--gray-600);border:1.5px solid var(--gray-200)}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy)}
+.btn-primary{background:var(--blue);color:white}
+.btn-primary:hover{background:#006AA3;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,131,198,0.3)}
+.btn-success{background:var(--green);color:white}
+.btn-success:hover{background:#2E9A5A;transform:translateY(-1px);box-shadow:0 4px 12px rgba(61,170,105,0.3)}
+.progress-dots{display:flex;gap:6px}
+.pdot{width:6px;height:6px;border-radius:50%;background:var(--gray-200);transition:all 0.3s}
+.pdot.active{width:20px;border-radius:3px;background:var(--blue)}
+.pdot.done{background:var(--green)}
+.success-wrap{padding:60px 40px;text-align:center}
+.success-icon{width:80px;height:80px;border-radius:50%;background:#E4F7ED;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 24px;animation:pop 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.success-title{font-family:'DM Serif Display',serif;font-size:28px;color:var(--navy);margin-bottom:12px}
+.success-sub{font-size:15px;color:var(--gray-600);line-height:1.6;max-width:440px;margin:0 auto 32px}
+.success-timeline{background:var(--gray-100);border-radius:14px;padding:24px;text-align:left;max-width:400px;margin:0 auto}
+.tl-item{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.tl-dot.done{background:#E4F7ED}
+.tl-dot.pending{background:#EBF4FF}
+.tl-dot.wait{background:var(--gray-200)}
+.tl-text strong{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:2px}
+.tl-text span{font-size:11px;color:var(--gray-400)}
+@media(max-width:640px){
+  .hero{padding:40px 20px 60px}
+  .hero-title{font-size:28px}
+  .main{padding:0 12px}
+  .form-section{padding:24px 16px}
+  .form-nav{padding:16px}
+  .campaign-grid{grid-template-columns:repeat(2,1fr)}
+  .asset-grid{grid-template-columns:1fr}
+  .urgency-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="sap-logo">Sponsor a Pet</div>
+    <div class="divider-v"></div>
+    <div class="client-badge">
+      <div class="client-avatar">SG</div>
+      <span class="client-name">ScienceWorks Grant Account</span>
+    </div>
+  </div>
+  <span class="powered-by">Campaign Portal</span>
+</header>
+
+<div class="hero">
+  <div class="hero-label">New Campaign Request</div>
+  <h1 class="hero-title">Tell us what you need.<br>We'll handle the rest.</h1>
+  <p class="hero-sub">Fill out this short form and our automated campaign builder will have your ads live within 24 hours.</p>
+  <div class="hero-steps">
+    <div class="hero-step"><div class="step-num active" id="step-1">1</div><span class="step-label active">Campaign type</span></div>
+    <div class="hero-step"><div class="step-num" id="step-2">2</div><span class="step-label">Goals & copy</span></div>
+    <div class="hero-step"><div class="step-num" id="step-3">3</div><span class="step-label">Assets</span></div>
+    <div class="hero-step"><div class="step-num" id="step-4">4</div><span class="step-label">Review & submit</span></div>
+  </div>
+</div>
+
+<div class="main">
+<div class="form-card">
+
+<!-- Step 1: Campaign type -->
+<div class="form-section active" id="section-1">
+  <div class="section-tag">Step 1 of 4</div>
+  <div class="section-title">What type of campaign?</div>
+  <div class="section-desc">Select the primary goal. Each type uses different keywords, ad copy, and landing page strategies.</div>
+  <div class="campaign-grid">
+        <div class="camp-card" onclick="selectCampaign('Visit', this)">
+          <div class="camp-icon">🎟️</div>
+          <div class="camp-name">Visit</div>
+          <div class="camp-desc">Drive visits and event attendance</div>
+        </div>
+        <div class="camp-card" onclick="selectCampaign('Donate', this)">
+          <div class="camp-icon">💰</div>
+          <div class="camp-name">Donate</div>
+          <div class="camp-desc">Drive donations to your cause or fund</div>
+        </div>
+        <div class="camp-card" onclick="selectCampaign('Summer Camp', this)">
+          <div class="camp-icon">⛺</div>
+          <div class="camp-name">Summer Camp</div>
+          <div class="camp-desc">Drive camp registrations and sign-ups</div>
+        </div>
+        <div class="camp-card" onclick="selectCampaign('Membership', this)">
+          <div class="camp-icon">🏅</div>
+          <div class="camp-name">Membership</div>
+          <div class="camp-desc">Drive annual membership signups</div>
+        </div>
+        <div class="camp-card" onclick="selectCampaign('Field Trip', this)">
+          <div class="camp-icon">🚌</div>
+          <div class="camp-name">Field Trip</div>
+          <div class="camp-desc">Drive school group field trip bookings</div>
+        </div>
+        <div class="camp-card" onclick="selectCampaign('Awareness', this)">
+          <div class="camp-icon">📣</div>
+          <div class="camp-name">Awareness</div>
+          <div class="camp-desc">Build brand recognition and general traffic</div>
+        </div>
+  </div>
+</div>
+
+<!-- Step 2: Goals -->
+<div class="form-section" id="section-2">
+  <div class="section-tag">Step 2 of 4</div>
+  <div class="section-title">Goals & messaging</div>
+  <div class="section-desc">Tell us what you want to achieve and how you'd like to sound.</div>
+
+  <div class="field">
+    <label>What's the specific goal? <span>(plain English)</span></label>
+    <textarea id="goal-text" placeholder="e.g. We have 8 urgent dogs in our care that need placement this week. We need adopters or fosters before Saturday." rows="3"></textarea>
+  </div>
+
+  <div class="field">
+    <label>Landing page URL <span>(where should the ad send people?)</span></label>
+    <input type="url" id="landing-url" placeholder="https://yourwebsite.org/adopt" value="https://scienceworksmuseum.org">
+    <div class="field-hint">The page people land on after clicking your ad. Make sure it's mobile-friendly and has a clear call to action.</div>
+  </div>
+
+  <div class="field">
+    <label>Ad copy preference</label>
+    <div class="radio-group">
+      <div class="radio-option selected" onclick="selectRadio(this,'copy')" data-val="ai">
+        <div class="radio-dot"></div>
+        <div class="radio-text">
+          <strong>✨ Write it for me (recommended)</strong>
+          <span>Our AI reads your goal and writes 15 headlines and 4 descriptions tailored to your mission and voice</span>
+        </div>
+      </div>
+      <div class="radio-option" onclick="selectRadio(this,'copy')" data-val="manual">
+        <div class="radio-dot"></div>
+        <div class="radio-text">
+          <strong>I'll provide my own copy</strong>
+          <span>Paste your headlines and descriptions below</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field" id="manual-copy-field" style="display:none">
+    <label>Your ad copy</label>
+    <textarea id="manual-copy" placeholder="Headlines (up to 15, one per line)&#10;---&#10;Descriptions (up to 4, one per line)" rows="8"></textarea>
+  </div>
+
+  <div class="field">
+    <label>Urgency</label>
+    <div class="urgency-row">
+      <div class="urgency-card selected" onclick="selectUrgency(this,'normal')">
+        <div class="urgency-label">⏱ Standard</div>
+        <div class="urgency-desc">Live within 24 hours. Normal priority.</div>
+      </div>
+      <div class="urgency-card rush" onclick="selectUrgency(this,'rush')">
+        <div class="urgency-label">🔥 Rush</div>
+        <div class="urgency-desc">Need this live today. We'll prioritize immediately.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Anything else we should know? <span>(optional)</span></label>
+    <textarea id="notes" placeholder="Specific animals to highlight, event dates, geographic focus, budget notes, etc." rows="3"></textarea>
+  </div>
+</div>
+
+<!-- Step 3: Assets -->
+<div class="form-section" id="section-3">
+  <div class="section-tag">Step 3 of 4</div>
+  <div class="section-title">Upload your assets</div>
+  <div class="section-desc">Provide images and video for your ads. The more you provide, the better coverage across Google's ad placements.</div>
+
+  <div class="field">
+    <label>Google Drive folder link <span>(recommended)</span></label>
+    <input type="url" id="drive-url" placeholder="https://drive.google.com/drive/folders/...">
+    <div class="field-hint">Create a folder in Google Drive, add subfolders named <strong>square</strong>, <strong>landscape</strong>, and <strong>portrait</strong>, drop your images in the right folder, then paste the link here. Make sure sharing is set to "Anyone with the link."</div>
+  </div>
+
+  <div class="field">
+    <label>Or upload images directly <span>(optional)</span></label>
+    <div class="asset-grid">
+      <div class="asset-box" id="box-square">
+        <input type="file" accept="image/*" onchange="handleFile(this,'box-square','done-square')" multiple>
+        <div class="asset-icon">🖼️</div>
+        <div class="asset-label">Square</div>
+        <div class="asset-size">1:1 · min 300×300px</div>
+        <div class="asset-done" id="done-square"></div>
+      </div>
+      <div class="asset-box" id="box-landscape">
+        <input type="file" accept="image/*" onchange="handleFile(this,'box-landscape','done-landscape')" multiple>
+        <div class="asset-icon">🖼️</div>
+        <div class="asset-label">Landscape</div>
+        <div class="asset-size">1.91:1 · min 600×314px</div>
+        <div class="asset-done" id="done-landscape"></div>
+      </div>
+      <div class="asset-box" id="box-portrait">
+        <input type="file" accept="image/*" onchange="handleFile(this,'box-portrait','done-portrait')" multiple>
+        <div class="asset-icon">🖼️</div>
+        <div class="asset-label">Portrait</div>
+        <div class="asset-size">4:5 · min 480×600px</div>
+        <div class="asset-done" id="done-portrait"></div>
+      </div>
+      <div class="asset-box" id="box-logo">
+        <input type="file" accept="image/*" onchange="handleFile(this,'box-logo','done-logo')">
+        <div class="asset-icon">🏷️</div>
+        <div class="asset-label">Logo</div>
+        <div class="asset-size">Square · min 128×128px</div>
+        <div class="asset-done" id="done-logo"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>YouTube video URL <span>(optional)</span></label>
+    <input type="url" id="yt-url" placeholder="https://youtube.com/watch?v=...">
+    <div class="field-hint">Google will use your video in video ad placements at no extra cost from your grant.</div>
+  </div>
+</div>
+
+<!-- Step 4: Review -->
+<div class="form-section" id="section-4">
+  <div class="section-tag">Step 4 of 4</div>
+  <div class="section-title">Review your request</div>
+  <div class="section-desc">Everything look right? Hit submit and we'll get started immediately.</div>
+
+  <div class="summary-row"><span class="summary-label">Client</span><span class="summary-val">ScienceWorks Grant Account</span></div>
+  <div class="summary-row"><span class="summary-label">Campaign type</span><span class="summary-val" id="sum-type">—</span></div>
+  <div class="summary-row"><span class="summary-label">Goal</span><span class="summary-val" id="sum-goal">—</span></div>
+  <div class="summary-row"><span class="summary-label">Landing page</span><span class="summary-val" id="sum-url">—</span></div>
+  <div class="summary-row"><span class="summary-label">Ad copy</span><span class="summary-val" id="sum-copy">AI-generated</span></div>
+  <div class="summary-row"><span class="summary-label">Urgency</span><span class="summary-val" id="sum-urgency">Standard</span></div>
+  <div class="summary-row"><span class="summary-label">Assets</span><span class="summary-val" id="sum-assets">—</span></div>
+  <div class="summary-row"><span class="summary-label">Notes</span><span class="summary-val" id="sum-notes">None</span></div>
+
+  <div style="background:#EBF4FF;border-radius:12px;padding:16px 20px;margin-top:24px;display:flex;align-items:flex-start;gap:12px">
+    <span style="font-size:18px;flex-shrink:0">⚡</span>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">What happens next</div>
+      <div style="font-size:12px;color:var(--gray-600);line-height:1.6">Our automated campaign builder will process your request, generate ad copy, upload your assets, and build the full campaign structure. Your SAP team reviews everything before it goes live — you'll hear from us within 24 hours.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Success -->
+<div class="form-section" id="section-success">
+  <div class="success-wrap">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">Request submitted!</div>
+    <p class="success-sub">Your campaign request is in the queue. Our team is on it — you'll hear from us within 24 hours (or sooner if you selected Rush).</p>
+    <div class="success-timeline">
+      <div class="tl-item"><div class="tl-dot done">✓</div><div class="tl-text"><strong>Request received</strong><span>Just now</span></div></div>
+      <div class="tl-item"><div class="tl-dot pending">⚡</div><div class="tl-text"><strong>Zakk Bot building campaign</strong><span>Generating copy, uploading assets, creating structure</span></div></div>
+      <div class="tl-item"><div class="tl-dot wait">👀</div><div class="tl-text"><strong>SAP team review</strong><span>We review before anything goes live</span></div></div>
+      <div class="tl-item"><div class="tl-dot wait">🚀</div><div class="tl-text"><strong>Campaign live</strong><span>Within 24 hours of submission</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="form-nav" id="form-nav">
+  <button class="btn btn-ghost" id="btn-back" onclick="prev()" style="visibility:hidden">← Back</button>
+  <div class="progress-dots">
+    <div class="pdot active" id="pd1"></div>
+    <div class="pdot" id="pd2"></div>
+    <div class="pdot" id="pd3"></div>
+    <div class="pdot" id="pd4"></div>
+  </div>
+  <button class="btn btn-primary" id="btn-next" onclick="next()">Continue →</button>
+</div>
+
+</div>
+</div>
+
+<script>
+const CLIENT_NAME = "ScienceWorks Grant Account";
+const CLIENT_SLUG = "scienceworks";
+const WEB3_KEY = "YOUR_WEB3FORMS_KEY";
+let cur = 1;
+let fd = {client:CLIENT_NAME, slug:CLIENT_SLUG, type:'', goal:'', url:'', copy:'ai', manual:'', urgency:'normal', notes:'', drive:'', yt:'', assets:[]};
+
+function selectCampaign(t, el) {
+  document.querySelectorAll('.camp-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  fd.type = t;
+}
+
+function selectRadio(el, g) {
+  el.closest('.radio-group').querySelectorAll('.radio-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  if (g==='copy') {
+    fd.copy = el.dataset.val;
+    document.getElementById('manual-copy-field').style.display = fd.copy==='manual' ? 'block' : 'none';
+  }
+}
+
+function selectUrgency(el, v) {
+  document.querySelectorAll('.urgency-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  fd.urgency = v;
+}
+
+function handleFile(input, boxId, doneId) {
+  if (input.files.length > 0) {
+    document.getElementById(boxId).classList.add('has-file');
+    const d = document.getElementById(doneId);
+    d.textContent = '✓ ' + input.files.length + ' file' + (input.files.length>1?'s':'') + ' selected';
+    d.style.display = 'block';
+  }
+}
+
+function updateSummary() {
+  fd.goal = document.getElementById('goal-text').value;
+  fd.url = document.getElementById('landing-url').value;
+  fd.manual = document.getElementById('manual-copy').value;
+  fd.notes = document.getElementById('notes').value;
+  fd.drive = document.getElementById('drive-url').value;
+  fd.yt = document.getElementById('yt-url').value;
+  document.getElementById('sum-type').textContent = fd.type || '—';
+  document.getElementById('sum-goal').textContent = fd.goal ? fd.goal.substring(0,120)+(fd.goal.length>120?'...':'') : '—';
+  document.getElementById('sum-url').textContent = fd.url || '—';
+  document.getElementById('sum-copy').textContent = fd.copy==='ai' ? '✨ AI-generated' : 'Manual';
+  document.getElementById('sum-urgency').textContent = fd.urgency==='rush' ? '🔥 Rush — same day' : '⏱ Standard — 24 hours';
+  document.getElementById('sum-notes').textContent = fd.notes || 'None';
+  const a = [];
+  if (document.getElementById('done-square').style.display!=='none') a.push('Square images');
+  if (document.getElementById('done-landscape').style.display!=='none') a.push('Landscape images');
+  if (document.getElementById('done-portrait').style.display!=='none') a.push('Portrait images');
+  if (document.getElementById('done-logo').style.display!=='none') a.push('Logo');
+  if (fd.drive) a.push('Google Drive folder');
+  if (fd.yt) a.push('YouTube video');
+  document.getElementById('sum-assets').textContent = a.length ? a.join(', ') : 'None uploaded';
+}
+
+function updateUI() {
+  document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('section-'+cur).classList.add('active');
+  for (let i=1;i<=4;i++) {
+    const el=document.getElementById('step-'+i);
+    const lb=el?.nextElementSibling;
+    if (i<cur) { el.classList.add('done'); el.classList.remove('active'); el.textContent='✓'; lb?.classList.remove('active'); }
+    else if (i===cur) { el.classList.add('active'); el.classList.remove('done'); el.textContent=i; lb?.classList.add('active'); }
+    else { el.classList.remove('active','done'); el.textContent=i; lb?.classList.remove('active'); }
+    const pd=document.getElementById('pd'+i);
+    pd.className='pdot'+(i<cur?' done':i===cur?' active':'');
+  }
+  document.getElementById('btn-back').style.visibility = cur>1?'visible':'hidden';
+  const nb=document.getElementById('btn-next');
+  if (cur===4) { nb.textContent='🚀 Submit request'; nb.className='btn btn-success'; }
+  else { nb.textContent='Continue →'; nb.className='btn btn-primary'; }
+}
+
+function next() {
+  if (cur===1 && !fd.type) { alert('Please select a campaign type.'); return; }
+  if (cur===2) {
+    fd.goal = document.getElementById('goal-text').value;
+    if (!fd.goal.trim()) { alert('Please describe your campaign goal.'); return; }
+  }
+  if (cur===3) updateSummary();
+  if (cur===4) { submit(); return; }
+  cur++; updateUI();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function prev() {
+  if (cur>1) { cur--; updateUI(); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+
+function submit() {
+  const payload = {
+    access_key: WEB3_KEY,
+    subject: '🐾 Campaign Request — ' + CLIENT_NAME + ' — ' + fd.type,
+    client_name: fd.client,
+    client_slug: fd.slug,
+    campaign_type: fd.type,
+    goal: fd.goal,
+    landing_url: fd.url,
+    copy_preference: fd.copy,
+    manual_copy: fd.manual,
+    urgency: fd.urgency,
+    notes: fd.notes,
+    drive_url: fd.drive,
+    youtube_url: fd.yt,
+    submitted_at: new Date().toISOString(),
+  };
+  document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('section-success').classList.add('active');
+  document.getElementById('form-nav').style.display='none';
+  fetch('https://api.web3forms.com/submit',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  }).catch(e=>console.log('Submit error:',e));
+}
+</script>
+</body>
+</html>
