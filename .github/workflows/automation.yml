@@ -76,6 +76,8 @@ jobs:
        (github.event.inputs.job == 'fetch_ga4' || github.event.inputs.job == 'reports' || github.event.inputs.job == 'all'))
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -91,8 +93,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
           git add ga4_cache.json
-          git diff --staged --quiet || git commit -m "Update GA4 cache $(date +'%Y-%m-%d')"
-          git push
+          git diff --staged --quiet || (git pull --rebase origin main && git commit -m "Update GA4 cache $(date +'%Y-%m-%d')" && git push)
 
   fetch_seo:
     name: Fetch SEO data
@@ -103,6 +104,8 @@ jobs:
        (github.event.inputs.job == 'fetch_seo' || github.event.inputs.job == 'all'))
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -119,8 +122,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
           git add seo_cache.json
-          git diff --staged --quiet || git commit -m "Update SEO cache $(date +'%Y-%m-%d')"
-          git push
+          git diff --staged --quiet || (git pull --rebase origin main && git commit -m "Update SEO cache $(date +'%Y-%m-%d')" && git push)
 
   reports:
     name: Monthly client reports
@@ -132,6 +134,8 @@ jobs:
        (github.event.inputs.job == 'reports' || github.event.inputs.job == 'all'))
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -155,6 +159,7 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
+          git pull --rebase origin main
           git add reports/
           git diff --staged --quiet || git commit -m "Monthly reports $(date +'%B %Y')"
           git push
