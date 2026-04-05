@@ -2,15 +2,10 @@ name: SAP Ad Grants Automation
 
 on:
   schedule:
-    # Alert watcher — 8am ET (1pm UTC) daily
     - cron: '0 13 * * *'
-    # Alert watcher — 4pm ET (9pm UTC) daily
     - cron: '0 21 * * *'
-    # Monday digest — 8am ET Monday only
     - cron: '0 13 * * 1'
-    # Monthly reports — 1st of each month at 9am ET (2pm UTC)
     - cron: '0 14 1 * *'
-    # Weekly SEO fetch — Sunday 6am ET (11am UTC)
     - cron: '0 11 * * 0'
 
   workflow_dispatch:
@@ -30,7 +25,6 @@ on:
 
 jobs:
 
-  # ── ALERT WATCHER (twice daily) ────────────────────────────────────────
   alerts:
     name: Alert watcher
     runs-on: ubuntu-latest
@@ -39,17 +33,13 @@ jobs:
       (github.event.inputs.job == 'alerts' || github.event.inputs.job == 'all')) ||
       (github.event_name == 'schedule' &&
       (github.event.schedule == '0 13 * * *' || github.event.schedule == '0 21 * * *'))
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install dependencies
         run: pip install requests google-auth google-auth-httplib2
-
       - name: Run alert watcher
         env:
           WINDSOR_API_KEY: ${{ secrets.WINDSOR_API_KEY }}
@@ -57,7 +47,6 @@ jobs:
           MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
         run: python alert_watcher.py
 
-  # ── MONDAY DIGEST ──────────────────────────────────────────────────────
   digest:
     name: Monday digest
     runs-on: ubuntu-latest
@@ -65,24 +54,19 @@ jobs:
       (github.event_name == 'schedule' && github.event.schedule == '0 13 * * 1') ||
       (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.job == 'digest' || github.event.inputs.job == 'all'))
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install dependencies
         run: pip install requests
-
       - name: Run Slack digest
         env:
           WINDSOR_API_KEY: ${{ secrets.WINDSOR_API_KEY }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run: python slack_digest.py
 
-  # ── FETCH GA4 (runs before monthly reports) ────────────────────────────
   fetch_ga4:
     name: Fetch GA4 data
     runs-on: ubuntu-latest
@@ -90,23 +74,18 @@ jobs:
       (github.event_name == 'schedule' && github.event.schedule == '0 14 1 * *') ||
       (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.job == 'fetch_ga4' || github.event.inputs.job == 'reports' || github.event.inputs.job == 'all'))
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install dependencies
         run: pip install requests google-auth google-auth-httplib2 pyyaml
-
       - name: Fetch GA4 data for all clients
         env:
           WINDSOR_API_KEY: ${{ secrets.WINDSOR_API_KEY }}
           GOOGLE_ADS_YAML: ${{ secrets.GOOGLE_ADS_YAML }}
         run: python fetch_ga4.py
-
       - name: Commit GA4 cache
         run: |
           git config --global user.email "actions@github.com"
@@ -115,7 +94,6 @@ jobs:
           git diff --staged --quiet || git commit -m "Update GA4 cache $(date +'%Y-%m-%d')"
           git push
 
-  # ── FETCH SEO (weekly — Sundays) ───────────────────────────────────────
   fetch_seo:
     name: Fetch SEO data
     runs-on: ubuntu-latest
@@ -123,24 +101,19 @@ jobs:
       (github.event_name == 'schedule' && github.event.schedule == '0 11 * * 0') ||
       (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.job == 'fetch_seo' || github.event.inputs.job == 'all'))
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install dependencies
         run: pip install requests google-auth google-auth-httplib2 pyyaml
-
       - name: Fetch SEO data for enrolled clients
         env:
           GOOGLE_ADS_YAML: ${{ secrets.GOOGLE_ADS_YAML }}
           DATAFORSEO_LOGIN: ${{ secrets.DATAFORSEO_LOGIN }}
           DATAFORSEO_PASSWORD: ${{ secrets.DATAFORSEO_PASSWORD }}
         run: python fetch_seo.py
-
       - name: Commit SEO cache
         run: |
           git config --global user.email "actions@github.com"
@@ -149,7 +122,6 @@ jobs:
           git diff --staged --quiet || git commit -m "Update SEO cache $(date +'%Y-%m-%d')"
           git push
 
-  # ── MONTHLY REPORTS ────────────────────────────────────────────────────
   reports:
     name: Monthly client reports
     runs-on: ubuntu-latest
@@ -158,32 +130,27 @@ jobs:
       (github.event_name == 'schedule' && github.event.schedule == '0 14 1 * *') ||
       (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.job == 'reports' || github.event.inputs.job == 'all'))
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install dependencies
         run: pip install requests google-ads google-auth google-auth-httplib2 pyyaml
-
-      - name: Fetch Google Ads data
+      - name: Write google-ads.yaml
+        run: echo "$GOOGLE_ADS_YAML" > google-ads.yaml
         env:
           GOOGLE_ADS_YAML: ${{ secrets.GOOGLE_ADS_YAML }}
+      - name: Fetch Google Ads data
         run: python fetch_google_ads.py
-
       - name: Generate all client reports v2
         env:
           WINDSOR_API_KEY: ${{ secrets.WINDSOR_API_KEY }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
         run: python generate_reports_v2.py
-
-      - name: Validate reports — fail if contamination detected
+      - name: Validate reports
         run: python generate_reports_v2.py --validate-only
-
       - name: Commit reports to GitHub Pages
         run: |
           git config --global user.email "actions@github.com"
