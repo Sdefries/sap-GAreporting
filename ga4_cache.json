@@ -2,7 +2,7 @@
   "city-dogs-kitties": {
     "ga4_id": "490392378",
     "client": "City Dogs and City Kitties Rescue",
-    "fetched_at": "2026-04-05T00:15:12.875733",
+    "fetched_at": "2026-04-05T00:37:09.671694",
     "overview_30d": {},
     "overview_7d": {},
     "daily_30d": [],
@@ -19,7 +19,7 @@
   "guardian-pet-trust": {
     "ga4_id": "482775564",
     "client": "Guardian Pet Trust",
-    "fetched_at": "2026-04-05T00:15:12.875733",
+    "fetched_at": "2026-04-05T00:37:09.671694",
     "overview_30d": {},
     "overview_7d": {},
     "daily_30d": [],
@@ -36,7 +36,7 @@
   "pup-profile": {
     "ga4_id": "477106491",
     "client": "Pup Profile",
-    "fetched_at": "2026-04-05T00:15:12.875733",
+    "fetched_at": "2026-04-05T00:37:09.671694",
     "overview_30d": {},
     "overview_7d": {},
     "daily_30d": [],
@@ -51,7 +51,7 @@
     "sources": []
   },
   "_meta": {
-    "fetched_at": "2026-04-05T00:15:12.875733",
+    "fetched_at": "2026-04-05T00:37:09.671694",
     "clients_fetched": 3,
     "clients_skipped": 12
   }
