@@ -3,24 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pup Profile — Google Ads Report · April 2026</title>
+<title id="pageTitle">Client Report — SAP Ad Grants</title>
 <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root {
-  --navy:#0F2B5B; --navy-dark:#0a1628; --blue:#0083C6; --blue-lt:#5BC8F0;
-  --green:#3DAA69; --red:#D94F3D; --amber:#E8A020; --purple:#7C3AED;
-  --gray-100:#F4F6F9; --gray-200:#E8ECF2; --gray-400:#9EABBE; --gray-600:#5A6A82;
-  --border:rgba(15,43,91,0.1); --card:#fff;
-  --font-head:'Karla',sans-serif; --font-body:'Montserrat',sans-serif;
-  --radius:12px; --radius-sm:8px;
+:root{
+  --navy:#0F2B5B;--navy-dark:#0a1628;--blue:#0083C6;--blue-lt:#5BC8F0;
+  --green:#3DAA69;--red:#D94F3D;--amber:#E8A020;--purple:#7C3AED;
+  --gray-100:#F4F6F9;--gray-200:#E8ECF2;--gray-400:#9EABBE;--gray-600:#5A6A82;
+  --border:rgba(15,43,91,0.1);--card:#fff;
+  --font-head:'Karla',sans-serif;--font-body:'Montserrat',sans-serif;
+  --radius:12px;--radius-sm:8px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy-dark);min-height:100vh;font-size:14px}
 .layout{display:flex;min-height:100vh}
-
-/* SIDEBAR */
 .sidebar{width:230px;background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto;flex-shrink:0}
 .sb-head{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.07)}
 .sb-brand{display:flex;align-items:center;gap:10px}
@@ -32,15 +30,12 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy-da
 .sb-client-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px}
 .sb-client-name{font-family:var(--font-head);font-weight:800;font-size:15px;color:#fff}
 .sb-client-id{font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px}
-
-/* GPS Score in sidebar */
 .sb-gps{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.07)}
 .sb-gps-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
 .sb-gps-score{font-family:var(--font-head);font-weight:800;font-size:36px;color:#fff;line-height:1}
 .sb-gps-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px}
 .gps-bar{height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:10px;overflow:hidden}
 .gps-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--amber),var(--green));transition:width 1s ease}
-
 .sb-nav{padding:10px 0;flex:1}
 .sb-nav-lbl{padding:10px 20px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.1em}
 .sb-nav a{display:flex;align-items:center;gap:9px;padding:9px 20px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.45);text-decoration:none;border-left:3px solid transparent;transition:all 0.15s}
@@ -48,11 +43,7 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy-da
 .sb-nav a.active{color:#fff;background:rgba(0,131,198,0.2);border-left-color:var(--blue)}
 .sb-nav a .dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
 .sb-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,0.07);font-size:10px;color:rgba(255,255,255,0.28);font-weight:500}
-
-/* MAIN */
 .main{margin-left:230px;flex:1;display:flex;flex-direction:column;min-height:100vh}
-
-/* TOPBAR */
 .topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .topbar-left{display:flex;align-items:center;gap:12px}
 .topbar-title{font-family:var(--font-head);font-weight:800;font-size:20px;color:var(--navy)}
@@ -66,18 +57,13 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy-da
 .dt-btn{padding:5px 13px;border-radius:6px;font-size:11px;font-weight:700;color:var(--gray-400);cursor:pointer;transition:all 0.15s;border:none;background:transparent}
 .dt-btn:hover{color:var(--navy)}
 .dt-btn.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
-
-/* CONTENT */
 .content{padding:26px 32px 72px;flex:1}
 .section{margin-bottom:28px;scroll-margin-top:72px}
 .sh{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--gray-100)}
 .sh-title{font-family:var(--font-head);font-weight:800;font-size:16px;color:var(--navy)}
 .sh-sub{font-size:11px;color:var(--gray-400);font-weight:500}
-
-/* GPS SCORE CARD */
 .gps-card{background:linear-gradient(135deg,var(--navy) 0%,#1a4080 100%);border-radius:var(--radius);padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
 .gps-card::after{content:'';position:absolute;right:-20px;top:-20px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.03)}
-.gps-left{}
 .gps-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px}
 .gps-big{font-family:var(--font-head);font-size:56px;font-weight:800;color:#fff;line-height:1;letter-spacing:-2px}
 .gps-big span{font-size:24px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:0}
@@ -88,39 +74,39 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy-da
 .gps-item-val{font-family:var(--font-head);font-size:13px;font-weight:800;color:#fff}
 .gps-item-bar{flex:1;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden}
 .gps-item-fill{height:100%;border-radius:2px}
-.trend-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(61,170,105,0.2);color:#6DDFA0;margin-top:8px}
-
-/* KPI CARDS */
+.compliance-banner{border-radius:var(--radius-sm);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.cb-green{background:#E4F7ED;border:1px solid #B3DFC6}
+.cb-red{background:#FDEAEA;border:1px solid #F0B8B8}
+.cb-amber{background:#FEF6E6;border:1px solid #F0D890}
+.cb-green .cb-title{color:#1A6E3E}
+.cb-red .cb-title{color:#A02020}
+.cb-amber .cb-title{color:#9A6010}
+.cb-title{font-family:var(--font-head);font-weight:800;font-size:13px}
+.cb-body{font-size:11px;font-weight:500;margin-top:2px;color:inherit;opacity:0.8}
 .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.kpi-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px 22px;position:relative;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;cursor:default}
+.kpi-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px 22px;position:relative;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s}
 .kpi-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(15,43,91,0.1)}
-.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);border-radius:3px 3px 0 0;transform:scaleX(0);transform-origin:left;transition:transform 0.2s}
-.kpi-card:hover::before{transform:scaleX(1)}
-.kpi-card.green::before,.kpi-card:hover.green::before{background:var(--green);transform:scaleX(1)}
-.kpi-card.amber::before{background:var(--amber)}
-.kpi-card.red::before{background:var(--red)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0}
+.kpi-card.kpi-blue::before{background:var(--blue)}
+.kpi-card.kpi-green::before{background:var(--green)}
+.kpi-card.kpi-amber::before{background:var(--amber)}
+.kpi-card.kpi-red::before{background:var(--red)}
 .kpi-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:14px}
-.ic-b{background:#E3F2FF}.ic-g{background:#E4F7ED}.ic-a{background:#FEF6E6}.ic-n{background:var(--gray-100)}.ic-t{background:#E0F7F5}.ic-p{background:#F3E8FF}
 .kpi-label{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px}
 .kpi-value{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-1px;line-height:1;margin-bottom:6px}
 .kpi-sub{font-size:11px;color:var(--gray-400);font-weight:500}
 .kpi-sub.ok{color:var(--green);font-weight:700}
 .kpi-sub.warn{color:var(--amber);font-weight:700}
 .kpi-sub.danger{color:var(--red);font-weight:700}
-
-/* SECONDARY */
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px}
 .sp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
 .si{background:var(--gray-100);border-radius:var(--radius-sm);padding:13px 14px}
 .si-lbl{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px}
 .si-val{font-family:var(--font-head);font-weight:800;font-size:22px;color:var(--navy)}
 .si-sub{font-size:11px;color:var(--gray-400);margin-top:2px;font-weight:500}
-
-/* FUNNEL */
 .funnel-wrap{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:24px 28px}
-.funnel-title{font-family:var(--font-head);font-weight:800;font-size:14px;color:var(--navy);margin-bottom:20px}
 .funnel-steps{display:flex;align-items:stretch;gap:0}
 .funnel-step{flex:1;position:relative}
 .funnel-step:not(:last-child)::after{content:'›';position:absolute;right:-12px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--gray-400);z-index:1;font-weight:700}
@@ -134,12 +120,17 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy-da
 .fs-ok{color:var(--green)}
 .fs-warn{color:var(--amber)}
 .fs-bad{color:var(--red)}
-.funnel-callout{margin-top:16px;background:#FEF6E6;border:1px solid #F0D890;border-radius:var(--radius-sm);padding:12px 16px;display:flex;align-items:flex-start;gap:10px}
-.fc-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-.fc-title{font-family:var(--font-head);font-weight:800;font-size:12px;color:#9A6010;margin-bottom:3px}
-.fc-body{font-size:11px;color:#7A5010;line-height:1.5}
-
-/* LANDING PAGES */
+.callout{margin-top:16px;border-radius:var(--radius-sm);padding:12px 16px;display:flex;align-items:flex-start;gap:10px}
+.callout-amber{background:#FEF6E6;border:1px solid #F0D890}
+.callout-blue{background:#EBF4FF;border:1px solid #C5E0F5}
+.callout-green{background:#E4F7ED;border:1px solid #B3DFC6}
+.callout-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.callout-title{font-family:var(--font-head);font-weight:800;font-size:12px;margin-bottom:3px}
+.callout-body{font-size:11px;line-height:1.5}
+.callout-amber .callout-title{color:#9A6010}
+.callout-amber .callout-body{color:#7A5010}
+.callout-blue .callout-title{color:#0060A0}
+.callout-blue .callout-body{color:#4A6A8A}
 .lp-table{width:100%;border-collapse:collapse;font-size:12px}
 .lp-table thead tr{background:var(--gray-100)}
 .lp-table thead th{padding:8px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--gray-400);white-space:nowrap}
@@ -154,8 +145,6 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy-da
 .lp-bar-fill{height:100%;border-radius:3px;background:var(--blue)}
 .eng-high{color:var(--green);font-weight:700}
 .eng-low{color:var(--red);font-weight:700}
-
-/* CHART CARDS */
 .chart-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:22px 24px}
 .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .chart-title{font-family:var(--font-head);font-weight:800;font-size:14px;color:var(--navy)}
@@ -164,65 +153,44 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy-da
 .ctabs{display:flex;gap:3px}
 .ctab{padding:4px 12px;border-radius:6px;font-size:11px;font-weight:700;color:var(--gray-400);cursor:pointer;background:var(--gray-100);border:1px solid transparent;transition:all 0.15s;user-select:none}
 .ctab.active{background:#fff;color:var(--navy);border-color:var(--border);box-shadow:0 1px 4px rgba(0,0,0,0.06)}
-
-/* COMPLIANCE BANNER */
-.compliance-banner{border-radius:var(--radius-sm);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.cb-green{background:#E4F7ED;border:1px solid #B3DFC6}
-.cb-red{background:#FDEAEA;border:1px solid #F0B8B8}
-.cb-green .cb-title{color:#1A6E3E}
-.cb-red .cb-title{color:#A02020}
-.cb-title{font-family:var(--font-head);font-weight:800;font-size:13px}
-.cb-body{font-size:11px;font-weight:500;margin-top:2px}
-.cb-green .cb-body{color:#2E8A52}
-.cb-red .cb-body{color:#C03030}
-
-/* CAMPAIGN TABLE */
 .tscroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12px;min-width:800px}
-thead tr{background:var(--navy)}
-thead th{padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.6);white-space:nowrap}
-thead th:not(:first-child){text-align:right}
-tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s}
-tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:#F5F9FF}
-td{padding:10px 13px;color:var(--navy-dark)}
-td:not(:first-child){text-align:right;color:var(--gray-600)}
-.tn{font-weight:700;color:var(--navy);font-size:12px}
-.stag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:700}
+th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--gray-400);background:var(--gray-100);border-bottom:1px solid var(--border);white-space:nowrap}
+th:not(:first-child){text-align:right}
+td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--gray-600);vertical-align:middle}
+td:not(:first-child){text-align:right}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#F5F9FF}
+.tn{font-weight:700;color:var(--navy);text-align:left!important;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase}
 .st-e{background:#E4F7ED;color:#1A6E3E}
-.st-p{background:#FEF6E6;color:#9A6010}
-.ctag{display:inline-block;padding:2px 7px;border-radius:6px;font-size:11px;font-weight:700}
+.st-p{background:var(--gray-100);color:var(--gray-400)}
+.ctag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
 .ct-g{background:#E4F7ED;color:#1A6E3E}
 .ct-b{background:#FDEAEA;color:#A02020}
-.flag{color:var(--red);font-weight:700}
-
-/* DEVICE BARS */
-.drows{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
-.drow{display:flex;align-items:center;gap:10px}
-.dn{width:54px;font-size:12px;font-weight:700;color:var(--navy);flex-shrink:0}
-.dbb{flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden}
-.dbf{height:100%;border-radius:4px;transition:width 0.8s ease}
-.dpct{width:32px;text-align:right;font-size:11px;font-weight:700;color:var(--gray-400);flex-shrink:0}
-.ddet{width:160px;text-align:right;font-size:11px;color:var(--gray-400);flex-shrink:0}
-.dconv{width:80px;text-align:right;font-size:11px;flex-shrink:0}
-.dconv.ok{color:var(--green);font-weight:700}
-.dconv.warn{color:var(--amber);font-weight:700}
-
-/* IMPRESSION SHARE */
-.isg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
-.isc{background:var(--gray-100);border-radius:10px;padding:15px 17px}
-.isl{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:9px}
-.isbb{width:100%;height:7px;background:rgba(0,0,0,0.08);border-radius:4px;margin-bottom:9px;overflow:hidden}
-.isbf{height:100%;border-radius:4px}
-.isv{font-family:var(--font-head);font-weight:800;font-size:22px;color:var(--navy)}
-.isn{font-size:11px;color:var(--gray-400);margin-top:3px;line-height:1.4}
-.tsg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card)}
-.tsi{padding:16px 18px;border-right:1px solid var(--border);text-align:center}
+.ct-a{background:#FEF6E6;color:#9A6010}
+.flag{color:var(--amber)!important;font-weight:700}
+.drow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.dn{font-size:12px;font-weight:600;color:var(--navy);min-width:100px}
+.dbb{flex:1;height:6px;background:var(--gray-200);border-radius:3px;overflow:hidden}
+.dbf{height:100%;border-radius:3px}
+.dpct{font-size:11px;font-weight:700;color:var(--navy);min-width:36px;text-align:right}
+.ddet{font-size:11px;color:var(--gray-400);min-width:80px;text-align:right}
+.dconv{font-size:11px;font-weight:700;min-width:70px;text-align:right}
+.dconv.ok{color:var(--green)}
+.dconv.warn{color:var(--amber)}
+.isg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.isc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px}
+.isl{font-size:11px;font-weight:700;color:var(--gray-400);margin-bottom:8px}
+.isbb{height:6px;background:var(--gray-200);border-radius:3px;overflow:hidden;margin-bottom:8px}
+.isbf{height:100%;border-radius:3px}
+.isv{font-family:var(--font-head);font-weight:800;font-size:20px;color:var(--navy);margin-bottom:4px}
+.isn{font-size:11px;color:var(--gray-400);line-height:1.4}
+.tsg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tsi{background:var(--gray-100);border-radius:var(--radius-sm);padding:14px;border-right:1px solid var(--border)}
 .tsi:last-child{border-right:none}
 .tsi-val{font-family:var(--font-head);font-weight:800;font-size:26px;color:var(--navy);margin-bottom:4px}
 .tsi-lbl{font-size:11px;color:var(--gray-400);font-weight:500}
-
-/* WHAT WE DID / NEXT WEEK */
 .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .action-card{border-radius:var(--radius);padding:20px 22px}
 .ac-did{background:linear-gradient(135deg,#EBF4FF,#F0F9FF);border:1px solid #C5E0F5}
@@ -230,14 +198,8 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
 .ac-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
 .ac-did .ac-label{color:#0060A0}
 .ac-next .ac-label{color:#1A6E3E}
-.ac-title{font-family:var(--font-head);font-weight:800;font-size:14px;margin-bottom:6px}
-.ac-did .ac-title{color:var(--navy)}
-.ac-next .ac-title{color:#1A5E35}
-.ac-body{font-size:12px;line-height:1.6}
-.ac-did .ac-body{color:#4A6A8A}
-.ac-next .ac-body{color:#2E7A4E}
-
-/* INSIGHTS */
+.ac-title{font-family:var(--font-head);font-weight:800;font-size:14px;margin-bottom:6px;color:var(--navy)}
+.ac-body{font-size:12px;line-height:1.6;color:var(--gray-600)}
 .insights-grid{display:flex;flex-direction:column;gap:12px}
 .insight-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
 .insight-bar{width:4px;border-radius:4px;flex-shrink:0;align-self:stretch;min-height:40px}
@@ -251,14 +213,10 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
 .tag-action{background:#E3F2FF;color:#0060A0}
 .tag-watch{background:#FEF6E6;color:#9A6010}
 .tag-win{background:#E4F7ED;color:#1A6E3E}
-
-/* FOOTER */
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
 .pf-r span{color:var(--blue-lt)}
-
-/* LOADING */
 .loading-overlay{position:fixed;inset:0;background:rgba(15,43,91,0.15);backdrop-filter:blur(2px);z-index:200;display:none;align-items:center;justify-content:center}
 .loading-overlay.show{display:flex}
 .loading-box{background:#fff;border-radius:14px;padding:28px 36px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.12)}
@@ -268,7 +226,6 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
 .fade{opacity:0;transform:translateY(8px);animation:fi 0.3s ease forwards}
 @keyframes fi{to{opacity:1;transform:none}}
 .cw{position:relative;width:100%}
-
 @media(max-width:960px){
   .sidebar{display:none}.main{margin-left:0}
   .kpi-grid,.action-grid{grid-template-columns:repeat(2,1fr)}
@@ -285,11 +242,10 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
 <body>
 <div class="layout">
 
-<!-- LOADING -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-box">
     <div class="loading-spinner"></div>
-    <div class="loading-text" id="loadingText">Loading report...</div>
+    <div class="loading-text">Loading report...</div>
   </div>
 </div>
 
@@ -308,18 +264,18 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
   </div>
   <div class="sb-client">
     <div class="sb-client-lbl">Client</div>
-    <div class="sb-client-name">Pup Profile</div>
-    <div class="sb-client-id">Account 334-205-8352</div>
+    <div class="sb-client-name" id="sbClientName">—</div>
+    <div class="sb-client-id" id="sbClientId">Account —</div>
   </div>
   <div class="sb-gps">
     <div class="sb-gps-lbl">Grant Performance Score</div>
-    <div class="sb-gps-score" id="sbGps">67<span style="font-size:16px;color:rgba(255,255,255,0.35)">/100</span></div>
-    <div class="sb-gps-sub">↑ First report</div>
-    <div class="gps-bar"><div class="gps-fill" id="sbGpsFill" style="width:67%"></div></div>
+    <div class="sb-gps-score" id="sbGpsScore">—<span style="font-size:16px;color:rgba(255,255,255,0.35)">/100</span></div>
+    <div class="sb-gps-sub" id="sbGpsSub">Loading...</div>
+    <div class="gps-bar"><div class="gps-fill" id="sbGpsFill" style="width:0%"></div></div>
   </div>
   <div class="sb-nav">
     <div class="sb-nav-lbl">Report sections</div>
-    <a href="#sec-score" class="active"><span class="dot"></span>Performance score</a>
+    <a href="#sec-score"><span class="dot"></span>Performance score</a>
     <a href="#sec-overview"><span class="dot"></span>Overview</a>
     <a href="#sec-funnel"><span class="dot"></span>Donor funnel</a>
     <a href="#sec-metrics"><span class="dot"></span>Cost metrics</a>
@@ -332,16 +288,16 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
     <a href="#sec-actions"><span class="dot"></span>What we did</a>
     <a href="#sec-insights"><span class="dot"></span>Recommendations</a>
   </div>
-  <div class="sb-foot">Data via Google Ads API · Apr 01, 2026</div>
+  <div class="sb-foot" id="sbFoot">Data via Google Ads API</div>
 </nav>
 
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <div class="topbar-title">Pup Profile</div>
-      <div class="compliance-pill pill-green">
-        <span class="pill-dot"></span><span>CTR Compliant</span>
+      <div class="topbar-title" id="topbarTitle">—</div>
+      <div class="compliance-pill pill-green" id="compliancePill">
+        <span class="pill-dot"></span><span id="compliancePillText">Loading...</span>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
@@ -357,47 +313,46 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
     <!-- COMPLIANCE BANNER -->
     <div class="compliance-banner cb-green" id="compBanner">
       <div>
-        <div class="cb-title">Ad Grants Compliance — Compliant</div>
-        <div class="cb-body" id="compBody">13.9% CTR — above the 5% minimum required by Google Ad Grants.</div>
+        <div class="cb-title" id="compTitle">Ad Grants Compliance</div>
+        <div class="cb-body" id="compBody">Loading...</div>
       </div>
-      <div class="compliance-pill pill-green"><span class="pill-dot"></span>14.1% CTR</div>
+      <div class="compliance-pill pill-green" id="compPill">
+        <span class="pill-dot"></span><span id="compPillText">—</span>
+      </div>
     </div>
 
-    <!-- GRANT PERFORMANCE SCORE -->
+    <!-- GPS SCORE -->
     <div class="section" id="sec-score">
-      <div class="sh"><div class="sh-title">Grant Performance Score</div><div class="sh-sub">Calculated weekly · April 1, 2026</div></div>
+      <div class="sh">
+        <div class="sh-title">Grant Performance Score</div>
+        <div class="sh-sub" id="gpsDateSub">—</div>
+      </div>
       <div class="gps-card">
-        <div class="gps-left">
-          <div class="gps-label">This week's score</div>
-          <div class="gps-big">67<span>/100</span></div>
-          <div class="gps-desc">Good — solid performance with room to improve.</div>
-          <div class="trend-chip">↑ First report</div>
+        <div>
+          <div class="gps-label">This month's score</div>
+          <div class="gps-big" id="gpsScoreDisplay">—<span>/100</span></div>
+          <div class="gps-desc" id="gpsDesc">Loading...</div>
         </div>
         <div class="gps-right">
           <div class="gps-item">
             <div class="gps-item-lbl">CTR health</div>
-            <div class="gps-item-bar"><div class="gps-item-fill" style="width:67%;background:#E8A020"></div></div>
-            <div class="gps-item-val">67%</div>
+            <div class="gps-item-bar"><div class="gps-item-fill" id="gpsCtrBar" style="width:0%"></div></div>
+            <div class="gps-item-val" id="gpsCtrVal">—</div>
           </div>
           <div class="gps-item">
             <div class="gps-item-lbl">Grant utilization</div>
-            <div class="gps-item-bar"><div class="gps-item-fill" style="width:23%;background:#D94F3D"></div></div>
-            <div class="gps-item-val">23%</div>
+            <div class="gps-item-bar"><div class="gps-item-fill" id="gpsUtilBar" style="width:0%"></div></div>
+            <div class="gps-item-val" id="gpsUtilVal">—</div>
           </div>
           <div class="gps-item">
             <div class="gps-item-lbl">Conversion tracking</div>
-            <div class="gps-item-bar"><div class="gps-item-fill" style="width:100%;background:#3DAA69"></div></div>
-            <div class="gps-item-val">100%</div>
-          </div>
-          <div class="gps-item">
-            <div class="gps-item-lbl">Funnel efficiency</div>
-            <div class="gps-item-bar"><div class="gps-item-fill" style="width:100%;background:#3DAA69"></div></div>
-            <div class="gps-item-val">100%</div>
+            <div class="gps-item-bar"><div class="gps-item-fill" id="gpsConvBar" style="width:0%"></div></div>
+            <div class="gps-item-val" id="gpsConvVal">—</div>
           </div>
           <div class="gps-item">
             <div class="gps-item-lbl">Budget pacing</div>
-            <div class="gps-item-bar"><div class="gps-item-fill" style="width:100%;background:#3DAA69"></div></div>
-            <div class="gps-item-val">100%</div>
+            <div class="gps-item-bar"><div class="gps-item-fill" id="gpsBudgetBar" style="width:0%"></div></div>
+            <div class="gps-item-val" id="gpsBudgetVal">—</div>
           </div>
         </div>
       </div>
@@ -405,80 +360,40 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
 
     <!-- OVERVIEW -->
     <div class="section" id="sec-overview">
-      <div class="sh"><div class="sh-title">Overview</div><div class="sh-sub" id="rangeLabel">Last 30 days including today</div></div>
+      <div class="sh">
+        <div class="sh-title">Overview</div>
+        <div class="sh-sub" id="rangeLabel">Last 30 days</div>
+      </div>
       <div class="kpi-grid" id="kpiGrid"></div>
     </div>
 
     <!-- DONOR FUNNEL -->
     <div class="section" id="sec-funnel">
-      <div class="sh"><div class="sh-title">Donor funnel</div><div class="sh-sub">Ad click → website → donation · Last 7 days · GA4 data</div></div>
+      <div class="sh">
+        <div class="sh-title">Donor funnel</div>
+        <div class="sh-sub" id="funnelSub">Campaign performance · 30 days</div>
+      </div>
       <div class="funnel-wrap">
-        <div class="funnel-steps">
-          <div class="funnel-step">
-            <div class="fs-inner">
-              <div class="fs-icon">🖱️</div>
-              <div class="fs-label">Ad Clicks</div>
-              <div class="fs-value">362</div>
-              <div class="fs-rate fs-ok">100%</div>
-              <div class="fs-sub">from Google Ads</div>
-            </div>
-          </div>
-          <div class="funnel-step">
-            <div class="fs-inner">
-              <div class="fs-icon">🌐</div>
-              <div class="fs-label">Site Sessions</div>
-              <div class="fs-value">334</div>
-              <div class="fs-rate fs-ok">92%</div>
-              <div class="fs-sub">landed on site</div>
-            </div>
-          </div>
-          <div class="funnel-step">
-            <div class="fs-inner">
-              <div class="fs-icon">💛</div>
-              <div class="fs-label">Donate Page</div>
-              <div class="fs-value">28</div>
-              <div class="fs-rate fs-warn">8%</div>
-              <div class="fs-sub">reached donate page · avg 76s</div>
-            </div>
-          </div>
-          <div class="funnel-step">
-            <div class="fs-inner">
-              <div class="fs-icon">🐾</div>
-              <div class="fs-label">Pups Fund</div>
-              <div class="fs-value">5</div>
-              <div class="fs-rate fs-warn">18%</div>
-              <div class="fs-sub">clicked through to form</div>
-            </div>
-          </div>
-          <div class="funnel-step">
-            <div class="fs-inner">
-              <div class="fs-icon">📋</div>
-              <div class="fs-label">Form Reached</div>
-              <div class="fs-value">5</div>
-              <div class="fs-rate fs-warn">18%</div>
-              <div class="fs-sub">of donate page visitors</div>
-            </div>
-          </div>
-        </div>
-        <div class="funnel-callout">
-          <div class="fc-icon">⚠️</div>
-          <div>
-            <div class="fc-title">Two-click donation flow is losing people</div>
-            <div class="fc-body">Visitors land on <strong>/donate</strong>, spend 76 seconds reading, then must click again to reach <strong>/pups-fund/donate</strong> where the actual form lives. We recommend sending paid ad traffic directly to the form page — skipping the intermediary step. This single change typically lifts conversion rates 20–40%.</div>
-          </div>
-        </div>
+        <div class="funnel-steps" id="funnelSteps"></div>
+        <div id="funnelCallout"></div>
       </div>
     </div>
 
     <!-- COST METRICS -->
     <div class="section" id="sec-metrics">
-      <div class="sh"><div class="sh-title">Cost metrics</div><div class="sh-sub">Efficiency breakdown</div></div>
+      <div class="sh">
+        <div class="sh-title">Cost metrics</div>
+        <div class="sh-sub">Efficiency breakdown</div>
+      </div>
       <div class="g3" id="metricsGrid"></div>
     </div>
 
     <!-- TRENDS -->
     <div class="section" id="sec-trends">
-      <div class="sh"><div class="sh-title">Performance trends</div><div class="sh-sub" id="trendsLabel">Daily · Feb 26 – Mar 27</div></div>
+      <div class="sh">
+        <div class="sh-title">Performance trends</div>
+        <div class="sh-sub" id="trendsLabel">Daily · Last 30 days</div>
+      </div>
       <div class="chart-card" style="margin-bottom:14px">
         <div class="chart-header">
           <div class="chart-title">Clicks &amp; conversions</div>
@@ -498,7 +413,7 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
       <div class="g2">
         <div class="chart-card">
           <div class="chart-header">
-            <div class="chart-title">Daily spend &amp; avg. CPC</div>
+            <div class="chart-title">Daily spend &amp; CPC</div>
             <div class="chart-legend">
               <span><span class="legend-dot" style="background:#0F2B5B"></span>Spend</span>
               <span><span class="legend-dot" style="background:#E8A020"></span>CPC</span>
@@ -515,10 +430,17 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
 
     <!-- CAMPAIGNS -->
     <div class="section" id="sec-campaigns">
-      <div class="sh"><div class="sh-title">Campaigns</div><div class="sh-sub">Active &amp; paused</div></div>
+      <div class="sh">
+        <div class="sh-title">Campaigns</div>
+        <div class="sh-sub">All active campaigns</div>
+      </div>
       <div class="card" style="padding:0;overflow:hidden">
         <div class="tscroll"><table>
-          <thead><tr><th>Campaign</th><th>Status</th><th>CTR</th><th>Clicks</th><th>Impressions</th><th>Spend</th><th>Conv.</th><th>CPA</th><th>Avg. CPC</th></tr></thead>
+          <thead><tr>
+            <th>Campaign</th><th>Status</th><th>CTR</th>
+            <th>Clicks</th><th>Impressions</th><th>Spend</th>
+            <th>Conv.</th><th>CPA</th><th>Avg. CPC</th>
+          </tr></thead>
           <tbody id="campBody"></tbody>
         </table></div>
       </div>
@@ -526,11 +448,14 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
 
     <!-- AUDIENCE -->
     <div class="section" id="sec-audience">
-      <div class="sh"><div class="sh-title">Audience</div><div class="sh-sub">Device breakdown with conversion rates</div></div>
+      <div class="sh">
+        <div class="sh-title">Audience</div>
+        <div class="sh-sub">Device breakdown</div>
+      </div>
       <div class="g2">
         <div class="card">
-          <div class="sh-title" style="font-size:14px;margin-bottom:16px">Clicks &amp; conversions by device</div>
-          <div class="drows" id="devRows"></div>
+          <div class="sh-title" style="font-size:14px;margin-bottom:16px">Clicks by device</div>
+          <div id="devRows"></div>
           <div class="cw" style="height:150px"><canvas id="deviceDonut"></canvas></div>
         </div>
         <div class="card">
@@ -542,274 +467,195 @@ td:not(:first-child){text-align:right;color:var(--gray-600)}
 
     <!-- LANDING PAGES -->
     <div class="section" id="sec-landing">
-      <div class="sh"><div class="sh-title">Landing pages</div><div class="sh-sub">GA4 · Last 7 days · Top pages by sessions</div></div>
+      <div class="sh">
+        <div class="sh-title">Landing pages</div>
+        <div class="sh-sub" id="lpSub">Top pages by sessions</div>
+      </div>
       <div class="card" style="padding:0;overflow:hidden">
         <table class="lp-table">
-          <thead><tr><th>Page</th><th>Sessions</th><th>Traffic share</th><th>Avg. time on page</th><th>Engagement</th><th>Conversions</th></tr></thead>
+          <thead><tr>
+            <th>Page</th><th>Sessions</th><th>Traffic share</th>
+            <th>Avg. time on page</th><th>Engagement</th><th>Conversions</th>
+          </tr></thead>
           <tbody id="lpBody"></tbody>
         </table>
       </div>
-      <div class="funnel-callout" style="margin-top:12px;background:#EBF4FF;border-color:#C5E0F5">
-        <div class="fc-icon">💡</div>
-        <div>
-          <div class="fc-title" style="color:#0060A0">Opportunity: 57% of paid traffic lands on /browse dog profiles</div>
-          <div class="fc-body" style="color:#4A6A8A">People are browsing dogs on mobile and not finding a clear path to donate or adopt. Adding a persistent donate CTA to the /browse page could capture this warm audience before they leave.</div>
-        </div>
-      </div>
+      <div id="lpCallout"></div>
     </div>
 
     <!-- LOCATION -->
     <div class="section" id="sec-location">
-      <div class="sh"><div class="sh-title">Audience location</div><div class="sh-sub">GA4 · Last 7 days · Sessions by city &amp; state</div></div>
+      <div class="sh">
+        <div class="sh-title">Audience location</div>
+        <div class="sh-sub" id="locationSub">Sessions by city &amp; state</div>
+      </div>
       <div class="g2">
         <div class="card">
           <div class="sh-title" style="font-size:14px;margin-bottom:16px">Top states</div>
           <div id="stateRows"></div>
-          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--gray-400)">
-            Reaching visitors across <strong style="color:var(--navy)">13 states</strong> this week · 62% California-based
-          </div>
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--gray-400)" id="locationSummary"></div>
         </div>
         <div class="card">
           <div class="sh-title" style="font-size:14px;margin-bottom:16px">Top cities</div>
           <div id="cityRows"></div>
         </div>
       </div>
-      <div class="funnel-callout" style="margin-top:12px;background:#F3E8FF;border-color:#D8B4FE">
-        <div class="fc-icon">📍</div>
-        <div>
-          <div class="fc-title" style="color:#6B21A8">Strong California concentration — opportunity to expand</div>
-          <div class="fc-body" style="color:#7E22CE">62% of your traffic comes from California. Your urgency campaigns targeting LA and San Diego are driving this. Phoenix is your strongest out-of-state market at 8 sessions this week — worth testing a dedicated Arizona campaign to see if that audience converts.</div>
-        </div>
-      </div>
+      <div id="locationCallout"></div>
     </div>
 
     <!-- VISIBILITY -->
     <div class="section" id="sec-visibility">
-      <div class="sh"><div class="sh-title">Visibility</div><div class="sh-sub">Impression share &amp; top-of-page</div></div>
-      <div class="isg">
-        <div class="isc">
-          <div class="isl">Search impression share</div>
-          <div class="isbb"><div class="isbf" style="width:10%;background:var(--blue)"></div></div>
-          <div class="isv">~10%</div>
-          <div class="isn">Winning ~10% of eligible auctions. Significant room to grow.</div>
-        </div>
-        <div class="isc">
-          <div class="isl">Lost IS — Ad Rank</div>
-          <div class="isbb"><div class="isbf" style="width:58%;background:var(--red)"></div></div>
-          <div class="isv">~58%</div>
-          <div class="isn">Lost to quality/bid — improve keyword relevance and ad strength.</div>
-        </div>
-        <div class="isc">
-          <div class="isl">Lost IS — Budget</div>
-          <div class="isbb"><div class="isbf" style="width:8%;background:var(--amber)"></div></div>
-          <div class="isv">&lt;10%</div>
-          <div class="isn">Budget is not the primary constraint — focus on ad quality.</div>
-        </div>
+      <div class="sh">
+        <div class="sh-title">Visibility</div>
+        <div class="sh-sub">Impression share &amp; top-of-page</div>
       </div>
-      <div class="card">
-        <div class="sh-title" style="font-size:14px;margin-bottom:16px">Top-of-page performance</div>
-        <div class="tsg">
-          <div class="tsi"><div class="tsi-val">46%</div><div class="tsi-lbl">Top impression % (Search-Donate)</div></div>
-          <div class="tsi"><div class="tsi-val">36%</div><div class="tsi-lbl">Absolute top % (Search-Donate)</div></div>
-          <div class="tsi"><div class="tsi-val">21.3%</div><div class="tsi-lbl">Highest CTR campaign</div></div>
-        </div>
-      </div>
+      <div class="isg" id="visibilityGrid"></div>
     </div>
 
-    <!-- WHAT WE DID / NEXT WEEK -->
+    <!-- ACTIONS -->
     <div class="section" id="sec-actions">
-      <div class="sh"><div class="sh-title">Actions &amp; focus</div><div class="sh-sub">From your SAP team</div></div>
-      <div class="action-grid">
+      <div class="sh">
+        <div class="sh-title">Actions &amp; focus</div>
+        <div class="sh-sub">From your SAP team</div>
+      </div>
+      <div class="action-grid" id="actionsGrid">
         <div class="action-card ac-did">
-          <div class="ac-label">✅ What we did this week</div>
-          <div class="ac-title">Shifted budget toward top performers</div>
-          <div class="ac-body">We identified that P Max Donate and Search-Donate are your two highest-converting campaigns. We increased their daily budget allocation by 15% by reducing spend on Shop Pup-Profile, which has $644 in spend and 0 tracked conversions. This shift is expected to improve your overall CPA next week.</div>
+          <div class="ac-label">✅ This month</div>
+          <div class="ac-title" id="actionDidTitle">Account review completed</div>
+          <div class="ac-body" id="actionDidBody">Full performance audit conducted across all active campaigns.</div>
         </div>
         <div class="action-card ac-next">
-          <div class="ac-label">🔭 Next week focus</div>
-          <div class="ac-title">Fixing the two-click donate flow</div>
-          <div class="ac-body">We're updating the destination URLs on your donation campaigns to send paid traffic directly to <strong>/pups-fund/donate</strong> — bypassing the intermediary /donate page. We're also reviewing conversion event setup in GA4 to ensure form submissions are tracked correctly.</div>
+          <div class="ac-label">🔭 Next focus</div>
+          <div class="ac-title" id="actionNextTitle">Optimization in progress</div>
+          <div class="ac-body" id="actionNextBody">Ongoing campaign optimization based on performance data.</div>
         </div>
       </div>
     </div>
 
-    <!-- INSIGHTS & RECOMMENDATIONS -->
+    <!-- INSIGHTS -->
     <div class="section" id="sec-insights">
-      <div class="sh"><div class="sh-title">Recommendations</div><div class="sh-sub">Specific, actionable · prioritized by impact</div></div>
-      <div class="insights-grid">
-        <div class="insight-card fade" style="animation-delay:0.0s">
-          <div class="insight-bar green"></div>
-          <div>
-            <div class="insight-title">CTR compliant at 13.9%</div>
-            <div class="insight-body">Your account CTR is 13.9% — above the required 5% minimum. We're monitoring this closely and will alert you if it dips below the compliance threshold.</div>
-            <span class="insight-tag tag-win">Compliant</span>
-          </div>
-        </div>
-        <div class="insight-card fade" style="animation-delay:0.06s">
-          <div class="insight-bar red"></div>
-          <div>
-            <div class="insight-title">Grant significantly under-utilized — 23%</div>
-            <div class="insight-body">Only $2,348 of the $10,000 monthly grant is being used. This is an opportunity — more campaigns, broader keywords, and stronger bids will capture more free ad traffic for Pup Profile.</div>
-            <span class="insight-tag tag-action">Needs attention</span>
-          </div>
-        </div>
-        <div class="insight-card fade" style="animation-delay:0.12s">
-          <div class="insight-bar green"></div>
-          <div>
-            <div class="insight-title">246 tracked conversions this period</div>
-            <div class="insight-body">Your campaigns recorded 246 conversions at $10 average cost per conversion. These represent people who took meaningful action — donation inquiries, adoption applications, volunteer signups — after clicking your ads.</div>
-            <span class="insight-tag tag-win">Conversions tracked</span>
-          </div>
-        </div>
-        <div class="insight-card fade" style="animation-delay:0.18s">
-          <div class="insight-bar blue"></div>
-          <div>
-            <div class="insight-title">Top performer: P Max Donate</div>
-            <div class="insight-body">This campaign is leading the account with a 16.9% CTR and 103 clicks this period. We're using its performance signals to optimize the rest of the account.</div>
-            <span class="insight-tag tag-win">Top campaign</span>
-          </div>
-        </div>
+      <div class="sh">
+        <div class="sh-title">Recommendations</div>
+        <div class="sh-sub">Specific, actionable · prioritized by impact</div>
       </div>
+      <div class="insights-grid" id="insightsGrid"></div>
     </div>
 
   </div><!-- /content -->
 
   <div class="pf">
-    <div class="pf-l" id="pfDate">Data via Google Ads API · Apr 01, 2026</div>
+    <div class="pf-l" id="pfDate">Data via Google Ads API</div>
     <div class="pf-r">Sponsor a <span>Pet</span></div>
   </div>
 </div>
 </div>
 
 <script>
-const DATA = {
-  '30d': {
-    totals:{cl:344,im:2481,ctr:13.87,cost:2348.32,cv:246.5,cpc:6.83,costPerConv:9.53,convRate:71.7},
-    campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:16.91,cl:103,im:609,cost:604.01,cv:88,cpc:5.86,cpa:6.86},{n:"Awareness",s:"ENABLED",ctr:12.34,cl:66,im:535,cost:224.67,cv:49,cpc:3.40,cpa:4.59},{n:"California Donate - Pmax",s:"ENABLED",ctr:15.05,cl:42,im:279,cost:442.39,cv:36,cpc:10.53,cpa:12.29},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:9.48,cl:29,im:306,cost:138.73,cv:25,cpc:4.78,cpa:5.55},{n:"Search-Donate",s:"ENABLED",ctr:18.12,cl:25,im:138,cost:176.05,cv:18,cpc:7.04,cpa:9.52},{n:"Urgent Need Arizona",s:"ENABLED",ctr:12.50,cl:25,im:200,cost:205.47,cv:20,cpc:8.22,cpa:10.27},{n:"Urgent Need-LA",s:"ENABLED",ctr:17.31,cl:18,im:104,cost:201.22,cv:0,cpc:11.18,cpa:null},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:12.41,cl:17,im:137,cost:205.94,cv:0,cpc:12.11,cpa:null},{n:"Urgent Need River Side",s:"ENABLED",ctr:12.50,cl:11,im:88,cost:72.80,cv:10,cpc:6.62,cpa:7.28},{n:"Shop Pup-Profile",s:"ENABLED",ctr:9.41,cl:8,im:85,cost:77.05,cv:0,cpc:9.63,cpa:null},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Donate",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null}],
-    daily:{labels:["Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01"],clicks:[41, 55, 45, 48, 52, 45, 58],convs:[30, 39, 32, 35, 37, 32, 42],spend:[281.8, 375.73, 305.28, 328.77, 352.25, 305.28, 399.21],cpc:[6.87, 6.83, 6.78, 6.85, 6.77, 6.78, 6.88]},
-    devices:[
-      {n:'Desktop',cl:1280,im:8900,cost:7800,cv:950,cvRate:74.2},
-      {n:'Mobile',cl:340,im:2600,cost:2100,cv:180,cvRate:52.9},
-      {n:'Tablet',cl:20,im:149,cost:93,cv:8,cvRate:40.0}
-    ],
-  },
-  '7d': {
-    totals:{cl:344,im:2481,ctr:13.87,cost:2348.32,cv:246.5,cpc:6.83,costPerConv:9.53,convRate:71.7},
-    campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:16.91,cl:103,im:609,cost:604.01,cv:88,cpc:5.86,cpa:6.86},{n:"Awareness",s:"ENABLED",ctr:12.34,cl:66,im:535,cost:224.67,cv:49,cpc:3.40,cpa:4.59},{n:"California Donate - Pmax",s:"ENABLED",ctr:15.05,cl:42,im:279,cost:442.39,cv:36,cpc:10.53,cpa:12.29},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:9.48,cl:29,im:306,cost:138.73,cv:25,cpc:4.78,cpa:5.55},{n:"Search-Donate",s:"ENABLED",ctr:18.12,cl:25,im:138,cost:176.05,cv:18,cpc:7.04,cpa:9.52},{n:"Urgent Need Arizona",s:"ENABLED",ctr:12.50,cl:25,im:200,cost:205.47,cv:20,cpc:8.22,cpa:10.27},{n:"Urgent Need-LA",s:"ENABLED",ctr:17.31,cl:18,im:104,cost:201.22,cv:0,cpc:11.18,cpa:null},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:12.41,cl:17,im:137,cost:205.94,cv:0,cpc:12.11,cpa:null},{n:"Urgent Need River Side",s:"ENABLED",ctr:12.50,cl:11,im:88,cost:72.80,cv:10,cpc:6.62,cpa:7.28},{n:"Shop Pup-Profile",s:"ENABLED",ctr:9.41,cl:8,im:85,cost:77.05,cv:0,cpc:9.63,cpa:null},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Donate",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0.00,cl:0,im:0,cost:0.00,cv:0,cpc:0.00,cpa:null}],
-    daily:{labels:["Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01"],clicks:[41, 55, 45, 48, 52, 45, 58],convs:[30, 39, 32, 35, 37, 32, 42],spend:[281.8, 375.73, 305.28, 328.77, 352.25, 305.28, 399.21],cpc:[6.87, 6.83, 6.78, 6.85, 6.77, 6.78, 6.88]},
-    devices:[
-      {n:'Desktop',cl:283,im:2020,cost:1800,cv:210,cvRate:74.2},
-      {n:'Mobile',cl:74,im:555,cost:500,cv:48,cvRate:64.9},
-      {n:'Tablet',cl:5,im:15,cost:16,cv:2,cvRate:40.0}
-    ],
-  },
-};
-
-// GA4 landing page data
-const LP_DATA = [
-  {page:'/browse',sessions:91,pct:55,avgTime:'82s',engaged:true,convs:0},
-  {page:'/ (home)',sessions:47,pct:28,avgTime:'143s',engaged:true,convs:0},
-  {page:'/donate',sessions:28,pct:17,avgTime:'76s',engaged:true,convs:0},
-  {page:'/browse/[dog-id]',sessions:18,pct:11,avgTime:'98s',engaged:true,convs:0},
-  {page:'/shop',sessions:4,pct:2,avgTime:'26s',engaged:false,convs:0},
-];
-
-// Location data
-const STATE_DATA = [
-  {state:'California',sessions:65,pct:62},
-  {state:'Arizona',sessions:8,pct:8},
-  {state:'Texas',sessions:7,pct:7},
-  {state:'Illinois',sessions:5,pct:5},
-  {state:'New York',sessions:3,pct:3},
-  {state:'Massachusetts',sessions:2,pct:2},
-  {state:'Florida',sessions:2,pct:2},
-  {state:'Ohio',sessions:2,pct:2},
-  {state:'Virginia',sessions:2,pct:2},
-  {state:'Indiana',sessions:2,pct:2},
-];
-const CITY_DATA = [
-  {city:'Los Angeles',state:'CA',sessions:23},
-  {city:'San Diego',state:'CA',sessions:11},
-  {city:'Phoenix',state:'AZ',sessions:8},
-  {city:'Rancho Santa Fe',state:'CA',sessions:6},
-  {city:'Houston',state:'TX',sessions:4},
-  {city:'Anaheim',state:'CA',sessions:3},
-  {city:'New York',state:'NY',sessions:3},
-  {city:'Palm Desert',state:'CA',sessions:3},
-  {city:'Chicago',state:'IL',sessions:2},
-  {city:'Seattle',state:'WA',sessions:2},
-];
-
-const stateColors=['#0F2B5B','#0083C6','#1A5F9E','#3DAA69','#2E9E60','#5B8DB8','#6DBF90','#9EABBE','#C5D4E3','#E8ECF2'];
-
+// ── DATA — injected by generate_reports_v2.py ─────────────────────────────
+// window.CLIENT_DATA and window.REPORT_DATA are set below this script tag
+// by the Python generator. This script reads from those objects only.
 
 let range = '30d';
-let mainChartInst=null,spendChartInst=null,convChartInst=null,deviceInst=null,spendBarInst=null;
+let charts = {};
 const tk={maxTicksLimit:8,maxRotation:0,font:{size:10,family:"'Montserrat',sans-serif"},color:'#9EABBE'};
 const gl={color:'rgba(0,0,0,0.04)'};
-const dc=['#0083C6','#3DAA69','#F5A623'];
+const dc=['#0083C6','#3DAA69','#F5A623','#E8A020','#7C3AED','#D94F3D','#5BC8F0','#0F2B5B'];
 
-function fmt$(v){return '$'+v.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
-function fmtN(v){return v.toLocaleString()}
+function fmt$(v){if(!v&&v!==0)return'—';return'$'+(+v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
+function fmtN(v){if(!v&&v!==0)return'—';return(+v).toLocaleString()}
+function fmtPct(v){if(v===null||v===undefined)return'—';return(+v).toFixed(1)+'%'}
+function colorBar(pct){return pct>=80?'#3DAA69':pct>=50?'#E8A020':'#D94F3D'}
+
 function destroyCharts(){
-  [mainChartInst,spendChartInst,convChartInst,deviceInst,spendBarInst].forEach(c=>{if(c)c.destroy()});
-  mainChartInst=spendChartInst=convChartInst=deviceInst=spendBarInst=null;
+  Object.values(charts).forEach(c=>{if(c)c.destroy()});
+  charts={};
 }
 
 function render(){
-  const d=DATA[range];
-  const t=d.totals;
-  document.getElementById('rangeLabel').textContent=range==='30d'?'Last 30 days including today':'Last 7 days including today';
-  document.getElementById('trendsLabel').textContent=range==='30d'?'Daily · Feb 26 – Mar 27':'Daily · Mar 21 – Mar 27';
-  document.getElementById('pfDate').textContent=`Data via Google Ads API + GA4 · Last ${range==='30d'?30:7} days`;
+  if(!window.REPORT_DATA) return;
+  const d = window.REPORT_DATA[range];
+  if(!d) return;
+  const t = d.totals;
+
+  document.getElementById('rangeLabel').textContent = range==='30d'?'Last 30 days':'Last 7 days';
+  document.getElementById('trendsLabel').textContent = range==='30d'?'Daily · Last 30 days':'Daily · Last 7 days';
+  document.getElementById('funnelSub').textContent = 'Campaign performance · '+(range==='30d'?'30':'7')+' days';
+  document.getElementById('pfDate').textContent = 'Data via Google Ads API · '+(window.CLIENT_DATA?.report_date||'');
+
   destroyCharts();
 
-  // KPI
-  const kpiData=[
-    {icon:'📊',cls:'ic-b',lbl:'Total clicks',val:fmtN(t.cl),sub:'paid ad clicks'},
-    {icon:'👁',cls:'ic-n',lbl:'Impressions',val:fmtN(t.im),sub:'ad views'},
-    {icon:'⚡',cls:'ic-g green',lbl:'Avg. CTR',val:t.ctr.toFixed(1)+'%',sub:'Above 5% minimum',noteClass:'ok'},
-    {icon:'💰',cls:'ic-a',lbl:'Total spend',val:fmt$(t.cost),sub:'of $10,000 grant'},
-    {icon:'🎯',cls:'ic-t green',lbl:'Conversions',val:fmtN(Math.round(t.cv)),sub:fmt$(t.costPerConv)+' / conv.',noteClass:'ok'},
-    {icon:'📈',cls:'ic-b',lbl:'Avg. CPC',val:fmt$(t.cpc),sub:'cost per click'},
+  // KPI cards
+  const kpis=[
+    {icon:'📊',bg:'#E3F2FF',lbl:'Total Clicks',val:fmtN(t.cl),sub:'paid ad clicks',cls:'kpi-blue'},
+    {icon:'👁',bg:'#F4F6F9',lbl:'Impressions',val:fmtN(t.im),sub:'ad views',cls:''},
+    {icon:'⚡',bg:'#E4F7ED',lbl:'Avg. CTR',val:fmtPct(t.ctr),sub:t.ctr>=5?'Above 5% minimum':'Below 5% — at risk',subCls:t.ctr>=5?'ok':'danger',cls:'kpi-green'},
+    {icon:'💰',bg:'#FEF6E6',lbl:'Total Spend',val:fmt$(t.cost),sub:'of $10,000 grant',cls:'kpi-amber'},
+    {icon:'🎯',bg:'#E0F7F5',lbl:'Conversions',val:fmtN(Math.round(t.cv||0)),sub:t.costPerConv?fmt$(t.costPerConv)+' / conv.':'No conversions tracked',subCls:t.cv>0?'ok':'warn',cls:'kpi-green'},
+    {icon:'📈',bg:'#F4F6F9',lbl:'Avg. CPC',val:fmt$(t.cpc),sub:'cost per click',cls:''},
   ];
-  document.getElementById('kpiGrid').innerHTML=kpiData.map((k,i)=>`
+  document.getElementById('kpiGrid').innerHTML=kpis.map((k,i)=>`
     <div class="kpi-card ${k.cls} fade" style="animation-delay:${i*.06}s">
-      <div class="kpi-icon ${k.cls.split(' ')[0]}">${k.icon}</div>
+      <div class="kpi-icon" style="background:${k.bg}">${k.icon}</div>
       <div class="kpi-label">${k.lbl}</div>
       <div class="kpi-value">${k.val}</div>
-      <div class="kpi-sub ${k.noteClass||''}">${k.sub}</div>
+      <div class="kpi-sub ${k.subCls||''}">${k.sub}</div>
     </div>`).join('');
 
-  // Metrics
-  const pmaxCl=d.campaigns.filter(c=>c.n.toLowerCase().includes('pmax')||c.n.toLowerCase().includes('p max')).reduce((s,c)=>s+c.cl,0);
-  const pmaxCost=d.campaigns.filter(c=>c.n.toLowerCase().includes('pmax')||c.n.toLowerCase().includes('p max')).reduce((s,c)=>s+c.cost,0);
+  // Funnel
+  const funnelSteps=[
+    {icon:'🖱️',lbl:'Ad Clicks',val:fmtN(t.cl),rate:'100%',cls:'fs-ok',sub:'from Google Ads'},
+    {icon:'🎯',lbl:'Conversions',val:fmtN(Math.round(t.cv||0)),rate:fmtPct(t.convRate),cls:t.cv>0?'fs-ok':'fs-warn',sub:'tracked conversions'},
+    {icon:'💰',lbl:'Cost / Conv',val:t.costPerConv?fmt$(t.costPerConv):'—',rate:t.costPerConv&&t.costPerConv<25?'Good':'Review',cls:t.costPerConv&&t.costPerConv<25?'fs-ok':'fs-warn',sub:'avg cost per conversion'},
+    {icon:'📊',lbl:'Grant Used',val:fmtPct(Math.min(100,t.cost/10000*100)),rate:t.cost>=8000?'Strong':'Building',cls:t.cost>=8000?'fs-ok':'fs-warn',sub:'of $10,000/month'},
+  ];
+  document.getElementById('funnelSteps').innerHTML=funnelSteps.map(s=>`
+    <div class="funnel-step">
+      <div class="fs-inner">
+        <div class="fs-icon">${s.icon}</div>
+        <div class="fs-label">${s.lbl}</div>
+        <div class="fs-value">${s.val}</div>
+        <div class="fs-rate ${s.cls}">${s.rate}</div>
+        <div class="fs-sub">${s.sub}</div>
+      </div>
+    </div>`).join('');
+
+  // Metrics grid
+  const pmaxCl=d.campaigns.filter(c=>c.n.toLowerCase().includes('max')).reduce((s,c)=>s+c.cl,0);
+  const pmaxCost=d.campaigns.filter(c=>c.n.toLowerCase().includes('max')).reduce((s,c)=>s+c.cost,0);
   document.getElementById('metricsGrid').innerHTML=`
-    <div class="card"><div class="sh-title" style="font-size:14px;margin-bottom:12px">Cost efficiency</div><div class="sp">
-      <div class="si"><div class="si-lbl">Avg. CPC</div><div class="si-val">${fmt$(t.cpc)}</div><div class="si-sub">per click</div></div>
-      <div class="si"><div class="si-lbl">Cost/conv.</div><div class="si-val">${fmt$(t.costPerConv)}</div><div class="si-sub">blended avg.</div></div>
-    </div></div>
-    <div class="card"><div class="sh-title" style="font-size:14px;margin-bottom:12px">Conversion rate</div><div class="sp">
-      <div class="si"><div class="si-lbl">Conv. rate</div><div class="si-val">${t.convRate.toFixed(1)}%</div><div class="si-sub">clicks → conv.</div></div>
-      <div class="si"><div class="si-lbl">Grant used</div><div class="si-val">${((t.cost/10000)*100).toFixed(1)}%</div><div class="si-sub">of $10k/mo</div></div>
-    </div></div>
-    <div class="card"><div class="sh-title" style="font-size:14px;margin-bottom:12px">PMax vs Search</div><div class="sp">
-      <div class="si"><div class="si-lbl">PMax</div><div class="si-val">${fmtN(pmaxCl)}</div><div class="si-sub">clicks · ${fmt$(pmaxCost)}</div></div>
-      <div class="si"><div class="si-lbl">Search</div><div class="si-val">${fmtN(t.cl-pmaxCl)}</div><div class="si-sub">clicks · ${fmt$(t.cost-pmaxCost)}</div></div>
-    </div></div>`;
+    <div class="card">
+      <div class="sh-title" style="font-size:14px;margin-bottom:12px">Cost efficiency</div>
+      <div class="sp">
+        <div class="si"><div class="si-lbl">Avg. CPC</div><div class="si-val">${fmt$(t.cpc)}</div><div class="si-sub">per click</div></div>
+        <div class="si"><div class="si-lbl">Cost/Conv.</div><div class="si-val">${t.costPerConv?fmt$(t.costPerConv):'—'}</div><div class="si-sub">blended avg.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sh-title" style="font-size:14px;margin-bottom:12px">Conversion rate</div>
+      <div class="sp">
+        <div class="si"><div class="si-lbl">Conv. Rate</div><div class="si-val">${fmtPct(t.convRate)}</div><div class="si-sub">clicks → conv.</div></div>
+        <div class="si"><div class="si-lbl">Grant Used</div><div class="si-val">${fmtPct(Math.min(100,t.cost/10000*100))}</div><div class="si-sub">of $10k/mo</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sh-title" style="font-size:14px;margin-bottom:12px">PMax vs Search</div>
+      <div class="sp">
+        <div class="si"><div class="si-lbl">PMax</div><div class="si-val">${fmtN(pmaxCl)}</div><div class="si-sub">clicks · ${fmt$(pmaxCost)}</div></div>
+        <div class="si"><div class="si-lbl">Search</div><div class="si-val">${fmtN(t.cl-pmaxCl)}</div><div class="si-sub">clicks · ${fmt$(t.cost-pmaxCost)}</div></div>
+      </div>
+    </div>`;
 
   // Campaign table
   const tb=document.getElementById('campBody');
   tb.innerHTML='';
   d.campaigns.forEach(c=>{
-    const ctrStr=c.ctr.toFixed(1)+'%';
-    const ctrCls=c.ctr>=5?'ct-g':'ct-b';
+    const ctrCls=c.ctr>=5?'ct-g':c.ctr>=2?'ct-a':'ct-b';
     const convFlag=c.cv===0&&c.s==='ENABLED';
     const tr=document.createElement('tr');
     tr.innerHTML=`
-      <td class="tn">${c.n}</td>
-      <td><span class="stag st-e">${c.s.toLowerCase()}</span></td>
-      <td><span class="ctag ${ctrCls}">${ctrStr}</span></td>
+      <td class="tn" title="${c.n}">${c.n}</td>
+      <td><span class="stag ${c.s==='ENABLED'?'st-e':'st-p'}">${c.s.toLowerCase()}</span></td>
+      <td><span class="ctag ${ctrCls}">${fmtPct(c.ctr)}</span></td>
       <td>${fmtN(c.cl)}</td><td>${fmtN(c.im)}</td>
       <td>${fmt$(c.cost)}</td>
       <td class="${convFlag?'flag':''}">${c.cv===0?'0 ⚠':fmtN(c.cv)}</td>
@@ -818,79 +664,126 @@ function render(){
     tb.appendChild(tr);
   });
 
-  // Device rows + donut with conversion rates
+  // Devices
   const devs=d.devices;
-  const totDev=devs.reduce((s,dv)=>s+dv.cl,0);
+  const totDev=devs.reduce((s,dv)=>s+dv.cl,0)||1;
   document.getElementById('devRows').innerHTML=devs.map((dv,i)=>{
-    const p=totDev>0?Math.round(dv.cl/totDev*100):0;
-    const cvCls=dv.cvRate>=70?'ok':dv.cvRate>=50?'warn':'';
-    return `<div class="drow">
+    const p=Math.round(dv.cl/totDev*100);
+    return`<div class="drow">
       <div class="dn">${dv.n}</div>
       <div class="dbb"><div class="dbf" style="width:${p}%;background:${dc[i]}"></div></div>
       <div class="dpct">${p}%</div>
       <div class="ddet">${fmtN(dv.cl)} clicks</div>
-      <div class="dconv ${cvCls}">${dv.cvRate}% conv.</div>
     </div>`;
   }).join('');
-  deviceInst=new Chart(document.getElementById('deviceDonut'),{type:'doughnut',data:{labels:devs.map(dv=>dv.n),datasets:[{data:devs.map(dv=>dv.cl),backgroundColor:dc,borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'right',labels:{font:{size:11,family:"'Montserrat',sans-serif"},color:'#6B7FA3',boxWidth:10,padding:10}}}}});
+  charts.device=new Chart(document.getElementById('deviceDonut'),{
+    type:'doughnut',
+    data:{labels:devs.map(d=>d.n),datasets:[{data:devs.map(d=>d.cl),backgroundColor:dc,borderWidth:0,hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'right',labels:{font:{size:11,family:"'Montserrat',sans-serif"},color:'#6B7FA3',boxWidth:10,padding:10}}}}
+  });
 
   // Spend bar
   const activeCamps=d.campaigns.filter(c=>c.cost>0);
-  spendBarInst=new Chart(document.getElementById('spendBar'),{type:'bar',data:{
-    labels:activeCamps.map(c=>c.n.replace('California Donate ','CA ').replace('Adoptions-Website Traffic','Adoptions').replace('Urgent Need ','Urgent ').replace('-Website Traffic','')),
-    datasets:[{data:activeCamps.map(c=>c.cost),backgroundColor:['#0F2B5B','#0083C6','#3DAA69','#1A5F9E','#2E9E60','#5B8DB8','#6DBF90','#3A7FAD','#73AAD4','#99CDB4'],borderRadius:4}]
-  },options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.parsed.x.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}}},scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{...tk,callback:v=>'$'+v.toLocaleString()}},y:{grid:{display:false},ticks:{...tk}}}}});
+  charts.spendBar=new Chart(document.getElementById('spendBar'),{
+    type:'bar',
+    data:{labels:activeCamps.map(c=>c.n.length>20?c.n.substring(0,18)+'…':c.n),datasets:[{data:activeCamps.map(c=>c.cost),backgroundColor:dc,borderRadius:4}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmt$(ctx.parsed.x)}}},scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{...tk,callback:v=>fmt$(v)}},y:{grid:{display:false},ticks:{...tk}}}}
+  });
 
   // Trend charts
   buildMain('bar');
   const dy=d.daily;
-  spendChartInst=new Chart(document.getElementById('spendChart'),{type:'bar',data:{labels:dy.labels,datasets:[
-    {label:'Spend',data:dy.spend,backgroundColor:'#0F2B5B',borderRadius:3,yAxisID:'y'},
-    {label:'CPC',data:dy.cpc,type:'line',borderColor:'#E8A020',backgroundColor:'transparent',pointRadius:2,pointBackgroundColor:'#E8A020',yAxisID:'y2',tension:0.3}
-  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>'$'+v},grid:gl},y2:{position:'right',ticks:{...tk,callback:v=>'$'+v,color:'#E8A020'},grid:{display:false}}}}});
-  convChartInst=new Chart(document.getElementById('convChart'),{type:'bar',data:{labels:dy.labels,datasets:[{label:'Conversions',data:dy.convs,backgroundColor:'#3DAA69',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,stepSize:10},grid:gl,beginAtZero:true}}}});
+  charts.spend=new Chart(document.getElementById('spendChart'),{
+    type:'bar',
+    data:{labels:dy.labels,datasets:[
+      {label:'Spend',data:dy.spend,backgroundColor:'#0F2B5B',borderRadius:3,yAxisID:'y'},
+      {label:'CPC',data:dy.cpc,type:'line',borderColor:'#E8A020',backgroundColor:'transparent',pointRadius:2,pointBackgroundColor:'#E8A020',yAxisID:'y2',tension:0.3}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>fmt$(v)},grid:gl},y2:{position:'right',ticks:{...tk,callback:v=>fmt$(v),color:'#E8A020'},grid:{display:false}}}}
+  });
+  charts.conv=new Chart(document.getElementById('convChart'),{
+    type:'bar',
+    data:{labels:dy.labels,datasets:[{label:'Conversions',data:dy.convs,backgroundColor:'#3DAA69',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,stepSize:10},grid:gl,beginAtZero:true}}}
+  });
 
   // Landing pages
-  document.getElementById('lpBody').innerHTML=LP_DATA.map(lp=>`
+  const lpData=window.LP_DATA||[];
+  document.getElementById('lpSub').textContent=lpData[0]&&lpData[0].page!=='GA4 not connected'?'GA4 · Top pages by sessions':'GA4 data pending';
+  document.getElementById('lpBody').innerHTML=lpData.map(lp=>`
     <tr>
       <td class="lp-page">${lp.page}</td>
-      <td style="text-align:right;color:var(--navy);font-weight:700">${lp.sessions}</td>
-      <td style="text-align:right">
-        <span class="lp-bar-wrap"><span class="lp-bar-fill" style="width:${lp.pct}%"></span></span>${lp.pct}%
-      </td>
+      <td style="text-align:right;color:var(--navy);font-weight:700">${fmtN(lp.sessions)}</td>
+      <td style="text-align:right"><span class="lp-bar-wrap"><span class="lp-bar-fill" style="width:${lp.pct}%"></span></span>${lp.pct}%</td>
       <td style="text-align:right;font-weight:600;color:var(--navy)">${lp.avgTime}</td>
       <td style="text-align:right" class="${lp.engaged?'eng-high':'eng-low'}">${lp.engaged?'✓ Engaged':'Low'}</td>
-      <td style="text-align:right" class="${lp.convs>0?'':'flag'}">${lp.convs===0?'0 ⚠':lp.convs}</td>
+      <td style="text-align:right" class="${lp.convs>0?'':'flag'}">${lp.convs===0?'0 ⚠':fmtN(lp.convs)}</td>
     </tr>`).join('');
 
-  // Location - states
-  document.getElementById('stateRows').innerHTML = STATE_DATA.map((s,i)=>`
+  // Location
+  const stateData=window.STATE_DATA||[];
+  const cityData=window.CITY_DATA||[];
+  const stateColors=['#0F2B5B','#0083C6','#1A5F9E','#3DAA69','#2E9E60','#5B8DB8','#6DBF90','#9EABBE','#C5D4E3','#E8ECF2'];
+  document.getElementById('stateRows').innerHTML=stateData.map((s,i)=>`
     <div class="drow" style="margin-bottom:10px">
-      <div class="dn" style="width:110px;font-size:11px">${s.state}</div>
+      <div class="dn" style="width:120px;font-size:11px">${s.state}</div>
       <div class="dbb"><div class="dbf" style="width:${s.pct}%;background:${stateColors[i]||'#9EABBE'}"></div></div>
       <div class="dpct" style="width:40px">${s.pct}%</div>
-      <div style="width:50px;text-align:right;font-size:11px;color:var(--gray-400)">${s.sessions}</div>
+      <div style="width:40px;text-align:right;font-size:11px;color:var(--gray-400)">${s.sessions}</div>
     </div>`).join('');
 
-  // Location - cities
-  document.getElementById('cityRows').innerHTML = CITY_DATA.map((c,i)=>`
+  const maxCity=cityData[0]?.sessions||1;
+  document.getElementById('cityRows').innerHTML=cityData.map((c,i)=>`
     <div class="drow" style="margin-bottom:10px">
-      <div class="dn" style="width:140px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.city}</div>
+      <div class="dn" style="width:130px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.city}</div>
       <div style="font-size:10px;color:var(--gray-400);width:28px;flex-shrink:0">${c.state}</div>
-      <div class="dbb"><div class="dbf" style="width:${Math.round(c.sessions/23*100)}%;background:${stateColors[i]||'#9EABBE'}"></div></div>
+      <div class="dbb"><div class="dbf" style="width:${Math.round(c.sessions/maxCity*100)}%;background:${stateColors[i]||'#9EABBE'}"></div></div>
       <div style="width:30px;text-align:right;font-size:11px;color:var(--gray-400)">${c.sessions}</div>
     </div>`).join('');
+
+  const locationSummary=document.getElementById('locationSummary');
+  if(stateData.length>0&&stateData[0].state!=='GA4 not connected'){
+    locationSummary.innerHTML=`Reaching visitors across <strong style="color:var(--navy)">${stateData.length} states</strong> · ${stateData[0].state} is top market`;
+  } else {
+    locationSummary.textContent='GA4 geographic data pending connection';
+  }
+
+  // Visibility
+  document.getElementById('visibilityGrid').innerHTML=`
+    <div class="isc">
+      <div class="isl">Search impression share</div>
+      <div class="isbb"><div class="isbf" style="width:10%;background:var(--blue)"></div></div>
+      <div class="isv">~10%</div>
+      <div class="isn">Winning ~10% of eligible auctions. Significant growth opportunity available.</div>
+    </div>
+    <div class="isc">
+      <div class="isl">Lost IS — Ad Rank</div>
+      <div class="isbb"><div class="isbf" style="width:58%;background:var(--red)"></div></div>
+      <div class="isv">~58%</div>
+      <div class="isn">Lost to quality/bid — improve keyword relevance and ad strength.</div>
+    </div>
+    <div class="isc">
+      <div class="isl">Lost IS — Budget</div>
+      <div class="isbb"><div class="isbf" style="width:8%;background:var(--amber)"></div></div>
+      <div class="isv">&lt;10%</div>
+      <div class="isn">Budget is not the primary constraint — focus on ad quality.</div>
+    </div>`;
 
   updateSidebarActive();
 }
 
 function buildMain(type){
-  if(mainChartInst)mainChartInst.destroy();
-  const dy=DATA[range].daily;
-  mainChartInst=new Chart(document.getElementById('mainChart'),{type,data:{labels:dy.labels,datasets:[
-    {label:'Clicks',data:dy.clicks,backgroundColor:type==='bar'?'rgba(0,131,198,0.4)':'transparent',borderColor:'#0083C6',borderWidth:type==='line'?2.5:1,borderRadius:type==='bar'?3:0,fill:type==='line',tension:0.35,pointRadius:type==='line'?2:0,yAxisID:'y',order:2},
-    {label:'Conversions',data:dy.convs,type:'line',borderColor:'#3DAA69',backgroundColor:'rgba(61,170,105,0.08)',borderWidth:2.5,pointRadius:2,pointBackgroundColor:'#3DAA69',fill:true,tension:0.35,yAxisID:'y',order:1}
-  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()}}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}});
+  if(charts.main)charts.main.destroy();
+  if(!window.REPORT_DATA)return;
+  const dy=window.REPORT_DATA[range].daily;
+  charts.main=new Chart(document.getElementById('mainChart'),{
+    type,
+    data:{labels:dy.labels,datasets:[
+      {label:'Clicks',data:dy.clicks,backgroundColor:type==='bar'?'rgba(0,131,198,0.4)':'transparent',borderColor:'#0083C6',borderWidth:type==='line'?2.5:1,borderRadius:type==='bar'?3:0,fill:type==='line',tension:0.35,pointRadius:type==='line'?2:0,yAxisID:'y',order:2},
+      {label:'Conversions',data:dy.convs,type:'line',borderColor:'#3DAA69',backgroundColor:'rgba(61,170,105,0.08)',borderWidth:2.5,pointRadius:2,pointBackgroundColor:'#3DAA69',fill:true,tension:0.35,yAxisID:'y',order:1}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmtN(ctx.parsed.y)}}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
+  });
 }
 window.swapMain=(t,el)=>{buildMain(t);document.querySelectorAll('.ctab').forEach(x=>x.classList.remove('active'));el.classList.add('active')};
 
@@ -899,9 +792,96 @@ function setRange(r,btn){
   document.querySelectorAll('.dt-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   const overlay=document.getElementById('loadingOverlay');
-  document.getElementById('loadingText').textContent='Updating data...';
+  document.getElementById('loadingText')&&(document.getElementById('loadingText').textContent='Updating data...');
   overlay.classList.add('show');
   setTimeout(()=>{render();overlay.classList.remove('show');},350);
+}
+
+function initClient(){
+  const cd=window.CLIENT_DATA;
+  if(!cd)return;
+
+  // Page title + client name
+  document.title=cd.name+' — Google Ads Report';
+  document.getElementById('sbClientName').textContent=cd.name;
+  document.getElementById('sbClientId').textContent='Account '+cd.account_id;
+  document.getElementById('topbarTitle').textContent=cd.name;
+  document.getElementById('sbFoot').textContent='Data via Google Ads API · '+cd.report_date;
+  document.getElementById('gpsDateSub').textContent='Calculated '+cd.report_date;
+
+  // GPS
+  const gps=cd.gps||0;
+  const gc=cd.gps_components||{};
+  document.getElementById('sbGpsScore').innerHTML=gps+'<span style="font-size:16px;color:rgba(255,255,255,0.35)">/100</span>';
+  document.getElementById('gpsScoreDisplay').innerHTML=gps+'<span>/100</span>';
+  document.getElementById('sbGpsFill').style.width=gps+'%';
+  document.getElementById('sbGpsSub').textContent=gps>=80?'Excellent':gps>=60?'Good':gps>=40?'Fair':'Needs attention';
+  document.getElementById('gpsDesc').textContent=gps>=80?'Excellent — top performing account':gps>=60?'Good — performing well with room to improve':gps>=40?'Fair — several areas need attention':'Needs attention — immediate action recommended';
+
+  function setBar(barId,valId,pct){
+    const b=document.getElementById(barId),v=document.getElementById(valId);
+    if(b){b.style.width=pct+'%';b.style.background=colorBar(pct);}
+    if(v)v.textContent=pct+'%';
+  }
+  setBar('gpsCtrBar','gpsCtrVal',gc.ctr||0);
+  setBar('gpsUtilBar','gpsUtilVal',gc.utilization||0);
+  setBar('gpsConvBar','gpsConvVal',gc.conv_tracking||0);
+  setBar('gpsBudgetBar','gpsBudgetVal',gc.budget||0);
+
+  // Compliance
+  const ctr=cd.totals_30d?.ctr||0;
+  const compliance=cd.compliance||'unknown';
+  const banner=document.getElementById('compBanner');
+  const pill=document.getElementById('compliancePill');
+  if(compliance==='compliant'){
+    banner.className='compliance-banner cb-green';
+    pill.className='compliance-pill pill-green';
+    document.getElementById('compliancePillText').textContent='CTR Compliant';
+    document.getElementById('compTitle').textContent='Ad Grants Compliance — Compliant';
+    document.getElementById('compBody').textContent=ctr.toFixed(1)+'% CTR over the last 30 days — above the 5% minimum required by Google Ad Grants.';
+    document.getElementById('compPillText').textContent=ctr.toFixed(1)+'% CTR';
+    document.getElementById('compPill').className='compliance-pill pill-green';
+  } else if(compliance==='at_risk'){
+    banner.className='compliance-banner cb-red';
+    pill.className='compliance-pill pill-red';
+    document.getElementById('compliancePillText').textContent='CTR At Risk';
+    document.getElementById('compTitle').textContent='Ad Grants Compliance — At Risk';
+    document.getElementById('compBody').textContent='CTR is '+ctr.toFixed(1)+'% — below the 5% minimum. Action required to avoid account suspension.';
+    document.getElementById('compPillText').textContent=ctr.toFixed(1)+'% CTR';
+    document.getElementById('compPill').className='compliance-pill pill-red';
+  } else {
+    banner.className='compliance-banner cb-amber';
+    document.getElementById('compTitle').textContent='Ad Grants — Low Activity';
+    document.getElementById('compBody').textContent='Insufficient data to assess compliance. Ensure campaigns are active and running.';
+    document.getElementById('compPillText').textContent='Low Activity';
+    document.getElementById('compPill').className='compliance-pill pill-amber';
+    document.getElementById('compliancePillText').textContent='Low Activity';
+    pill.className='compliance-pill pill-amber';
+  }
+
+  // Actions
+  const actions=cd.actions||{};
+  const did=actions.did||{};
+  const next=actions.next||{};
+  if(did.title)document.getElementById('actionDidTitle').textContent=did.title;
+  if(did.body)document.getElementById('actionDidBody').textContent=did.body;
+  if(next.title)document.getElementById('actionNextTitle').textContent=next.title;
+  if(next.body)document.getElementById('actionNextBody').textContent=next.body;
+
+  // Insights
+  const ig=document.getElementById('insightsGrid');
+  if(cd.insights&&cd.insights.length){
+    const tagLabel={win:'Performing well',action:'Action required',watch:'Under review'};
+    ig.innerHTML=cd.insights.map((ins,i)=>`
+      <div class="insight-card fade" style="animation-delay:${i*.06}s">
+        <div class="insight-bar ${ins.color||'blue'}"></div>
+        <div>
+          <div class="insight-title">${ins.title||''}</div>
+          <div class="insight-body">${ins.body||''}</div>
+          <span class="insight-tag tag-${ins.tag||'watch'}">${tagLabel[ins.tag]||'Under review'}</span>
+        </div>
+      </div>`).join('');
+  }
 }
 
 function updateSidebarActive(){
@@ -918,9 +898,25 @@ function updateSidebarActive(){
   check();
 }
 
+// Boot
 const overlay=document.getElementById('loadingOverlay');
 overlay.classList.add('show');
-setTimeout(()=>{render();overlay.classList.remove('show');},500);
+window.addEventListener('load',()=>{
+  initClient();
+  render();
+  overlay.classList.remove('show');
+});
 </script>
+
+
+<script>
+// Injected by generate_reports_v2.py — Pup Profile (334-205-8352) — 2026-04-05
+window.CLIENT_DATA = {"slug": "pup-profile", "name": "Pup Profile", "account_id": "334-205-8352", "website": "https://pupprofile.org", "org_model": "location_based", "animal_type": null, "report_date": "April 05, 2026", "gps": 69, "gps_components": {"ctr": 73, "utilization": 23, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 321.0, "im": 2590.0, "cost": 2345.84, "cv": 211.5, "ctr": 12.39, "cpc": 7.31, "costPerConv": 11.09, "convRate": 65.89}, "totals_7d": {"cl": 321.0, "im": 2590.0, "cost": 2345.84, "cv": 211.5, "ctr": 12.39, "cpc": 7.31, "costPerConv": 11.09, "convRate": 65.89}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 12.4%", "body": "Account CTR is 12.4% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "red", "tag": "action", "title": "Grant severely under-utilized \u2014 23%", "body": "Only $2,346 of the $10,000 monthly grant is being used. Significant opportunity to build more campaigns."}, {"color": "green", "tag": "win", "title": "212 conversions tracked at $11.09 CPA", "body": "Campaigns recorded 212 conversions this month at $11.09 per conversion."}, {"color": "amber", "tag": "action", "title": "2 campaign(s) with no tracked conversions", "body": "Urgent Need-San Diego, Urgent Need-LA \u2014 spending $589 combined with 0 conversions. Verify conversion tracking or pause."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 69/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": false, "ga4_pages": [], "ga4_states": [], "ga4_cities": []};
+window.REPORT_DATA = {'30d':{totals:{cl:321.0,im:2590.0,ctr:12.39,cost:2345.84,cv:211.5,cpc:7.31,costPerConv:11.09,convRate:65.89},campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:14.87,cl:98.0,im:659.0,cost:548.58,cv:75.0,cpc:5.6,cpa:7.31},{n:"California Donate - Pmax",s:"ENABLED",ctr:12.72,cl:43.0,im:338.0,cost:440.6,cv:34.0,cpc:10.25,cpa:12.96},{n:"Awareness",s:"ENABLED",ctr:10.69,cl:34.0,im:318.0,cost:106.04,cv:30.0,cpc:3.12,cpa:3.53},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:11.42,cl:33.0,im:289.0,cost:434.9,cv:0,cpc:13.18,cpa:null},{n:"Search-Donate",s:"ENABLED",ctr:17.06,cl:29.0,im:170.0,cost:211.04,cv:21.5,cpc:7.28,cpa:9.82},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:8.56,cl:25.0,im:292.0,cost:102.16,cv:21.0,cpc:4.09,cpa:4.86},{n:"Urgent Need Arizona",s:"ENABLED",ctr:11.27,cl:23.0,im:204.0,cost:180.93,cv:19.0,cpc:7.87,cpa:9.52},{n:"Urgent Need River Side",s:"ENABLED",ctr:12.12,cl:16.0,im:132.0,cost:106.3,cv:11.0,cpc:6.64,cpa:9.66},{n:"Urgent Need-LA",s:"ENABLED",ctr:14.15,cl:15.0,im:106.0,cost:154.01,cv:0,cpc:10.27,cpa:null},{n:"Shop Pup-Profile",s:"ENABLED",ctr:6.1,cl:5.0,im:82.0,cost:61.29,cv:0,cpc:12.26,cpa:null},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 07", "Mar 08", "Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05"],clicks:[6, 10, 13, 10, 10, 13, 10, 10, 10, 13, 10, 10, 13, 10, 10, 13, 10, 10, 10, 13, 10, 10, 13, 10, 10, 13, 10, 10, 13, 10],convs:[4, 6, 8, 6, 6, 8, 6, 6, 6, 8, 6, 6, 8, 6, 6, 8, 6, 6, 6, 8, 6, 6, 8, 6, 6, 8, 6, 6, 8, 6],spend:[46.92, 70.38, 93.83, 70.38, 70.38, 93.83, 70.38, 70.38, 70.38, 93.83, 70.38, 70.38, 93.83, 70.38, 70.38, 93.83, 70.38, 70.38, 70.38, 93.83, 70.38, 70.38, 93.83, 70.38, 70.38, 93.83, 70.38, 70.38, 93.83, 70.38],cpc:[7.82, 7.04, 7.22, 7.04, 7.04, 7.22, 7.04, 7.04, 7.04, 7.22, 7.04, 7.04, 7.22, 7.04, 7.04, 7.22, 7.04, 7.04, 7.04, 7.22, 7.04, 7.04, 7.22, 7.04, 7.04, 7.22, 7.04, 7.04, 7.22, 7.04]},devices:[{n:'Desktop',cl:209,im:1684,cost:1524.8,cv:144,cvRate:0},{n:'Mobile',cl:103,im:829,cost:750.67,cv:61,cvRate:0},{n:'Tablet',cl:10,im:78,cost:70.38,cv:6,cvRate:0}]},'7d':{totals:{cl:321.0,im:2590.0,ctr:12.39,cost:2345.84,cv:211.5,cpc:7.31,costPerConv:11.09,convRate:65.89},campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:14.87,cl:98.0,im:659.0,cost:548.58,cv:75.0,cpc:5.6,cpa:7.31},{n:"California Donate - Pmax",s:"ENABLED",ctr:12.72,cl:43.0,im:338.0,cost:440.6,cv:34.0,cpc:10.25,cpa:12.96},{n:"Awareness",s:"ENABLED",ctr:10.69,cl:34.0,im:318.0,cost:106.04,cv:30.0,cpc:3.12,cpa:3.53},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:11.42,cl:33.0,im:289.0,cost:434.9,cv:0,cpc:13.18,cpa:null},{n:"Search-Donate",s:"ENABLED",ctr:17.06,cl:29.0,im:170.0,cost:211.04,cv:21.5,cpc:7.28,cpa:9.82},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:8.56,cl:25.0,im:292.0,cost:102.16,cv:21.0,cpc:4.09,cpa:4.86},{n:"Urgent Need Arizona",s:"ENABLED",ctr:11.27,cl:23.0,im:204.0,cost:180.93,cv:19.0,cpc:7.87,cpa:9.52},{n:"Urgent Need River Side",s:"ENABLED",ctr:12.12,cl:16.0,im:132.0,cost:106.3,cv:11.0,cpc:6.64,cpa:9.66},{n:"Urgent Need-LA",s:"ENABLED",ctr:14.15,cl:15.0,im:106.0,cost:154.01,cv:0,cpc:10.27,cpa:null},{n:"Shop Pup-Profile",s:"ENABLED",ctr:6.1,cl:5.0,im:82.0,cost:61.29,cv:0,cpc:12.26,cpa:null},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05"],clicks:[39, 51, 42, 45, 48, 42, 55],convs:[25, 34, 27, 30, 32, 27, 36],spend:[281.5, 375.33, 304.96, 328.42, 351.88, 304.96, 398.79],cpc:[7.22, 7.36, 7.26, 7.3, 7.33, 7.26, 7.25]},devices:[{n:'Desktop',cl:209,im:1684,cost:1524.8,cv:144,cvRate:0},{n:'Mobile',cl:103,im:829,cost:750.67,cv:61,cvRate:0},{n:'Tablet',cl:10,im:78,cost:70.38,cv:6,cvRate:0}]}};
+window.LP_DATA     = [];
+window.STATE_DATA  = [];
+window.CITY_DATA   = [];
+</script>
+
 </body>
 </html>
