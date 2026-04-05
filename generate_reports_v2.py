@@ -468,7 +468,7 @@ def _build_daily(rows, n_days):
 
 # ── TEMPLATE ──────────────────────────────────────────────────────────────────
 
-REPORT_TEMPLATE_V2 = open("/home/claude/pup_profile_report_v4.html").read()
+REPORT_TEMPLATE_V2 = open("report_template.html").read()
 
 def render_report(client_data):
     """
