@@ -1,156 +1,237 @@
+#!/usr/bin/env python3
 """
-fetch_ga4.py
-Fetches GA4 analytics data for all clients via Windsor GA4 connector.
-Saves to ga4_cache.json keyed by client slug.
+Fetch GA4 data directly from Google Analytics Data API.
+Uses service account authentication via GA_SERVICE_ACCOUNT secret.
 """
-import json, os, datetime, urllib.request, urllib.parse
 
-with open("clients.json") as f:
-    CLIENTS = json.load(f)
+import json
+import os
+from datetime import datetime
 
-WINDSOR_API_KEY = os.environ.get("WINDSOR_API_KEY", "")
-WINDSOR_BASE    = "https://connectors.windsor.ai/googleanalytics4"
+from google.analytics.data_v1beta import BetaAnalyticsDataClient
+from google.analytics.data_v1beta.types import (
+    DateRange,
+    Dimension,
+    Metric,
+    RunReportRequest,
+)
+from google.oauth2 import service_account
 
-# Map client slug to Windsor GA4 account ID
-GA4_IDS = {c["slug"]: str(c["ga4_id"]) for c in CLIENTS if c.get("ga4_id")}
 
-def fetch(account_id, fields, date_preset):
-    if not WINDSOR_API_KEY:
-        print("  No WINDSOR_API_KEY")
-        return []
-    params = {
-        "api_key":     WINDSOR_API_KEY,
-        "connector":   "googleanalytics4",
-        "accounts":    account_id,
-        "date_preset": date_preset,
-        "fields":      ",".join(fields),
-    }
-    url = f"{WINDSOR_BASE}?{urllib.parse.urlencode(params)}"
-    try:
-        with urllib.request.urlopen(url, timeout=30) as r:
-            data = json.loads(r.read())
-            return data.get("data", data) if isinstance(data, dict) else data
-    except Exception as e:
-        print(f"    Error: {e}")
-        return []
-
-def process_client(slug, ga4_id):
-    print(f"  {slug} ({ga4_id})")
-
-    # Overview 30d
-    overview = fetch(ga4_id, [
-        "sessions","active_users","newusers","bounce_rate",
-        "engagement_rate","average_session_duration","conversions"
-    ], "last_30dT")
-    ov = overview[0] if overview else {}
-
-    # Overview 7d
-    overview_7d = fetch(ga4_id, [
-        "sessions","active_users","conversions","engagement_rate"
-    ], "last_7dT")
-    ov7 = overview_7d[0] if overview_7d else {}
-
-    # Landing pages 7d
-    pages_raw = fetch(ga4_id, [
-        "landing_page","sessions","average_session_duration",
-        "engagement_rate","conversions","bounce_rate"
-    ], "last_7dT")
-
-    # Aggregate landing pages by page path
-    page_map = {}
-    for r in pages_raw:
-        pg = r.get("landing_page","") or ""
-        if not pg or pg in ["(not set)",""]:
-            pg = "/"
-        if pg not in page_map:
-            page_map[pg] = {"sessions":0,"total_duration":0,"conversions":0,"engagement_sum":0,"count":0}
-        page_map[pg]["sessions"]       += r.get("sessions",0) or 0
-        page_map[pg]["total_duration"] += (r.get("average_session_duration",0) or 0) * (r.get("sessions",0) or 0)
-        page_map[pg]["conversions"]    += r.get("conversions",0) or 0
-        page_map[pg]["engagement_sum"] += (r.get("engagement_rate",0) or 0) * (r.get("sessions",0) or 0)
-        page_map[pg]["count"]          += 1
-
-    pages = []
-    for pg, v in sorted(page_map.items(), key=lambda x: x[1]["sessions"], reverse=True)[:10]:
-        sess = v["sessions"]
-        pages.append({
-            "landing_page":             pg,
-            "sessions":                 sess,
-            "average_session_duration": round(v["total_duration"]/max(sess,1),1),
-            "engagement_rate":          round(v["engagement_sum"]/max(sess,1),3),
-            "conversions":              v["conversions"],
-        })
-
-    # Geographic — states
-    geo_raw = fetch(ga4_id, ["region","sessions","active_users"], "last_7dT")
-    state_map = {}
-    for r in geo_raw:
-        region = r.get("region","") or ""
-        if not region or region in ["(not set)",""]: continue
-        state_map[region] = state_map.get(region,0) + (r.get("sessions",0) or 0)
-    states = [{"region":k,"sessions":v} for k,v in sorted(state_map.items(), key=lambda x: x[1], reverse=True)[:10]]
-
-    # Geographic — cities
-    city_raw = fetch(ga4_id, ["city","region","sessions"], "last_7dT")
-    city_map = {}
-    for r in city_raw:
-        city = r.get("city","") or ""
-        region = r.get("region","") or ""
-        if not city or city in ["(not set)",""]: continue
-        key = f"{city}|{region}"
-        city_map[key] = city_map.get(key,0) + (r.get("sessions",0) or 0)
-    cities = [{"city":k.split("|")[0],"region":k.split("|")[1],"sessions":v}
-              for k,v in sorted(city_map.items(), key=lambda x: x[1], reverse=True)[:15]]
-
-    # Channels
-    channels_raw = fetch(ga4_id, ["default_channel_group","sessions","conversions","engagement_rate"], "last_30dT")
-    channels = sorted(
-        [r for r in channels_raw if r.get("default_channel_group")],
-        key=lambda r: r.get("sessions",0), reverse=True
+def get_client():
+    """Create GA4 client from service account credentials."""
+    creds_json = os.environ.get("GA_SERVICE_ACCOUNT")
+    if not creds_json:
+        raise ValueError("GA_SERVICE_ACCOUNT environment variable not set")
+    
+    creds_info = json.loads(creds_json)
+    credentials = service_account.Credentials.from_service_account_info(
+        creds_info,
+        scopes=["https://www.googleapis.com/auth/analytics.readonly"]
     )
+    return BetaAnalyticsDataClient(credentials=credentials)
 
-    print(f"    Sessions: {ov.get('sessions',0):.0f} | Pages: {len(pages)} | States: {len(states)} | Cities: {len(cities)}")
 
+def run_report(client, property_id, dimensions, metrics, date_range):
+    """Run a GA4 report and return rows as list of dicts."""
+    request = RunReportRequest(
+        property=f"properties/{property_id}",
+        dimensions=[Dimension(name=d) for d in dimensions],
+        metrics=[Metric(name=m) for m in metrics],
+        date_ranges=[DateRange(start_date=date_range[0], end_date=date_range[1])],
+    )
+    
+    try:
+        response = client.run_report(request)
+    except Exception as e:
+        print(f"  Error fetching report: {e}")
+        return []
+    
+    rows = []
+    for row in response.rows:
+        row_data = {}
+        for i, dim in enumerate(dimensions):
+            row_data[dim] = row.dimension_values[i].value
+        for i, met in enumerate(metrics):
+            row_data[met] = row.metric_values[i].value
+        rows.append(row_data)
+    
+    return rows
+
+
+def fetch_overview(client, property_id, start_date, end_date):
+    """Fetch overview metrics for a date range."""
+    metrics = [
+        "sessions",
+        "totalUsers",
+        "newUsers",
+        "screenPageViews",
+        "averageSessionDuration",
+        "bounceRate",
+        "engagementRate",
+        "conversions"
+    ]
+    
+    request = RunReportRequest(
+        property=f"properties/{property_id}",
+        metrics=[Metric(name=m) for m in metrics],
+        date_ranges=[DateRange(start_date=start_date, end_date=end_date)],
+    )
+    
+    try:
+        response = client.run_report(request)
+    except Exception as e:
+        print(f"  Error fetching overview: {e}")
+        return {}
+    
+    if not response.rows:
+        return {}
+    
+    row = response.rows[0]
     return {
-        "ga4_id":       ga4_id,
-        "client":       slug,
-        "fetched_at":   datetime.datetime.now().isoformat(),
-        "overview_30d": ov,
-        "overview_7d":  ov7,
-        "landing_pages":pages,
-        "states":       states,
-        "cities":       cities,
-        "channels":     channels,
+        metrics[i]: row.metric_values[i].value
+        for i in range(len(metrics))
     }
 
-def run():
-    print(f"\nFetch GA4 — {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}")
-    print(f"Clients with GA4: {len(GA4_IDS)}\n")
 
-    cache_path = "ga4_cache.json"
+def fetch_landing_pages(client, property_id):
+    """Fetch top landing pages for last 30 days."""
+    rows = run_report(
+        client,
+        property_id,
+        dimensions=["landingPage"],
+        metrics=["sessions", "averageSessionDuration", "bounceRate", "engagementRate", "conversions"],
+        date_range=("30daysAgo", "today")
+    )
+    
+    # Sort by sessions descending, take top 10
+    rows.sort(key=lambda x: int(x.get("sessions", 0)), reverse=True)
+    return rows[:10]
+
+
+def fetch_states(client, property_id):
+    """Fetch top states/regions for last 30 days."""
+    rows = run_report(
+        client,
+        property_id,
+        dimensions=["region"],
+        metrics=["sessions", "totalUsers"],
+        date_range=("30daysAgo", "today")
+    )
+    
+    # Filter out (not set), sort by sessions, take top 10
+    rows = [r for r in rows if r.get("region") != "(not set)"]
+    rows.sort(key=lambda x: int(x.get("sessions", 0)), reverse=True)
+    return rows[:10]
+
+
+def fetch_cities(client, property_id):
+    """Fetch top cities for last 30 days."""
+    rows = run_report(
+        client,
+        property_id,
+        dimensions=["city"],
+        metrics=["sessions", "totalUsers"],
+        date_range=("30daysAgo", "today")
+    )
+    
+    # Filter out (not set), sort by sessions, take top 10
+    rows = [r for r in rows if r.get("city") != "(not set)"]
+    rows.sort(key=lambda x: int(x.get("sessions", 0)), reverse=True)
+    return rows[:10]
+
+
+def fetch_channels(client, property_id):
+    """Fetch traffic channels for last 30 days."""
+    rows = run_report(
+        client,
+        property_id,
+        dimensions=["sessionDefaultChannelGroup"],
+        metrics=["sessions", "totalUsers", "conversions"],
+        date_range=("30daysAgo", "today")
+    )
+    
+    rows.sort(key=lambda x: int(x.get("sessions", 0)), reverse=True)
+    return rows
+
+
+def main():
+    # Load clients
+    with open("clients.json", "r") as f:
+        clients = json.load(f)
+    
+    # Initialize GA4 client
+    print("Initializing GA4 Data API client...")
+    client = get_client()
+    
+    # Load existing cache or start fresh
+    cache_file = "ga4_cache.json"
     cache = {}
-    if os.path.exists(cache_path):
+    
+    # Process each client
+    clients_fetched = 0
+    
+    for slug, info in clients.items():
+        ga4_id = info.get("ga4_id")
+        
+        if not ga4_id:
+            print(f"Skipping {slug} - no GA4 ID")
+            continue
+        
+        print(f"Fetching {slug} (GA4: {ga4_id})...")
+        
         try:
-            with open(cache_path) as f: cache = json.load(f)
-        except: cache = {}
-
-    fetched = 0
-    for slug, ga4_id in GA4_IDS.items():
-        try:
-            data = process_client(slug, ga4_id)
-            cache[slug] = data
-            fetched += 1
+            # Fetch all data
+            overview_30d = fetch_overview(client, ga4_id, "30daysAgo", "today")
+            overview_7d = fetch_overview(client, ga4_id, "7daysAgo", "today")
+            landing_pages = fetch_landing_pages(client, ga4_id)
+            states = fetch_states(client, ga4_id)
+            cities = fetch_cities(client, ga4_id)
+            channels = fetch_channels(client, ga4_id)
+            
+            cache[slug] = {
+                "ga4_id": ga4_id,
+                "client": slug,
+                "fetched_at": datetime.utcnow().isoformat(),
+                "overview_30d": overview_30d,
+                "overview_7d": overview_7d,
+                "landing_pages": landing_pages,
+                "states": states,
+                "cities": cities,
+                "channels": channels
+            }
+            
+            clients_fetched += 1
+            print(f"  ✓ {len(landing_pages)} landing pages, {len(states)} states, {len(cities)} cities")
+            
         except Exception as e:
-            print(f"  Error processing {slug}: {e}")
-
+            print(f"  ✗ Error: {e}")
+            cache[slug] = {
+                "ga4_id": ga4_id,
+                "client": slug,
+                "fetched_at": datetime.utcnow().isoformat(),
+                "error": str(e),
+                "overview_30d": {},
+                "overview_7d": {},
+                "landing_pages": [],
+                "states": [],
+                "cities": [],
+                "channels": []
+            }
+    
+    # Add metadata
     cache["_meta"] = {
-        "fetched_at": datetime.datetime.now().isoformat(),
-        "clients_fetched": fetched,
+        "fetched_at": datetime.utcnow().isoformat(),
+        "clients_fetched": clients_fetched
     }
+    
+    # Write cache
+    with open(cache_file, "w") as f:
+        json.dump(cache, f, indent=2)
+    
+    print(f"\nDone. Fetched data for {clients_fetched} clients.")
+    print(f"Cache saved to {cache_file}")
 
-    with open(cache_path, "w") as f:
-        json.dump(cache, f, indent=2, default=str)
-    print(f"\n✓ ga4_cache.json saved — {fetched} clients")
 
 if __name__ == "__main__":
-    run()
+    main()
