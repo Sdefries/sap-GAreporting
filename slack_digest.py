@@ -16,7 +16,7 @@ import urllib.request
 with open("clients.json") as f:
     CLIENTS = json.load(f)
 
-with open("windsor_cache.json") as f:
+with open("google_ads_cache.json") as f:
     CACHE = json.load(f)
 
 SLACK_WEBHOOK = os.environ.get("SLACK_WEBHOOK", "")
