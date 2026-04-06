@@ -3,7 +3,7 @@
     "slug": "scienceworks",
     "name": "ScienceWorks Grant Account",
     "google_ads_id": "932-847-2468",
-    "ga4_id": null,
+    "ga4_id": "345894114",
     "contact_email": "",
     "contact_name": "",
     "org_type": "museum",
@@ -96,13 +96,13 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "ScienceWorks Grant Account \u2014 Ad Grants"
+    "mailerlite_group": "ScienceWorks Grant Account — Ad Grants"
   },
   {
     "slug": "justice-accountability-la",
     "name": "Justice & Accountability Center of LA",
     "google_ads_id": "315-976-8484",
-    "ga4_id": null,
+    "ga4_id": "521218906",
     "contact_email": "",
     "contact_name": "",
     "org_type": "legal_aid",
@@ -143,7 +143,7 @@
         "category": "LEAD",
         "group": "Client Intake",
         "value": 0.0,
-        "notes": "Primary conversion \u2014 client submits services intake form"
+        "notes": "Primary conversion — client submits services intake form"
       },
       {
         "name": "Volunteer Application",
@@ -157,7 +157,7 @@
         "category": "PAGE_VIEW",
         "group": "Engagement",
         "value": 0.0,
-        "notes": "Micro-conversion \u2014 visited key service page"
+        "notes": "Micro-conversion — visited key service page"
       }
     ],
     "campaign_conversion_assignments": [
@@ -185,7 +185,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Justice & Accountability Center of LA \u2014 Ad Grants"
+    "mailerlite_group": "Justice & Accountability Center of LA — Ad Grants"
   },
   {
     "slug": "city-dogs-kitties",
@@ -232,21 +232,21 @@
         "category": "PURCHASE",
         "group": "Donations",
         "value": 50.0,
-        "notes": "Donorbox iframe \u2014 use Donorbox native Google Ads pixel OR thank-you page redirect. See IFRAME_PROCESSOR_GUIDANCE['donorbox']"
+        "notes": "Donorbox iframe — use Donorbox native Google Ads pixel OR thank-you page redirect. See IFRAME_PROCESSOR_GUIDANCE['donorbox']"
       },
       {
         "name": "Adoption Application Submit",
         "category": "LEAD",
         "group": "Adoptions",
         "value": 0.0,
-        "notes": "Own-site adoption form \u2014 standard GA4 tracking"
+        "notes": "Own-site adoption form — standard GA4 tracking"
       },
       {
         "name": "Foster Application Submit",
         "category": "LEAD",
         "group": "Adoptions",
         "value": 0.0,
-        "notes": "Own-site foster form \u2014 standard GA4 tracking"
+        "notes": "Own-site foster form — standard GA4 tracking"
       }
     ],
     "campaign_conversion_assignments": [
@@ -268,7 +268,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "City Dogs and City Kitties Rescue \u2014 Ad Grants"
+    "mailerlite_group": "City Dogs and City Kitties Rescue — Ad Grants"
   },
   {
     "slug": "guardian-pet-trust",
@@ -310,7 +310,7 @@
         "category": "PURCHASE",
         "group": "Donations",
         "value": 50.0,
-        "notes": "Donorbox \u2014 use native pixel"
+        "notes": "Donorbox — use native pixel"
       },
       {
         "name": "Program Application",
@@ -340,7 +340,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Guardian Pet Trust \u2014 Ad Grants"
+    "mailerlite_group": "Guardian Pet Trust — Ad Grants"
   },
   {
     "slug": "edwin-d-marks",
@@ -392,13 +392,13 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Edwin D Marks Animal Foundation \u2014 Ad Grants"
+    "mailerlite_group": "Edwin D Marks Animal Foundation — Ad Grants"
   },
   {
     "slug": "earth-organization",
     "name": "The Earth Organization",
     "google_ads_id": "312-145-7553",
-    "ga4_id": null,
+    "ga4_id": "515557533",
     "contact_email": "",
     "contact_name": "",
     "org_type": "environment",
@@ -459,13 +459,13 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "The Earth Organization \u2014 Ad Grants"
+    "mailerlite_group": "The Earth Organization — Ad Grants"
   },
   {
     "slug": "ziva",
     "name": "A Second Chance for Ziva",
     "google_ads_id": "598-275-9296",
-    "ga4_id": null,
+    "ga4_id": "504662809",
     "contact_email": "",
     "contact_name": "",
     "org_type": "animal_rescue",
@@ -510,13 +510,13 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "A Second Chance for Ziva \u2014 Ad Grants"
+    "mailerlite_group": "A Second Chance for Ziva — Ad Grants"
   },
   {
     "slug": "pink-paws",
     "name": "Pink Paws For The Cause",
     "google_ads_id": "566-368-6847",
-    "ga4_id": null,
+    "ga4_id": "521209710",
     "contact_email": "",
     "contact_name": "",
     "org_type": "animal_rescue",
@@ -576,7 +576,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Pink Paws For The Cause \u2014 Ad Grants"
+    "mailerlite_group": "Pink Paws For The Cause — Ad Grants"
   },
   {
     "slug": "angels4paws",
@@ -627,13 +627,13 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Angels4Paws Animal Rescue \u2014 Ad Grants"
+    "mailerlite_group": "Angels4Paws Animal Rescue — Ad Grants"
   },
   {
     "slug": "humane-society-nw-montana",
     "name": "Humane Society of Northwest Montana",
     "google_ads_id": "471-611-0713",
-    "ga4_id": null,
+    "ga4_id": "509609252",
     "contact_email": "",
     "contact_name": "",
     "org_type": "humane_society",
@@ -697,13 +697,13 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Humane Society of Northwest Montana \u2014 Ad Grants"
+    "mailerlite_group": "Humane Society of Northwest Montana — Ad Grants"
   },
   {
     "slug": "paws-and-claws",
     "name": "Paws and Claws Animal Welfare Society",
     "google_ads_id": "471-199-5950",
-    "ga4_id": null,
+    "ga4_id": "513862587",
     "contact_email": "",
     "contact_name": "",
     "org_type": "animal_rescue",
@@ -749,13 +749,13 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Paws and Claws Animal Welfare Society \u2014 Ad Grants"
+    "mailerlite_group": "Paws and Claws Animal Welfare Society — Ad Grants"
   },
   {
     "slug": "silver-linings",
     "name": "Silver Linings Rescue Ranch",
     "google_ads_id": "321-208-5637",
-    "ga4_id": null,
+    "ga4_id": "513124215",
     "contact_email": "",
     "contact_name": "",
     "org_type": "equine_rescue",
@@ -833,13 +833,13 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Silver Linings Rescue Ranch \u2014 Ad Grants"
+    "mailerlite_group": "Silver Linings Rescue Ranch — Ad Grants"
   },
   {
     "slug": "straydog",
     "name": "Straydog Inc",
     "google_ads_id": "583-897-7800",
-    "ga4_id": null,
+    "ga4_id": "510703446",
     "contact_email": "",
     "contact_name": "",
     "org_type": "animal_rescue",
@@ -899,13 +899,13 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Straydog Inc \u2014 Ad Grants"
+    "mailerlite_group": "Straydog Inc — Ad Grants"
   },
   {
     "slug": "red-clay-ranch",
     "name": "Red Clay Ranch Equine Rescue & Sanctuary",
     "google_ads_id": "378-461-6494",
-    "ga4_id": null,
+    "ga4_id": "521180891",
     "contact_email": "",
     "contact_name": "",
     "org_type": "equine_rescue",
@@ -984,7 +984,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Red Clay Ranch Equine Rescue & Sanctuary \u2014 Ad Grants"
+    "mailerlite_group": "Red Clay Ranch Equine Rescue & Sanctuary — Ad Grants"
   },
   {
     "slug": "pup-profile",
@@ -994,7 +994,7 @@
     "contact_email": "pupprofileteam@gmail.com",
     "contact_name": "Nikki Leonard",
     "contact_first_name": "Nikki",
-    "mailerlite_group": "Pup Profile \u2014 Ad Grants",
+    "mailerlite_group": "Pup Profile — Ad Grants",
     "org_type": "animal_rescue",
     "website": "https://pupprofile.org",
     "donation_processor": "unknown",
@@ -1073,5 +1073,59 @@
     ],
     "mailerlite_group_id": "183135259834976217",
     "mailerlite_subscriber_id": "137396765079897422"
+  },
+  {
+    "slug": "joshua-tree-no-kill",
+    "name": "Joshua Tree No Kill Animal Shelter",
+    "google_ads_id": null,
+    "ga4_id": "530911485",
+    "contact_email": "",
+    "contact_name": "",
+    "contact_first_name": "",
+    "mailerlite_group": "Joshua Tree No Kill Animal Shelter — Ad Grants",
+    "org_type": "animal_rescue",
+    "website": "",
+    "donation_processor": "unknown",
+    "conversion_strategy": "ga4_import",
+    "geo": {
+      "target_type": "radius",
+      "locations": [
+        "Joshua Tree, CA"
+      ],
+      "radius_miles": 50,
+      "exclude_locations": []
+    },
+    "keywords": {
+      "negative": [
+        "breeders",
+        "buy",
+        "pet store"
+      ],
+      "include_themes": [
+        "no kill shelter",
+        "animal adoption",
+        "pet rescue",
+        "joshua tree"
+      ]
+    },
+    "conversions": [
+      {
+        "name": "Adoption Inquiry",
+        "category": "LEAD",
+        "group": "Adoptions",
+        "value": 0.0,
+        "notes": ""
+      }
+    ],
+    "campaign_conversion_assignments": [
+      {
+        "campaign_keywords": [
+          "adopt",
+          "rescue",
+          "shelter"
+        ],
+        "goal_group": "Adoptions"
+      }
+    ]
   }
 ]
