@@ -156,7 +156,7 @@ def fetch_channels(client, property_id):
 
 
 def main():
-    # Load clients
+    # Load clients (it's a list, not a dict)
     with open("clients.json", "r") as f:
         clients = json.load(f)
     
@@ -171,8 +171,12 @@ def main():
     # Process each client
     clients_fetched = 0
     
-    for slug, info in clients.items():
+    for info in clients:
+        slug = info.get("slug")
         ga4_id = info.get("ga4_id")
+        
+        if not slug:
+            continue
         
         if not ga4_id:
             print(f"Skipping {slug} - no GA4 ID")
