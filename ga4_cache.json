@@ -2,7 +2,7 @@
   "scienceworks": {
     "ga4_id": "345894114",
     "client": "scienceworks",
-    "fetched_at": "2026-04-06T00:38:45.762643",
+    "fetched_at": "2026-04-06T00:41:59.680919",
     "overview_30d": {
       "sessions": "7538",
       "totalUsers": "5770",
@@ -275,7 +275,7 @@
   "justice-accountability-la": {
     "ga4_id": "521218906",
     "client": "justice-accountability-la",
-    "fetched_at": "2026-04-06T00:38:48.547802",
+    "fetched_at": "2026-04-06T00:42:00.195866",
     "overview_30d": {
       "sessions": "3897",
       "totalUsers": "2920",
@@ -524,7 +524,7 @@
   "city-dogs-kitties": {
     "ga4_id": "490392378",
     "client": "city-dogs-kitties",
-    "fetched_at": "2026-04-06T00:38:52.068636",
+    "fetched_at": "2026-04-06T00:42:02.665405",
     "overview_30d": {
       "sessions": "19007",
       "totalUsers": "10858",
@@ -539,20 +539,20 @@
       "sessions": "4383",
       "totalUsers": "2848",
       "newUsers": "4185",
-      "screenPageViews": "17986",
-      "averageSessionDuration": "353.03383046543456",
+      "screenPageViews": "17987",
+      "averageSessionDuration": "353.07887671982661",
       "bounceRate": "0.011635865845311431",
       "engagementRate": "0.9883641341546886",
-      "conversions": "49150"
+      "conversions": "49155"
     },
     "landing_pages": [
       {
         "landingPage": "/",
         "sessions": "7518",
-        "averageSessionDuration": "402.72612308765622",
+        "averageSessionDuration": "402.75238508991748",
         "bounceRate": "0.00013301409949454643",
         "engagementRate": "0.99986698590050549",
-        "conversions": "108874"
+        "conversions": "108879"
       },
       {
         "landingPage": "/adopt-foster/adopt-a-dog",
@@ -565,7 +565,7 @@
       {
         "landingPage": "/adopt-foster/adopt-a-cat",
         "sessions": "2366",
-        "averageSessionDuration": "368.77967868850379",
+        "averageSessionDuration": "368.77967868850385",
         "bounceRate": "0.0092983939137785288",
         "engagementRate": "0.99070160608622149",
         "conversions": "19039"
@@ -791,7 +791,7 @@
   "guardian-pet-trust": {
     "ga4_id": "482775564",
     "client": "guardian-pet-trust",
-    "fetched_at": "2026-04-06T00:38:55.181449",
+    "fetched_at": "2026-04-06T00:42:04.638724",
     "overview_30d": {
       "sessions": "1056",
       "totalUsers": "961",
@@ -1046,7 +1046,7 @@
   "earth-organization": {
     "ga4_id": "515557533",
     "client": "earth-organization",
-    "fetched_at": "2026-04-06T00:38:57.624202",
+    "fetched_at": "2026-04-06T00:42:05.652190",
     "overview_30d": {
       "sessions": "2",
       "totalUsers": "1",
@@ -1101,7 +1101,7 @@
   "ziva": {
     "ga4_id": "504662809",
     "client": "ziva",
-    "fetched_at": "2026-04-06T00:39:00.725853",
+    "fetched_at": "2026-04-06T00:42:07.605974",
     "overview_30d": {
       "sessions": "3806",
       "totalUsers": "2549",
@@ -1356,7 +1356,7 @@
   "pink-paws": {
     "ga4_id": "521209710",
     "client": "pink-paws",
-    "fetched_at": "2026-04-06T00:39:03.185522",
+    "fetched_at": "2026-04-06T00:42:08.774701",
     "overview_30d": {
       "sessions": "1519",
       "totalUsers": "1147",
@@ -1611,15 +1611,15 @@
   "humane-society-nw-montana": {
     "ga4_id": "509609252",
     "client": "humane-society-nw-montana",
-    "fetched_at": "2026-04-06T00:39:05.835750",
+    "fetched_at": "2026-04-06T00:42:10.481889",
     "overview_30d": {
-      "sessions": "10434",
-      "totalUsers": "5029",
+      "sessions": "10437",
+      "totalUsers": "5030",
       "newUsers": "4293",
-      "screenPageViews": "24423",
-      "averageSessionDuration": "154.47087786994442",
-      "bounceRate": "0.30276020701552614",
-      "engagementRate": "0.69723979298447381",
+      "screenPageViews": "24427",
+      "averageSessionDuration": "154.43902397422633",
+      "bounceRate": "0.30296062086806552",
+      "engagementRate": "0.69703937913193448",
       "conversions": "8"
     },
     "overview_7d": {
@@ -1635,16 +1635,16 @@
     "landing_pages": [
       {
         "landingPage": "/",
-        "sessions": "6360",
-        "averageSessionDuration": "164.06377833003145",
-        "bounceRate": "0.15927672955974842",
-        "engagementRate": "0.84072327044025152",
+        "sessions": "6363",
+        "averageSessionDuration": "164.00208849787836",
+        "bounceRate": "0.15967311016815966",
+        "engagementRate": "0.84032688983184034",
         "conversions": "1"
       },
       {
         "landingPage": "/adoptable-dogs",
         "sessions": "1997",
-        "averageSessionDuration": "154.62152463945921",
+        "averageSessionDuration": "154.62630718928392",
         "bounceRate": "0.513770655983976",
         "engagementRate": "0.486229344016024",
         "conversions": "0"
@@ -1675,8 +1675,8 @@
       },
       {
         "landingPage": "",
-        "sessions": "66",
-        "averageSessionDuration": "13.426677318181818",
+        "sessions": "67",
+        "averageSessionDuration": "13.550814059701493",
         "bounceRate": "1",
         "engagementRate": "0",
         "conversions": "0"
@@ -1860,7 +1860,7 @@
   "paws-and-claws": {
     "ga4_id": "513862587",
     "client": "paws-and-claws",
-    "fetched_at": "2026-04-06T00:39:08.721529",
+    "fetched_at": "2026-04-06T00:42:11.489481",
     "overview_30d": {
       "sessions": "868",
       "totalUsers": "825",
@@ -2115,7 +2115,7 @@
   "silver-linings": {
     "ga4_id": "513124215",
     "client": "silver-linings",
-    "fetched_at": "2026-04-06T00:39:12.125825",
+    "fetched_at": "2026-04-06T00:42:12.648664",
     "overview_30d": {
       "sessions": "1912",
       "totalUsers": "1705",
@@ -2370,7 +2370,7 @@
   "straydog": {
     "ga4_id": "510703446",
     "client": "straydog",
-    "fetched_at": "2026-04-06T00:39:14.345218",
+    "fetched_at": "2026-04-06T00:42:13.869239",
     "overview_30d": {
       "sessions": "3268",
       "totalUsers": "2668",
@@ -2643,7 +2643,7 @@
   "red-clay-ranch": {
     "ga4_id": "521180891",
     "client": "red-clay-ranch",
-    "fetched_at": "2026-04-06T00:39:17.598567",
+    "fetched_at": "2026-04-06T00:42:15.229997",
     "overview_30d": {
       "sessions": "967",
       "totalUsers": "828",
@@ -2898,7 +2898,7 @@
   "pup-profile": {
     "ga4_id": "477106491",
     "client": "pup-profile",
-    "fetched_at": "2026-04-06T00:39:19.928632",
+    "fetched_at": "2026-04-06T00:42:15.728924",
     "overview_30d": {
       "sessions": "1712",
       "totalUsers": "1498",
@@ -3153,7 +3153,7 @@
   "joshua-tree-no-kill": {
     "ga4_id": "530911485",
     "client": "joshua-tree-no-kill",
-    "fetched_at": "2026-04-06T00:39:21.688055",
+    "fetched_at": "2026-04-06T00:42:17.283568",
     "overview_30d": {},
     "overview_7d": {},
     "landing_pages": [],
@@ -3162,7 +3162,7 @@
     "channels": []
   },
   "_meta": {
-    "fetched_at": "2026-04-06T00:39:21.688130",
+    "fetched_at": "2026-04-06T00:42:17.283661",
     "clients_fetched": 14
   }
 }
