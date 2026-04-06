@@ -1,0 +1,121 @@
+{
+  "guardian-pet-trust": {
+    "client": "Guardian Pet Trust",
+    "slug": "guardian-pet-trust",
+    "website": "https://guardianpettrust.org",
+    "fetched_at": "2026-04-06T21:33:22.764467",
+    "pagespeed_mobile": {
+      "strategy": "mobile",
+      "performance_score": null,
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    "pagespeed_desktop": {
+      "strategy": "desktop",
+      "performance_score": null,
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    "search_console": {},
+    "keyword_rankings": [
+      {
+        "keyword": "guardian pet trust",
+        "position": null,
+        "error": "HTTP Error 401: Unauthorized"
+      },
+      {
+        "keyword": "pet care assistance California",
+        "position": null,
+        "error": "HTTP Error 401: Unauthorized"
+      },
+      {
+        "keyword": "senior pet care assistance",
+        "position": null,
+        "error": "HTTP Error 401: Unauthorized"
+      },
+      {
+        "keyword": "low income veterinary help",
+        "position": null,
+        "error": "HTTP Error 401: Unauthorized"
+      },
+      {
+        "keyword": "pet trust fund",
+        "position": null,
+        "error": "HTTP Error 401: Unauthorized"
+      }
+    ],
+    "summary": {
+      "pagespeed_mobile": null,
+      "pagespeed_desktop": null,
+      "cwv_pass": null,
+      "organic_clicks_30d": 0,
+      "avg_position": null,
+      "keywords_tracked": 5,
+      "keywords_ranked": 0,
+      "keywords_top10": 0,
+      "in_local_pack": false,
+      "sc_impressions_30d": 0,
+      "sc_avg_position": null
+    }
+  },
+  "humane-society-nw-montana": {
+    "client": "Humane Society of Northwest Montana",
+    "slug": "humane-society-nw-montana",
+    "website": "https://flatheadhumanesociety.org",
+    "fetched_at": "2026-04-06T21:33:25.990064",
+    "pagespeed_mobile": {
+      "strategy": "mobile",
+      "performance_score": null,
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    "pagespeed_desktop": {
+      "strategy": "desktop",
+      "performance_score": null,
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    "search_console": {},
+    "keyword_rankings": [
+      {
+        "keyword": "humane society kalispell",
+        "position": null,
+        "error": "HTTP Error 401: Unauthorized"
+      },
+      {
+        "keyword": "animal shelter northwest montana",
+        "position": null,
+        "error": "HTTP Error 401: Unauthorized"
+      },
+      {
+        "keyword": "adopt dog kalispell mt",
+        "position": null,
+        "error": "HTTP Error 401: Unauthorized"
+      },
+      {
+        "keyword": "flathead humane society",
+        "position": null,
+        "error": "HTTP Error 401: Unauthorized"
+      },
+      {
+        "keyword": "montana pet adoption",
+        "position": null,
+        "error": "HTTP Error 401: Unauthorized"
+      }
+    ],
+    "summary": {
+      "pagespeed_mobile": null,
+      "pagespeed_desktop": null,
+      "cwv_pass": null,
+      "organic_clicks_30d": 0,
+      "avg_position": null,
+      "keywords_tracked": 5,
+      "keywords_ranked": 0,
+      "keywords_top10": 0,
+      "in_local_pack": false,
+      "sc_impressions_30d": 0,
+      "sc_avg_position": null
+    }
+  },
+  "_meta": {
+    "fetched_at": "2026-04-06T21:33:22.764435",
+    "clients_fetched": 2,
+    "pagespeed_only": false
+  }
+}
