@@ -312,7 +312,7 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
             continue
 
         rows30 = WINDSOR_CACHE.get(acct, [])
-        rows7  = rows30  # differentiated date range coming in next sprint
+        rows7  = WINDSOR_CACHE.get(f"{acct}_7d", [])
         ga4    = GA4_CACHE.get(slug)
         seo    = SEO_CACHE.get(slug) if client.get("local_seo_enrolled") else None
 
