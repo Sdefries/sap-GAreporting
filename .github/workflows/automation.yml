@@ -80,11 +80,10 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: pip install requests google-auth google-auth-httplib2 pyyaml
+        run: pip install google-analytics-data
       - name: Fetch GA4 data for all clients
         env:
-          WINDSOR_API_KEY: ${{ secrets.WINDSOR_API_KEY }}
-          GOOGLE_ADS_YAML: ${{ secrets.GOOGLE_ADS_YAML }}
+          GA_SERVICE_ACCOUNT: ${{ secrets.GA_SERVICE_ACCOUNT }}
         run: python fetch_ga4.py
       - name: Commit GA4 cache
         run: |
