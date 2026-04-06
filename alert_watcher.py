@@ -4,9 +4,9 @@ alert_watcher.py
 SAP Ad Grants alert system. Runs twice daily via GitHub Actions.
 
 DATA SOURCE
-  Reads from windsor_cache.json — pre-built by the automation.yml
+  Reads from google_ads_cache.json — pre-built by the automation.yml
   workflow step that calls generate_cache.py before this script runs.
-  No Windsor REST API calls. No auth issues. Clean and fast.
+  No Google Ads API REST API calls. No auth issues. Clean and fast.
 
 ALERTS
   Milestone (positive)
@@ -57,12 +57,12 @@ GRANT_MAX = 10000.0
 # ── DATA LOADING ──────────────────────────────────────────────────────────
 
 def load_cache() -> dict:
-    """Load windsor_cache.json. Exits if missing — workflow must build it first."""
-    if not os.path.exists("windsor_cache.json"):
-        print("ERROR: windsor_cache.json not found.")
+    """Load google_ads_cache.json. Exits if missing — workflow must build it first."""
+    if not os.path.exists("google_ads_cache.json"):
+        print("ERROR: google_ads_cache.json not found.")
         print("The generate_cache.py step must run before alert_watcher.py.")
         raise SystemExit(1)
-    with open("windsor_cache.json") as f:
+    with open("google_ads_cache.json") as f:
         data = json.load(f)
     meta = data.get("_meta", {})
     print(f"  Cache loaded: {meta.get('account_count')} accounts, "
@@ -176,7 +176,7 @@ def check_critical(client: dict, summary: dict) -> list:
             "type": "critical", "level": "no_data", "client": name,
             "slack_msg": (
                 f":black_circle: *No data — {name}*\n"
-                f"> Windsor returned no data. Account may be suspended."
+                f"> Google Ads API returned no data. Account may be suspended."
             ),
         })
         return alerts
