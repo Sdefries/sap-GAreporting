@@ -42,7 +42,6 @@ jobs:
         run: pip install requests google-auth google-auth-httplib2
       - name: Run alert watcher
         env:
-          WINDSOR_API_KEY: ${{ secrets.WINDSOR_API_KEY }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
         run: python alert_watcher.py
@@ -63,7 +62,6 @@ jobs:
         run: pip install requests
       - name: Run Slack digest
         env:
-          WINDSOR_API_KEY: ${{ secrets.WINDSOR_API_KEY }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run: python slack_digest.py
 
@@ -142,7 +140,6 @@ jobs:
         run: python fetch_google_ads.py
       - name: Generate all client reports v2
         env:
-          WINDSOR_API_KEY: ${{ secrets.WINDSOR_API_KEY }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
         run: python generate_reports_v2.py
