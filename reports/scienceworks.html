@@ -212,6 +212,45 @@ tr:hover td{background:#F5F9FF}
 .tag-action{background:#E3F2FF;color:#0060A0}
 .tag-watch{background:#FEF6E6;color:#9A6010}
 .tag-win{background:#E4F7ED;color:#1A6E3E}
+
+/* SEO Section */
+.seo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.seo-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px 20px;text-align:center}
+.seo-card.wide{grid-column:span 2}
+.seo-card.full{grid-column:span 4}
+.seo-icon{font-size:24px;margin-bottom:8px}
+.seo-label{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.seo-value{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-1px}
+.seo-value.green{color:var(--green)}
+.seo-value.amber{color:var(--amber)}
+.seo-value.red{color:var(--red)}
+.seo-sub{font-size:11px;color:var(--gray-400);margin-top:4px}
+.seo-bar{height:6px;background:var(--gray-100);border-radius:3px;margin-top:10px;overflow:hidden}
+.seo-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.seo-fill.green{background:var(--green)}
+.seo-fill.amber{background:var(--amber)}
+.seo-fill.red{background:var(--red)}
+.seo-queries{display:flex;flex-direction:column;gap:8px;text-align:left;margin-top:10px}
+.seo-query-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--gray-100);border-radius:8px}
+.seo-query-term{font-size:12px;font-weight:600;color:var(--navy)}
+.seo-query-stats{display:flex;gap:16px}
+.seo-query-stat{font-size:11px;color:var(--gray-600)}
+.seo-query-stat strong{color:var(--navy)}
+
+/* SEO Locked State */
+.seo-locked{position:relative;min-height:280px}
+.seo-locked-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,43,91,0.03) 0%,rgba(0,131,198,0.06) 100%);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:10;backdrop-filter:blur(2px)}
+.seo-locked-icon{font-size:48px;margin-bottom:16px;opacity:0.6}
+.seo-locked-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.seo-locked-desc{font-size:13px;color:var(--gray-600);max-width:360px;line-height:1.6;margin-bottom:20px}
+.seo-locked-features{display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap;justify-content:center}
+.seo-locked-feature{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-600)}
+.seo-locked-feature::before{content:'✓';color:var(--green);font-weight:700}
+.seo-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
+.seo-unlock-btn:hover{background:#006AA3;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,131,198,0.3)}
+.seo-locked-bg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;opacity:0.15;filter:blur(1px);pointer-events:none}
+.seo-locked-bg .seo-card{background:var(--gray-100);border:1px dashed var(--border)}
+
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
@@ -253,7 +292,7 @@ tr:hover td{background:#F5F9FF}
 <nav class="sidebar">
   <div class="sb-head">
     <div class="sb-brand">
-      <img src="logo.png" alt="Sponsor a Purpose" class="sb-logo">
+      <img src="../logo.png" alt="Sponsor a Purpose" class="sb-logo">
     </div>
     <div class="sb-tag" style="margin-top:8px">Ad Grants Reporting</div>
   </div>
@@ -280,6 +319,7 @@ tr:hover td{background:#F5F9FF}
     <a href="#sec-landing"><span class="dot"></span>Landing pages</a>
     <a href="#sec-location"><span class="dot"></span>Location</a>
     <a href="#sec-visibility"><span class="dot"></span>Visibility</a>
+    <a href="#sec-seo"><span class="dot"></span>SEO</a>
     <a href="#sec-actions"><span class="dot"></span>What we did</a>
     <a href="#sec-insights"><span class="dot"></span>Recommendations</a>
   </div>
@@ -507,6 +547,17 @@ tr:hover td{background:#F5F9FF}
       <div class="isg" id="visibilityGrid"></div>
     </div>
 
+    <!-- SEO -->
+    <div class="section" id="sec-seo">
+      <div class="sh">
+        <div class="sh-title">SEO Performance</div>
+        <div class="sh-sub" id="seoSubtitle">Organic search &amp; site speed</div>
+      </div>
+      <div id="seoContent">
+        <!-- JS will populate based on enrollment status -->
+      </div>
+    </div>
+
     <!-- ACTIONS -->
     <div class="section" id="sec-actions">
       <div class="sh">
@@ -540,7 +591,7 @@ tr:hover td{background:#F5F9FF}
 
   <div class="pf">
     <div class="pf-l" id="pfDate">Data via Google Ads API</div>
-    <img src="logo.png" alt="Sponsor a Purpose" class="pf-logo">
+    <img src="../logo.png" alt="Sponsor a Purpose" class="pf-logo">
   </div>
 </div>
 </div>
@@ -744,25 +795,186 @@ function render(){
   }
 
   // Visibility
-  document.getElementById('visibilityGrid').innerHTML=`
+  // Visibility section — use real impression share data
+  const impShare = t.impressionShare;
+  const lostBudget = t.lostIsBudget;
+  const lostRank = t.lostIsRank;
+  
+  // Build visibility cards only if we have data
+  let visCards = '';
+  
+  if (impShare !== null && impShare !== undefined) {
+    const isColor = impShare >= 20 ? 'var(--green)' : impShare >= 10 ? 'var(--amber)' : 'var(--red)';
+    const isNote = impShare >= 30 ? 'Strong visibility in eligible auctions.' :
+                   impShare >= 15 ? 'Moderate visibility — room for growth.' :
+                   'Low visibility — significant growth opportunity available.';
+    visCards += `
     <div class="isc">
       <div class="isl">Search impression share</div>
-      <div class="isbb"><div class="isbf" style="width:10%;background:var(--blue)"></div></div>
-      <div class="isv">~10%</div>
-      <div class="isn">Winning ~10% of eligible auctions. Significant growth opportunity available.</div>
-    </div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(impShare,100)}%;background:${isColor}"></div></div>
+      <div class="isv">${impShare.toFixed(1)}%</div>
+      <div class="isn">${isNote}</div>
+    </div>`;
+  }
+  
+  if (lostRank !== null && lostRank !== undefined) {
+    const lrColor = lostRank <= 20 ? 'var(--green)' : lostRank <= 50 ? 'var(--amber)' : 'var(--red)';
+    const lrNote = lostRank <= 20 ? 'Excellent ad quality — minimal loss to rank.' :
+                   lostRank <= 40 ? 'Moderate loss — improve keyword relevance and ad strength.' :
+                   'High loss to ad rank — focus on quality score and relevance.';
+    visCards += `
     <div class="isc">
       <div class="isl">Lost IS — Ad Rank</div>
-      <div class="isbb"><div class="isbf" style="width:58%;background:var(--red)"></div></div>
-      <div class="isv">~58%</div>
-      <div class="isn">Lost to quality/bid — improve keyword relevance and ad strength.</div>
-    </div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(lostRank,100)}%;background:${lrColor}"></div></div>
+      <div class="isv">${lostRank.toFixed(1)}%</div>
+      <div class="isn">${lrNote}</div>
+    </div>`;
+  }
+  
+  if (lostBudget !== null && lostBudget !== undefined) {
+    const lbColor = lostBudget <= 10 ? 'var(--green)' : lostBudget <= 30 ? 'var(--amber)' : 'var(--red)';
+    const lbNote = lostBudget <= 10 ? 'Budget is not the primary constraint — focus on ad quality.' :
+                   lostBudget <= 30 ? 'Some budget constraints — consider reallocating from low performers.' :
+                   'Significant budget limitation — review daily caps and prioritize top campaigns.';
+    visCards += `
     <div class="isc">
       <div class="isl">Lost IS — Budget</div>
-      <div class="isbb"><div class="isbf" style="width:8%;background:var(--amber)"></div></div>
-      <div class="isv">&lt;10%</div>
-      <div class="isn">Budget is not the primary constraint — focus on ad quality.</div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(lostBudget,100)}%;background:${lbColor}"></div></div>
+      <div class="isv">${lostBudget.toFixed(1)}%</div>
+      <div class="isn">${lbNote}</div>
     </div>`;
+  }
+  
+  // If no impression share data available, show placeholder message
+  if (!visCards) {
+    visCards = `
+    <div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666;">
+      <div style="font-size:14px;">Impression share data not available for this period.</div>
+      <div style="font-size:12px;margin-top:8px;">This data requires Standard API access — coming soon.</div>
+    </div>`;
+  }
+  
+  document.getElementById('visibilityGrid').innerHTML = visCards;
+
+  // SEO Section
+  const seoContainer = document.getElementById('seoContent');
+  const seoEnrolled = window.CLIENT_DATA?.seo_enrolled || false;
+  const seoData = window.CLIENT_DATA?.seo || null;
+  
+  if (seoEnrolled && seoData && seoData.enrolled) {
+    // Enrolled client with data - show full SEO metrics
+    const ps = seoData.pagespeed_mobile || 0;
+    const psDesk = seoData.pagespeed_desktop || 0;
+    const seoScore = seoData.seo_score || 0;
+    const cwvPass = seoData.cwv_pass;
+    const orgClicks = seoData.organic_clicks || 0;
+    const orgImps = seoData.organic_impressions || 0;
+    const avgPos = seoData.avg_position;
+    const topQueries = seoData.top_queries || [];
+    
+    const psColor = ps >= 90 ? 'green' : ps >= 50 ? 'amber' : 'red';
+    const seoColor = seoScore >= 90 ? 'green' : seoScore >= 50 ? 'amber' : 'red';
+    
+    let queriesHTML = '';
+    if (topQueries.length > 0) {
+      queriesHTML = '<div class="seo-queries">';
+      topQueries.slice(0, 5).forEach(q => {
+        queriesHTML += `
+          <div class="seo-query-row">
+            <span class="seo-query-term">${q.query || q.keyword || ''}</span>
+            <div class="seo-query-stats">
+              <span class="seo-query-stat"><strong>${fmtN(q.clicks || 0)}</strong> clicks</span>
+              <span class="seo-query-stat"><strong>${fmtN(q.impressions || 0)}</strong> impr</span>
+              <span class="seo-query-stat">Pos <strong>${(q.position || 0).toFixed(1)}</strong></span>
+            </div>
+          </div>`;
+      });
+      queriesHTML += '</div>';
+    }
+    
+    seoContainer.innerHTML = `
+      <div class="seo-grid">
+        <div class="seo-card">
+          <div class="seo-icon">📱</div>
+          <div class="seo-label">Mobile Speed</div>
+          <div class="seo-value ${psColor}">${ps}</div>
+          <div class="seo-bar"><div class="seo-fill ${psColor}" style="width:${ps}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">💻</div>
+          <div class="seo-label">Desktop Speed</div>
+          <div class="seo-value ${psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red'}">${psDesk}</div>
+          <div class="seo-bar"><div class="seo-fill ${psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red'}" style="width:${psDesk}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">🔍</div>
+          <div class="seo-label">SEO Score</div>
+          <div class="seo-value ${seoColor}">${seoScore}</div>
+          <div class="seo-bar"><div class="seo-fill ${seoColor}" style="width:${seoScore}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">${cwvPass ? '✅' : '⚠️'}</div>
+          <div class="seo-label">Core Web Vitals</div>
+          <div class="seo-value" style="font-size:18px;color:${cwvPass ? 'var(--green)' : 'var(--amber)'}">${cwvPass ? 'Passing' : 'Needs Work'}</div>
+          <div class="seo-sub">${seoData.lcp || '—'} LCP · ${seoData.cls || '—'} CLS</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-icon">🔎</div>
+          <div class="seo-label">Organic Clicks (30d)</div>
+          <div class="seo-value">${fmtN(orgClicks)}</div>
+          <div class="seo-sub">${fmtN(orgImps)} impressions · Avg position ${avgPos ? avgPos.toFixed(1) : '—'}</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-label" style="margin-bottom:10px">Top Search Queries</div>
+          ${queriesHTML || '<div class="seo-sub">No query data available yet</div>'}
+        </div>
+      </div>
+    `;
+    document.getElementById('seoSubtitle').textContent = 'Organic search & site speed · Last updated ' + (seoData.fetched_at ? new Date(seoData.fetched_at).toLocaleDateString() : 'recently');
+  } else {
+    // Not enrolled - show fields with N/A and upsell note
+    seoContainer.innerHTML = `
+      <div class="seo-grid" style="opacity:0.5;">
+        <div class="seo-card">
+          <div class="seo-icon">📱</div>
+          <div class="seo-label">Mobile Speed</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">💻</div>
+          <div class="seo-label">Desktop Speed</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">🔍</div>
+          <div class="seo-label">SEO Score</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">📊</div>
+          <div class="seo-label">Core Web Vitals</div>
+          <div class="seo-value" style="font-size:18px;color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-icon">🔎</div>
+          <div class="seo-label">Organic Clicks (30d)</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-label">Top Search Queries</div>
+          <div class="seo-value" style="font-size:16px;color:var(--gray-400);margin-top:12px">N/A</div>
+        </div>
+      </div>
+      <div style="background:var(--gray-100);border-radius:var(--radius-sm);padding:16px 20px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--navy);margin-bottom:4px;">Interested in SEO insights?</div>
+          <div style="font-size:12px;color:var(--gray-600);">PageSpeed scores, keyword rankings, and organic traffic data are available as part of our SEO package.</div>
+        </div>
+        <a href="mailto:scott@sponsorapurpose.org?subject=SEO%20Package%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">Learn More</a>
+      </div>
+    `;
+    document.getElementById('seoSubtitle').textContent = 'Available with SEO package';
+  }
 
   updateSidebarActive();
 }
@@ -880,7 +1092,7 @@ function initClient(){
 }
 
 function updateSidebarActive(){
-  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-audience','sec-landing','sec-location','sec-visibility','sec-actions','sec-insights'];
+  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-audience','sec-landing','sec-location','sec-visibility','sec-seo','sec-actions','sec-insights'];
   const links=document.querySelectorAll('.sb-nav a');
   function check(){
     let cur=ids[0];
@@ -906,11 +1118,11 @@ window.addEventListener('load',()=>{
 
 <script>
 // Injected by generate_reports_v2.py — ScienceWorks Grant Account (932-847-2468) — 2026-04-06
-window.CLIENT_DATA = {"slug": "scienceworks", "name": "ScienceWorks Grant Account", "account_id": "932-847-2468", "website": "https://scienceworksmuseum.org", "org_model": "location_based", "animal_type": null, "report_date": "April 06, 2026", "gps": 68, "gps_components": {"ctr": 87, "utilization": 7, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 164.0, "im": 1019.0, "cost": 699.19, "cv": 3.0, "ctr": 16.09, "cpc": 4.26, "costPerConv": 233.06, "convRate": 1.83}, "totals_7d": {"cl": 32.0, "im": 213.0, "cost": 131.72, "cv": 1.0, "ctr": 15.02, "cpc": 4.12, "costPerConv": 131.72, "convRate": 3.12}, "insights": [{"color": "green", "tag": "win", "title": "Exceptional CTR \u2014 16.1%", "body": "Your campaigns are achieving 16.1% CTR \u2014 well above the industry average. Strong ad relevance and keyword targeting."}, {"color": "red", "tag": "action", "title": "Grant severely under-utilized \u2014 7%", "body": "Only $699 of the $10,000 monthly grant is being used. Significant opportunity to build more campaigns."}, {"color": "green", "tag": "win", "title": "3 conversions tracked at $233.06 CPA", "body": "Campaigns recorded 3 conversions this month at $233.06 per conversion."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 68/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/", "sessions": "2644", "averageSessionDuration": "206.26480213313158", "bounceRate": "0.074508320726172472", "engagementRate": "0.92549167927382758", "conversions": "27"}, {"landingPage": "/camps", "sessions": "558", "averageSessionDuration": "101.31507598924732", "bounceRate": "0.13082437275985664", "engagementRate": "0.86917562724014341", "conversions": "2"}, {"landingPage": "/events", "sessions": "499", "averageSessionDuration": "57.954083615230452", "bounceRate": "0.13026052104208416", "engagementRate": "0.86973947895791581", "conversions": "0"}, {"landingPage": "/museumlab", "sessions": "333", "averageSessionDuration": "70.2863084984985", "bounceRate": "0.12912912912912913", "engagementRate": "0.87087087087087089", "conversions": "0"}, {"landingPage": "/visit", "sessions": "316", "averageSessionDuration": "156.95756147468353", "bounceRate": "0.12341772151898735", "engagementRate": "0.87658227848101267", "conversions": "0"}, {"landingPage": "/np/clients/scienceworksmuseum/tellFriend.jsp", "sessions": "302", "averageSessionDuration": "22.350895877483442", "bounceRate": "0.11258278145695365", "engagementRate": "0.88741721854304634", "conversions": "0"}, {"landingPage": "/earth-day", "sessions": "269", "averageSessionDuration": "389.20284023791822", "bounceRate": "0.089219330855018583", "engagementRate": "0.91078066914498146", "conversions": "0"}, {"landingPage": "(not set)", "sessions": "266", "averageSessionDuration": "4.0105893308270675", "bounceRate": "0.96240601503759393", "engagementRate": "0.037593984962406013", "conversions": "0"}, {"landingPage": "/sparking-action", "sessions": "162", "averageSessionDuration": "267.56213931481477", "bounceRate": "0.12962962962962962", "engagementRate": "0.87037037037037035", "conversions": "0"}, {"landingPage": "/calling-all-food-trucks", "sessions": "130", "averageSessionDuration": "9.5796043461538467", "bounceRate": "0.15384615384615385", "engagementRate": "0.84615384615384615", "conversions": "0"}], "ga4_states": [{"region": "Oregon", "sessions": "3411", "totalUsers": "2446"}, {"region": "California", "sessions": "1218", "totalUsers": "949"}, {"region": "Washington", "sessions": "437", "totalUsers": "370"}, {"region": "Alabama", "sessions": "168", "totalUsers": "166"}, {"region": "Nevada", "sessions": "159", "totalUsers": "143"}, {"region": "Saint Petersburg", "sessions": "109", "totalUsers": "109"}, {"region": "Texas", "sessions": "108", "totalUsers": "95"}, {"region": "Illinois", "sessions": "92", "totalUsers": "20"}, {"region": "Gansu", "sessions": "77", "totalUsers": "77"}, {"region": "Iowa", "sessions": "70", "totalUsers": "69"}], "ga4_cities": [{"city": "Medford", "sessions": "1150", "totalUsers": "908"}, {"city": "Ashland", "sessions": "865", "totalUsers": "451"}, {"city": "Portland", "sessions": "393", "totalUsers": "329"}, {"city": "Singapore", "sessions": "348", "totalUsers": "349"}, {"city": "Central Point", "sessions": "154", "totalUsers": "117"}, {"city": "Birmingham", "sessions": "153", "totalUsers": "151"}, {"city": "San Jose", "sessions": "151", "totalUsers": "129"}, {"city": "Grants Pass", "sessions": "113", "totalUsers": "94"}, {"city": "Saint Petersburg", "sessions": "109", "totalUsers": "109"}, {"city": "Los Angeles", "sessions": "102", "totalUsers": "94"}]};
-window.REPORT_DATA = {'30d':{totals:{cl:164.0,im:1019.0,ctr:16.09,cost:699.19,cv:3.0,cpc:4.26,costPerConv:233.06,convRate:1.83},campaigns:[{n:"P Max Camps",s:"ENABLED",ctr:14.08,cl:96.0,im:682.0,cost:415.07,cv:1.0,cpc:4.32,cpa:415.07},{n:"P Max MemberShip",s:"ENABLED",ctr:23.15,cl:25.0,im:108.0,cost:80.67,cv:0,cpc:3.23,cpa:null},{n:"P Max Birthday Venue Rentals",s:"ENABLED",ctr:18.9,cl:24.0,im:127.0,cost:143.98,cv:1.0,cpc:6.0,cpa:143.98},{n:"Book Your Next Event - v2",s:"ENABLED",ctr:19.0,cl:19.0,im:100.0,cost:59.48,cv:1.0,cpc:3.13,cpa:59.48},{n:"General Awareness Campaign-Improve keywords",s:"ENABLED",ctr:0,cl:0,im:2.0,cost:0,cv:0,cpc:0,cpa:null},{n:"Robotics Program Fundraising #2",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Camps Campaign",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Book Your Next Event",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Field Trips",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search - MemberShips",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-General Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 08", "Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[3, 5, 7, 5, 5, 7, 5, 5, 5, 7, 5, 5, 7, 5, 5, 7, 5, 5, 5, 7, 5, 5, 7, 5, 5, 7, 5, 5, 7, 5],convs:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],spend:[13.98, 20.98, 27.97, 20.98, 20.98, 27.97, 20.98, 20.98, 20.98, 27.97, 20.98, 20.98, 27.97, 20.98, 20.98, 27.97, 20.98, 20.98, 20.98, 27.97, 20.98, 20.98, 27.97, 20.98, 20.98, 27.97, 20.98, 20.98, 27.97, 20.98],cpc:[4.66, 4.2, 4.0, 4.2, 4.2, 4.0, 4.2, 4.2, 4.2, 4.0, 4.2, 4.2, 4.0, 4.2, 4.2, 4.0, 4.2, 4.2, 4.2, 4.0, 4.2, 4.2, 4.0, 4.2, 4.2, 4.0, 4.2, 4.2, 4.0, 4.2]},devices:[{n:'Desktop',cl:107,im:662,cost:454.47,cv:2,cvRate:0},{n:'Mobile',cl:52,im:326,cost:223.74,cv:1,cvRate:0},{n:'Tablet',cl:5,im:31,cost:20.98,cv:0,cvRate:0}]},'7d':{totals:{cl:32.0,im:213.0,ctr:15.02,cost:131.72,cv:1.0,cpc:4.12,costPerConv:131.72,convRate:3.12},campaigns:[{n:"P Max Camps",s:"ENABLED",ctr:8.7,cl:12.0,im:138.0,cost:56.97,cv:0,cpc:4.75,cpa:null},{n:"P Max Birthday Venue Rentals",s:"ENABLED",ctr:30.0,cl:9.0,im:30.0,cost:48.67,cv:0,cpc:5.41,cpa:null},{n:"P Max MemberShip",s:"ENABLED",ctr:23.33,cl:7.0,im:30.0,cost:23.07,cv:0,cpc:3.3,cpa:null},{n:"Book Your Next Event - v2",s:"ENABLED",ctr:26.67,cl:4.0,im:15.0,cost:3.0,cv:1.0,cpc:0.75,cpa:3.0},{n:"General Awareness Campaign-Improve keywords",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Robotics Program Fundraising #2",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Camps Campaign",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Book Your Next Event",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Field Trips",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search - MemberShips",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-General Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[4, 5, 4, 4, 5, 4, 5],convs:[0, 0, 0, 0, 0, 0, 0],spend:[15.81, 21.08, 17.12, 18.44, 19.76, 17.12, 22.39],cpc:[3.95, 4.22, 4.28, 4.61, 3.95, 4.28, 4.48]},devices:[{n:'Desktop',cl:21,im:138,cost:85.62,cv:1,cvRate:0},{n:'Mobile',cl:10,im:68,cost:42.15,cv:0,cvRate:0},{n:'Tablet',cl:1,im:6,cost:3.95,cv:0,cvRate:0}]}};
-window.LP_DATA     = [{"page": "/", "sessions": 2644, "pct": 61, "avgTime": "206s", "engaged": true, "convs": 27}, {"page": "/camps", "sessions": 558, "pct": 13, "avgTime": "101s", "engaged": true, "convs": 2}, {"page": "/events", "sessions": 499, "pct": 11, "avgTime": "57s", "engaged": true, "convs": 0}, {"page": "/museumlab", "sessions": 333, "pct": 8, "avgTime": "70s", "engaged": true, "convs": 0}, {"page": "/visit", "sessions": 316, "pct": 7, "avgTime": "156s", "engaged": true, "convs": 0}];
-window.STATE_DATA  = [{"state": "Oregon", "sessions": 3411, "pct": 58}, {"state": "California", "sessions": 1218, "pct": 21}, {"state": "Washington", "sessions": 437, "pct": 7}, {"state": "Alabama", "sessions": 168, "pct": 3}, {"state": "Nevada", "sessions": 159, "pct": 3}, {"state": "Saint Petersburg", "sessions": 109, "pct": 2}, {"state": "Texas", "sessions": 108, "pct": 2}, {"state": "Illinois", "sessions": 92, "pct": 2}, {"state": "Gansu", "sessions": 77, "pct": 1}, {"state": "Iowa", "sessions": 70, "pct": 1}];
-window.CITY_DATA   = [{"city": "Medford", "state": "", "sessions": 1150}, {"city": "Ashland", "state": "", "sessions": 865}, {"city": "Portland", "state": "", "sessions": 393}, {"city": "Singapore", "state": "", "sessions": 348}, {"city": "Central Point", "state": "", "sessions": 154}, {"city": "Birmingham", "state": "", "sessions": 153}, {"city": "San Jose", "state": "", "sessions": 151}, {"city": "Grants Pass", "state": "", "sessions": 113}, {"city": "Saint Petersburg", "state": "", "sessions": 109}, {"city": "Los Angeles", "state": "", "sessions": 102}];
+window.CLIENT_DATA = {"slug": "scienceworks", "name": "ScienceWorks Grant Account", "account_id": "932-847-2468", "website": "https://scienceworksmuseum.org", "org_model": "location_based", "animal_type": null, "report_date": "April 06, 2026", "gps": 67, "gps_components": {"ctr": 87, "utilization": 6, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 162.0, "im": 1008.0, "cost": 647.76, "cv": 3.0, "ctr": 16.07, "cpc": 4.0, "costPerConv": 215.92, "convRate": 1.85, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "totals_7d": {"cl": 31.0, "im": 206.0, "cost": 112.49, "cv": 1.0, "ctr": 15.05, "cpc": 3.63, "costPerConv": 112.49, "convRate": 3.23, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "insights": [{"color": "green", "tag": "win", "title": "Exceptional CTR \u2014 16.1%", "body": "Your campaigns are achieving 16.1% CTR \u2014 well above the industry average. Strong ad relevance and keyword targeting."}, {"color": "red", "tag": "action", "title": "Grant severely under-utilized \u2014 6%", "body": "Only $648 of the $10,000 monthly grant is being used. Significant opportunity to build more campaigns."}, {"color": "green", "tag": "win", "title": "3 conversions tracked at $215.92 CPA", "body": "Campaigns recorded 3 conversions this month at $215.92 per conversion."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 67/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/", "sessions": "2644", "averageSessionDuration": "206.27628496558245", "bounceRate": "0.074508320726172472", "engagementRate": "0.92549167927382758", "conversions": "27"}, {"landingPage": "/camps", "sessions": "559", "averageSessionDuration": "101.51715569588551", "bounceRate": "0.13237924865831843", "engagementRate": "0.8676207513416816", "conversions": "2"}, {"landingPage": "/events", "sessions": "499", "averageSessionDuration": "57.954083615230452", "bounceRate": "0.13026052104208416", "engagementRate": "0.86973947895791581", "conversions": "0"}, {"landingPage": "/museumlab", "sessions": "333", "averageSessionDuration": "70.2863084984985", "bounceRate": "0.12912912912912913", "engagementRate": "0.87087087087087089", "conversions": "0"}, {"landingPage": "/visit", "sessions": "316", "averageSessionDuration": "156.95756147468353", "bounceRate": "0.12341772151898735", "engagementRate": "0.87658227848101267", "conversions": "0"}, {"landingPage": "/np/clients/scienceworksmuseum/tellFriend.jsp", "sessions": "302", "averageSessionDuration": "22.350895877483442", "bounceRate": "0.11258278145695365", "engagementRate": "0.88741721854304634", "conversions": "0"}, {"landingPage": "/earth-day", "sessions": "269", "averageSessionDuration": "389.20284023791822", "bounceRate": "0.089219330855018583", "engagementRate": "0.91078066914498146", "conversions": "0"}, {"landingPage": "(not set)", "sessions": "266", "averageSessionDuration": "4.0105893308270675", "bounceRate": "0.96240601503759393", "engagementRate": "0.037593984962406013", "conversions": "0"}, {"landingPage": "/sparking-action", "sessions": "162", "averageSessionDuration": "267.56213931481477", "bounceRate": "0.12962962962962962", "engagementRate": "0.87037037037037035", "conversions": "0"}, {"landingPage": "/calling-all-food-trucks", "sessions": "130", "averageSessionDuration": "9.5796043461538467", "bounceRate": "0.15384615384615385", "engagementRate": "0.84615384615384615", "conversions": "0"}], "ga4_states": [{"region": "Oregon", "sessions": "3414", "totalUsers": "2446"}, {"region": "California", "sessions": "1218", "totalUsers": "949"}, {"region": "Washington", "sessions": "437", "totalUsers": "370"}, {"region": "Alabama", "sessions": "168", "totalUsers": "166"}, {"region": "Nevada", "sessions": "159", "totalUsers": "143"}, {"region": "Saint Petersburg", "sessions": "109", "totalUsers": "109"}, {"region": "Texas", "sessions": "108", "totalUsers": "95"}, {"region": "Illinois", "sessions": "93", "totalUsers": "20"}, {"region": "Gansu", "sessions": "77", "totalUsers": "77"}, {"region": "Iowa", "sessions": "70", "totalUsers": "69"}], "ga4_cities": [{"city": "Medford", "sessions": "1150", "totalUsers": "908"}, {"city": "Ashland", "sessions": "866", "totalUsers": "451"}, {"city": "Portland", "sessions": "393", "totalUsers": "329"}, {"city": "Singapore", "sessions": "348", "totalUsers": "349"}, {"city": "Central Point", "sessions": "155", "totalUsers": "118"}, {"city": "Birmingham", "sessions": "153", "totalUsers": "151"}, {"city": "San Jose", "sessions": "151", "totalUsers": "129"}, {"city": "Grants Pass", "sessions": "113", "totalUsers": "94"}, {"city": "Saint Petersburg", "sessions": "109", "totalUsers": "109"}, {"city": "Los Angeles", "sessions": "102", "totalUsers": "94"}], "seo_enrolled": false, "seo": null};
+window.REPORT_DATA = {'30d':{totals:{cl:162.0,im:1008.0,ctr:16.07,cost:647.76,cv:3.0,cpc:4.0,costPerConv:215.92,convRate:1.85},campaigns:[{n:"P Max Camps",s:"ENABLED",ctr:13.88,cl:93.0,im:670.0,cost:374.2,cv:1.0,cpc:4.02,cpa:374.2},{n:"P Max Birthday Venue Rentals",s:"ENABLED",ctr:19.85,cl:26.0,im:131.0,cost:153.37,cv:1.0,cpc:5.9,cpa:153.37},{n:"P Max MemberShip",s:"ENABLED",ctr:22.22,cl:24.0,im:108.0,cost:60.72,cv:0,cpc:2.53,cpa:null},{n:"Book Your Next Event - v2",s:"ENABLED",ctr:19.59,cl:19.0,im:97.0,cost:59.48,cv:1.0,cpc:3.13,cpa:59.48},{n:"General Awareness Campaign-Improve keywords",s:"ENABLED",ctr:0,cl:0,im:2.0,cost:0,cv:0,cpc:0,cpa:null},{n:"Robotics Program Fundraising #2",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Camps Campaign",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Book Your Next Event",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Field Trips",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search - MemberShips",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-General Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 08", "Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[3, 5, 6, 5, 5, 6, 5, 5, 5, 6, 5, 5, 6, 5, 5, 6, 5, 5, 5, 6, 5, 5, 6, 5, 5, 6, 5, 5, 6, 5],convs:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],spend:[12.96, 19.43, 25.91, 19.43, 19.43, 25.91, 19.43, 19.43, 19.43, 25.91, 19.43, 19.43, 25.91, 19.43, 19.43, 25.91, 19.43, 19.43, 19.43, 25.91, 19.43, 19.43, 25.91, 19.43, 19.43, 25.91, 19.43, 19.43, 25.91, 19.43],cpc:[4.32, 3.89, 4.32, 3.89, 3.89, 4.32, 3.89, 3.89, 3.89, 4.32, 3.89, 3.89, 4.32, 3.89, 3.89, 4.32, 3.89, 3.89, 3.89, 4.32, 3.89, 3.89, 4.32, 3.89, 3.89, 4.32, 3.89, 3.89, 4.32, 3.89]},devices:[{n:'Desktop',cl:105,im:655,cost:421.04,cv:2,cvRate:0},{n:'Mobile',cl:52,im:323,cost:207.28,cv:1,cvRate:0},{n:'Tablet',cl:5,im:30,cost:19.43,cv:0,cvRate:0}]},'7d':{totals:{cl:31.0,im:206.0,ctr:15.05,cost:112.49,cv:1.0,cpc:3.63,costPerConv:112.49,convRate:3.23},campaigns:[{n:"P Max Camps",s:"ENABLED",ctr:8.33,cl:11.0,im:132.0,cost:47.6,cv:0,cpc:4.33,cpa:null},{n:"P Max Birthday Venue Rentals",s:"ENABLED",ctr:35.48,cl:11.0,im:31.0,cost:58.06,cv:0,cpc:5.28,cpa:null},{n:"P Max MemberShip",s:"ENABLED",ctr:17.86,cl:5.0,im:28.0,cost:3.82,cv:0,cpc:0.76,cpa:null},{n:"Book Your Next Event - v2",s:"ENABLED",ctr:26.67,cl:4.0,im:15.0,cost:3.0,cv:1.0,cpc:0.75,cpa:3.0},{n:"General Awareness Campaign-Improve keywords",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Robotics Program Fundraising #2",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Camps Campaign",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Book Your Next Event",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Field Trips",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search - MemberShips",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-General Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[4, 5, 4, 4, 5, 4, 5],convs:[0, 0, 0, 0, 0, 0, 0],spend:[13.5, 18.0, 14.62, 15.75, 16.87, 14.62, 19.12],cpc:[3.38, 3.6, 3.65, 3.94, 3.37, 3.65, 3.82]},devices:[{n:'Desktop',cl:20,im:134,cost:73.12,cv:1,cvRate:0},{n:'Mobile',cl:10,im:66,cost:36.0,cv:0,cvRate:0},{n:'Tablet',cl:1,im:6,cost:3.37,cv:0,cvRate:0}]}};
+window.LP_DATA     = [{"page": "/", "sessions": 2644, "pct": 61, "avgTime": "206s", "engaged": true, "convs": 27}, {"page": "/camps", "sessions": 559, "pct": 13, "avgTime": "101s", "engaged": true, "convs": 2}, {"page": "/events", "sessions": 499, "pct": 11, "avgTime": "57s", "engaged": true, "convs": 0}, {"page": "/museumlab", "sessions": 333, "pct": 8, "avgTime": "70s", "engaged": true, "convs": 0}, {"page": "/visit", "sessions": 316, "pct": 7, "avgTime": "156s", "engaged": true, "convs": 0}];
+window.STATE_DATA  = [{"state": "Oregon", "sessions": 3414, "pct": 58}, {"state": "California", "sessions": 1218, "pct": 21}, {"state": "Washington", "sessions": 437, "pct": 7}, {"state": "Alabama", "sessions": 168, "pct": 3}, {"state": "Nevada", "sessions": 159, "pct": 3}, {"state": "Saint Petersburg", "sessions": 109, "pct": 2}, {"state": "Texas", "sessions": 108, "pct": 2}, {"state": "Illinois", "sessions": 93, "pct": 2}, {"state": "Gansu", "sessions": 77, "pct": 1}, {"state": "Iowa", "sessions": 70, "pct": 1}];
+window.CITY_DATA   = [{"city": "Medford", "state": "", "sessions": 1150}, {"city": "Ashland", "state": "", "sessions": 866}, {"city": "Portland", "state": "", "sessions": 393}, {"city": "Singapore", "state": "", "sessions": 348}, {"city": "Central Point", "state": "", "sessions": 155}, {"city": "Birmingham", "state": "", "sessions": 153}, {"city": "San Jose", "state": "", "sessions": 151}, {"city": "Grants Pass", "state": "", "sessions": 113}, {"city": "Saint Petersburg", "state": "", "sessions": 109}, {"city": "Los Angeles", "state": "", "sessions": 102}];
 </script>
 
 </body>

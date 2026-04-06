@@ -212,6 +212,45 @@ tr:hover td{background:#F5F9FF}
 .tag-action{background:#E3F2FF;color:#0060A0}
 .tag-watch{background:#FEF6E6;color:#9A6010}
 .tag-win{background:#E4F7ED;color:#1A6E3E}
+
+/* SEO Section */
+.seo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.seo-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px 20px;text-align:center}
+.seo-card.wide{grid-column:span 2}
+.seo-card.full{grid-column:span 4}
+.seo-icon{font-size:24px;margin-bottom:8px}
+.seo-label{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.seo-value{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-1px}
+.seo-value.green{color:var(--green)}
+.seo-value.amber{color:var(--amber)}
+.seo-value.red{color:var(--red)}
+.seo-sub{font-size:11px;color:var(--gray-400);margin-top:4px}
+.seo-bar{height:6px;background:var(--gray-100);border-radius:3px;margin-top:10px;overflow:hidden}
+.seo-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.seo-fill.green{background:var(--green)}
+.seo-fill.amber{background:var(--amber)}
+.seo-fill.red{background:var(--red)}
+.seo-queries{display:flex;flex-direction:column;gap:8px;text-align:left;margin-top:10px}
+.seo-query-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--gray-100);border-radius:8px}
+.seo-query-term{font-size:12px;font-weight:600;color:var(--navy)}
+.seo-query-stats{display:flex;gap:16px}
+.seo-query-stat{font-size:11px;color:var(--gray-600)}
+.seo-query-stat strong{color:var(--navy)}
+
+/* SEO Locked State */
+.seo-locked{position:relative;min-height:280px}
+.seo-locked-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,43,91,0.03) 0%,rgba(0,131,198,0.06) 100%);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:10;backdrop-filter:blur(2px)}
+.seo-locked-icon{font-size:48px;margin-bottom:16px;opacity:0.6}
+.seo-locked-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.seo-locked-desc{font-size:13px;color:var(--gray-600);max-width:360px;line-height:1.6;margin-bottom:20px}
+.seo-locked-features{display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap;justify-content:center}
+.seo-locked-feature{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-600)}
+.seo-locked-feature::before{content:'✓';color:var(--green);font-weight:700}
+.seo-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
+.seo-unlock-btn:hover{background:#006AA3;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,131,198,0.3)}
+.seo-locked-bg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;opacity:0.15;filter:blur(1px);pointer-events:none}
+.seo-locked-bg .seo-card{background:var(--gray-100);border:1px dashed var(--border)}
+
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
@@ -253,7 +292,7 @@ tr:hover td{background:#F5F9FF}
 <nav class="sidebar">
   <div class="sb-head">
     <div class="sb-brand">
-      <img src="logo.png" alt="Sponsor a Purpose" class="sb-logo">
+      <img src="../logo.png" alt="Sponsor a Purpose" class="sb-logo">
     </div>
     <div class="sb-tag" style="margin-top:8px">Ad Grants Reporting</div>
   </div>
@@ -280,6 +319,7 @@ tr:hover td{background:#F5F9FF}
     <a href="#sec-landing"><span class="dot"></span>Landing pages</a>
     <a href="#sec-location"><span class="dot"></span>Location</a>
     <a href="#sec-visibility"><span class="dot"></span>Visibility</a>
+    <a href="#sec-seo"><span class="dot"></span>SEO</a>
     <a href="#sec-actions"><span class="dot"></span>What we did</a>
     <a href="#sec-insights"><span class="dot"></span>Recommendations</a>
   </div>
@@ -507,6 +547,17 @@ tr:hover td{background:#F5F9FF}
       <div class="isg" id="visibilityGrid"></div>
     </div>
 
+    <!-- SEO -->
+    <div class="section" id="sec-seo">
+      <div class="sh">
+        <div class="sh-title">SEO Performance</div>
+        <div class="sh-sub" id="seoSubtitle">Organic search &amp; site speed</div>
+      </div>
+      <div id="seoContent">
+        <!-- JS will populate based on enrollment status -->
+      </div>
+    </div>
+
     <!-- ACTIONS -->
     <div class="section" id="sec-actions">
       <div class="sh">
@@ -540,7 +591,7 @@ tr:hover td{background:#F5F9FF}
 
   <div class="pf">
     <div class="pf-l" id="pfDate">Data via Google Ads API</div>
-    <img src="logo.png" alt="Sponsor a Purpose" class="pf-logo">
+    <img src="../logo.png" alt="Sponsor a Purpose" class="pf-logo">
   </div>
 </div>
 </div>
@@ -744,25 +795,186 @@ function render(){
   }
 
   // Visibility
-  document.getElementById('visibilityGrid').innerHTML=`
+  // Visibility section — use real impression share data
+  const impShare = t.impressionShare;
+  const lostBudget = t.lostIsBudget;
+  const lostRank = t.lostIsRank;
+  
+  // Build visibility cards only if we have data
+  let visCards = '';
+  
+  if (impShare !== null && impShare !== undefined) {
+    const isColor = impShare >= 20 ? 'var(--green)' : impShare >= 10 ? 'var(--amber)' : 'var(--red)';
+    const isNote = impShare >= 30 ? 'Strong visibility in eligible auctions.' :
+                   impShare >= 15 ? 'Moderate visibility — room for growth.' :
+                   'Low visibility — significant growth opportunity available.';
+    visCards += `
     <div class="isc">
       <div class="isl">Search impression share</div>
-      <div class="isbb"><div class="isbf" style="width:10%;background:var(--blue)"></div></div>
-      <div class="isv">~10%</div>
-      <div class="isn">Winning ~10% of eligible auctions. Significant growth opportunity available.</div>
-    </div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(impShare,100)}%;background:${isColor}"></div></div>
+      <div class="isv">${impShare.toFixed(1)}%</div>
+      <div class="isn">${isNote}</div>
+    </div>`;
+  }
+  
+  if (lostRank !== null && lostRank !== undefined) {
+    const lrColor = lostRank <= 20 ? 'var(--green)' : lostRank <= 50 ? 'var(--amber)' : 'var(--red)';
+    const lrNote = lostRank <= 20 ? 'Excellent ad quality — minimal loss to rank.' :
+                   lostRank <= 40 ? 'Moderate loss — improve keyword relevance and ad strength.' :
+                   'High loss to ad rank — focus on quality score and relevance.';
+    visCards += `
     <div class="isc">
       <div class="isl">Lost IS — Ad Rank</div>
-      <div class="isbb"><div class="isbf" style="width:58%;background:var(--red)"></div></div>
-      <div class="isv">~58%</div>
-      <div class="isn">Lost to quality/bid — improve keyword relevance and ad strength.</div>
-    </div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(lostRank,100)}%;background:${lrColor}"></div></div>
+      <div class="isv">${lostRank.toFixed(1)}%</div>
+      <div class="isn">${lrNote}</div>
+    </div>`;
+  }
+  
+  if (lostBudget !== null && lostBudget !== undefined) {
+    const lbColor = lostBudget <= 10 ? 'var(--green)' : lostBudget <= 30 ? 'var(--amber)' : 'var(--red)';
+    const lbNote = lostBudget <= 10 ? 'Budget is not the primary constraint — focus on ad quality.' :
+                   lostBudget <= 30 ? 'Some budget constraints — consider reallocating from low performers.' :
+                   'Significant budget limitation — review daily caps and prioritize top campaigns.';
+    visCards += `
     <div class="isc">
       <div class="isl">Lost IS — Budget</div>
-      <div class="isbb"><div class="isbf" style="width:8%;background:var(--amber)"></div></div>
-      <div class="isv">&lt;10%</div>
-      <div class="isn">Budget is not the primary constraint — focus on ad quality.</div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(lostBudget,100)}%;background:${lbColor}"></div></div>
+      <div class="isv">${lostBudget.toFixed(1)}%</div>
+      <div class="isn">${lbNote}</div>
     </div>`;
+  }
+  
+  // If no impression share data available, show placeholder message
+  if (!visCards) {
+    visCards = `
+    <div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666;">
+      <div style="font-size:14px;">Impression share data not available for this period.</div>
+      <div style="font-size:12px;margin-top:8px;">This data requires Standard API access — coming soon.</div>
+    </div>`;
+  }
+  
+  document.getElementById('visibilityGrid').innerHTML = visCards;
+
+  // SEO Section
+  const seoContainer = document.getElementById('seoContent');
+  const seoEnrolled = window.CLIENT_DATA?.seo_enrolled || false;
+  const seoData = window.CLIENT_DATA?.seo || null;
+  
+  if (seoEnrolled && seoData && seoData.enrolled) {
+    // Enrolled client with data - show full SEO metrics
+    const ps = seoData.pagespeed_mobile || 0;
+    const psDesk = seoData.pagespeed_desktop || 0;
+    const seoScore = seoData.seo_score || 0;
+    const cwvPass = seoData.cwv_pass;
+    const orgClicks = seoData.organic_clicks || 0;
+    const orgImps = seoData.organic_impressions || 0;
+    const avgPos = seoData.avg_position;
+    const topQueries = seoData.top_queries || [];
+    
+    const psColor = ps >= 90 ? 'green' : ps >= 50 ? 'amber' : 'red';
+    const seoColor = seoScore >= 90 ? 'green' : seoScore >= 50 ? 'amber' : 'red';
+    
+    let queriesHTML = '';
+    if (topQueries.length > 0) {
+      queriesHTML = '<div class="seo-queries">';
+      topQueries.slice(0, 5).forEach(q => {
+        queriesHTML += `
+          <div class="seo-query-row">
+            <span class="seo-query-term">${q.query || q.keyword || ''}</span>
+            <div class="seo-query-stats">
+              <span class="seo-query-stat"><strong>${fmtN(q.clicks || 0)}</strong> clicks</span>
+              <span class="seo-query-stat"><strong>${fmtN(q.impressions || 0)}</strong> impr</span>
+              <span class="seo-query-stat">Pos <strong>${(q.position || 0).toFixed(1)}</strong></span>
+            </div>
+          </div>`;
+      });
+      queriesHTML += '</div>';
+    }
+    
+    seoContainer.innerHTML = `
+      <div class="seo-grid">
+        <div class="seo-card">
+          <div class="seo-icon">📱</div>
+          <div class="seo-label">Mobile Speed</div>
+          <div class="seo-value ${psColor}">${ps}</div>
+          <div class="seo-bar"><div class="seo-fill ${psColor}" style="width:${ps}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">💻</div>
+          <div class="seo-label">Desktop Speed</div>
+          <div class="seo-value ${psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red'}">${psDesk}</div>
+          <div class="seo-bar"><div class="seo-fill ${psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red'}" style="width:${psDesk}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">🔍</div>
+          <div class="seo-label">SEO Score</div>
+          <div class="seo-value ${seoColor}">${seoScore}</div>
+          <div class="seo-bar"><div class="seo-fill ${seoColor}" style="width:${seoScore}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">${cwvPass ? '✅' : '⚠️'}</div>
+          <div class="seo-label">Core Web Vitals</div>
+          <div class="seo-value" style="font-size:18px;color:${cwvPass ? 'var(--green)' : 'var(--amber)'}">${cwvPass ? 'Passing' : 'Needs Work'}</div>
+          <div class="seo-sub">${seoData.lcp || '—'} LCP · ${seoData.cls || '—'} CLS</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-icon">🔎</div>
+          <div class="seo-label">Organic Clicks (30d)</div>
+          <div class="seo-value">${fmtN(orgClicks)}</div>
+          <div class="seo-sub">${fmtN(orgImps)} impressions · Avg position ${avgPos ? avgPos.toFixed(1) : '—'}</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-label" style="margin-bottom:10px">Top Search Queries</div>
+          ${queriesHTML || '<div class="seo-sub">No query data available yet</div>'}
+        </div>
+      </div>
+    `;
+    document.getElementById('seoSubtitle').textContent = 'Organic search & site speed · Last updated ' + (seoData.fetched_at ? new Date(seoData.fetched_at).toLocaleDateString() : 'recently');
+  } else {
+    // Not enrolled - show fields with N/A and upsell note
+    seoContainer.innerHTML = `
+      <div class="seo-grid" style="opacity:0.5;">
+        <div class="seo-card">
+          <div class="seo-icon">📱</div>
+          <div class="seo-label">Mobile Speed</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">💻</div>
+          <div class="seo-label">Desktop Speed</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">🔍</div>
+          <div class="seo-label">SEO Score</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">📊</div>
+          <div class="seo-label">Core Web Vitals</div>
+          <div class="seo-value" style="font-size:18px;color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-icon">🔎</div>
+          <div class="seo-label">Organic Clicks (30d)</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-label">Top Search Queries</div>
+          <div class="seo-value" style="font-size:16px;color:var(--gray-400);margin-top:12px">N/A</div>
+        </div>
+      </div>
+      <div style="background:var(--gray-100);border-radius:var(--radius-sm);padding:16px 20px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--navy);margin-bottom:4px;">Interested in SEO insights?</div>
+          <div style="font-size:12px;color:var(--gray-600);">PageSpeed scores, keyword rankings, and organic traffic data are available as part of our SEO package.</div>
+        </div>
+        <a href="mailto:scott@sponsorapurpose.org?subject=SEO%20Package%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">Learn More</a>
+      </div>
+    `;
+    document.getElementById('seoSubtitle').textContent = 'Available with SEO package';
+  }
 
   updateSidebarActive();
 }
@@ -880,7 +1092,7 @@ function initClient(){
 }
 
 function updateSidebarActive(){
-  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-audience','sec-landing','sec-location','sec-visibility','sec-actions','sec-insights'];
+  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-audience','sec-landing','sec-location','sec-visibility','sec-seo','sec-actions','sec-insights'];
   const links=document.querySelectorAll('.sb-nav a');
   function check(){
     let cur=ids[0];
@@ -906,8 +1118,8 @@ window.addEventListener('load',()=>{
 
 <script>
 // Injected by generate_reports_v2.py — The Earth Organization (312-145-7553) — 2026-04-06
-window.CLIENT_DATA = {"slug": "earth-organization", "name": "The Earth Organization", "account_id": "312-145-7553", "website": "", "org_model": "location_based", "animal_type": null, "report_date": "April 06, 2026", "gps": 43, "gps_components": {"ctr": 60, "utilization": 18, "conv_tracking": 0, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 105.0, "im": 1282.0, "cost": 1782.67, "cv": 0, "ctr": 8.19, "cpc": 16.98, "costPerConv": null, "convRate": 0.0}, "totals_7d": {"cl": 21.0, "im": 338.0, "cost": 334.71, "cv": 0, "ctr": 6.21, "cpc": 15.94, "costPerConv": null, "convRate": 0.0}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 8.2%", "body": "Account CTR is 8.2% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "red", "tag": "action", "title": "Grant severely under-utilized \u2014 18%", "body": "Only $1,783 of the $10,000 monthly grant is being used. Significant opportunity to build more campaigns."}, {"color": "amber", "tag": "watch", "title": "Conversion tracking needs review", "body": "Campaigns are spending grant budget but no conversions are being tracked. Verify GA4 event setup."}, {"color": "amber", "tag": "action", "title": "3 campaign(s) with no tracked conversions", "body": "General Awareness, P Max - Donate, PMax - Eco Safari \u2014 spending $1,783 combined with 0 conversions. Verify conversion tracking or pause."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 43/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "(not set)", "sessions": "1", "averageSessionDuration": "11.534606", "bounceRate": "0", "engagementRate": "1", "conversions": "0"}, {"landingPage": "/", "sessions": "1", "averageSessionDuration": "0", "bounceRate": "1", "engagementRate": "0", "conversions": "1"}], "ga4_states": [{"region": "Florida", "sessions": "1", "totalUsers": "1"}, {"region": "Georgia", "sessions": "1", "totalUsers": "1"}], "ga4_cities": []};
-window.REPORT_DATA = {'30d':{totals:{cl:105.0,im:1282.0,ctr:8.19,cost:1782.67,cv:0,cpc:16.98,costPerConv:0,convRate:0.0},campaigns:[{n:"General Awareness",s:"ENABLED",ctr:7.75,cl:85.0,im:1097.0,cost:1450.84,cv:0,cpc:17.07,cpa:null},{n:"P Max - Donate",s:"ENABLED",ctr:11.32,cl:12.0,im:106.0,cost:230.21,cv:0,cpc:19.18,cpa:null},{n:"PMax - Eco Safari",s:"ENABLED",ctr:10.13,cl:8.0,im:79.0,cost:101.63,cv:0,cpc:12.7,cpa:null},{n:"Search - Eco Safari",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 08", "Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[2, 3, 4, 3, 3, 4, 3, 3, 3, 4, 3, 3, 4, 3, 3, 4, 3, 3, 3, 4, 3, 3, 4, 3, 3, 4, 3, 3, 4, 3],convs:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],spend:[35.65, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48, 53.48, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48, 53.48, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48],cpc:[17.82, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83]},devices:[{n:'Desktop',cl:68,im:833,cost:1158.74,cv:0,cvRate:0},{n:'Mobile',cl:34,im:410,cost:570.45,cv:0,cvRate:0},{n:'Tablet',cl:3,im:38,cost:53.48,cv:0,cvRate:0}]},'7d':{totals:{cl:21.0,im:338.0,ctr:6.21,cost:334.71,cv:0,cpc:15.94,costPerConv:0,convRate:0.0},campaigns:[{n:"General Awareness",s:"ENABLED",ctr:6.49,cl:20.0,im:308.0,cost:325.12,cv:0,cpc:16.26,cpa:null},{n:"PMax - Eco Safari",s:"ENABLED",ctr:7.14,cl:1.0,im:14.0,cost:9.59,cv:0,cpc:9.59,cpa:null},{n:"P Max - Donate",s:"ENABLED",ctr:0,cl:0,im:16.0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search - Eco Safari",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[3, 3, 3, 3, 3, 3, 4],convs:[0, 0, 0, 0, 0, 0, 0],spend:[40.17, 53.55, 43.51, 46.86, 50.21, 43.51, 56.9],cpc:[13.39, 17.85, 14.5, 15.62, 16.74, 14.5, 14.22]},devices:[{n:'Desktop',cl:14,im:220,cost:217.56,cv:0,cvRate:0},{n:'Mobile',cl:7,im:108,cost:107.11,cv:0,cvRate:0},{n:'Tablet',cl:1,im:10,cost:10.04,cv:0,cvRate:0}]}};
+window.CLIENT_DATA = {"slug": "earth-organization", "name": "The Earth Organization", "account_id": "312-145-7553", "website": "", "org_model": "location_based", "animal_type": null, "report_date": "April 06, 2026", "gps": 43, "gps_components": {"ctr": 60, "utilization": 18, "conv_tracking": 0, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 105.0, "im": 1295.0, "cost": 1782.67, "cv": 0, "ctr": 8.11, "cpc": 16.98, "costPerConv": null, "convRate": 0.0, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "totals_7d": {"cl": 20.0, "im": 334.0, "cost": 323.57, "cv": 0, "ctr": 5.99, "cpc": 16.18, "costPerConv": null, "convRate": 0.0, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 8.1%", "body": "Account CTR is 8.1% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "red", "tag": "action", "title": "Grant severely under-utilized \u2014 18%", "body": "Only $1,783 of the $10,000 monthly grant is being used. Significant opportunity to build more campaigns."}, {"color": "amber", "tag": "watch", "title": "Conversion tracking needs review", "body": "Campaigns are spending grant budget but no conversions are being tracked. Verify GA4 event setup."}, {"color": "amber", "tag": "action", "title": "3 campaign(s) with no tracked conversions", "body": "General Awareness, P Max - Donate, PMax - Eco Safari \u2014 spending $1,783 combined with 0 conversions. Verify conversion tracking or pause."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 43/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "(not set)", "sessions": "1", "averageSessionDuration": "11.534606", "bounceRate": "0", "engagementRate": "1", "conversions": "0"}, {"landingPage": "/", "sessions": "1", "averageSessionDuration": "0", "bounceRate": "1", "engagementRate": "0", "conversions": "1"}], "ga4_states": [{"region": "Florida", "sessions": "1", "totalUsers": "1"}, {"region": "Georgia", "sessions": "1", "totalUsers": "1"}], "ga4_cities": [], "seo_enrolled": false, "seo": null};
+window.REPORT_DATA = {'30d':{totals:{cl:105.0,im:1295.0,ctr:8.11,cost:1782.67,cv:0,cpc:16.98,costPerConv:0,convRate:0.0},campaigns:[{n:"General Awareness",s:"ENABLED",ctr:7.62,cl:85.0,im:1116.0,cost:1450.84,cv:0,cpc:17.07,cpa:null},{n:"P Max - Donate",s:"ENABLED",ctr:11.88,cl:12.0,im:101.0,cost:230.21,cv:0,cpc:19.18,cpa:null},{n:"PMax - Eco Safari",s:"ENABLED",ctr:10.26,cl:8.0,im:78.0,cost:101.63,cv:0,cpc:12.7,cpa:null},{n:"Search - Eco Safari",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 08", "Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[2, 3, 4, 3, 3, 4, 3, 3, 3, 4, 3, 3, 4, 3, 3, 4, 3, 3, 3, 4, 3, 3, 4, 3, 3, 4, 3, 3, 4, 3],convs:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],spend:[35.65, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48, 53.48, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48, 53.48, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48, 53.48, 71.31, 53.48],cpc:[17.82, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83, 17.83]},devices:[{n:'Desktop',cl:68,im:842,cost:1158.74,cv:0,cvRate:0},{n:'Mobile',cl:34,im:414,cost:570.45,cv:0,cvRate:0},{n:'Tablet',cl:3,im:39,cost:53.48,cv:0,cvRate:0}]},'7d':{totals:{cl:20.0,im:334.0,ctr:5.99,cost:323.57,cv:0,cpc:16.18,costPerConv:0,convRate:0.0},campaigns:[{n:"General Awareness",s:"ENABLED",ctr:6.19,cl:19.0,im:307.0,cost:313.98,cv:0,cpc:16.53,cpa:null},{n:"PMax - Eco Safari",s:"ENABLED",ctr:7.69,cl:1.0,im:13.0,cost:9.59,cv:0,cpc:9.59,cpa:null},{n:"P Max - Donate",s:"ENABLED",ctr:0,cl:0,im:14.0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search - Eco Safari",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[2, 3, 3, 3, 3, 3, 3],convs:[0, 0, 0, 0, 0, 0, 0],spend:[38.83, 51.77, 42.06, 45.3, 48.54, 42.06, 55.01],cpc:[19.41, 17.26, 14.02, 15.1, 16.18, 14.02, 18.34]},devices:[{n:'Desktop',cl:13,im:217,cost:210.32,cv:0,cvRate:0},{n:'Mobile',cl:6,im:107,cost:103.54,cv:0,cvRate:0},{n:'Tablet',cl:1,im:10,cost:9.71,cv:0,cvRate:0}]}};
 window.LP_DATA     = [{"page": "(not set)", "sessions": 1, "pct": 50, "avgTime": "11s", "engaged": true, "convs": 0}, {"page": "/", "sessions": 1, "pct": 50, "avgTime": "0s", "engaged": false, "convs": 1}];
 window.STATE_DATA  = [{"state": "Florida", "sessions": 1, "pct": 50}, {"state": "Georgia", "sessions": 1, "pct": 50}];
 window.CITY_DATA   = [];

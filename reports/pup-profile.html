@@ -212,6 +212,45 @@ tr:hover td{background:#F5F9FF}
 .tag-action{background:#E3F2FF;color:#0060A0}
 .tag-watch{background:#FEF6E6;color:#9A6010}
 .tag-win{background:#E4F7ED;color:#1A6E3E}
+
+/* SEO Section */
+.seo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.seo-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px 20px;text-align:center}
+.seo-card.wide{grid-column:span 2}
+.seo-card.full{grid-column:span 4}
+.seo-icon{font-size:24px;margin-bottom:8px}
+.seo-label{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.seo-value{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-1px}
+.seo-value.green{color:var(--green)}
+.seo-value.amber{color:var(--amber)}
+.seo-value.red{color:var(--red)}
+.seo-sub{font-size:11px;color:var(--gray-400);margin-top:4px}
+.seo-bar{height:6px;background:var(--gray-100);border-radius:3px;margin-top:10px;overflow:hidden}
+.seo-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.seo-fill.green{background:var(--green)}
+.seo-fill.amber{background:var(--amber)}
+.seo-fill.red{background:var(--red)}
+.seo-queries{display:flex;flex-direction:column;gap:8px;text-align:left;margin-top:10px}
+.seo-query-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--gray-100);border-radius:8px}
+.seo-query-term{font-size:12px;font-weight:600;color:var(--navy)}
+.seo-query-stats{display:flex;gap:16px}
+.seo-query-stat{font-size:11px;color:var(--gray-600)}
+.seo-query-stat strong{color:var(--navy)}
+
+/* SEO Locked State */
+.seo-locked{position:relative;min-height:280px}
+.seo-locked-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,43,91,0.03) 0%,rgba(0,131,198,0.06) 100%);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:10;backdrop-filter:blur(2px)}
+.seo-locked-icon{font-size:48px;margin-bottom:16px;opacity:0.6}
+.seo-locked-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.seo-locked-desc{font-size:13px;color:var(--gray-600);max-width:360px;line-height:1.6;margin-bottom:20px}
+.seo-locked-features{display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap;justify-content:center}
+.seo-locked-feature{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-600)}
+.seo-locked-feature::before{content:'✓';color:var(--green);font-weight:700}
+.seo-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
+.seo-unlock-btn:hover{background:#006AA3;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,131,198,0.3)}
+.seo-locked-bg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;opacity:0.15;filter:blur(1px);pointer-events:none}
+.seo-locked-bg .seo-card{background:var(--gray-100);border:1px dashed var(--border)}
+
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
@@ -253,7 +292,7 @@ tr:hover td{background:#F5F9FF}
 <nav class="sidebar">
   <div class="sb-head">
     <div class="sb-brand">
-      <img src="logo.png" alt="Sponsor a Purpose" class="sb-logo">
+      <img src="../logo.png" alt="Sponsor a Purpose" class="sb-logo">
     </div>
     <div class="sb-tag" style="margin-top:8px">Ad Grants Reporting</div>
   </div>
@@ -280,6 +319,7 @@ tr:hover td{background:#F5F9FF}
     <a href="#sec-landing"><span class="dot"></span>Landing pages</a>
     <a href="#sec-location"><span class="dot"></span>Location</a>
     <a href="#sec-visibility"><span class="dot"></span>Visibility</a>
+    <a href="#sec-seo"><span class="dot"></span>SEO</a>
     <a href="#sec-actions"><span class="dot"></span>What we did</a>
     <a href="#sec-insights"><span class="dot"></span>Recommendations</a>
   </div>
@@ -507,6 +547,17 @@ tr:hover td{background:#F5F9FF}
       <div class="isg" id="visibilityGrid"></div>
     </div>
 
+    <!-- SEO -->
+    <div class="section" id="sec-seo">
+      <div class="sh">
+        <div class="sh-title">SEO Performance</div>
+        <div class="sh-sub" id="seoSubtitle">Organic search &amp; site speed</div>
+      </div>
+      <div id="seoContent">
+        <!-- JS will populate based on enrollment status -->
+      </div>
+    </div>
+
     <!-- ACTIONS -->
     <div class="section" id="sec-actions">
       <div class="sh">
@@ -540,7 +591,7 @@ tr:hover td{background:#F5F9FF}
 
   <div class="pf">
     <div class="pf-l" id="pfDate">Data via Google Ads API</div>
-    <img src="logo.png" alt="Sponsor a Purpose" class="pf-logo">
+    <img src="../logo.png" alt="Sponsor a Purpose" class="pf-logo">
   </div>
 </div>
 </div>
@@ -744,25 +795,186 @@ function render(){
   }
 
   // Visibility
-  document.getElementById('visibilityGrid').innerHTML=`
+  // Visibility section — use real impression share data
+  const impShare = t.impressionShare;
+  const lostBudget = t.lostIsBudget;
+  const lostRank = t.lostIsRank;
+  
+  // Build visibility cards only if we have data
+  let visCards = '';
+  
+  if (impShare !== null && impShare !== undefined) {
+    const isColor = impShare >= 20 ? 'var(--green)' : impShare >= 10 ? 'var(--amber)' : 'var(--red)';
+    const isNote = impShare >= 30 ? 'Strong visibility in eligible auctions.' :
+                   impShare >= 15 ? 'Moderate visibility — room for growth.' :
+                   'Low visibility — significant growth opportunity available.';
+    visCards += `
     <div class="isc">
       <div class="isl">Search impression share</div>
-      <div class="isbb"><div class="isbf" style="width:10%;background:var(--blue)"></div></div>
-      <div class="isv">~10%</div>
-      <div class="isn">Winning ~10% of eligible auctions. Significant growth opportunity available.</div>
-    </div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(impShare,100)}%;background:${isColor}"></div></div>
+      <div class="isv">${impShare.toFixed(1)}%</div>
+      <div class="isn">${isNote}</div>
+    </div>`;
+  }
+  
+  if (lostRank !== null && lostRank !== undefined) {
+    const lrColor = lostRank <= 20 ? 'var(--green)' : lostRank <= 50 ? 'var(--amber)' : 'var(--red)';
+    const lrNote = lostRank <= 20 ? 'Excellent ad quality — minimal loss to rank.' :
+                   lostRank <= 40 ? 'Moderate loss — improve keyword relevance and ad strength.' :
+                   'High loss to ad rank — focus on quality score and relevance.';
+    visCards += `
     <div class="isc">
       <div class="isl">Lost IS — Ad Rank</div>
-      <div class="isbb"><div class="isbf" style="width:58%;background:var(--red)"></div></div>
-      <div class="isv">~58%</div>
-      <div class="isn">Lost to quality/bid — improve keyword relevance and ad strength.</div>
-    </div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(lostRank,100)}%;background:${lrColor}"></div></div>
+      <div class="isv">${lostRank.toFixed(1)}%</div>
+      <div class="isn">${lrNote}</div>
+    </div>`;
+  }
+  
+  if (lostBudget !== null && lostBudget !== undefined) {
+    const lbColor = lostBudget <= 10 ? 'var(--green)' : lostBudget <= 30 ? 'var(--amber)' : 'var(--red)';
+    const lbNote = lostBudget <= 10 ? 'Budget is not the primary constraint — focus on ad quality.' :
+                   lostBudget <= 30 ? 'Some budget constraints — consider reallocating from low performers.' :
+                   'Significant budget limitation — review daily caps and prioritize top campaigns.';
+    visCards += `
     <div class="isc">
       <div class="isl">Lost IS — Budget</div>
-      <div class="isbb"><div class="isbf" style="width:8%;background:var(--amber)"></div></div>
-      <div class="isv">&lt;10%</div>
-      <div class="isn">Budget is not the primary constraint — focus on ad quality.</div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(lostBudget,100)}%;background:${lbColor}"></div></div>
+      <div class="isv">${lostBudget.toFixed(1)}%</div>
+      <div class="isn">${lbNote}</div>
     </div>`;
+  }
+  
+  // If no impression share data available, show placeholder message
+  if (!visCards) {
+    visCards = `
+    <div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666;">
+      <div style="font-size:14px;">Impression share data not available for this period.</div>
+      <div style="font-size:12px;margin-top:8px;">This data requires Standard API access — coming soon.</div>
+    </div>`;
+  }
+  
+  document.getElementById('visibilityGrid').innerHTML = visCards;
+
+  // SEO Section
+  const seoContainer = document.getElementById('seoContent');
+  const seoEnrolled = window.CLIENT_DATA?.seo_enrolled || false;
+  const seoData = window.CLIENT_DATA?.seo || null;
+  
+  if (seoEnrolled && seoData && seoData.enrolled) {
+    // Enrolled client with data - show full SEO metrics
+    const ps = seoData.pagespeed_mobile || 0;
+    const psDesk = seoData.pagespeed_desktop || 0;
+    const seoScore = seoData.seo_score || 0;
+    const cwvPass = seoData.cwv_pass;
+    const orgClicks = seoData.organic_clicks || 0;
+    const orgImps = seoData.organic_impressions || 0;
+    const avgPos = seoData.avg_position;
+    const topQueries = seoData.top_queries || [];
+    
+    const psColor = ps >= 90 ? 'green' : ps >= 50 ? 'amber' : 'red';
+    const seoColor = seoScore >= 90 ? 'green' : seoScore >= 50 ? 'amber' : 'red';
+    
+    let queriesHTML = '';
+    if (topQueries.length > 0) {
+      queriesHTML = '<div class="seo-queries">';
+      topQueries.slice(0, 5).forEach(q => {
+        queriesHTML += `
+          <div class="seo-query-row">
+            <span class="seo-query-term">${q.query || q.keyword || ''}</span>
+            <div class="seo-query-stats">
+              <span class="seo-query-stat"><strong>${fmtN(q.clicks || 0)}</strong> clicks</span>
+              <span class="seo-query-stat"><strong>${fmtN(q.impressions || 0)}</strong> impr</span>
+              <span class="seo-query-stat">Pos <strong>${(q.position || 0).toFixed(1)}</strong></span>
+            </div>
+          </div>`;
+      });
+      queriesHTML += '</div>';
+    }
+    
+    seoContainer.innerHTML = `
+      <div class="seo-grid">
+        <div class="seo-card">
+          <div class="seo-icon">📱</div>
+          <div class="seo-label">Mobile Speed</div>
+          <div class="seo-value ${psColor}">${ps}</div>
+          <div class="seo-bar"><div class="seo-fill ${psColor}" style="width:${ps}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">💻</div>
+          <div class="seo-label">Desktop Speed</div>
+          <div class="seo-value ${psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red'}">${psDesk}</div>
+          <div class="seo-bar"><div class="seo-fill ${psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red'}" style="width:${psDesk}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">🔍</div>
+          <div class="seo-label">SEO Score</div>
+          <div class="seo-value ${seoColor}">${seoScore}</div>
+          <div class="seo-bar"><div class="seo-fill ${seoColor}" style="width:${seoScore}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">${cwvPass ? '✅' : '⚠️'}</div>
+          <div class="seo-label">Core Web Vitals</div>
+          <div class="seo-value" style="font-size:18px;color:${cwvPass ? 'var(--green)' : 'var(--amber)'}">${cwvPass ? 'Passing' : 'Needs Work'}</div>
+          <div class="seo-sub">${seoData.lcp || '—'} LCP · ${seoData.cls || '—'} CLS</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-icon">🔎</div>
+          <div class="seo-label">Organic Clicks (30d)</div>
+          <div class="seo-value">${fmtN(orgClicks)}</div>
+          <div class="seo-sub">${fmtN(orgImps)} impressions · Avg position ${avgPos ? avgPos.toFixed(1) : '—'}</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-label" style="margin-bottom:10px">Top Search Queries</div>
+          ${queriesHTML || '<div class="seo-sub">No query data available yet</div>'}
+        </div>
+      </div>
+    `;
+    document.getElementById('seoSubtitle').textContent = 'Organic search & site speed · Last updated ' + (seoData.fetched_at ? new Date(seoData.fetched_at).toLocaleDateString() : 'recently');
+  } else {
+    // Not enrolled - show fields with N/A and upsell note
+    seoContainer.innerHTML = `
+      <div class="seo-grid" style="opacity:0.5;">
+        <div class="seo-card">
+          <div class="seo-icon">📱</div>
+          <div class="seo-label">Mobile Speed</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">💻</div>
+          <div class="seo-label">Desktop Speed</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">🔍</div>
+          <div class="seo-label">SEO Score</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">📊</div>
+          <div class="seo-label">Core Web Vitals</div>
+          <div class="seo-value" style="font-size:18px;color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-icon">🔎</div>
+          <div class="seo-label">Organic Clicks (30d)</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-label">Top Search Queries</div>
+          <div class="seo-value" style="font-size:16px;color:var(--gray-400);margin-top:12px">N/A</div>
+        </div>
+      </div>
+      <div style="background:var(--gray-100);border-radius:var(--radius-sm);padding:16px 20px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--navy);margin-bottom:4px;">Interested in SEO insights?</div>
+          <div style="font-size:12px;color:var(--gray-600);">PageSpeed scores, keyword rankings, and organic traffic data are available as part of our SEO package.</div>
+        </div>
+        <a href="mailto:scott@sponsorapurpose.org?subject=SEO%20Package%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">Learn More</a>
+      </div>
+    `;
+    document.getElementById('seoSubtitle').textContent = 'Available with SEO package';
+  }
 
   updateSidebarActive();
 }
@@ -880,7 +1092,7 @@ function initClient(){
 }
 
 function updateSidebarActive(){
-  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-audience','sec-landing','sec-location','sec-visibility','sec-actions','sec-insights'];
+  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-audience','sec-landing','sec-location','sec-visibility','sec-seo','sec-actions','sec-insights'];
   const links=document.querySelectorAll('.sb-nav a');
   function check(){
     let cur=ids[0];
@@ -906,8 +1118,8 @@ window.addEventListener('load',()=>{
 
 <script>
 // Injected by generate_reports_v2.py — Pup Profile (334-205-8352) — 2026-04-06
-window.CLIENT_DATA = {"slug": "pup-profile", "name": "Pup Profile", "account_id": "334-205-8352", "website": "https://pupprofile.org", "org_model": "location_based", "animal_type": null, "report_date": "April 06, 2026", "gps": 93, "gps_components": {"ctr": 77, "utilization": 100, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 1557.0, "im": 11167.0, "cost": 10011.33, "cv": 1066.0, "ctr": 13.94, "cpc": 6.43, "costPerConv": 9.39, "convRate": 68.46}, "totals_7d": {"cl": 312.0, "im": 2568.0, "cost": 2335.27, "cv": 208.5, "ctr": 12.15, "cpc": 7.48, "costPerConv": 11.2, "convRate": 66.83}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 13.9%", "body": "Account CTR is 13.9% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "green", "tag": "win", "title": "Grant utilization strong \u2014 100% used", "body": "Spending $10,011 of the $10,000 monthly grant. On pace to maximize full grant value this month."}, {"color": "green", "tag": "win", "title": "1066 conversions tracked at $9.39 CPA", "body": "Campaigns recorded 1066 conversions this month at $9.39 per conversion."}, {"color": "amber", "tag": "action", "title": "3 campaign(s) with no tracked conversions", "body": "Urgent Need-San Diego, Urgent Need-LA, Shop Pup-Profile \u2014 spending $2,277 combined with 0 conversions. Verify conversion tracking or pause."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 93/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/browse", "sessions": "587", "averageSessionDuration": "115.10373456558773", "bounceRate": "0.0017035775127768314", "engagementRate": "0.99829642248722317", "conversions": "3159"}, {"landingPage": "/", "sessions": "288", "averageSessionDuration": "123.66496608333334", "bounceRate": "0", "engagementRate": "1", "conversions": "1796"}, {"landingPage": "/browse/ZZH2ZB", "sessions": "118", "averageSessionDuration": "136.84171547457626", "bounceRate": "0", "engagementRate": "1", "conversions": "771"}, {"landingPage": "/browse/R9ESGL", "sessions": "105", "averageSessionDuration": "85.346062561904759", "bounceRate": "0", "engagementRate": "1", "conversions": "653"}, {"landingPage": "/donate", "sessions": "91", "averageSessionDuration": "77.022480615384609", "bounceRate": "0", "engagementRate": "1", "conversions": "572"}, {"landingPage": "/browse/G5I4YV", "sessions": "90", "averageSessionDuration": "67.421446033333339", "bounceRate": "0", "engagementRate": "1", "conversions": "565"}, {"landingPage": "/pups-fund/donate", "sessions": "50", "averageSessionDuration": "145.40191976", "bounceRate": "0", "engagementRate": "1", "conversions": "346"}, {"landingPage": "/browse/JDU1IO", "sessions": "42", "averageSessionDuration": "94.492100261904753", "bounceRate": "0", "engagementRate": "1", "conversions": "236"}, {"landingPage": "/browse/A1941495", "sessions": "36", "averageSessionDuration": "79.179434666666666", "bounceRate": "0", "engagementRate": "1", "conversions": "246"}, {"landingPage": "(not set)", "sessions": "34", "averageSessionDuration": "0.15490767647058823", "bounceRate": "0.088235294117647065", "engagementRate": "0.91176470588235292", "conversions": "68"}], "ga4_states": [{"region": "California", "sessions": "560", "totalUsers": "453"}, {"region": "Florida", "sessions": "90", "totalUsers": "87"}, {"region": "Arizona", "sessions": "89", "totalUsers": "86"}, {"region": "New York", "sessions": "71", "totalUsers": "70"}, {"region": "Texas", "sessions": "68", "totalUsers": "62"}, {"region": "Ohio", "sessions": "48", "totalUsers": "43"}, {"region": "Oregon", "sessions": "48", "totalUsers": "45"}, {"region": "Washington", "sessions": "42", "totalUsers": "41"}, {"region": "Virginia", "sessions": "41", "totalUsers": "39"}, {"region": "North Carolina", "sessions": "40", "totalUsers": "40"}], "ga4_cities": [{"city": "Los Angeles", "sessions": "126", "totalUsers": "110"}, {"city": "San Diego", "sessions": "81", "totalUsers": "53"}, {"city": "Phoenix", "sessions": "37", "totalUsers": "37"}, {"city": "New York", "sessions": "22", "totalUsers": "21"}, {"city": "San Jose", "sessions": "15", "totalUsers": "13"}, {"city": "Houston", "sessions": "13", "totalUsers": "9"}, {"city": "Long Beach", "sessions": "11", "totalUsers": "10"}, {"city": "Columbus", "sessions": "10", "totalUsers": "9"}, {"city": "Las Vegas", "sessions": "10", "totalUsers": "9"}, {"city": "Rancho Santa Fe", "sessions": "10", "totalUsers": "2"}]};
-window.REPORT_DATA = {'30d':{totals:{cl:1557.0,im:11167.0,ctr:13.94,cost:10011.33,cv:1066.0,cpc:6.43,costPerConv:9.39,convRate:68.46},campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:17.17,cl:465.0,im:2708.0,cost:2415.17,cv:388.0,cpc:5.19,cpa:6.22},{n:"California Donate - Pmax",s:"ENABLED",ctr:15.71,cl:236.0,im:1502.0,cost:2168.44,cv:184.5,cpc:9.19,cpa:11.75},{n:"Awareness",s:"ENABLED",ctr:9.93,cl:232.0,im:2336.0,cost:773.26,cv:180.0,cpc:3.33,cpa:4.3},{n:"Search-Donate",s:"ENABLED",ctr:20.65,cl:133.0,im:644.0,cost:926.98,cv:104.5,cpc:6.97,cpa:8.87},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:9.85,cl:108.0,im:1097.0,cost:450.69,cv:93.0,cpc:4.17,cpa:4.85},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:13.9,cl:102.0,im:734.0,cost:1003.57,cv:0,cpc:9.84,cpa:null},{n:"Urgent Need Arizona",s:"ENABLED",ctr:13.95,cl:94.0,im:674.0,cost:646.59,cv:75.0,cpc:6.88,cpa:8.62},{n:"Urgent Need-LA",s:"ENABLED",ctr:13.82,cl:81.0,im:586.0,cost:775.48,cv:0,cpc:9.57,cpa:null},{n:"Shop Pup-Profile",s:"ENABLED",ctr:11.83,cl:53.0,im:448.0,cost:498.08,cv:0,cpc:9.4,cpa:null},{n:"Urgent Need River Side",s:"ENABLED",ctr:12.1,cl:53.0,im:438.0,cost:353.1,cv:41.0,cpc:6.66,cpa:8.61},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 08", "Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[31, 47, 62, 47, 47, 62, 47, 47, 47, 62, 47, 47, 62, 47, 47, 62, 47, 47, 47, 62, 47, 47, 62, 47, 47, 62, 47, 47, 62, 47],convs:[21, 32, 43, 32, 32, 43, 32, 32, 32, 43, 32, 32, 43, 32, 32, 43, 32, 32, 32, 43, 32, 32, 43, 32, 32, 43, 32, 32, 43, 32],spend:[200.23, 300.34, 400.45, 300.34, 300.34, 400.45, 300.34, 300.34, 300.34, 400.45, 300.34, 300.34, 400.45, 300.34, 300.34, 400.45, 300.34, 300.34, 300.34, 400.45, 300.34, 300.34, 400.45, 300.34, 300.34, 400.45, 300.34, 300.34, 400.45, 300.34],cpc:[6.46, 6.39, 6.46, 6.39, 6.39, 6.46, 6.39, 6.39, 6.39, 6.46, 6.39, 6.39, 6.46, 6.39, 6.39, 6.46, 6.39, 6.39, 6.39, 6.46, 6.39, 6.39, 6.46, 6.39, 6.39, 6.46, 6.39, 6.39, 6.46, 6.39]},devices:[{n:'Desktop',cl:1012,im:7259,cost:6507.36,cv:725,cvRate:0},{n:'Mobile',cl:498,im:3573,cost:3203.63,cv:309,cvRate:0},{n:'Tablet',cl:47,im:335,cost:300.34,cv:32,cvRate:0}]},'7d':{totals:{cl:312.0,im:2568.0,ctr:12.15,cost:2335.27,cv:208.5,cpc:7.48,costPerConv:11.2,convRate:66.83},campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:14.18,cl:95.0,im:670.0,cost:549.6,cv:74.0,cpc:5.79,cpa:7.43},{n:"California Donate - Pmax",s:"ENABLED",ctr:13.76,cl:45.0,im:327.0,cost:471.73,cv:35.0,cpc:10.48,cpa:13.48},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:10.56,cl:34.0,im:322.0,cost:450.42,cv:0,cpc:13.25,cpa:null},{n:"Awareness",s:"ENABLED",ctr:10.03,cl:29.0,im:289.0,cost:89.67,cv:27.0,cpc:3.09,cpa:3.32},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:9.03,cl:26.0,im:288.0,cost:102.0,cv:22.0,cpc:3.92,cpa:4.64},{n:"Urgent Need Arizona",s:"ENABLED",ctr:12.38,cl:26.0,im:210.0,cost:211.53,cv:24.0,cpc:8.14,cpa:8.81},{n:"Search-Donate",s:"ENABLED",ctr:16.89,cl:25.0,im:148.0,cost:176.22,cv:18.5,cpc:7.05,cpa:9.53},{n:"Urgent Need-LA",s:"ENABLED",ctr:11.97,cl:14.0,im:117.0,cost:144.22,cv:0,cpc:10.3,cpa:null},{n:"Urgent Need River Side",s:"ENABLED",ctr:11.2,cl:14.0,im:125.0,cost:91.49,cv:8.0,cpc:6.53,cpa:11.44},{n:"Shop Pup-Profile",s:"ENABLED",ctr:5.56,cl:4.0,im:72.0,cost:48.41,cv:0,cpc:12.1,cpa:null},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[37, 50, 41, 44, 47, 41, 53],convs:[25, 33, 27, 29, 31, 27, 35],spend:[280.23, 373.64, 303.59, 326.94, 350.29, 303.59, 397.0],cpc:[7.57, 7.47, 7.4, 7.43, 7.45, 7.4, 7.49]},devices:[{n:'Desktop',cl:203,im:1669,cost:1517.93,cv:142,cvRate:0},{n:'Mobile',cl:100,im:822,cost:747.29,cv:60,cvRate:0},{n:'Tablet',cl:9,im:77,cost:70.06,cv:6,cvRate:0}]}};
+window.CLIENT_DATA = {"slug": "pup-profile", "name": "Pup Profile", "account_id": "334-205-8352", "website": "https://pupprofile.org", "org_model": "location_based", "animal_type": null, "report_date": "April 06, 2026", "gps": 93, "gps_components": {"ctr": 77, "utilization": 100, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 1558.0, "im": 11242.0, "cost": 10023.77, "cv": 1060.0, "ctr": 13.86, "cpc": 6.43, "costPerConv": 9.46, "convRate": 68.04, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "totals_7d": {"cl": 315.0, "im": 2555.0, "cost": 2341.86, "cv": 208.0, "ctr": 12.33, "cpc": 7.43, "costPerConv": 11.26, "convRate": 66.03, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 13.9%", "body": "Account CTR is 13.9% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "green", "tag": "win", "title": "Grant utilization strong \u2014 100% used", "body": "Spending $10,024 of the $10,000 monthly grant. On pace to maximize full grant value this month."}, {"color": "green", "tag": "win", "title": "1060 conversions tracked at $9.46 CPA", "body": "Campaigns recorded 1060 conversions this month at $9.46 per conversion."}, {"color": "amber", "tag": "action", "title": "3 campaign(s) with no tracked conversions", "body": "Urgent Need-San Diego, Urgent Need-LA, Shop Pup-Profile \u2014 spending $2,267 combined with 0 conversions. Verify conversion tracking or pause."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 93/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/browse", "sessions": "587", "averageSessionDuration": "115.10373456558773", "bounceRate": "0.0017035775127768314", "engagementRate": "0.99829642248722317", "conversions": "3159"}, {"landingPage": "/", "sessions": "288", "averageSessionDuration": "123.66496608333334", "bounceRate": "0", "engagementRate": "1", "conversions": "1796"}, {"landingPage": "/browse/ZZH2ZB", "sessions": "118", "averageSessionDuration": "136.84171547457626", "bounceRate": "0", "engagementRate": "1", "conversions": "771"}, {"landingPage": "/browse/R9ESGL", "sessions": "105", "averageSessionDuration": "85.346062561904759", "bounceRate": "0", "engagementRate": "1", "conversions": "653"}, {"landingPage": "/donate", "sessions": "91", "averageSessionDuration": "77.022480615384609", "bounceRate": "0", "engagementRate": "1", "conversions": "572"}, {"landingPage": "/browse/G5I4YV", "sessions": "90", "averageSessionDuration": "67.421446033333339", "bounceRate": "0", "engagementRate": "1", "conversions": "565"}, {"landingPage": "/pups-fund/donate", "sessions": "50", "averageSessionDuration": "145.40191976", "bounceRate": "0", "engagementRate": "1", "conversions": "346"}, {"landingPage": "/browse/JDU1IO", "sessions": "42", "averageSessionDuration": "94.492100261904753", "bounceRate": "0", "engagementRate": "1", "conversions": "236"}, {"landingPage": "/browse/A1941495", "sessions": "36", "averageSessionDuration": "79.179434666666666", "bounceRate": "0", "engagementRate": "1", "conversions": "246"}, {"landingPage": "(not set)", "sessions": "34", "averageSessionDuration": "0.15490767647058823", "bounceRate": "0.088235294117647065", "engagementRate": "0.91176470588235292", "conversions": "68"}], "ga4_states": [{"region": "California", "sessions": "560", "totalUsers": "453"}, {"region": "Florida", "sessions": "90", "totalUsers": "87"}, {"region": "Arizona", "sessions": "89", "totalUsers": "86"}, {"region": "New York", "sessions": "71", "totalUsers": "70"}, {"region": "Texas", "sessions": "68", "totalUsers": "62"}, {"region": "Ohio", "sessions": "48", "totalUsers": "43"}, {"region": "Oregon", "sessions": "48", "totalUsers": "45"}, {"region": "Washington", "sessions": "42", "totalUsers": "41"}, {"region": "Virginia", "sessions": "41", "totalUsers": "39"}, {"region": "North Carolina", "sessions": "40", "totalUsers": "40"}], "ga4_cities": [{"city": "Los Angeles", "sessions": "126", "totalUsers": "110"}, {"city": "San Diego", "sessions": "81", "totalUsers": "53"}, {"city": "Phoenix", "sessions": "37", "totalUsers": "37"}, {"city": "New York", "sessions": "22", "totalUsers": "21"}, {"city": "San Jose", "sessions": "15", "totalUsers": "13"}, {"city": "Houston", "sessions": "13", "totalUsers": "9"}, {"city": "Long Beach", "sessions": "11", "totalUsers": "10"}, {"city": "Columbus", "sessions": "10", "totalUsers": "9"}, {"city": "Las Vegas", "sessions": "10", "totalUsers": "9"}, {"city": "Rancho Santa Fe", "sessions": "10", "totalUsers": "2"}], "seo_enrolled": false, "seo": null};
+window.REPORT_DATA = {'30d':{totals:{cl:1558.0,im:11242.0,ctr:13.86,cost:10023.77,cv:1060.0,cpc:6.43,costPerConv:9.46,convRate:68.04},campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:16.87,cl:458.0,im:2715.0,cost:2403.11,cv:379.0,cpc:5.25,cpa:6.34},{n:"Awareness",s:"ENABLED",ctr:10.08,cl:240.0,im:2380.0,cost:796.38,cv:187.0,cpc:3.32,cpa:4.26},{n:"California Donate - Pmax",s:"ENABLED",ctr:15.35,cl:232.0,im:1511.0,cost:2143.0,cv:178.5,cpc:9.24,cpa:12.01},{n:"Search-Donate",s:"ENABLED",ctr:21.29,cl:132.0,im:620.0,cost:920.29,cv:104.5,cpc:6.97,cpa:8.81},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:10.09,cl:110.0,im:1090.0,cost:461.26,cv:93.0,cpc:4.19,cpa:4.96},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:13.58,cl:102.0,im:751.0,cost:1012.89,cv:0,cpc:9.93,cpa:null},{n:"Urgent Need Arizona",s:"ENABLED",ctr:14.33,cl:97.0,im:677.0,cost:673.22,cv:76.0,cpc:6.94,cpa:8.86},{n:"Urgent Need-LA",s:"ENABLED",ctr:13.09,cl:80.0,im:611.0,cost:756.25,cv:0,cpc:9.45,cpa:null},{n:"Urgent Need River Side",s:"ENABLED",ctr:12.27,cl:54.0,im:440.0,cost:359.31,cv:42.0,cpc:6.65,cpa:8.55},{n:"Shop Pup-Profile",s:"ENABLED",ctr:11.86,cl:53.0,im:447.0,cost:498.08,cv:0,cpc:9.4,cpa:null},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 08", "Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[31, 47, 62, 47, 47, 62, 47, 47, 47, 62, 47, 47, 62, 47, 47, 62, 47, 47, 47, 62, 47, 47, 62, 47, 47, 62, 47, 47, 62, 47],convs:[21, 32, 42, 32, 32, 42, 32, 32, 32, 42, 32, 32, 42, 32, 32, 42, 32, 32, 32, 42, 32, 32, 42, 32, 32, 42, 32, 32, 42, 32],spend:[200.48, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71],cpc:[6.47, 6.4, 6.47, 6.4, 6.4, 6.47, 6.4, 6.4, 6.4, 6.47, 6.4, 6.4, 6.47, 6.4, 6.4, 6.47, 6.4, 6.4, 6.4, 6.47, 6.4, 6.4, 6.47, 6.4, 6.4, 6.47, 6.4, 6.4, 6.47, 6.4]},devices:[{n:'Desktop',cl:1013,im:7307,cost:6515.45,cv:721,cvRate:0},{n:'Mobile',cl:499,im:3597,cost:3207.61,cv:307,cvRate:0},{n:'Tablet',cl:47,im:337,cost:300.71,cv:32,cvRate:0}]},'7d':{totals:{cl:315.0,im:2555.0,ctr:12.33,cost:2341.86,cv:208.0,cpc:7.43,costPerConv:11.26,convRate:66.03},campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:13.66,cl:90.0,im:659.0,cost:543.38,cv:73.0,cpc:6.04,cpa:7.44},{n:"California Donate - Pmax",s:"ENABLED",ctr:12.0,cl:39.0,im:325.0,cost:420.17,cv:30.0,cpc:10.77,cpa:14.01},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:10.78,cl:36.0,im:334.0,cost:468.96,cv:0,cpc:13.03,cpa:null},{n:"Awareness",s:"ENABLED",ctr:11.0,cl:34.0,im:309.0,cost:103.5,cv:32.0,cpc:3.04,cpa:3.23},{n:"Urgent Need Arizona",s:"ENABLED",ctr:14.69,cl:31.0,im:211.0,cost:250.18,cv:27.0,cpc:8.07,cpa:9.27},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:10.31,cl:30.0,im:291.0,cost:117.33,cv:23.0,cpc:3.91,cpa:5.1},{n:"Search-Donate",s:"ENABLED",ctr:17.89,cl:22.0,im:123.0,cost:150.42,cv:16.0,cpc:6.84,cpa:9.4},{n:"Urgent Need-LA",s:"ENABLED",ctr:12.14,cl:17.0,im:140.0,cost:163.21,cv:0,cpc:9.6,cpa:null},{n:"Urgent Need River Side",s:"ENABLED",ctr:10.0,cl:12.0,im:120.0,cost:76.32,cv:7.0,cpc:6.36,cpa:10.9},{n:"Shop Pup-Profile",s:"ENABLED",ctr:9.3,cl:4.0,im:43.0,cost:48.41,cv:0,cpc:12.1,cpa:null},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[38, 50, 41, 44, 47, 41, 54],convs:[25, 33, 27, 29, 31, 27, 35],spend:[281.02, 374.7, 304.44, 327.86, 351.28, 304.44, 398.12],cpc:[7.4, 7.49, 7.43, 7.45, 7.47, 7.43, 7.37]},devices:[{n:'Desktop',cl:205,im:1661,cost:1522.21,cv:141,cvRate:0},{n:'Mobile',cl:101,im:818,cost:749.4,cv:60,cvRate:0},{n:'Tablet',cl:9,im:77,cost:70.26,cv:6,cvRate:0}]}};
 window.LP_DATA     = [{"page": "/browse", "sessions": 587, "pct": 49, "avgTime": "115s", "engaged": true, "convs": 3159}, {"page": "/", "sessions": 288, "pct": 24, "avgTime": "123s", "engaged": true, "convs": 1796}, {"page": "/browse/ZZH2ZB", "sessions": 118, "pct": 10, "avgTime": "136s", "engaged": true, "convs": 771}, {"page": "/browse/R9ESGL", "sessions": 105, "pct": 9, "avgTime": "85s", "engaged": true, "convs": 653}, {"page": "/donate", "sessions": 91, "pct": 8, "avgTime": "77s", "engaged": true, "convs": 572}];
 window.STATE_DATA  = [{"state": "California", "sessions": 560, "pct": 51}, {"state": "Florida", "sessions": 90, "pct": 8}, {"state": "Arizona", "sessions": 89, "pct": 8}, {"state": "New York", "sessions": 71, "pct": 6}, {"state": "Texas", "sessions": 68, "pct": 6}, {"state": "Ohio", "sessions": 48, "pct": 4}, {"state": "Oregon", "sessions": 48, "pct": 4}, {"state": "Washington", "sessions": 42, "pct": 4}, {"state": "Virginia", "sessions": 41, "pct": 4}, {"state": "North Carolina", "sessions": 40, "pct": 4}];
 window.CITY_DATA   = [{"city": "Los Angeles", "state": "", "sessions": 126}, {"city": "San Diego", "state": "", "sessions": 81}, {"city": "Phoenix", "state": "", "sessions": 37}, {"city": "New York", "state": "", "sessions": 22}, {"city": "San Jose", "state": "", "sessions": 15}, {"city": "Houston", "state": "", "sessions": 13}, {"city": "Long Beach", "state": "", "sessions": 11}, {"city": "Columbus", "state": "", "sessions": 10}, {"city": "Las Vegas", "state": "", "sessions": 10}, {"city": "Rancho Santa Fe", "state": "", "sessions": 10}];

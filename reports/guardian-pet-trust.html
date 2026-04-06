@@ -212,6 +212,45 @@ tr:hover td{background:#F5F9FF}
 .tag-action{background:#E3F2FF;color:#0060A0}
 .tag-watch{background:#FEF6E6;color:#9A6010}
 .tag-win{background:#E4F7ED;color:#1A6E3E}
+
+/* SEO Section */
+.seo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.seo-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px 20px;text-align:center}
+.seo-card.wide{grid-column:span 2}
+.seo-card.full{grid-column:span 4}
+.seo-icon{font-size:24px;margin-bottom:8px}
+.seo-label{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.seo-value{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-1px}
+.seo-value.green{color:var(--green)}
+.seo-value.amber{color:var(--amber)}
+.seo-value.red{color:var(--red)}
+.seo-sub{font-size:11px;color:var(--gray-400);margin-top:4px}
+.seo-bar{height:6px;background:var(--gray-100);border-radius:3px;margin-top:10px;overflow:hidden}
+.seo-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.seo-fill.green{background:var(--green)}
+.seo-fill.amber{background:var(--amber)}
+.seo-fill.red{background:var(--red)}
+.seo-queries{display:flex;flex-direction:column;gap:8px;text-align:left;margin-top:10px}
+.seo-query-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--gray-100);border-radius:8px}
+.seo-query-term{font-size:12px;font-weight:600;color:var(--navy)}
+.seo-query-stats{display:flex;gap:16px}
+.seo-query-stat{font-size:11px;color:var(--gray-600)}
+.seo-query-stat strong{color:var(--navy)}
+
+/* SEO Locked State */
+.seo-locked{position:relative;min-height:280px}
+.seo-locked-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,43,91,0.03) 0%,rgba(0,131,198,0.06) 100%);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:10;backdrop-filter:blur(2px)}
+.seo-locked-icon{font-size:48px;margin-bottom:16px;opacity:0.6}
+.seo-locked-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.seo-locked-desc{font-size:13px;color:var(--gray-600);max-width:360px;line-height:1.6;margin-bottom:20px}
+.seo-locked-features{display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap;justify-content:center}
+.seo-locked-feature{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-600)}
+.seo-locked-feature::before{content:'✓';color:var(--green);font-weight:700}
+.seo-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
+.seo-unlock-btn:hover{background:#006AA3;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,131,198,0.3)}
+.seo-locked-bg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;opacity:0.15;filter:blur(1px);pointer-events:none}
+.seo-locked-bg .seo-card{background:var(--gray-100);border:1px dashed var(--border)}
+
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
@@ -253,7 +292,7 @@ tr:hover td{background:#F5F9FF}
 <nav class="sidebar">
   <div class="sb-head">
     <div class="sb-brand">
-      <img src="logo.png" alt="Sponsor a Purpose" class="sb-logo">
+      <img src="../logo.png" alt="Sponsor a Purpose" class="sb-logo">
     </div>
     <div class="sb-tag" style="margin-top:8px">Ad Grants Reporting</div>
   </div>
@@ -280,6 +319,7 @@ tr:hover td{background:#F5F9FF}
     <a href="#sec-landing"><span class="dot"></span>Landing pages</a>
     <a href="#sec-location"><span class="dot"></span>Location</a>
     <a href="#sec-visibility"><span class="dot"></span>Visibility</a>
+    <a href="#sec-seo"><span class="dot"></span>SEO</a>
     <a href="#sec-actions"><span class="dot"></span>What we did</a>
     <a href="#sec-insights"><span class="dot"></span>Recommendations</a>
   </div>
@@ -507,6 +547,17 @@ tr:hover td{background:#F5F9FF}
       <div class="isg" id="visibilityGrid"></div>
     </div>
 
+    <!-- SEO -->
+    <div class="section" id="sec-seo">
+      <div class="sh">
+        <div class="sh-title">SEO Performance</div>
+        <div class="sh-sub" id="seoSubtitle">Organic search &amp; site speed</div>
+      </div>
+      <div id="seoContent">
+        <!-- JS will populate based on enrollment status -->
+      </div>
+    </div>
+
     <!-- ACTIONS -->
     <div class="section" id="sec-actions">
       <div class="sh">
@@ -540,7 +591,7 @@ tr:hover td{background:#F5F9FF}
 
   <div class="pf">
     <div class="pf-l" id="pfDate">Data via Google Ads API</div>
-    <img src="logo.png" alt="Sponsor a Purpose" class="pf-logo">
+    <img src="../logo.png" alt="Sponsor a Purpose" class="pf-logo">
   </div>
 </div>
 </div>
@@ -744,25 +795,186 @@ function render(){
   }
 
   // Visibility
-  document.getElementById('visibilityGrid').innerHTML=`
+  // Visibility section — use real impression share data
+  const impShare = t.impressionShare;
+  const lostBudget = t.lostIsBudget;
+  const lostRank = t.lostIsRank;
+  
+  // Build visibility cards only if we have data
+  let visCards = '';
+  
+  if (impShare !== null && impShare !== undefined) {
+    const isColor = impShare >= 20 ? 'var(--green)' : impShare >= 10 ? 'var(--amber)' : 'var(--red)';
+    const isNote = impShare >= 30 ? 'Strong visibility in eligible auctions.' :
+                   impShare >= 15 ? 'Moderate visibility — room for growth.' :
+                   'Low visibility — significant growth opportunity available.';
+    visCards += `
     <div class="isc">
       <div class="isl">Search impression share</div>
-      <div class="isbb"><div class="isbf" style="width:10%;background:var(--blue)"></div></div>
-      <div class="isv">~10%</div>
-      <div class="isn">Winning ~10% of eligible auctions. Significant growth opportunity available.</div>
-    </div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(impShare,100)}%;background:${isColor}"></div></div>
+      <div class="isv">${impShare.toFixed(1)}%</div>
+      <div class="isn">${isNote}</div>
+    </div>`;
+  }
+  
+  if (lostRank !== null && lostRank !== undefined) {
+    const lrColor = lostRank <= 20 ? 'var(--green)' : lostRank <= 50 ? 'var(--amber)' : 'var(--red)';
+    const lrNote = lostRank <= 20 ? 'Excellent ad quality — minimal loss to rank.' :
+                   lostRank <= 40 ? 'Moderate loss — improve keyword relevance and ad strength.' :
+                   'High loss to ad rank — focus on quality score and relevance.';
+    visCards += `
     <div class="isc">
       <div class="isl">Lost IS — Ad Rank</div>
-      <div class="isbb"><div class="isbf" style="width:58%;background:var(--red)"></div></div>
-      <div class="isv">~58%</div>
-      <div class="isn">Lost to quality/bid — improve keyword relevance and ad strength.</div>
-    </div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(lostRank,100)}%;background:${lrColor}"></div></div>
+      <div class="isv">${lostRank.toFixed(1)}%</div>
+      <div class="isn">${lrNote}</div>
+    </div>`;
+  }
+  
+  if (lostBudget !== null && lostBudget !== undefined) {
+    const lbColor = lostBudget <= 10 ? 'var(--green)' : lostBudget <= 30 ? 'var(--amber)' : 'var(--red)';
+    const lbNote = lostBudget <= 10 ? 'Budget is not the primary constraint — focus on ad quality.' :
+                   lostBudget <= 30 ? 'Some budget constraints — consider reallocating from low performers.' :
+                   'Significant budget limitation — review daily caps and prioritize top campaigns.';
+    visCards += `
     <div class="isc">
       <div class="isl">Lost IS — Budget</div>
-      <div class="isbb"><div class="isbf" style="width:8%;background:var(--amber)"></div></div>
-      <div class="isv">&lt;10%</div>
-      <div class="isn">Budget is not the primary constraint — focus on ad quality.</div>
+      <div class="isbb"><div class="isbf" style="width:${Math.min(lostBudget,100)}%;background:${lbColor}"></div></div>
+      <div class="isv">${lostBudget.toFixed(1)}%</div>
+      <div class="isn">${lbNote}</div>
     </div>`;
+  }
+  
+  // If no impression share data available, show placeholder message
+  if (!visCards) {
+    visCards = `
+    <div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666;">
+      <div style="font-size:14px;">Impression share data not available for this period.</div>
+      <div style="font-size:12px;margin-top:8px;">This data requires Standard API access — coming soon.</div>
+    </div>`;
+  }
+  
+  document.getElementById('visibilityGrid').innerHTML = visCards;
+
+  // SEO Section
+  const seoContainer = document.getElementById('seoContent');
+  const seoEnrolled = window.CLIENT_DATA?.seo_enrolled || false;
+  const seoData = window.CLIENT_DATA?.seo || null;
+  
+  if (seoEnrolled && seoData && seoData.enrolled) {
+    // Enrolled client with data - show full SEO metrics
+    const ps = seoData.pagespeed_mobile || 0;
+    const psDesk = seoData.pagespeed_desktop || 0;
+    const seoScore = seoData.seo_score || 0;
+    const cwvPass = seoData.cwv_pass;
+    const orgClicks = seoData.organic_clicks || 0;
+    const orgImps = seoData.organic_impressions || 0;
+    const avgPos = seoData.avg_position;
+    const topQueries = seoData.top_queries || [];
+    
+    const psColor = ps >= 90 ? 'green' : ps >= 50 ? 'amber' : 'red';
+    const seoColor = seoScore >= 90 ? 'green' : seoScore >= 50 ? 'amber' : 'red';
+    
+    let queriesHTML = '';
+    if (topQueries.length > 0) {
+      queriesHTML = '<div class="seo-queries">';
+      topQueries.slice(0, 5).forEach(q => {
+        queriesHTML += `
+          <div class="seo-query-row">
+            <span class="seo-query-term">${q.query || q.keyword || ''}</span>
+            <div class="seo-query-stats">
+              <span class="seo-query-stat"><strong>${fmtN(q.clicks || 0)}</strong> clicks</span>
+              <span class="seo-query-stat"><strong>${fmtN(q.impressions || 0)}</strong> impr</span>
+              <span class="seo-query-stat">Pos <strong>${(q.position || 0).toFixed(1)}</strong></span>
+            </div>
+          </div>`;
+      });
+      queriesHTML += '</div>';
+    }
+    
+    seoContainer.innerHTML = `
+      <div class="seo-grid">
+        <div class="seo-card">
+          <div class="seo-icon">📱</div>
+          <div class="seo-label">Mobile Speed</div>
+          <div class="seo-value ${psColor}">${ps}</div>
+          <div class="seo-bar"><div class="seo-fill ${psColor}" style="width:${ps}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">💻</div>
+          <div class="seo-label">Desktop Speed</div>
+          <div class="seo-value ${psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red'}">${psDesk}</div>
+          <div class="seo-bar"><div class="seo-fill ${psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red'}" style="width:${psDesk}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">🔍</div>
+          <div class="seo-label">SEO Score</div>
+          <div class="seo-value ${seoColor}">${seoScore}</div>
+          <div class="seo-bar"><div class="seo-fill ${seoColor}" style="width:${seoScore}%"></div></div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">${cwvPass ? '✅' : '⚠️'}</div>
+          <div class="seo-label">Core Web Vitals</div>
+          <div class="seo-value" style="font-size:18px;color:${cwvPass ? 'var(--green)' : 'var(--amber)'}">${cwvPass ? 'Passing' : 'Needs Work'}</div>
+          <div class="seo-sub">${seoData.lcp || '—'} LCP · ${seoData.cls || '—'} CLS</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-icon">🔎</div>
+          <div class="seo-label">Organic Clicks (30d)</div>
+          <div class="seo-value">${fmtN(orgClicks)}</div>
+          <div class="seo-sub">${fmtN(orgImps)} impressions · Avg position ${avgPos ? avgPos.toFixed(1) : '—'}</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-label" style="margin-bottom:10px">Top Search Queries</div>
+          ${queriesHTML || '<div class="seo-sub">No query data available yet</div>'}
+        </div>
+      </div>
+    `;
+    document.getElementById('seoSubtitle').textContent = 'Organic search & site speed · Last updated ' + (seoData.fetched_at ? new Date(seoData.fetched_at).toLocaleDateString() : 'recently');
+  } else {
+    // Not enrolled - show fields with N/A and upsell note
+    seoContainer.innerHTML = `
+      <div class="seo-grid" style="opacity:0.5;">
+        <div class="seo-card">
+          <div class="seo-icon">📱</div>
+          <div class="seo-label">Mobile Speed</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">💻</div>
+          <div class="seo-label">Desktop Speed</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">🔍</div>
+          <div class="seo-label">SEO Score</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card">
+          <div class="seo-icon">📊</div>
+          <div class="seo-label">Core Web Vitals</div>
+          <div class="seo-value" style="font-size:18px;color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-icon">🔎</div>
+          <div class="seo-label">Organic Clicks (30d)</div>
+          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
+        </div>
+        <div class="seo-card wide">
+          <div class="seo-label">Top Search Queries</div>
+          <div class="seo-value" style="font-size:16px;color:var(--gray-400);margin-top:12px">N/A</div>
+        </div>
+      </div>
+      <div style="background:var(--gray-100);border-radius:var(--radius-sm);padding:16px 20px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--navy);margin-bottom:4px;">Interested in SEO insights?</div>
+          <div style="font-size:12px;color:var(--gray-600);">PageSpeed scores, keyword rankings, and organic traffic data are available as part of our SEO package.</div>
+        </div>
+        <a href="mailto:scott@sponsorapurpose.org?subject=SEO%20Package%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">Learn More</a>
+      </div>
+    `;
+    document.getElementById('seoSubtitle').textContent = 'Available with SEO package';
+  }
 
   updateSidebarActive();
 }
@@ -880,7 +1092,7 @@ function initClient(){
 }
 
 function updateSidebarActive(){
-  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-audience','sec-landing','sec-location','sec-visibility','sec-actions','sec-insights'];
+  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-audience','sec-landing','sec-location','sec-visibility','sec-seo','sec-actions','sec-insights'];
   const links=document.querySelectorAll('.sb-nav a');
   function check(){
     let cur=ids[0];
@@ -906,9 +1118,9 @@ window.addEventListener('load',()=>{
 
 <script>
 // Injected by generate_reports_v2.py — Guardian Pet Trust (878-405-5035) — 2026-04-06
-window.CLIENT_DATA = {"slug": "guardian-pet-trust", "name": "Guardian Pet Trust", "account_id": "878-405-5035", "website": "https://guardianpettrust.org", "org_model": "location_based", "animal_type": null, "report_date": "April 06, 2026", "gps": 85, "gps_components": {"ctr": 53, "utilization": 99, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 717.0, "im": 10411.0, "cost": 9935.52, "cv": 2098.00002, "ctr": 6.89, "cpc": 13.86, "costPerConv": 4.74, "convRate": 292.61}, "totals_7d": {"cl": 159.0, "im": 2475.0, "cost": 2303.26, "cv": 468.0, "ctr": 6.42, "cpc": 14.49, "costPerConv": 4.92, "convRate": 294.34}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 6.9%", "body": "Account CTR is 6.9% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "green", "tag": "win", "title": "Grant utilization strong \u2014 99% used", "body": "Spending $9,936 of the $10,000 monthly grant. On pace to maximize full grant value this month."}, {"color": "green", "tag": "win", "title": "2098 conversions tracked at $4.74 CPA", "body": "Campaigns recorded 2098 conversions this month at $4.74 per conversion."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 85/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/blogs", "sessions": "257", "averageSessionDuration": "100.11775875097277", "bounceRate": "0", "engagementRate": "1", "conversions": "1369"}, {"landingPage": "/donate", "sessions": "194", "averageSessionDuration": "41.458148623711338", "bounceRate": "0", "engagementRate": "1", "conversions": "865"}, {"landingPage": "/foster", "sessions": "162", "averageSessionDuration": "62.313291067901233", "bounceRate": "0", "engagementRate": "1", "conversions": "926"}, {"landingPage": "/", "sessions": "134", "averageSessionDuration": "177.3663100447761", "bounceRate": "0", "engagementRate": "1", "conversions": "675"}, {"landingPage": "/free-ebook", "sessions": "105", "averageSessionDuration": "3.099355457142857", "bounceRate": "0", "engagementRate": "1", "conversions": "327"}, {"landingPage": "/pet-owner", "sessions": "87", "averageSessionDuration": "34.1583346091954", "bounceRate": "0", "engagementRate": "1", "conversions": "311"}, {"landingPage": "/about-us", "sessions": "42", "averageSessionDuration": "81.835521857142865", "bounceRate": "0.023809523809523808", "engagementRate": "0.97619047619047616", "conversions": "169"}, {"landingPage": "(not set)", "sessions": "38", "averageSessionDuration": "41.387011184210522", "bounceRate": "0.10526315789473684", "engagementRate": "0.89473684210526316", "conversions": "74"}, {"landingPage": "/attorney", "sessions": "12", "averageSessionDuration": "50.490449333333338", "bounceRate": "0", "engagementRate": "1", "conversions": "50"}, {"landingPage": "/caretaker", "sessions": "8", "averageSessionDuration": "746.087405875", "bounceRate": "0", "engagementRate": "1", "conversions": "36"}], "ga4_states": [{"region": "Florida", "sessions": "152", "totalUsers": "113"}, {"region": "California", "sessions": "77", "totalUsers": "66"}, {"region": "Virginia", "sessions": "68", "totalUsers": "60"}, {"region": "Texas", "sessions": "59", "totalUsers": "55"}, {"region": "New York", "sessions": "45", "totalUsers": "43"}, {"region": "Washington", "sessions": "41", "totalUsers": "40"}, {"region": "Alabama", "sessions": "36", "totalUsers": "36"}, {"region": "Illinois", "sessions": "36", "totalUsers": "32"}, {"region": "Colorado", "sessions": "30", "totalUsers": "21"}, {"region": "Georgia", "sessions": "30", "totalUsers": "28"}], "ga4_cities": [{"city": "Boca Raton", "sessions": "40", "totalUsers": "10"}, {"city": "Birmingham", "sessions": "35", "totalUsers": "35"}, {"city": "Ashburn", "sessions": "23", "totalUsers": "19"}, {"city": "New York", "sessions": "23", "totalUsers": "22"}, {"city": "Chicago", "sessions": "22", "totalUsers": "18"}, {"city": "Miami", "sessions": "22", "totalUsers": "22"}, {"city": "Moses Lake", "sessions": "22", "totalUsers": "21"}, {"city": "Atlanta", "sessions": "16", "totalUsers": "14"}, {"city": "Los Angeles", "sessions": "16", "totalUsers": "15"}, {"city": "Des Moines", "sessions": "15", "totalUsers": "15"}]};
-window.REPORT_DATA = {'30d':{totals:{cl:717.0,im:10411.0,ctr:6.89,cost:9935.52,cv:2098.00002,cpc:13.86,costPerConv:4.74,convRate:292.61},campaigns:[{n:"Search - Blogs",s:"ENABLED",ctr:7.53,cl:284.0,im:3771.0,cost:1894.13,cv:756.0,cpc:6.67,cpa:2.51},{n:"P Max - Donate",s:"ENABLED",ctr:7.03,cl:235.0,im:3341.0,cost:4576.53,cv:602.0,cpc:19.47,cpa:7.6},{n:"P-Max-Foster",s:"ENABLED",ctr:7.19,cl:124.0,im:1725.0,cost:2167.9,cv:493.00002,cpc:17.48,cpa:4.4},{n:"P_Max _ Blogs",s:"ENABLED",ctr:4.85,cl:23.0,im:474.0,cost:392.6,cv:69.0,cpc:17.07,cpa:5.69},{n:"P-Max Pet Owner",s:"ENABLED",ctr:11.97,cl:17.0,im:142.0,cost:283.52,cv:68.0,cpc:16.68,cpa:4.17},{n:"Pet Trust Awareness \u2013 PMax",s:"ENABLED",ctr:3.04,cl:15.0,im:494.0,cost:321.26,cv:42.0,cpc:21.42,cpa:7.65},{n:"PMax-CareTaker",s:"ENABLED",ctr:3.72,cl:12.0,im:323.0,cost:208.39,cv:54.0,cpc:17.37,cpa:3.86},{n:"Partner as Vet \u2013 P-Max",s:"ENABLED",ctr:4.96,cl:6.0,im:121.0,cost:83.14,cv:9.0,cpc:13.86,cpa:9.24},{n:"Search-attorney",s:"ENABLED",ctr:14.29,cl:1.0,im:7.0,cost:8.04,cv:5.0,cpc:8.04,cpa:1.61},{n:"Pet Caretaker + Audiences",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Pet Owner",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Care for Our Pet Trust Pets",s:"ENABLED",ctr:0,cl:0,im:13.0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 08", "Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[14, 22, 29, 22, 22, 29, 22, 22, 22, 29, 22, 22, 29, 22, 22, 29, 22, 22, 22, 29, 22, 22, 29, 22, 22, 29, 22, 22, 29, 22],convs:[42, 63, 84, 63, 63, 84, 63, 63, 63, 84, 63, 63, 84, 63, 63, 84, 63, 63, 63, 84, 63, 63, 84, 63, 63, 84, 63, 63, 84, 63],spend:[198.71, 298.07, 397.42, 298.07, 298.07, 397.42, 298.07, 298.07, 298.07, 397.42, 298.07, 298.07, 397.42, 298.07, 298.07, 397.42, 298.07, 298.07, 298.07, 397.42, 298.07, 298.07, 397.42, 298.07, 298.07, 397.42, 298.07, 298.07, 397.42, 298.07],cpc:[14.19, 13.55, 13.7, 13.55, 13.55, 13.7, 13.55, 13.55, 13.55, 13.7, 13.55, 13.55, 13.7, 13.55, 13.55, 13.7, 13.55, 13.55, 13.55, 13.7, 13.55, 13.55, 13.7, 13.55, 13.55, 13.7, 13.55, 13.55, 13.7, 13.55]},devices:[{n:'Desktop',cl:466,im:6767,cost:6458.09,cv:1427,cvRate:0},{n:'Mobile',cl:229,im:3332,cost:3179.37,cv:608,cvRate:0},{n:'Tablet',cl:22,im:312,cost:298.07,cv:63,cvRate:0}]},'7d':{totals:{cl:159.0,im:2475.0,ctr:6.42,cost:2303.26,cv:468.0,cpc:14.49,costPerConv:4.92,convRate:294.34},campaigns:[{n:"Search - Blogs",s:"ENABLED",ctr:6.45,cl:63.0,im:976.0,cost:452.94,cv:157.0,cpc:7.19,cpa:2.88},{n:"P Max - Donate",s:"ENABLED",ctr:6.49,cl:42.0,im:647.0,cost:918.23,cv:105.0,cpc:21.86,cpa:8.75},{n:"P-Max-Foster",s:"ENABLED",ctr:7.33,cl:37.0,im:505.0,cost:637.34,cv:150.0,cpc:17.23,cpa:4.25},{n:"P_Max _ Blogs",s:"ENABLED",ctr:5.66,cl:6.0,im:106.0,cost:94.68,cv:16.0,cpc:15.78,cpa:5.92},{n:"P-Max Pet Owner",s:"ENABLED",ctr:17.24,cl:5.0,im:29.0,cost:96.16,cv:20.0,cpc:19.23,cpa:4.81},{n:"Pet Trust Awareness \u2013 PMax",s:"ENABLED",ctr:3.41,cl:3.0,im:88.0,cost:45.18,cv:7.0,cpc:15.06,cpa:6.45},{n:"PMax-CareTaker",s:"ENABLED",ctr:1.98,cl:2.0,im:101.0,cost:39.2,cv:13.0,cpc:19.6,cpa:3.02},{n:"Partner as Vet \u2013 P-Max",s:"ENABLED",ctr:4.76,cl:1.0,im:21.0,cost:19.53,cv:0,cpc:19.53,cpa:null},{n:"Pet Caretaker + Audiences",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Pet Owner",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-attorney",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Care for Our Pet Trust Pets",s:"ENABLED",ctr:0,cl:0,im:2.0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[19, 25, 21, 22, 24, 21, 27],convs:[56, 75, 61, 66, 70, 61, 80],spend:[276.39, 368.52, 299.42, 322.46, 345.49, 299.42, 391.55],cpc:[14.55, 14.74, 14.26, 14.66, 14.4, 14.26, 14.5]},devices:[{n:'Desktop',cl:103,im:1609,cost:1497.12,cv:318,cvRate:0},{n:'Mobile',cl:51,im:792,cost:737.04,cv:136,cvRate:0},{n:'Tablet',cl:5,im:74,cost:69.1,cv:14,cvRate:0}]}};
-window.LP_DATA     = [{"page": "/blogs", "sessions": 257, "pct": 30, "avgTime": "100s", "engaged": true, "convs": 1369}, {"page": "/donate", "sessions": 194, "pct": 23, "avgTime": "41s", "engaged": true, "convs": 865}, {"page": "/foster", "sessions": 162, "pct": 19, "avgTime": "62s", "engaged": true, "convs": 926}, {"page": "/", "sessions": 134, "pct": 16, "avgTime": "177s", "engaged": true, "convs": 675}, {"page": "/free-ebook", "sessions": 105, "pct": 12, "avgTime": "3s", "engaged": true, "convs": 327}];
+window.CLIENT_DATA = {"slug": "guardian-pet-trust", "name": "Guardian Pet Trust", "account_id": "878-405-5035", "website": "https://guardianpettrust.org", "org_model": "location_based", "animal_type": null, "report_date": "April 06, 2026", "gps": 85, "gps_components": {"ctr": 53, "utilization": 99, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 718.0, "im": 10501.0, "cost": 9932.98, "cv": 2105.00002, "ctr": 6.84, "cpc": 13.83, "costPerConv": 4.72, "convRate": 293.18, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "totals_7d": {"cl": 159.0, "im": 2516.0, "cost": 2303.38, "cv": 481.0, "ctr": 6.32, "cpc": 14.49, "costPerConv": 4.79, "convRate": 302.52, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 6.8%", "body": "Account CTR is 6.8% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "green", "tag": "win", "title": "Grant utilization strong \u2014 99% used", "body": "Spending $9,933 of the $10,000 monthly grant. On pace to maximize full grant value this month."}, {"color": "green", "tag": "win", "title": "2105 conversions tracked at $4.72 CPA", "body": "Campaigns recorded 2105 conversions this month at $4.72 per conversion."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 85/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/blogs", "sessions": "257", "averageSessionDuration": "100.11775875097277", "bounceRate": "0", "engagementRate": "1", "conversions": "1369"}, {"landingPage": "/donate", "sessions": "194", "averageSessionDuration": "41.458148623711338", "bounceRate": "0", "engagementRate": "1", "conversions": "865"}, {"landingPage": "/foster", "sessions": "164", "averageSessionDuration": "61.825311414634157", "bounceRate": "0", "engagementRate": "1", "conversions": "936"}, {"landingPage": "/", "sessions": "134", "averageSessionDuration": "177.3663100447761", "bounceRate": "0", "engagementRate": "1", "conversions": "675"}, {"landingPage": "/free-ebook", "sessions": "105", "averageSessionDuration": "3.099355457142857", "bounceRate": "0", "engagementRate": "1", "conversions": "327"}, {"landingPage": "/pet-owner", "sessions": "87", "averageSessionDuration": "34.1583346091954", "bounceRate": "0", "engagementRate": "1", "conversions": "311"}, {"landingPage": "/about-us", "sessions": "42", "averageSessionDuration": "81.835521857142865", "bounceRate": "0.023809523809523808", "engagementRate": "0.97619047619047616", "conversions": "169"}, {"landingPage": "(not set)", "sessions": "38", "averageSessionDuration": "41.387011184210522", "bounceRate": "0.10526315789473684", "engagementRate": "0.89473684210526316", "conversions": "74"}, {"landingPage": "/attorney", "sessions": "12", "averageSessionDuration": "50.490449333333338", "bounceRate": "0", "engagementRate": "1", "conversions": "50"}, {"landingPage": "/caretaker", "sessions": "8", "averageSessionDuration": "746.087405875", "bounceRate": "0", "engagementRate": "1", "conversions": "36"}], "ga4_states": [{"region": "Florida", "sessions": "152", "totalUsers": "113"}, {"region": "California", "sessions": "77", "totalUsers": "66"}, {"region": "Virginia", "sessions": "68", "totalUsers": "60"}, {"region": "Texas", "sessions": "59", "totalUsers": "55"}, {"region": "New York", "sessions": "45", "totalUsers": "43"}, {"region": "Washington", "sessions": "41", "totalUsers": "40"}, {"region": "Alabama", "sessions": "36", "totalUsers": "36"}, {"region": "Illinois", "sessions": "36", "totalUsers": "32"}, {"region": "Colorado", "sessions": "30", "totalUsers": "21"}, {"region": "Georgia", "sessions": "30", "totalUsers": "28"}], "ga4_cities": [{"city": "Boca Raton", "sessions": "40", "totalUsers": "10"}, {"city": "Birmingham", "sessions": "35", "totalUsers": "35"}, {"city": "Ashburn", "sessions": "23", "totalUsers": "19"}, {"city": "New York", "sessions": "23", "totalUsers": "22"}, {"city": "Chicago", "sessions": "22", "totalUsers": "18"}, {"city": "Miami", "sessions": "22", "totalUsers": "22"}, {"city": "Moses Lake", "sessions": "22", "totalUsers": "21"}, {"city": "Atlanta", "sessions": "16", "totalUsers": "14"}, {"city": "Los Angeles", "sessions": "16", "totalUsers": "15"}, {"city": "Des Moines", "sessions": "15", "totalUsers": "15"}], "seo_enrolled": true, "seo": {"enrolled": true, "pagespeed_mobile": null, "pagespeed_desktop": null, "seo_score": null, "accessibility": null, "cwv_pass": null, "lcp": null, "cls": null, "tbt": null, "organic_clicks": 0, "organic_impressions": 0, "organic_ctr": 0, "avg_position": null, "top_queries": [], "top_pages": [], "keywords_tracked": 5, "keywords_top10": 0, "fetched_at": "2026-04-06T21:33:22.764467"}};
+window.REPORT_DATA = {'30d':{totals:{cl:718.0,im:10501.0,ctr:6.84,cost:9932.98,cv:2105.00002,cpc:13.83,costPerConv:4.72,convRate:293.18},campaigns:[{n:"Search - Blogs",s:"ENABLED",ctr:7.39,cl:287.0,im:3886.0,cost:1934.88,cv:771.0,cpc:6.74,cpa:2.51},{n:"P Max - Donate",s:"ENABLED",ctr:7.1,cl:235.0,im:3311.0,cost:4577.18,cv:597.0,cpc:19.48,cpa:7.67},{n:"P-Max-Foster",s:"ENABLED",ctr:7.3,cl:127.0,im:1740.0,cost:2208.72,cv:507.00002,cpc:17.39,cpa:4.36},{n:"P_Max _ Blogs",s:"ENABLED",ctr:4.96,cl:23.0,im:464.0,cost:392.33,cv:73.0,cpc:17.06,cpa:5.37},{n:"Pet Trust Awareness \u2013 PMax",s:"ENABLED",ctr:2.84,cl:14.0,im:493.0,cost:301.3,cv:42.0,cpc:21.52,cpa:7.17},{n:"P-Max Pet Owner",s:"ENABLED",ctr:10.07,cl:14.0,im:139.0,cost:232.65,cv:55.0,cpc:16.62,cpa:4.23},{n:"PMax-CareTaker",s:"ENABLED",ctr:3.29,cl:11.0,im:334.0,cost:194.74,cv:46.0,cpc:17.7,cpa:4.23},{n:"Partner as Vet \u2013 P-Max",s:"ENABLED",ctr:5.26,cl:6.0,im:114.0,cost:83.14,cv:9.0,cpc:13.86,cpa:9.24},{n:"Search-attorney",s:"ENABLED",ctr:14.29,cl:1.0,im:7.0,cost:8.04,cv:5.0,cpc:8.04,cpa:1.61},{n:"Pet Caretaker + Audiences",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Pet Owner",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Care for Our Pet Trust Pets",s:"ENABLED",ctr:0,cl:0,im:13.0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 08", "Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[14, 22, 29, 22, 22, 29, 22, 22, 22, 29, 22, 22, 29, 22, 22, 29, 22, 22, 22, 29, 22, 22, 29, 22, 22, 29, 22, 22, 29, 22],convs:[42, 63, 84, 63, 63, 84, 63, 63, 63, 84, 63, 63, 84, 63, 63, 84, 63, 63, 63, 84, 63, 63, 84, 63, 63, 84, 63, 63, 84, 63],spend:[198.66, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99, 297.99, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99, 297.99, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99],cpc:[14.19, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54, 13.54, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54, 13.54, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54]},devices:[{n:'Desktop',cl:467,im:6826,cost:6456.44,cv:1431,cvRate:0},{n:'Mobile',cl:230,im:3360,cost:3178.55,cv:610,cvRate:0},{n:'Tablet',cl:22,im:315,cost:297.99,cv:63,cvRate:0}]},'7d':{totals:{cl:159.0,im:2516.0,ctr:6.32,cost:2303.38,cv:481.0,cpc:14.49,costPerConv:4.79,convRate:302.52},campaigns:[{n:"Search - Blogs",s:"ENABLED",ctr:6.23,cl:67.0,im:1075.0,cost:494.65,cv:173.0,cpc:7.38,cpa:2.86},{n:"P Max - Donate",s:"ENABLED",ctr:6.5,cl:39.0,im:600.0,cost:884.04,cv:92.0,cpc:22.67,cpa:9.61},{n:"P-Max-Foster",s:"ENABLED",ctr:7.76,cl:38.0,im:490.0,cost:656.29,cv:161.0,cpc:17.27,cpa:4.08},{n:"P_Max _ Blogs",s:"ENABLED",ctr:5.71,cl:6.0,im:105.0,cost:107.44,cv:19.0,cpc:17.91,cpa:5.65},{n:"P-Max Pet Owner",s:"ENABLED",ctr:13.79,cl:4.0,im:29.0,cost:76.68,cv:16.0,cpc:19.17,cpa:4.79},{n:"Pet Trust Awareness \u2013 PMax",s:"ENABLED",ctr:2.3,cl:2.0,im:87.0,cost:25.55,cv:7.0,cpc:12.78,cpa:3.65},{n:"PMax-CareTaker",s:"ENABLED",ctr:1.82,cl:2.0,im:110.0,cost:39.2,cv:13.0,cpc:19.6,cpa:3.02},{n:"Partner as Vet \u2013 P-Max",s:"ENABLED",ctr:5.56,cl:1.0,im:18.0,cost:19.53,cv:0,cpc:19.53,cpa:null},{n:"Pet Caretaker + Audiences",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Pet Owner",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-attorney",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Care for Our Pet Trust Pets",s:"ENABLED",ctr:0,cl:0,im:2.0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[19, 25, 21, 22, 24, 21, 27],convs:[58, 77, 63, 67, 72, 63, 82],spend:[276.41, 368.54, 299.44, 322.47, 345.51, 299.44, 391.57],cpc:[14.55, 14.74, 14.26, 14.66, 14.4, 14.26, 14.5]},devices:[{n:'Desktop',cl:103,im:1635,cost:1497.2,cv:327,cvRate:0},{n:'Mobile',cl:51,im:805,cost:737.08,cv:139,cvRate:0},{n:'Tablet',cl:5,im:75,cost:69.1,cv:14,cvRate:0}]}};
+window.LP_DATA     = [{"page": "/blogs", "sessions": 257, "pct": 30, "avgTime": "100s", "engaged": true, "convs": 1369}, {"page": "/donate", "sessions": 194, "pct": 23, "avgTime": "41s", "engaged": true, "convs": 865}, {"page": "/foster", "sessions": 164, "pct": 19, "avgTime": "61s", "engaged": true, "convs": 936}, {"page": "/", "sessions": 134, "pct": 16, "avgTime": "177s", "engaged": true, "convs": 675}, {"page": "/free-ebook", "sessions": 105, "pct": 12, "avgTime": "3s", "engaged": true, "convs": 327}];
 window.STATE_DATA  = [{"state": "Florida", "sessions": 152, "pct": 26}, {"state": "California", "sessions": 77, "pct": 13}, {"state": "Virginia", "sessions": 68, "pct": 12}, {"state": "Texas", "sessions": 59, "pct": 10}, {"state": "New York", "sessions": 45, "pct": 8}, {"state": "Washington", "sessions": 41, "pct": 7}, {"state": "Alabama", "sessions": 36, "pct": 6}, {"state": "Illinois", "sessions": 36, "pct": 6}, {"state": "Colorado", "sessions": 30, "pct": 5}, {"state": "Georgia", "sessions": 30, "pct": 5}];
 window.CITY_DATA   = [{"city": "Boca Raton", "state": "", "sessions": 40}, {"city": "Birmingham", "state": "", "sessions": 35}, {"city": "Ashburn", "state": "", "sessions": 23}, {"city": "New York", "state": "", "sessions": 23}, {"city": "Chicago", "state": "", "sessions": 22}, {"city": "Miami", "state": "", "sessions": 22}, {"city": "Moses Lake", "state": "", "sessions": 22}, {"city": "Atlanta", "state": "", "sessions": 16}, {"city": "Los Angeles", "state": "", "sessions": 16}, {"city": "Des Moines", "state": "", "sessions": 15}];
 </script>
