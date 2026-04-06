@@ -23,6 +23,15 @@ REPORT_DATE   = datetime.date.today().strftime("%B %d, %Y")
 REPO_BASE     = "https://sdefries.github.io/sap-GAreporting/reports"
 os.makedirs("reports", exist_ok=True)
 
+# ── HELPER: safe int/float conversion (GA4 API returns strings) ──────────────
+def safe_int(val, default=0):
+    try: return int(float(val))
+    except: return default
+
+def safe_float(val, default=0.0):
+    try: return float(val)
+    except: return default
+
 # ── DATA BUILDERS ─────────────────────────────────────────────────────────────
 def totals(rows):
     if not rows: return {}
@@ -200,25 +209,52 @@ def build_report_data(cd):
 
 def build_lp_data(ga4_pages):
     if not ga4_pages: return "[]"
-    total = sum(p.get("sessions",0) for p in ga4_pages[:5]) or 1
+    # GA4 API returns strings — convert to int
+    total = sum(safe_int(p.get("sessions",0)) for p in ga4_pages[:5]) or 1
     out=[]
     for p in ga4_pages[:5]:
-        sess=int(p.get("sessions",0))
-        out.append({"page":p.get("landing_page",p.get("page","/")),"sessions":sess,
-                    "pct":round(sess/total*100),"avgTime":f"{int(p.get('average_session_duration',0))}s",
-                    "engaged":(p.get("engagement_rate",0) or 0)>0.5,"convs":int(p.get("conversions",0))})
+        sess = safe_int(p.get("sessions",0))
+        # Handle both camelCase (from API) and snake_case keys
+        page = p.get("landingPage") or p.get("landing_page") or p.get("page") or "/"
+        avg_time = safe_float(p.get("averageSessionDuration") or p.get("average_session_duration") or 0)
+        eng_rate = safe_float(p.get("engagementRate") or p.get("engagement_rate") or 0)
+        convs = safe_int(p.get("conversions",0))
+        out.append({
+            "page": page,
+            "sessions": sess,
+            "pct": round(sess/total*100),
+            "avgTime": f"{int(avg_time)}s",
+            "engaged": eng_rate > 0.5,
+            "convs": convs
+        })
     return json.dumps(out)
 
 def build_state_data(ga4_states):
     if not ga4_states: return "[]"
-    total=sum(s.get("sessions",0) for s in ga4_states[:10]) or 1
-    return json.dumps([{"state":s.get("region","Unknown"),"sessions":int(s.get("sessions",0)),
-                        "pct":round(int(s.get("sessions",0))/total*100)} for s in ga4_states[:10]])
+    # GA4 API returns strings — convert to int
+    total = sum(safe_int(s.get("sessions",0)) for s in ga4_states[:10]) or 1
+    out = []
+    for s in ga4_states[:10]:
+        sess = safe_int(s.get("sessions",0))
+        out.append({
+            "state": s.get("region","Unknown"),
+            "sessions": sess,
+            "pct": round(sess/total*100)
+        })
+    return json.dumps(out)
 
 def build_city_data(ga4_cities):
     if not ga4_cities: return "[]"
-    return json.dumps([{"city":c.get("city","Unknown"),"state":c.get("region","")[:2].upper(),
-                        "sessions":int(c.get("sessions",0))} for c in ga4_cities[:10]])
+    out = []
+    for c in ga4_cities[:10]:
+        sess = safe_int(c.get("sessions",0))
+        region = c.get("region","") or ""
+        out.append({
+            "city": c.get("city","Unknown"),
+            "state": region[:2].upper() if len(region)>=2 else "",
+            "sessions": sess
+        })
+    return json.dumps(out)
 
 def render(cd):
     """Inject all data into the clean template. One injection block at the bottom."""
