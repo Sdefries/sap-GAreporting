@@ -863,17 +863,23 @@ function render(){
   
   if (seoEnrolled && seoData && seoData.enrolled) {
     // Enrolled client with data - show full SEO metrics
-    const ps = seoData.pagespeed_mobile || 0;
-    const psDesk = seoData.pagespeed_desktop || 0;
-    const seoScore = seoData.seo_score || 0;
+    // Check for actual data vs null/0
+    const ps = seoData.pagespeed_mobile;
+    const psDesk = seoData.pagespeed_desktop;
+    const seoScore = seoData.seo_score;
     const cwvPass = seoData.cwv_pass;
-    const orgClicks = seoData.organic_clicks || 0;
-    const orgImps = seoData.organic_impressions || 0;
+    const orgClicks = seoData.organic_clicks;
+    const orgImps = seoData.organic_impressions;
     const avgPos = seoData.avg_position;
     const topQueries = seoData.top_queries || [];
     
-    const psColor = ps >= 90 ? 'green' : ps >= 50 ? 'amber' : 'red';
-    const seoColor = seoScore >= 90 ? 'green' : seoScore >= 50 ? 'amber' : 'red';
+    // Helper to display value or N/A
+    const valOrNA = (v) => (v !== null && v !== undefined && v !== 0) ? v : 'N/A';
+    const hasData = (v) => v !== null && v !== undefined && v !== 0;
+    
+    const psColor = hasData(ps) ? (ps >= 90 ? 'green' : ps >= 50 ? 'amber' : 'red') : '';
+    const psDeskColor = hasData(psDesk) ? (psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red') : '';
+    const seoColor = hasData(seoScore) ? (seoScore >= 90 ? 'green' : seoScore >= 50 ? 'amber' : 'red') : '';
     
     let queriesHTML = '';
     if (topQueries.length > 0) {
@@ -892,41 +898,46 @@ function render(){
       queriesHTML += '</div>';
     }
     
+    // CWV display logic
+    const cwvIcon = cwvPass === null ? '⏳' : (cwvPass ? '✅' : '⚠️');
+    const cwvText = cwvPass === null ? 'Pending' : (cwvPass ? 'Passing' : 'Needs Work');
+    const cwvColor = cwvPass === null ? 'var(--gray-400)' : (cwvPass ? 'var(--green)' : 'var(--amber)');
+    
     seoContainer.innerHTML = `
       <div class="seo-grid">
         <div class="seo-card">
           <div class="seo-icon">📱</div>
           <div class="seo-label">Mobile Speed</div>
-          <div class="seo-value ${psColor}">${ps}</div>
-          <div class="seo-bar"><div class="seo-fill ${psColor}" style="width:${ps}%"></div></div>
+          <div class="seo-value ${psColor}" style="${!hasData(ps) ? 'color:var(--gray-400)' : ''}">${valOrNA(ps)}</div>
+          <div class="seo-bar"><div class="seo-fill ${psColor}" style="width:${hasData(ps) ? ps : 0}%"></div></div>
         </div>
         <div class="seo-card">
           <div class="seo-icon">💻</div>
           <div class="seo-label">Desktop Speed</div>
-          <div class="seo-value ${psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red'}">${psDesk}</div>
-          <div class="seo-bar"><div class="seo-fill ${psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red'}" style="width:${psDesk}%"></div></div>
+          <div class="seo-value ${psDeskColor}" style="${!hasData(psDesk) ? 'color:var(--gray-400)' : ''}">${valOrNA(psDesk)}</div>
+          <div class="seo-bar"><div class="seo-fill ${psDeskColor}" style="width:${hasData(psDesk) ? psDesk : 0}%"></div></div>
         </div>
         <div class="seo-card">
           <div class="seo-icon">🔍</div>
           <div class="seo-label">SEO Score</div>
-          <div class="seo-value ${seoColor}">${seoScore}</div>
-          <div class="seo-bar"><div class="seo-fill ${seoColor}" style="width:${seoScore}%"></div></div>
+          <div class="seo-value ${seoColor}" style="${!hasData(seoScore) ? 'color:var(--gray-400)' : ''}">${valOrNA(seoScore)}</div>
+          <div class="seo-bar"><div class="seo-fill ${seoColor}" style="width:${hasData(seoScore) ? seoScore : 0}%"></div></div>
         </div>
         <div class="seo-card">
-          <div class="seo-icon">${cwvPass ? '✅' : '⚠️'}</div>
+          <div class="seo-icon">${cwvIcon}</div>
           <div class="seo-label">Core Web Vitals</div>
-          <div class="seo-value" style="font-size:18px;color:${cwvPass ? 'var(--green)' : 'var(--amber)'}">${cwvPass ? 'Passing' : 'Needs Work'}</div>
+          <div class="seo-value" style="font-size:18px;color:${cwvColor}">${cwvText}</div>
           <div class="seo-sub">${seoData.lcp || '—'} LCP · ${seoData.cls || '—'} CLS</div>
         </div>
         <div class="seo-card wide">
           <div class="seo-icon">🔎</div>
           <div class="seo-label">Organic Clicks (30d)</div>
-          <div class="seo-value">${fmtN(orgClicks)}</div>
-          <div class="seo-sub">${fmtN(orgImps)} impressions · Avg position ${avgPos ? avgPos.toFixed(1) : '—'}</div>
+          <div class="seo-value" style="${!hasData(orgClicks) ? 'color:var(--gray-400)' : ''}">${hasData(orgClicks) ? fmtN(orgClicks) : 'N/A'}</div>
+          <div class="seo-sub">${hasData(orgImps) ? fmtN(orgImps) + ' impressions' : 'No data'} · Avg position ${avgPos ? avgPos.toFixed(1) : '—'}</div>
         </div>
         <div class="seo-card wide">
           <div class="seo-label" style="margin-bottom:10px">Top Search Queries</div>
-          ${queriesHTML || '<div class="seo-sub">No query data available yet</div>'}
+          ${queriesHTML || '<div class="seo-sub">Requires Search Console access</div>'}
         </div>
       </div>
     `;
