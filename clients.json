@@ -279,6 +279,14 @@
     "contact_name": "",
     "org_type": "pet_care",
     "website": "https://guardianpettrust.org",
+    "local_seo_enrolled": true,
+    "seo_keywords": [
+      "guardian pet trust",
+      "pet care assistance California",
+      "senior pet care assistance",
+      "low income veterinary help",
+      "pet trust fund"
+    ],
     "donation_processor": "donorbox",
     "conversion_strategy": "cross_domain_iframe",
     "geo": {
@@ -637,7 +645,15 @@
     "contact_email": "",
     "contact_name": "",
     "org_type": "humane_society",
-    "website": "",
+    "website": "https://flatheadhumanesociety.org",
+    "local_seo_enrolled": true,
+    "seo_keywords": [
+      "humane society kalispell",
+      "animal shelter northwest montana",
+      "adopt dog kalispell mt",
+      "flathead humane society",
+      "montana pet adoption"
+    ],
     "donation_processor": "unknown",
     "conversion_strategy": "ga4_import",
     "geo": {
