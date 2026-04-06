@@ -39,12 +39,42 @@ def totals(rows):
     im   = sum(r.get("impressions",0) or 0 for r in rows)
     cost = sum(r.get("cost",0) or 0 for r in rows)
     cv   = sum(r.get("conversions",0) or 0 for r in rows)
+    
+    # Impression share: weighted average by impressions per campaign
+    # Only include campaigns that have impression share data
+    is_total_weight = 0
+    is_weighted_sum = 0
+    lost_budget_weighted = 0
+    lost_rank_weighted = 0
+    
+    for r in rows:
+        camp_im = r.get("impressions", 0) or 0
+        is_val = r.get("search_impression_share")
+        lb_val = r.get("lost_is_budget")
+        lr_val = r.get("lost_is_rank")
+        
+        if is_val is not None and camp_im > 0:
+            is_total_weight += camp_im
+            is_weighted_sum += is_val * camp_im
+        if lb_val is not None and camp_im > 0:
+            lost_budget_weighted += lb_val * camp_im
+        if lr_val is not None and camp_im > 0:
+            lost_rank_weighted += lr_val * camp_im
+    
+    # Calculate weighted averages
+    impression_share = round(is_weighted_sum / is_total_weight, 1) if is_total_weight > 0 else None
+    lost_is_budget = round(lost_budget_weighted / is_total_weight, 1) if is_total_weight > 0 else None
+    lost_is_rank = round(lost_rank_weighted / is_total_weight, 1) if is_total_weight > 0 else None
+    
     return {
         "cl": cl, "im": im, "cost": round(cost,2), "cv": cv,
         "ctr":         round(cl/im*100,2) if im>0 else 0,
         "cpc":         round(cost/cl,2) if cl>0 else 0,
         "costPerConv": round(cost/cv,2) if cv>0 else None,
         "convRate":    round(cv/cl*100,2) if cl>0 else 0,
+        "impressionShare": impression_share,
+        "lostIsBudget": lost_is_budget,
+        "lostIsRank": lost_is_rank,
     }
 
 def campaigns(rows):
@@ -151,6 +181,36 @@ def build_client_data(client, rows30, rows7, ga4, seo):
     ctr    = t30.get("ctr",0)
     imps   = t30.get("im",0)
     compliance = "low_activity" if imps<50 else ("compliant" if ctr>=5 else "at_risk")
+    
+    # SEO data for enrolled clients
+    seo_enrolled = client.get("local_seo_enrolled", False)
+    seo_data = None
+    if seo_enrolled and seo:
+        summary = seo.get("summary", {})
+        ps_mob = seo.get("pagespeed_mobile", {})
+        ps_desk = seo.get("pagespeed_desktop", {})
+        sc = seo.get("search_console", {})
+        seo_data = {
+            "enrolled": True,
+            "pagespeed_mobile": ps_mob.get("performance_score"),
+            "pagespeed_desktop": ps_desk.get("performance_score"),
+            "seo_score": ps_mob.get("seo_score"),
+            "accessibility": ps_mob.get("accessibility"),
+            "cwv_pass": ps_mob.get("cwv_pass"),
+            "lcp": ps_mob.get("lcp"),
+            "cls": ps_mob.get("cls"),
+            "tbt": ps_mob.get("tbt"),
+            "organic_clicks": sc.get("clicks", 0),
+            "organic_impressions": sc.get("impressions", 0),
+            "organic_ctr": sc.get("ctr", 0),
+            "avg_position": sc.get("position"),
+            "top_queries": sc.get("top_queries", [])[:5],
+            "top_pages": sc.get("top_pages", [])[:5],
+            "keywords_tracked": summary.get("keywords_tracked", 0),
+            "keywords_top10": summary.get("keywords_top10", 0),
+            "fetched_at": seo.get("fetched_at"),
+        }
+    
     return {
         "slug":        client["slug"],
         "name":        client["name"],
@@ -173,6 +233,8 @@ def build_client_data(client, rows30, rows7, ga4, seo):
         "ga4_pages": (ga4 or {}).get("landing_pages",[])[:10],
         "ga4_states":(ga4 or {}).get("states",[])[:10],
         "ga4_cities":(ga4 or {}).get("cities",[])[:10],
+        "seo_enrolled": seo_enrolled,
+        "seo": seo_data,
         # Data arrays for JS charts — these go into REPORT_DATA, not CLIENT_DATA
         "_camps30": camps30,
         "_camps7":  camps7,
