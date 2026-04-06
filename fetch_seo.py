@@ -52,15 +52,21 @@ CLIENTS = [c for c in ALL_CLIENTS if c.get("local_seo_enrolled")]
 DATAFORSEO_LOGIN    = os.environ.get("DATAFORSEO_LOGIN", "")
 DATAFORSEO_PASSWORD = os.environ.get("DATAFORSEO_PASSWORD", "")
 DATAFORSEO_BASE     = "https://api.dataforseo.com/v3"
+PAGESPEED_API_KEY   = os.environ.get("PAGESPEED_API_KEY", "")
 
 print(f"SEO enrolled clients: {len(CLIENTS)} of {len(ALL_CLIENTS)}")
+if PAGESPEED_API_KEY:
+    print("PageSpeed API key: ✓ configured")
+else:
+    print("PageSpeed API key: not set (using anonymous quota)")
 
 
 # ── PAGESPEED INSIGHTS ────────────────────────────────────────────────────────
 
 def fetch_pagespeed(url, strategy="mobile"):
     """
-    Free, no auth. Returns Core Web Vitals and performance score.
+    Returns Core Web Vitals and performance score.
+    Uses API key if available for higher quota.
     strategy: 'mobile' or 'desktop'
     """
     if not url:
@@ -71,6 +77,10 @@ def fetch_pagespeed(url, strategy="mobile"):
         f"?url={urllib.parse.quote(url)}&strategy={strategy}"
         f"&category=performance&category=seo&category=best-practices&category=accessibility"
     )
+    
+    # Add API key if available
+    if PAGESPEED_API_KEY:
+        api_url += f"&key={PAGESPEED_API_KEY}"
 
     try:
         with urllib.request.urlopen(api_url, timeout=30) as resp:
