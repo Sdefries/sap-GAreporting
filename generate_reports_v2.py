@@ -15,12 +15,12 @@ def load_cache(path):
         with open(path) as f: return json.load(f)
     except: return {}
 
-WINDSOR_CACHE = load_cache("google_ads_cache.json")
-GA4_CACHE     = load_cache("ga4_cache.json")
-SEO_CACHE     = load_cache("seo_cache.json")
-TEMPLATE      = open("report_template.html").read()
-REPORT_DATE   = datetime.date.today().strftime("%B %d, %Y")
-REPO_BASE     = "https://sdefries.github.io/sap-GAreporting/reports"
+GOOGLE_ADS_CACHE = load_cache("google_ads_cache.json")
+GA4_CACHE        = load_cache("ga4_cache.json")
+SEO_CACHE        = load_cache("seo_cache.json")
+TEMPLATE         = open("report_template.html").read()
+REPORT_DATE      = datetime.date.today().strftime("%B %d, %Y")
+REPO_BASE        = "https://sdefries.github.io/sap-GAreporting/reports"
 os.makedirs("reports", exist_ok=True)
 
 # ── HELPER: safe int/float conversion (GA4 API returns strings) ──────────────
@@ -41,7 +41,6 @@ def totals(rows):
     cv   = sum(r.get("conversions",0) or 0 for r in rows)
     
     # Impression share: weighted average by impressions per campaign
-    # Only include campaigns that have impression share data
     is_total_weight = 0
     is_weighted_sum = 0
     lost_budget_weighted = 0
@@ -169,7 +168,130 @@ def insights(client, t30, camps30):
         out.append({"color":"blue","tag":"action","title":"Foster recruitment should be your primary campaign goal","body":"For foster-based rescues, foster campaigns consistently outperform adoption campaigns. Ensure a dedicated foster campaign is always running."})
     return out[:5]
 
-def build_client_data(client, rows30, rows7, ga4, seo):
+def process_keywords(keywords_data):
+    """Process keywords into top performers and compliance risks."""
+    if not keywords_data:
+        return [], [], {"high": 0, "medium": 0, "low": 0}
+    
+    top_performers = []
+    compliance_risks = []
+    qs_dist = {"high": 0, "medium": 0, "low": 0}
+    
+    for kw in keywords_data:
+        ctr = kw.get("ctr", 0) or 0
+        clicks = kw.get("clicks", 0) or 0
+        impressions = kw.get("impressions", 0) or 0
+        qs = kw.get("quality_score")
+        
+        kw_entry = {
+            "keyword": kw.get("keyword", "Unknown"),
+            "ctr": round(ctr, 2),
+            "clicks": clicks,
+            "impressions": impressions,
+            "quality_score": qs,
+            "cost": round(kw.get("cost", 0) or 0, 2),
+            "conversions": kw.get("conversions", 0) or 0
+        }
+        
+        # CTR >= 5% = good, < 5% = compliance risk
+        if ctr >= 5 and clicks > 0:
+            top_performers.append(kw_entry)
+        elif ctr < 5 and impressions > 10:
+            compliance_risks.append(kw_entry)
+        
+        # Quality Score distribution
+        if qs:
+            if qs >= 7:
+                qs_dist["high"] += 1
+            elif qs >= 4:
+                qs_dist["medium"] += 1
+            else:
+                qs_dist["low"] += 1
+    
+    # Sort by clicks descending
+    top_performers = sorted(top_performers, key=lambda x: x["clicks"], reverse=True)[:10]
+    compliance_risks = sorted(compliance_risks, key=lambda x: x["impressions"], reverse=True)[:5]
+    
+    return top_performers, compliance_risks, qs_dist
+
+def process_ads(ads_data):
+    """Process ads into top headlines and best ads."""
+    if not ads_data:
+        return [], []
+    
+    top_headlines = []
+    best_ads = []
+    
+    for ad in ads_data:
+        ctr = ad.get("ctr", 0) or 0
+        clicks = ad.get("clicks", 0) or 0
+        
+        # Extract headlines from RSA
+        headlines = ad.get("headlines", [])
+        if isinstance(headlines, str):
+            headlines = [headlines]
+        
+        for hl in headlines[:3]:  # Top 3 headlines per ad
+            if hl:
+                top_headlines.append({
+                    "headline": hl,
+                    "ctr": round(ctr, 2),
+                    "clicks": clicks
+                })
+        
+        # Best performing ads
+        if clicks > 0:
+            best_ads.append({
+                "headline": headlines[0] if headlines else "Unknown",
+                "description": (ad.get("descriptions", []) or [""])[0],
+                "ctr": round(ctr, 2),
+                "clicks": clicks,
+                "conversions": ad.get("conversions", 0) or 0
+            })
+    
+    # Sort and deduplicate headlines
+    seen = set()
+    unique_headlines = []
+    for hl in sorted(top_headlines, key=lambda x: x["clicks"], reverse=True):
+        if hl["headline"] not in seen:
+            seen.add(hl["headline"])
+            unique_headlines.append(hl)
+    
+    return unique_headlines[:10], sorted(best_ads, key=lambda x: x["clicks"], reverse=True)[:5]
+
+def process_search_terms(search_terms_data):
+    """Process search terms into top terms and potential negatives."""
+    if not search_terms_data:
+        return [], []
+    
+    top_terms = []
+    potential_negatives = []
+    
+    for st in search_terms_data:
+        ctr = st.get("ctr", 0) or 0
+        clicks = st.get("clicks", 0) or 0
+        impressions = st.get("impressions", 0) or 0
+        conversions = st.get("conversions", 0) or 0
+        
+        term_entry = {
+            "term": st.get("search_term", "Unknown"),
+            "ctr": round(ctr, 2),
+            "clicks": clicks,
+            "impressions": impressions,
+            "conversions": conversions
+        }
+        
+        if clicks > 0 and ctr >= 2:
+            top_terms.append(term_entry)
+        elif impressions > 20 and ctr < 2 and conversions == 0:
+            potential_negatives.append(term_entry)
+    
+    return (
+        sorted(top_terms, key=lambda x: x["clicks"], reverse=True)[:10],
+        sorted(potential_negatives, key=lambda x: x["impressions"], reverse=True)[:5]
+    )
+
+def build_client_data(client, rows30, rows7, extended_data, ga4, seo):
     t30    = totals(rows30)
     t7     = totals(rows7)
     camps30= campaigns(rows30)
@@ -182,7 +304,18 @@ def build_client_data(client, rows30, rows7, ga4, seo):
     imps   = t30.get("im",0)
     compliance = "low_activity" if imps<50 else ("compliant" if ctr>=5 else "at_risk")
     
-    # SEO data for enrolled clients
+    # Process extended Google Ads data (available to ALL clients)
+    keywords_data = extended_data.get("keywords", [])
+    ads_data = extended_data.get("ads", [])
+    day_of_week = extended_data.get("day_of_week", [])
+    hour_of_day = extended_data.get("hour_of_day", [])
+    search_terms_data = extended_data.get("search_terms", [])
+    
+    top_keywords, compliance_risks, qs_distribution = process_keywords(keywords_data)
+    top_headlines, best_ads = process_ads(ads_data)
+    top_search_terms, potential_negatives = process_search_terms(search_terms_data)
+    
+    # SEO data for enrolled clients only
     seo_enrolled = client.get("local_seo_enrolled", False)
     seo_data = None
     if seo_enrolled and seo:
@@ -233,9 +366,26 @@ def build_client_data(client, rows30, rows7, ga4, seo):
         "ga4_pages": (ga4 or {}).get("landing_pages",[])[:10],
         "ga4_states":(ga4 or {}).get("states",[])[:10],
         "ga4_cities":(ga4 or {}).get("cities",[])[:10],
+        # Extended Google Ads data - available to ALL clients (not gated)
+        "keywords": {
+            "top_performers": top_keywords,
+            "compliance_risks": compliance_risks,
+            "quality_score_distribution": qs_distribution,
+        },
+        "ads": {
+            "top_headlines": top_headlines,
+            "top_ads": best_ads,
+        },
+        "day_of_week": day_of_week,
+        "hour_of_day": hour_of_day,
+        "search_terms": {
+            "top_terms": top_search_terms,
+            "potential_negatives": potential_negatives,
+        },
+        # SEO data - gated to enrolled clients
         "seo_enrolled": seo_enrolled,
         "seo": seo_data,
-        # Data arrays for JS charts — these go into REPORT_DATA, not CLIENT_DATA
+        # Data arrays for JS charts
         "_camps30": camps30,
         "_camps7":  camps7,
         "_daily30": d30,
@@ -271,12 +421,10 @@ def build_report_data(cd):
 
 def build_lp_data(ga4_pages):
     if not ga4_pages: return "[]"
-    # GA4 API returns strings — convert to int
     total = sum(safe_int(p.get("sessions",0)) for p in ga4_pages[:5]) or 1
     out=[]
     for p in ga4_pages[:5]:
         sess = safe_int(p.get("sessions",0))
-        # Handle both camelCase (from API) and snake_case keys
         page = p.get("landingPage") or p.get("landing_page") or p.get("page") or "/"
         avg_time = safe_float(p.get("averageSessionDuration") or p.get("average_session_duration") or 0)
         eng_rate = safe_float(p.get("engagementRate") or p.get("engagement_rate") or 0)
@@ -293,7 +441,6 @@ def build_lp_data(ga4_pages):
 
 def build_state_data(ga4_states):
     if not ga4_states: return "[]"
-    # GA4 API returns strings — convert to int
     total = sum(safe_int(s.get("sessions",0)) for s in ga4_states[:10]) or 1
     out = []
     for s in ga4_states[:10]:
@@ -319,8 +466,7 @@ def build_city_data(ga4_cities):
     return json.dumps(out)
 
 def render(cd):
-    """Inject all data into the clean template. One injection block at the bottom."""
-    # Strip internal chart arrays from CLIENT_DATA (they go into REPORT_DATA separately)
+    """Inject all data into the clean template."""
     client_data = {k:v for k,v in cd.items() if not k.startswith("_")}
     report_data  = build_report_data(cd)
     lp_data      = build_lp_data(cd.get("ga4_pages",[]))
@@ -340,7 +486,6 @@ def render(cd):
     return TEMPLATE.replace("<!-- CLIENT DATA INJECTED HERE BY generate_reports_v2.py -->", injection)
 
 # ── VALIDATION ────────────────────────────────────────────────────────────────
-# Simple: only check for the account ID of OTHER clients appearing in this report.
 def validate(slug, html):
     violations = []
     own_id = next((c.get("google_ads_id","") for c in CLIENTS if c["slug"]==slug), "")
@@ -373,12 +518,23 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
                 print(f"    ⚠ Not found")
             continue
 
-        rows30 = WINDSOR_CACHE.get(acct, [])
-        rows7  = WINDSOR_CACHE.get(f"{acct}_7d", [])
+        # Get campaign data (30d and 7d)
+        rows30 = GOOGLE_ADS_CACHE.get(acct, [])
+        rows7  = GOOGLE_ADS_CACHE.get(f"{acct}_7d", [])
+        
+        # Get extended Google Ads data (keywords, ads, timing, search terms)
+        extended_data = {
+            "keywords": GOOGLE_ADS_CACHE.get(f"{acct}_keywords", []),
+            "ads": GOOGLE_ADS_CACHE.get(f"{acct}_ads", []),
+            "day_of_week": GOOGLE_ADS_CACHE.get(f"{acct}_day_of_week", []),
+            "hour_of_day": GOOGLE_ADS_CACHE.get(f"{acct}_hour_of_day", []),
+            "search_terms": GOOGLE_ADS_CACHE.get(f"{acct}_search_terms", []),
+        }
+        
         ga4    = GA4_CACHE.get(slug)
         seo    = SEO_CACHE.get(slug) if client.get("local_seo_enrolled") else None
 
-        cd = build_client_data(client, rows30, rows7, ga4, seo)
+        cd = build_client_data(client, rows30, rows7, extended_data, ga4, seo)
         t30 = cd["totals_30d"]
         print(f"    GPS:{cd['gps']}/100 | Clicks:{t30.get('cl',0):.0f} | Spend:${t30.get('cost',0):,.0f} | Convs:{t30.get('cv',0):.0f} | GA4:{'✓' if cd['has_ga4'] else '✗'}")
 
