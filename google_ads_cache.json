@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetched_at": "2026-04-07T15:28:42.941417+00:00",
+    "fetched_at": "2026-04-07T17:34:28.886042+00:00",
     "source": "google_ads_api",
     "account_count": 15
   },
@@ -902,7 +902,7 @@
         "Change Lives with {Keyword:JAC}",
         "Expungement Help",
         "Removing Legal Barriers",
-        "Fight for Social Justice",
+        "Drive Meaningful Change",
         "Advocate for Fair Laws",
         "Community Legal Support",
         "Empowering Louisianans",
@@ -911,12 +911,13 @@
         "Your Voice for Reform",
         "Championing Legal Rights",
         "Legal Advocacy Nonprofit",
-        "Reform Justice Louisiana"
+        "Reform Justice Louisiana",
+        "Help Create a Better Louisiana"
       ],
       "descriptions": [
         "JAC Louisiana: Providing legal advocacy and expungement services across the state.",
         "We remove legal barriers to housing and employment for the people of Louisiana.",
-        "The Justice & Accountability Center is fighting for a fairer legal system for all.",
+        "The Justice & Accountability Center is working for a fairer legal system for all.",
         "Learn how JAC Louisiana creates new opportunities through criminal record reform."
       ],
       "final_url": "https://www.jaclouisiana.org/",
@@ -12940,7 +12941,7 @@
       "keyword": "dog adoption san diego",
       "match_type": "BROAD",
       "status": "ENABLED",
-      "quality_score": 7,
+      "quality_score": 8,
       "clicks": 1,
       "impressions": 3,
       "ctr": 33.33,
