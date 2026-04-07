@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetched_at": "2026-04-07T14:24:35.246895+00:00",
+    "fetched_at": "2026-04-07T15:28:42.941417+00:00",
     "source": "google_ads_api",
     "account_count": 15
   },
@@ -8974,7 +8974,7 @@
       "impressions": 9219.0,
       "ctr": 0.10814621976353184,
       "cost": 5168.489058,
-      "conversions": 5697.912972,
+      "conversions": 5697.951522,
       "search_impression_share": 10.0,
       "lost_is_budget": 39.2,
       "lost_is_rank": 60.6
@@ -9381,7 +9381,7 @@
       "clicks": 194,
       "impressions": 2140,
       "cost": 1362.75,
-      "conversions": 1189.650745,
+      "conversions": 1189.679653,
       "ctr": 9.07
     },
     {
@@ -9389,7 +9389,7 @@
       "clicks": 181,
       "impressions": 2035,
       "cost": 1362.72,
-      "conversions": 1104.3361439999999,
+      "conversions": 1104.3457859999999,
       "ctr": 8.89
     },
     {
@@ -9423,7 +9423,7 @@
       "clicks": 113,
       "impressions": 1019,
       "cost": 880.48,
-      "conversions": 751.740449,
+      "conversions": 751.750091,
       "ctr": 11.09
     },
     {
@@ -9431,7 +9431,7 @@
       "clicks": 74,
       "impressions": 735,
       "cost": 566.99,
-      "conversions": 459.35243,
+      "conversions": 459.371702,
       "ctr": 10.07
     },
     {
@@ -9439,7 +9439,7 @@
       "clicks": 94,
       "impressions": 834,
       "cost": 545.18,
-      "conversions": 489.705192,
+      "conversions": 489.714828,
       "ctr": 11.27
     },
     {

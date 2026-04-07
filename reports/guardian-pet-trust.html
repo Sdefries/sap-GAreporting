@@ -251,6 +251,99 @@ tr:hover td{background:#F5F9FF}
 .seo-locked-bg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;opacity:0.15;filter:blur(1px);pointer-events:none}
 .seo-locked-bg .seo-card{background:var(--gray-100);border:1px dashed var(--border)}
 
+/* Keywords Section */
+.kw-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.kw-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
+.kw-card-title{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.kw-card-sub{font-size:11px;color:var(--gray-400);margin-bottom:14px}
+.kw-table{width:100%;font-size:12px}
+.kw-table th{text-align:left;font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.05em;padding:8px 6px;border-bottom:1px solid var(--border)}
+.kw-table td{padding:10px 6px;border-bottom:1px solid var(--gray-100)}
+.kw-table tr:last-child td{border-bottom:none}
+.kw-keyword{font-weight:600;color:var(--navy);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kw-match{font-size:10px;color:var(--gray-400);background:var(--gray-100);padding:2px 6px;border-radius:4px;text-transform:uppercase}
+.kw-ctr{font-weight:700}
+.kw-ctr.good{color:var(--green)}
+.kw-ctr.warn{color:var(--amber)}
+.kw-ctr.bad{color:var(--red)}
+.kw-qs{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-weight:700;font-size:11px}
+.kw-qs.high{background:#E4F7ED;color:#1A6E3E}
+.kw-qs.med{background:#FEF6E6;color:#9A6010}
+.kw-qs.low{background:#FDEAEA;color:#A02020}
+.kw-qs.na{background:var(--gray-100);color:var(--gray-400)}
+.qs-dist{display:flex;gap:12px;margin-top:10px}
+.qs-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray-600)}
+.qs-dot{width:10px;height:10px;border-radius:50%}
+.qs-dot.high{background:var(--green)}
+.qs-dot.med{background:var(--amber)}
+.qs-dot.low{background:var(--red)}
+
+/* Ads Section */
+.ads-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.ads-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
+.ads-card-title{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.headline-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--gray-100);border-radius:8px;margin-bottom:8px}
+.headline-item:last-child{margin-bottom:0}
+.headline-text{font-size:13px;font-weight:600;color:var(--navy);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.headline-stats{display:flex;gap:12px;font-size:11px;color:var(--gray-600)}
+.headline-stats strong{color:var(--green);font-weight:700}
+.ad-item{padding:14px;background:var(--gray-100);border-radius:8px;margin-bottom:10px}
+.ad-item:last-child{margin-bottom:0}
+.ad-headlines{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.ad-desc{font-size:11px;color:var(--gray-600);margin-bottom:8px;line-height:1.4}
+.ad-stats{display:flex;gap:16px;font-size:11px;color:var(--gray-400)}
+.ad-stats span{display:flex;align-items:center;gap:4px}
+
+/* Timing Section */
+.timing-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.timing-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
+.timing-card.full{grid-column:span 2}
+.timing-title{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--navy);margin-bottom:14px}
+.dow-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.dow-item{text-align:center;padding:12px 6px;background:var(--gray-100);border-radius:8px}
+.dow-day{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;margin-bottom:4px}
+.dow-clicks{font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--navy)}
+.dow-ctr{font-size:10px;margin-top:2px}
+.dow-ctr.good{color:var(--green)}
+.dow-ctr.warn{color:var(--amber)}
+.dow-ctr.bad{color:var(--red)}
+.hour-heatmap{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.hour-cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--navy);position:relative;cursor:default}
+.hour-cell:hover::after{content:attr(data-tooltip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:4px 8px;border-radius:4px;font-size:10px;white-space:nowrap;z-index:10}
+
+/* Search Terms Section */
+.st-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.st-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
+.st-card-title{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.st-card-sub{font-size:11px;color:var(--gray-400);margin-bottom:14px}
+.st-table{width:100%;font-size:12px}
+.st-table th{text-align:left;font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.05em;padding:8px 6px;border-bottom:1px solid var(--border)}
+.st-table td{padding:10px 6px;border-bottom:1px solid var(--gray-100)}
+.st-table tr:last-child td{border-bottom:none}
+.st-term{font-weight:600;color:var(--navy);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-matched{font-size:10px;color:var(--gray-400)}
+.st-negative{background:#FDEAEA;color:#A02020;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+
+/* GBP Section */
+.gbp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.gbp-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px 20px;text-align:center}
+.gbp-card.wide{grid-column:span 2}
+.gbp-card.full{grid-column:span 4}
+.gbp-icon{font-size:24px;margin-bottom:8px}
+.gbp-label{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.gbp-value{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-1px}
+.gbp-sub{font-size:11px;color:var(--gray-400);margin-top:4px}
+.gbp-locked{position:relative;min-height:200px}
+.gbp-locked-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,43,91,0.03) 0%,rgba(0,131,198,0.06) 100%);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:10}
+.gbp-locked-icon{font-size:48px;margin-bottom:16px;opacity:0.6}
+.gbp-locked-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.gbp-locked-desc{font-size:13px;color:var(--gray-600);max-width:400px;line-height:1.6;margin-bottom:16px}
+.gbp-features{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.gbp-feature{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--gray-600)}
+.gbp-feature::before{content:'✓';color:var(--green);font-weight:700}
+.gbp-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
+.gbp-unlock-btn:hover{background:#006AA3;transform:translateY(-1px)}
+
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
@@ -315,11 +408,16 @@ tr:hover td{background:#F5F9FF}
     <a href="#sec-metrics"><span class="dot"></span>Cost metrics</a>
     <a href="#sec-trends"><span class="dot"></span>Trends</a>
     <a href="#sec-campaigns"><span class="dot"></span>Campaigns</a>
+    <a href="#sec-keywords"><span class="dot"></span>Keywords</a>
+    <a href="#sec-ads"><span class="dot"></span>Ad Copy</a>
+    <a href="#sec-timing"><span class="dot"></span>Timing</a>
+    <a href="#sec-search-terms"><span class="dot"></span>Search Terms</a>
     <a href="#sec-audience"><span class="dot"></span>Audience</a>
     <a href="#sec-landing"><span class="dot"></span>Landing pages</a>
     <a href="#sec-location"><span class="dot"></span>Location</a>
     <a href="#sec-visibility"><span class="dot"></span>Visibility</a>
     <a href="#sec-seo"><span class="dot"></span>SEO</a>
+    <a href="#sec-gbp"><span class="dot"></span>Business Profile</a>
     <a href="#sec-actions"><span class="dot"></span>What we did</a>
     <a href="#sec-insights"><span class="dot"></span>Recommendations</a>
   </div>
@@ -481,6 +579,109 @@ tr:hover td{background:#F5F9FF}
       </div>
     </div>
 
+    <!-- KEYWORDS -->
+    <div class="section" id="sec-keywords">
+      <div class="sh">
+        <div class="sh-title">Keyword Performance</div>
+        <div class="sh-sub">Top performers &amp; compliance risks · Last 30 days</div>
+      </div>
+      <div id="keywordsContent">
+        <div class="kw-grid">
+          <div class="kw-card">
+            <div class="kw-card-title">🏆 Top Performers</div>
+            <div class="kw-card-sub">Keywords driving the most clicks</div>
+            <table class="kw-table">
+              <thead><tr><th>Keyword</th><th>Match</th><th>Clicks</th><th>CTR</th><th>QS</th></tr></thead>
+              <tbody id="topKeywordsBody"></tbody>
+            </table>
+          </div>
+          <div class="kw-card">
+            <div class="kw-card-title">⚠️ Compliance Risks</div>
+            <div class="kw-card-sub">Keywords below 5% CTR with significant impressions</div>
+            <table class="kw-table">
+              <thead><tr><th>Keyword</th><th>Match</th><th>Impr.</th><th>CTR</th><th>QS</th></tr></thead>
+              <tbody id="lowCtrKeywordsBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px;padding:16px 20px">
+          <div class="kw-card-title" style="margin-bottom:10px">📊 Quality Score Distribution</div>
+          <div class="qs-dist" id="qsDistribution"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AD COPY -->
+    <div class="section" id="sec-ads">
+      <div class="sh">
+        <div class="sh-title">Ad Copy Performance</div>
+        <div class="sh-sub">Best performing headlines &amp; ads</div>
+      </div>
+      <div id="adsContent">
+        <div class="ads-grid">
+          <div class="ads-card">
+            <div class="ads-card-title">✨ Top Headlines</div>
+            <div id="topHeadlines"></div>
+          </div>
+          <div class="ads-card">
+            <div class="ads-card-title">📝 Best Performing Ads</div>
+            <div id="topAds"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMING -->
+    <div class="section" id="sec-timing">
+      <div class="sh">
+        <div class="sh-title">Performance by Time</div>
+        <div class="sh-sub">When your ads perform best</div>
+      </div>
+      <div id="timingContent">
+        <div class="timing-grid">
+          <div class="timing-card">
+            <div class="timing-title">📅 Day of Week</div>
+            <div class="dow-grid" id="dowGrid"></div>
+          </div>
+          <div class="timing-card">
+            <div class="timing-title">🕐 Hour of Day</div>
+            <div class="hour-heatmap" id="hourHeatmap"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--gray-400)">
+              <span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>11pm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH TERMS -->
+    <div class="section" id="sec-search-terms">
+      <div class="sh">
+        <div class="sh-title">Search Terms</div>
+        <div class="sh-sub">Actual queries triggering your ads</div>
+      </div>
+      <div id="searchTermsContent">
+        <div class="st-grid">
+          <div class="st-card">
+            <div class="st-card-title">🔍 Top Search Terms</div>
+            <div class="st-card-sub">Most clicked queries</div>
+            <table class="st-table">
+              <thead><tr><th>Search Term</th><th>Clicks</th><th>CTR</th><th>Conv.</th></tr></thead>
+              <tbody id="topSearchTermsBody"></tbody>
+            </table>
+          </div>
+          <div class="st-card">
+            <div class="st-card-title">🚫 Potential Negative Keywords</div>
+            <div class="st-card-sub">Low CTR terms to consider excluding</div>
+            <table class="st-table">
+              <thead><tr><th>Search Term</th><th>Impr.</th><th>CTR</th><th></th></tr></thead>
+              <tbody id="negativeTermsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- AUDIENCE -->
     <div class="section" id="sec-audience">
       <div class="sh">
@@ -554,6 +755,17 @@ tr:hover td{background:#F5F9FF}
         <div class="sh-sub" id="seoSubtitle">Organic search &amp; site speed</div>
       </div>
       <div id="seoContent">
+        <!-- JS will populate based on enrollment status -->
+      </div>
+    </div>
+
+    <!-- GOOGLE BUSINESS PROFILE -->
+    <div class="section" id="sec-gbp">
+      <div class="sh">
+        <div class="sh-title">Google Business Profile</div>
+        <div class="sh-sub" id="gbpSubtitle">Local presence &amp; reviews</div>
+      </div>
+      <div id="gbpContent">
         <!-- JS will populate based on enrollment status -->
       </div>
     </div>
@@ -987,6 +1199,189 @@ function render(){
     document.getElementById('seoSubtitle').textContent = 'Available with SEO package';
   }
 
+  // ── KEYWORDS SECTION ──────────────────────────────────────────────────────
+  const kwData = window.CLIENT_DATA?.keywords;
+  if (kwData && kwData.top_performers && kwData.top_performers.length > 0) {
+    // Has keyword data - render tables
+    const topKW = kwData.top_performers.slice(0, 8);
+    const lowKW = kwData.compliance_risks.slice(0, 8);
+    const qsDist = kwData.quality_score_distribution || {};
+    
+    const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
+    const qsClass = (qs) => qs === null ? 'na' : qs >= 7 ? 'high' : qs >= 4 ? 'med' : 'low';
+    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m);
+    
+    document.getElementById('topKeywordsBody').innerHTML = topKW.map(k => `
+      <tr>
+        <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
+        <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
+        <td>${fmtN(k.clicks)}</td>
+        <td class="kw-ctr ${ctrClass(k.ctr)}">${k.ctr.toFixed(1)}%</td>
+        <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
+      </tr>
+    `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--gray-400)">No data</td></tr>';
+    
+    document.getElementById('lowCtrKeywordsBody').innerHTML = lowKW.length > 0 ? lowKW.map(k => `
+      <tr>
+        <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
+        <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
+        <td>${fmtN(k.impressions)}</td>
+        <td class="kw-ctr bad">${k.ctr.toFixed(1)}%</td>
+        <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
+      </tr>
+    `).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--green)">✓ No compliance risks</td></tr>';
+    
+    document.getElementById('qsDistribution').innerHTML = `
+      <div class="qs-item"><span class="qs-dot high"></span> High (7-10): <strong>${qsDist.high || 0}</strong></div>
+      <div class="qs-item"><span class="qs-dot med"></span> Medium (4-6): <strong>${qsDist.medium || 0}</strong></div>
+      <div class="qs-item"><span class="qs-dot low"></span> Low (1-3): <strong>${qsDist.low || 0}</strong></div>
+      <div class="qs-item" style="color:var(--gray-400)">Unknown: ${qsDist.unknown || 0}</div>
+    `;
+  } else {
+    // No keyword data
+    document.getElementById('keywordsContent').innerHTML = `
+      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔑</div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Keyword Performance</div>
+        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
+        <a href="mailto:scott@sponsorapurpose.org?subject=Keyword%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      </div>
+    `;
+  }
+
+  // ── ADS SECTION ───────────────────────────────────────────────────────────
+  const adsData = window.CLIENT_DATA?.ads;
+  if (adsData && adsData.top_headlines && adsData.top_headlines.length > 0) {
+    document.getElementById('topHeadlines').innerHTML = adsData.top_headlines.map(h => `
+      <div class="headline-item">
+        <span class="headline-text" title="${h.text}">${h.text}</span>
+        <div class="headline-stats">
+          <span><strong>${h.ctr.toFixed(1)}%</strong> CTR</span>
+          <span>${fmtN(h.clicks)} clicks</span>
+        </div>
+      </div>
+    `).join('');
+    
+    const topAds = adsData.top_ads.slice(0, 4);
+    document.getElementById('topAds').innerHTML = topAds.map(a => `
+      <div class="ad-item">
+        <div class="ad-headlines">${(a.headlines || []).slice(0,3).join(' | ')}</div>
+        <div class="ad-desc">${(a.descriptions || []).slice(0,1).join(' ')}</div>
+        <div class="ad-stats">
+          <span>📊 ${a.ctr.toFixed(1)}% CTR</span>
+          <span>👆 ${fmtN(a.clicks)} clicks</span>
+          <span>🎯 ${fmtN(Math.round(a.conversions))} conv.</span>
+        </div>
+      </div>
+    `).join('');
+  } else {
+    document.getElementById('adsContent').innerHTML = `
+      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">✨</div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Ad Copy Performance</div>
+        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
+        <a href="mailto:scott@sponsorapurpose.org?subject=Ad%20Copy%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      </div>
+    `;
+  }
+
+  // ── TIMING SECTION ────────────────────────────────────────────────────────
+  const dowData = window.CLIENT_DATA?.day_of_week;
+  const hourData = window.CLIENT_DATA?.hour_of_day;
+  if (dowData && dowData.length > 0) {
+    const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
+    document.getElementById('dowGrid').innerHTML = dowData.map(d => `
+      <div class="dow-item">
+        <div class="dow-day">${d.day.slice(0,3)}</div>
+        <div class="dow-clicks">${fmtN(d.clicks)}</div>
+        <div class="dow-ctr ${ctrClass(d.ctr)}">${d.ctr.toFixed(1)}%</div>
+      </div>
+    `).join('');
+    
+    if (hourData && hourData.length > 0) {
+      const maxClicks = Math.max(...hourData.map(h => h.clicks)) || 1;
+      document.getElementById('hourHeatmap').innerHTML = hourData.map(h => {
+        const intensity = h.clicks / maxClicks;
+        const bg = intensity > 0.7 ? 'var(--blue)' : intensity > 0.4 ? 'rgba(0,131,198,0.5)' : intensity > 0.1 ? 'rgba(0,131,198,0.2)' : 'var(--gray-100)';
+        const color = intensity > 0.5 ? '#fff' : 'var(--navy)';
+        return `<div class="hour-cell" style="background:${bg};color:${color}" data-tooltip="${h.hour}:00 - ${h.clicks} clicks">${h.hour}</div>`;
+      }).join('');
+    }
+  } else {
+    document.getElementById('timingContent').innerHTML = `
+      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🕐</div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Performance by Time</div>
+        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
+        <a href="mailto:scott@sponsorapurpose.org?subject=Timing%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      </div>
+    `;
+  }
+
+  // ── SEARCH TERMS SECTION ──────────────────────────────────────────────────
+  const stData = window.CLIENT_DATA?.search_terms;
+  if (stData && stData.top_terms && stData.top_terms.length > 0) {
+    const topTerms = stData.top_terms.slice(0, 10);
+    const negTerms = stData.potential_negatives.slice(0, 8);
+    
+    document.getElementById('topSearchTermsBody').innerHTML = topTerms.map(t => `
+      <tr>
+        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td>${fmtN(t.clicks)}</td>
+        <td>${t.ctr.toFixed(1)}%</td>
+        <td>${fmtN(Math.round(t.conversions))}</td>
+      </tr>
+    `).join('');
+    
+    document.getElementById('negativeTermsBody').innerHTML = negTerms.length > 0 ? negTerms.map(t => `
+      <tr>
+        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td>${fmtN(t.impressions)}</td>
+        <td style="color:var(--red)">${t.ctr.toFixed(1)}%</td>
+        <td><span class="st-negative">Review</span></td>
+      </tr>
+    `).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--green)">✓ No low-CTR terms found</td></tr>';
+  } else {
+    document.getElementById('searchTermsContent').innerHTML = `
+      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔍</div>
+        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Search Terms Analysis</div>
+        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
+        <a href="mailto:scott@sponsorapurpose.org?subject=Search%20Terms%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      </div>
+    `;
+  }
+
+  // ── GOOGLE BUSINESS PROFILE SECTION ───────────────────────────────────────
+  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || false;
+  const gbpData = window.CLIENT_DATA?.gbp || null;
+  const gbpContainer = document.getElementById('gbpContent');
+  
+  if (gbpEnrolled && gbpData && !gbpData.pending_access) {
+    // Has GBP data - render metrics (future implementation)
+    gbpContainer.innerHTML = `<div>GBP data coming soon...</div>`;
+  } else {
+    // Locked state - show upsell
+    gbpContainer.innerHTML = `
+      <div class="gbp-locked">
+        <div class="gbp-locked-overlay">
+          <div class="gbp-locked-icon">📍</div>
+          <div class="gbp-locked-title">Google Business Profile Insights</div>
+          <div class="gbp-locked-desc">Track your local presence, reviews, direction requests, and phone calls from your Google Business Profile.</div>
+          <div class="gbp-features">
+            <span class="gbp-feature">Direction Requests</span>
+            <span class="gbp-feature">Phone Calls</span>
+            <span class="gbp-feature">Reviews & Rating</span>
+            <span class="gbp-feature">Photo Views</span>
+            <span class="gbp-feature">Discovery Searches</span>
+          </div>
+          <a href="mailto:scott@sponsorapurpose.org?subject=GBP%20Insights%20Interest" class="gbp-unlock-btn">Learn More →</a>
+        </div>
+      </div>
+    `;
+    document.getElementById('gbpSubtitle').textContent = 'Available with SEO package';
+  }
+
   updateSidebarActive();
 }
 
@@ -1103,7 +1498,7 @@ function initClient(){
 }
 
 function updateSidebarActive(){
-  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-audience','sec-landing','sec-location','sec-visibility','sec-seo','sec-actions','sec-insights'];
+  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-keywords','sec-ads','sec-timing','sec-search-terms','sec-audience','sec-landing','sec-location','sec-visibility','sec-seo','sec-gbp','sec-actions','sec-insights'];
   const links=document.querySelectorAll('.sb-nav a');
   function check(){
     let cur=ids[0];
@@ -1128,12 +1523,12 @@ window.addEventListener('load',()=>{
 
 
 <script>
-// Injected by generate_reports_v2.py — Guardian Pet Trust (878-405-5035) — 2026-04-06
-window.CLIENT_DATA = {"slug": "guardian-pet-trust", "name": "Guardian Pet Trust", "account_id": "878-405-5035", "website": "https://guardianpettrust.org", "org_model": "location_based", "animal_type": null, "report_date": "April 06, 2026", "gps": 85, "gps_components": {"ctr": 53, "utilization": 99, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 718.0, "im": 10501.0, "cost": 9932.98, "cv": 2105.00002, "ctr": 6.84, "cpc": 13.83, "costPerConv": 4.72, "convRate": 293.18, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "totals_7d": {"cl": 159.0, "im": 2516.0, "cost": 2303.38, "cv": 481.0, "ctr": 6.32, "cpc": 14.49, "costPerConv": 4.79, "convRate": 302.52, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 6.8%", "body": "Account CTR is 6.8% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "green", "tag": "win", "title": "Grant utilization strong \u2014 99% used", "body": "Spending $9,933 of the $10,000 monthly grant. On pace to maximize full grant value this month."}, {"color": "green", "tag": "win", "title": "2105 conversions tracked at $4.72 CPA", "body": "Campaigns recorded 2105 conversions this month at $4.72 per conversion."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 85/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/blogs", "sessions": "256", "averageSessionDuration": "99.452342562500007", "bounceRate": "0", "engagementRate": "1", "conversions": "1362"}, {"landingPage": "/donate", "sessions": "190", "averageSessionDuration": "37.265138010526314", "bounceRate": "0", "engagementRate": "1", "conversions": "849"}, {"landingPage": "/foster", "sessions": "159", "averageSessionDuration": "63.189960012578616", "bounceRate": "0", "engagementRate": "1", "conversions": "909"}, {"landingPage": "/", "sessions": "132", "averageSessionDuration": "179.41985987878789", "bounceRate": "0", "engagementRate": "1", "conversions": "656"}, {"landingPage": "/free-ebook", "sessions": "101", "averageSessionDuration": "3.2221022079207922", "bounceRate": "0", "engagementRate": "1", "conversions": "315"}, {"landingPage": "/pet-owner", "sessions": "87", "averageSessionDuration": "35.298921379310343", "bounceRate": "0", "engagementRate": "1", "conversions": "312"}, {"landingPage": "/about-us", "sessions": "42", "averageSessionDuration": "81.835521857142865", "bounceRate": "0.023809523809523808", "engagementRate": "0.97619047619047616", "conversions": "169"}, {"landingPage": "(not set)", "sessions": "39", "averageSessionDuration": "40.325805769230769", "bounceRate": "0.10256410256410256", "engagementRate": "0.89743589743589747", "conversions": "76"}, {"landingPage": "/attorney", "sessions": "11", "averageSessionDuration": "28.165790727272725", "bounceRate": "0", "engagementRate": "1", "conversions": "40"}, {"landingPage": "/caretaker", "sessions": "7", "averageSessionDuration": "851.21219471428572", "bounceRate": "0", "engagementRate": "1", "conversions": "34"}], "ga4_states": [{"region": "Florida", "sessions": "154", "totalUsers": "114"}, {"region": "California", "sessions": "76", "totalUsers": "65"}, {"region": "Virginia", "sessions": "67", "totalUsers": "59"}, {"region": "Texas", "sessions": "58", "totalUsers": "54"}, {"region": "New York", "sessions": "43", "totalUsers": "41"}, {"region": "Washington", "sessions": "41", "totalUsers": "40"}, {"region": "Alabama", "sessions": "36", "totalUsers": "36"}, {"region": "Illinois", "sessions": "36", "totalUsers": "32"}, {"region": "Colorado", "sessions": "30", "totalUsers": "21"}, {"region": "Georgia", "sessions": "28", "totalUsers": "28"}], "ga4_cities": [{"city": "Boca Raton", "sessions": "41", "totalUsers": "10"}, {"city": "Birmingham", "sessions": "35", "totalUsers": "35"}, {"city": "Chicago", "sessions": "22", "totalUsers": "18"}, {"city": "Miami", "sessions": "22", "totalUsers": "22"}, {"city": "Moses Lake", "sessions": "22", "totalUsers": "21"}, {"city": "Ashburn", "sessions": "21", "totalUsers": "17"}, {"city": "New York", "sessions": "21", "totalUsers": "20"}, {"city": "Des Moines", "sessions": "15", "totalUsers": "15"}, {"city": "Atlanta", "sessions": "14", "totalUsers": "14"}, {"city": "Los Angeles", "sessions": "14", "totalUsers": "13"}], "seo_enrolled": true, "seo": {"enrolled": true, "pagespeed_mobile": null, "pagespeed_desktop": null, "seo_score": null, "accessibility": null, "cwv_pass": null, "lcp": null, "cls": null, "tbt": null, "organic_clicks": 0, "organic_impressions": 0, "organic_ctr": 0, "avg_position": null, "top_queries": [], "top_pages": [], "keywords_tracked": 5, "keywords_top10": 0, "fetched_at": "2026-04-06T21:33:22.764467"}};
-window.REPORT_DATA = {'30d':{totals:{cl:718.0,im:10501.0,ctr:6.84,cost:9932.98,cv:2105.00002,cpc:13.83,costPerConv:4.72,convRate:293.18},campaigns:[{n:"Search - Blogs",s:"ENABLED",ctr:7.39,cl:287.0,im:3886.0,cost:1934.88,cv:771.0,cpc:6.74,cpa:2.51},{n:"P Max - Donate",s:"ENABLED",ctr:7.1,cl:235.0,im:3311.0,cost:4577.18,cv:597.0,cpc:19.48,cpa:7.67},{n:"P-Max-Foster",s:"ENABLED",ctr:7.3,cl:127.0,im:1740.0,cost:2208.72,cv:507.00002,cpc:17.39,cpa:4.36},{n:"P_Max _ Blogs",s:"ENABLED",ctr:4.96,cl:23.0,im:464.0,cost:392.33,cv:73.0,cpc:17.06,cpa:5.37},{n:"Pet Trust Awareness \u2013 PMax",s:"ENABLED",ctr:2.84,cl:14.0,im:493.0,cost:301.3,cv:42.0,cpc:21.52,cpa:7.17},{n:"P-Max Pet Owner",s:"ENABLED",ctr:10.07,cl:14.0,im:139.0,cost:232.65,cv:55.0,cpc:16.62,cpa:4.23},{n:"PMax-CareTaker",s:"ENABLED",ctr:3.29,cl:11.0,im:334.0,cost:194.74,cv:46.0,cpc:17.7,cpa:4.23},{n:"Partner as Vet \u2013 P-Max",s:"ENABLED",ctr:5.26,cl:6.0,im:114.0,cost:83.14,cv:9.0,cpc:13.86,cpa:9.24},{n:"Search-attorney",s:"ENABLED",ctr:14.29,cl:1.0,im:7.0,cost:8.04,cv:5.0,cpc:8.04,cpa:1.61},{n:"Pet Caretaker + Audiences",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Pet Owner",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Care for Our Pet Trust Pets",s:"ENABLED",ctr:0,cl:0,im:13.0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 08", "Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[14, 22, 29, 22, 22, 29, 22, 22, 22, 29, 22, 22, 29, 22, 22, 29, 22, 22, 22, 29, 22, 22, 29, 22, 22, 29, 22, 22, 29, 22],convs:[42, 63, 84, 63, 63, 84, 63, 63, 63, 84, 63, 63, 84, 63, 63, 84, 63, 63, 63, 84, 63, 63, 84, 63, 63, 84, 63, 63, 84, 63],spend:[198.66, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99, 297.99, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99, 297.99, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99, 297.99, 397.32, 297.99],cpc:[14.19, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54, 13.54, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54, 13.54, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54, 13.54, 13.7, 13.54]},devices:[{n:'Desktop',cl:467,im:6826,cost:6456.44,cv:1431,cvRate:0},{n:'Mobile',cl:230,im:3360,cost:3178.55,cv:610,cvRate:0},{n:'Tablet',cl:22,im:315,cost:297.99,cv:63,cvRate:0}]},'7d':{totals:{cl:159.0,im:2516.0,ctr:6.32,cost:2303.38,cv:481.0,cpc:14.49,costPerConv:4.79,convRate:302.52},campaigns:[{n:"Search - Blogs",s:"ENABLED",ctr:6.23,cl:67.0,im:1075.0,cost:494.65,cv:173.0,cpc:7.38,cpa:2.86},{n:"P Max - Donate",s:"ENABLED",ctr:6.5,cl:39.0,im:600.0,cost:884.04,cv:92.0,cpc:22.67,cpa:9.61},{n:"P-Max-Foster",s:"ENABLED",ctr:7.76,cl:38.0,im:490.0,cost:656.29,cv:161.0,cpc:17.27,cpa:4.08},{n:"P_Max _ Blogs",s:"ENABLED",ctr:5.71,cl:6.0,im:105.0,cost:107.44,cv:19.0,cpc:17.91,cpa:5.65},{n:"P-Max Pet Owner",s:"ENABLED",ctr:13.79,cl:4.0,im:29.0,cost:76.68,cv:16.0,cpc:19.17,cpa:4.79},{n:"Pet Trust Awareness \u2013 PMax",s:"ENABLED",ctr:2.3,cl:2.0,im:87.0,cost:25.55,cv:7.0,cpc:12.78,cpa:3.65},{n:"PMax-CareTaker",s:"ENABLED",ctr:1.82,cl:2.0,im:110.0,cost:39.2,cv:13.0,cpc:19.6,cpa:3.02},{n:"Partner as Vet \u2013 P-Max",s:"ENABLED",ctr:5.56,cl:1.0,im:18.0,cost:19.53,cv:0,cpc:19.53,cpa:null},{n:"Pet Caretaker + Audiences",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Pet Owner",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-attorney",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Care for Our Pet Trust Pets",s:"ENABLED",ctr:0,cl:0,im:2.0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06"],clicks:[19, 25, 21, 22, 24, 21, 27],convs:[58, 77, 63, 67, 72, 63, 82],spend:[276.41, 368.54, 299.44, 322.47, 345.51, 299.44, 391.57],cpc:[14.55, 14.74, 14.26, 14.66, 14.4, 14.26, 14.5]},devices:[{n:'Desktop',cl:103,im:1635,cost:1497.2,cv:327,cvRate:0},{n:'Mobile',cl:51,im:805,cost:737.08,cv:139,cvRate:0},{n:'Tablet',cl:5,im:75,cost:69.1,cv:14,cvRate:0}]}};
-window.LP_DATA     = [{"page": "/blogs", "sessions": 256, "pct": 31, "avgTime": "99s", "engaged": true, "convs": 1362}, {"page": "/donate", "sessions": 190, "pct": 23, "avgTime": "37s", "engaged": true, "convs": 849}, {"page": "/foster", "sessions": 159, "pct": 19, "avgTime": "63s", "engaged": true, "convs": 909}, {"page": "/", "sessions": 132, "pct": 16, "avgTime": "179s", "engaged": true, "convs": 656}, {"page": "/free-ebook", "sessions": 101, "pct": 12, "avgTime": "3s", "engaged": true, "convs": 315}];
-window.STATE_DATA  = [{"state": "Florida", "sessions": 154, "pct": 27}, {"state": "California", "sessions": 76, "pct": 13}, {"state": "Virginia", "sessions": 67, "pct": 12}, {"state": "Texas", "sessions": 58, "pct": 10}, {"state": "New York", "sessions": 43, "pct": 8}, {"state": "Washington", "sessions": 41, "pct": 7}, {"state": "Alabama", "sessions": 36, "pct": 6}, {"state": "Illinois", "sessions": 36, "pct": 6}, {"state": "Colorado", "sessions": 30, "pct": 5}, {"state": "Georgia", "sessions": 28, "pct": 5}];
-window.CITY_DATA   = [{"city": "Boca Raton", "state": "", "sessions": 41}, {"city": "Birmingham", "state": "", "sessions": 35}, {"city": "Chicago", "state": "", "sessions": 22}, {"city": "Miami", "state": "", "sessions": 22}, {"city": "Moses Lake", "state": "", "sessions": 22}, {"city": "Ashburn", "state": "", "sessions": 21}, {"city": "New York", "state": "", "sessions": 21}, {"city": "Des Moines", "state": "", "sessions": 15}, {"city": "Atlanta", "state": "", "sessions": 14}, {"city": "Los Angeles", "state": "", "sessions": 14}];
+// Injected by generate_reports_v2.py — Guardian Pet Trust (878-405-5035) — 2026-04-07
+window.CLIENT_DATA = {"slug": "guardian-pet-trust", "name": "Guardian Pet Trust", "account_id": "878-405-5035", "website": "https://guardianpettrust.org", "org_model": "location_based", "animal_type": null, "report_date": "April 07, 2026", "gps": 0, "gps_components": {}, "compliance": "low_activity", "totals_30d": {}, "totals_7d": {}, "insights": [{"color": "red", "tag": "action", "title": "Account needs setup", "body": "No campaign data found. The account may be new or not yet configured."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 0/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/blogs", "sessions": "259", "averageSessionDuration": "99.049930420849421", "bounceRate": "0", "engagementRate": "1", "conversions": "1376"}, {"landingPage": "/donate", "sessions": "191", "averageSessionDuration": "37.204627068062827", "bounceRate": "0", "engagementRate": "1", "conversions": "854"}, {"landingPage": "/foster", "sessions": "159", "averageSessionDuration": "63.189960012578616", "bounceRate": "0", "engagementRate": "1", "conversions": "909"}, {"landingPage": "/", "sessions": "134", "averageSessionDuration": "177.23773543283582", "bounceRate": "0", "engagementRate": "1", "conversions": "666"}, {"landingPage": "/free-ebook", "sessions": "101", "averageSessionDuration": "3.2221022079207922", "bounceRate": "0", "engagementRate": "1", "conversions": "315"}, {"landingPage": "/pet-owner", "sessions": "88", "averageSessionDuration": "35.05347251136363", "bounceRate": "0", "engagementRate": "1", "conversions": "316"}, {"landingPage": "/about-us", "sessions": "42", "averageSessionDuration": "81.835521857142865", "bounceRate": "0.023809523809523808", "engagementRate": "0.97619047619047616", "conversions": "169"}, {"landingPage": "(not set)", "sessions": "39", "averageSessionDuration": "40.325805769230769", "bounceRate": "0.10256410256410256", "engagementRate": "0.89743589743589747", "conversions": "76"}, {"landingPage": "/attorney", "sessions": "11", "averageSessionDuration": "28.165790727272725", "bounceRate": "0", "engagementRate": "1", "conversions": "40"}, {"landingPage": "/caretaker", "sessions": "7", "averageSessionDuration": "851.21219471428572", "bounceRate": "0", "engagementRate": "1", "conversions": "34"}], "ga4_states": [{"region": "Florida", "sessions": "155", "totalUsers": "115"}, {"region": "California", "sessions": "78", "totalUsers": "66"}, {"region": "Virginia", "sessions": "69", "totalUsers": "61"}, {"region": "Texas", "sessions": "58", "totalUsers": "54"}, {"region": "New York", "sessions": "44", "totalUsers": "42"}, {"region": "Washington", "sessions": "41", "totalUsers": "40"}, {"region": "Alabama", "sessions": "36", "totalUsers": "36"}, {"region": "Illinois", "sessions": "36", "totalUsers": "32"}, {"region": "Colorado", "sessions": "30", "totalUsers": "21"}, {"region": "Georgia", "sessions": "28", "totalUsers": "28"}], "ga4_cities": [{"city": "Boca Raton", "sessions": "41", "totalUsers": "10"}, {"city": "Birmingham", "sessions": "35", "totalUsers": "35"}, {"city": "Ashburn", "sessions": "22", "totalUsers": "18"}, {"city": "Chicago", "sessions": "22", "totalUsers": "18"}, {"city": "Miami", "sessions": "22", "totalUsers": "22"}, {"city": "Moses Lake", "sessions": "22", "totalUsers": "21"}, {"city": "New York", "sessions": "22", "totalUsers": "21"}, {"city": "Des Moines", "sessions": "15", "totalUsers": "15"}, {"city": "Atlanta", "sessions": "14", "totalUsers": "14"}, {"city": "Los Angeles", "sessions": "14", "totalUsers": "13"}], "seo_enrolled": true, "seo": {"enrolled": true, "pagespeed_mobile": null, "pagespeed_desktop": null, "seo_score": null, "accessibility": null, "cwv_pass": null, "lcp": null, "cls": null, "tbt": null, "organic_clicks": 0, "organic_impressions": 0, "organic_ctr": 0, "avg_position": null, "top_queries": [], "top_pages": [], "keywords_tracked": 5, "keywords_top10": 0, "fetched_at": "2026-04-06T21:33:22.764467"}};
+window.REPORT_DATA = {'30d':{totals:{cl:0,im:0,ctr:0,cost:0,cv:0,cpc:0,costPerConv:0,convRate:0},campaigns:[],daily:{labels:["Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],convs:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],spend:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],cpc:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},devices:[{n:'Desktop',cl:0,im:0,cost:0.0,cv:0,cvRate:0},{n:'Mobile',cl:0,im:0,cost:0.0,cv:0,cvRate:0},{n:'Tablet',cl:0,im:0,cost:0.0,cv:0,cvRate:0}]},'7d':{totals:{cl:0,im:0,ctr:0,cost:0,cv:0,cpc:0,costPerConv:0,convRate:0},campaigns:[],daily:{labels:["Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[0, 0, 0, 0, 0, 0, 0],convs:[0, 0, 0, 0, 0, 0, 0],spend:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],cpc:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},devices:[{n:'Desktop',cl:0,im:0,cost:0.0,cv:0,cvRate:0},{n:'Mobile',cl:0,im:0,cost:0.0,cv:0,cvRate:0},{n:'Tablet',cl:0,im:0,cost:0.0,cv:0,cvRate:0}]}};
+window.LP_DATA     = [{"page": "/blogs", "sessions": 259, "pct": 31, "avgTime": "99s", "engaged": true, "convs": 1376}, {"page": "/donate", "sessions": 191, "pct": 23, "avgTime": "37s", "engaged": true, "convs": 854}, {"page": "/foster", "sessions": 159, "pct": 19, "avgTime": "63s", "engaged": true, "convs": 909}, {"page": "/", "sessions": 134, "pct": 16, "avgTime": "177s", "engaged": true, "convs": 666}, {"page": "/free-ebook", "sessions": 101, "pct": 12, "avgTime": "3s", "engaged": true, "convs": 315}];
+window.STATE_DATA  = [{"state": "Florida", "sessions": 155, "pct": 27}, {"state": "California", "sessions": 78, "pct": 14}, {"state": "Virginia", "sessions": 69, "pct": 12}, {"state": "Texas", "sessions": 58, "pct": 10}, {"state": "New York", "sessions": 44, "pct": 8}, {"state": "Washington", "sessions": 41, "pct": 7}, {"state": "Alabama", "sessions": 36, "pct": 6}, {"state": "Illinois", "sessions": 36, "pct": 6}, {"state": "Colorado", "sessions": 30, "pct": 5}, {"state": "Georgia", "sessions": 28, "pct": 5}];
+window.CITY_DATA   = [{"city": "Boca Raton", "state": "", "sessions": 41}, {"city": "Birmingham", "state": "", "sessions": 35}, {"city": "Ashburn", "state": "", "sessions": 22}, {"city": "Chicago", "state": "", "sessions": 22}, {"city": "Miami", "state": "", "sessions": 22}, {"city": "Moses Lake", "state": "", "sessions": 22}, {"city": "New York", "state": "", "sessions": 22}, {"city": "Des Moines", "state": "", "sessions": 15}, {"city": "Atlanta", "state": "", "sessions": 14}, {"city": "Los Angeles", "state": "", "sessions": 14}];
 </script>
 
 </body>
