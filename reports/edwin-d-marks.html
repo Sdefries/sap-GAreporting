@@ -344,6 +344,12 @@ tr:hover td{background:#F5F9FF}
 .gbp-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
 .gbp-unlock-btn:hover{background:#006AA3;transform:translateY(-1px)}
 
+/* No Data State - neutral styling */
+.no-data-card{background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center}
+.no-data-icon{font-size:32px;margin-bottom:12px;opacity:0.5}
+.no-data-title{font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px}
+.no-data-desc{font-size:13px;color:var(--gray-600)}
+
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
@@ -1007,12 +1013,10 @@ function render(){
   }
 
   // Visibility
-  // Visibility section — use real impression share data
   const impShare = t.impressionShare;
   const lostBudget = t.lostIsBudget;
   const lostRank = t.lostIsRank;
   
-  // Build visibility cards only if we have data
   let visCards = '';
   
   if (impShare !== null && impShare !== undefined) {
@@ -1057,7 +1061,6 @@ function render(){
     </div>`;
   }
   
-  // If no impression share data available, show placeholder message
   if (!visCards) {
     visCards = `
     <div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666;">
@@ -1068,14 +1071,15 @@ function render(){
   
   document.getElementById('visibilityGrid').innerHTML = visCards;
 
-  // SEO Section
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SEO Section — GATED to seo_enrolled clients only
+  // ═══════════════════════════════════════════════════════════════════════════
   const seoContainer = document.getElementById('seoContent');
   const seoEnrolled = window.CLIENT_DATA?.seo_enrolled || false;
   const seoData = window.CLIENT_DATA?.seo || null;
   
   if (seoEnrolled && seoData && seoData.enrolled) {
     // Enrolled client with data - show full SEO metrics
-    // Check for actual data vs null/0
     const ps = seoData.pagespeed_mobile;
     const psDesk = seoData.pagespeed_desktop;
     const seoScore = seoData.seo_score;
@@ -1085,7 +1089,6 @@ function render(){
     const avgPos = seoData.avg_position;
     const topQueries = seoData.top_queries || [];
     
-    // Helper to display value or N/A
     const valOrNA = (v) => (v !== null && v !== undefined && v !== 0) ? v : 'N/A';
     const hasData = (v) => v !== null && v !== undefined && v !== 0;
     
@@ -1110,7 +1113,6 @@ function render(){
       queriesHTML += '</div>';
     }
     
-    // CWV display logic
     const cwvIcon = cwvPass === null ? '⏳' : (cwvPass ? '✅' : '⚠️');
     const cwvText = cwvPass === null ? 'Pending' : (cwvPass ? 'Passing' : 'Needs Work');
     const cwvColor = cwvPass === null ? 'var(--gray-400)' : (cwvPass ? 'var(--green)' : 'var(--amber)');
@@ -1155,7 +1157,7 @@ function render(){
     `;
     document.getElementById('seoSubtitle').textContent = 'Organic search & site speed · Last updated ' + (seoData.fetched_at ? new Date(seoData.fetched_at).toLocaleDateString() : 'recently');
   } else {
-    // Not enrolled - show fields with N/A and upsell note
+    // Not enrolled - show fields with N/A and upsell note (SEO package gating)
     seoContainer.innerHTML = `
       <div class="seo-grid" style="opacity:0.5;">
         <div class="seo-card">
@@ -1199,7 +1201,9 @@ function render(){
     document.getElementById('seoSubtitle').textContent = 'Available with SEO package';
   }
 
-  // ── KEYWORDS SECTION ──────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // KEYWORDS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const kwData = window.CLIENT_DATA?.keywords;
   if (kwData && kwData.top_performers && kwData.top_performers.length > 0) {
     // Has keyword data - render tables
@@ -1209,14 +1213,14 @@ function render(){
     
     const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
     const qsClass = (qs) => qs === null ? 'na' : qs >= 7 ? 'high' : qs >= 4 ? 'med' : 'low';
-    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m);
+    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m || '—');
     
     document.getElementById('topKeywordsBody').innerHTML = topKW.map(k => `
       <tr>
         <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
         <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
         <td>${fmtN(k.clicks)}</td>
-        <td class="kw-ctr ${ctrClass(k.ctr)}">${k.ctr.toFixed(1)}%</td>
+        <td class="kw-ctr ${ctrClass(k.ctr)}">${(k.ctr||0).toFixed(1)}%</td>
         <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
       </tr>
     `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--gray-400)">No data</td></tr>';
@@ -1226,7 +1230,7 @@ function render(){
         <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
         <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
         <td>${fmtN(k.impressions)}</td>
-        <td class="kw-ctr bad">${k.ctr.toFixed(1)}%</td>
+        <td class="kw-ctr bad">${(k.ctr||0).toFixed(1)}%</td>
         <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
       </tr>
     `).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--green)">✓ No compliance risks</td></tr>';
@@ -1238,122 +1242,129 @@ function render(){
       <div class="qs-item" style="color:var(--gray-400)">Unknown: ${qsDist.unknown || 0}</div>
     `;
   } else {
-    // No keyword data
+    // No keyword data — neutral message (NOT gated to SEO package)
     document.getElementById('keywordsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔑</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Keyword Performance</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Keyword%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🔑</div>
+        <div class="no-data-title">Keyword data not yet available</div>
+        <div class="no-data-desc">Keyword performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── ADS SECTION ───────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ADS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const adsData = window.CLIENT_DATA?.ads;
   if (adsData && adsData.top_headlines && adsData.top_headlines.length > 0) {
     document.getElementById('topHeadlines').innerHTML = adsData.top_headlines.map(h => `
       <div class="headline-item">
-        <span class="headline-text" title="${h.text}">${h.text}</span>
+        <span class="headline-text" title="${h.headline || h.text || ''}">${h.headline || h.text || ''}</span>
         <div class="headline-stats">
-          <span><strong>${h.ctr.toFixed(1)}%</strong> CTR</span>
+          <span><strong>${(h.ctr||0).toFixed(1)}%</strong> CTR</span>
           <span>${fmtN(h.clicks)} clicks</span>
         </div>
       </div>
     `).join('');
     
-    const topAds = adsData.top_ads.slice(0, 4);
+    const topAds = (adsData.top_ads || []).slice(0, 4);
     document.getElementById('topAds').innerHTML = topAds.map(a => `
       <div class="ad-item">
-        <div class="ad-headlines">${(a.headlines || []).slice(0,3).join(' | ')}</div>
-        <div class="ad-desc">${(a.descriptions || []).slice(0,1).join(' ')}</div>
+        <div class="ad-headlines">${(a.headlines || [a.headline]).slice(0,3).join(' | ')}</div>
+        <div class="ad-desc">${(a.descriptions || [a.description]).slice(0,1).join(' ')}</div>
         <div class="ad-stats">
-          <span>📊 ${a.ctr.toFixed(1)}% CTR</span>
+          <span>📊 ${(a.ctr||0).toFixed(1)}% CTR</span>
           <span>👆 ${fmtN(a.clicks)} clicks</span>
-          <span>🎯 ${fmtN(Math.round(a.conversions))} conv.</span>
+          <span>🎯 ${fmtN(Math.round(a.conversions||0))} conv.</span>
         </div>
       </div>
     `).join('');
   } else {
+    // No ads data — neutral message (NOT gated to SEO package)
     document.getElementById('adsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">✨</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Ad Copy Performance</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Ad%20Copy%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">✨</div>
+        <div class="no-data-title">Ad copy data not yet available</div>
+        <div class="no-data-desc">Ad performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── TIMING SECTION ────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TIMING Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const dowData = window.CLIENT_DATA?.day_of_week;
   const hourData = window.CLIENT_DATA?.hour_of_day;
   if (dowData && dowData.length > 0) {
     const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
     document.getElementById('dowGrid').innerHTML = dowData.map(d => `
       <div class="dow-item">
-        <div class="dow-day">${d.day.slice(0,3)}</div>
+        <div class="dow-day">${(d.day||'').slice(0,3)}</div>
         <div class="dow-clicks">${fmtN(d.clicks)}</div>
-        <div class="dow-ctr ${ctrClass(d.ctr)}">${d.ctr.toFixed(1)}%</div>
+        <div class="dow-ctr ${ctrClass(d.ctr||0)}">${(d.ctr||0).toFixed(1)}%</div>
       </div>
     `).join('');
     
     if (hourData && hourData.length > 0) {
-      const maxClicks = Math.max(...hourData.map(h => h.clicks)) || 1;
+      const maxClicks = Math.max(...hourData.map(h => h.clicks||0)) || 1;
       document.getElementById('hourHeatmap').innerHTML = hourData.map(h => {
-        const intensity = h.clicks / maxClicks;
+        const intensity = (h.clicks||0) / maxClicks;
         const bg = intensity > 0.7 ? 'var(--blue)' : intensity > 0.4 ? 'rgba(0,131,198,0.5)' : intensity > 0.1 ? 'rgba(0,131,198,0.2)' : 'var(--gray-100)';
         const color = intensity > 0.5 ? '#fff' : 'var(--navy)';
         return `<div class="hour-cell" style="background:${bg};color:${color}" data-tooltip="${h.hour}:00 - ${h.clicks} clicks">${h.hour}</div>`;
       }).join('');
     }
   } else {
+    // No timing data — neutral message (NOT gated to SEO package)
     document.getElementById('timingContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🕐</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Performance by Time</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Timing%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🕐</div>
+        <div class="no-data-title">Timing data not yet available</div>
+        <div class="no-data-desc">Day and hour performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── SEARCH TERMS SECTION ──────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SEARCH TERMS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const stData = window.CLIENT_DATA?.search_terms;
   if (stData && stData.top_terms && stData.top_terms.length > 0) {
     const topTerms = stData.top_terms.slice(0, 10);
-    const negTerms = stData.potential_negatives.slice(0, 8);
+    const negTerms = (stData.potential_negatives || []).slice(0, 8);
     
     document.getElementById('topSearchTermsBody').innerHTML = topTerms.map(t => `
       <tr>
-        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
         <td>${fmtN(t.clicks)}</td>
-        <td>${t.ctr.toFixed(1)}%</td>
-        <td>${fmtN(Math.round(t.conversions))}</td>
+        <td>${(t.ctr||0).toFixed(1)}%</td>
+        <td>${fmtN(Math.round(t.conversions||0))}</td>
       </tr>
     `).join('');
     
     document.getElementById('negativeTermsBody').innerHTML = negTerms.length > 0 ? negTerms.map(t => `
       <tr>
-        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
         <td>${fmtN(t.impressions)}</td>
-        <td style="color:var(--red)">${t.ctr.toFixed(1)}%</td>
+        <td style="color:var(--red)">${(t.ctr||0).toFixed(1)}%</td>
         <td><span class="st-negative">Review</span></td>
       </tr>
     `).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--green)">✓ No low-CTR terms found</td></tr>';
   } else {
+    // No search terms data — neutral message (NOT gated to SEO package)
     document.getElementById('searchTermsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔍</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Search Terms Analysis</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Search%20Terms%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🔍</div>
+        <div class="no-data-title">Search terms data not yet available</div>
+        <div class="no-data-desc">Search term data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── GOOGLE BUSINESS PROFILE SECTION ───────────────────────────────────────
-  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || false;
+  // ═══════════════════════════════════════════════════════════════════════════
+  // GBP Section — GATED to seo_enrolled clients only
+  // ═══════════════════════════════════════════════════════════════════════════
+  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || window.CLIENT_DATA?.seo_enrolled || false;
   const gbpData = window.CLIENT_DATA?.gbp || null;
   const gbpContainer = document.getElementById('gbpContent');
   
@@ -1361,7 +1372,7 @@ function render(){
     // Has GBP data - render metrics (future implementation)
     gbpContainer.innerHTML = `<div>GBP data coming soon...</div>`;
   } else {
-    // Locked state - show upsell
+    // Locked state - show upsell (SEO package gating)
     gbpContainer.innerHTML = `
       <div class="gbp-locked">
         <div class="gbp-locked-overlay">
@@ -1524,7 +1535,7 @@ window.addEventListener('load',()=>{
 
 <script>
 // Injected by generate_reports_v2.py — Edwin D Marks Animal Foundation (632-590-9900) — 2026-04-07
-window.CLIENT_DATA = {"slug": "edwin-d-marks", "name": "Edwin D Marks Animal Foundation", "account_id": "632-590-9900", "website": "", "org_model": "location_based", "animal_type": null, "report_date": "April 07, 2026", "gps": 0, "gps_components": {"ctr": 0, "utilization": 0, "conv_tracking": 0, "budget": 0}, "compliance": "low_activity", "totals_30d": {"cl": 0, "im": 0, "cost": 0, "cv": 0, "ctr": 0, "cpc": 0, "costPerConv": null, "convRate": 0, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "totals_7d": {"cl": 0, "im": 0, "cost": 0, "cv": 0, "ctr": 0, "cpc": 0, "costPerConv": null, "convRate": 0, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "insights": [{"color": "red", "tag": "action", "title": "CTR at risk \u2014 0.0%", "body": "CTR has dropped to 0.0% \u2014 below the 5% minimum required by Google Ad Grants. Immediate action needed."}, {"color": "red", "tag": "action", "title": "Grant severely under-utilized \u2014 0%", "body": "Only $0 of the $10,000 monthly grant is being used. Significant opportunity to build more campaigns."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 0/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": false, "ga4_pages": [], "ga4_states": [], "ga4_cities": [], "seo_enrolled": false, "seo": null};
+window.CLIENT_DATA = {"slug": "edwin-d-marks", "name": "Edwin D Marks Animal Foundation", "account_id": "632-590-9900", "website": "", "org_model": "location_based", "animal_type": null, "report_date": "April 07, 2026", "gps": 0, "gps_components": {"ctr": 0, "utilization": 0, "conv_tracking": 0, "budget": 0}, "compliance": "low_activity", "totals_30d": {"cl": 0, "im": 0, "cost": 0, "cv": 0, "ctr": 0, "cpc": 0, "costPerConv": null, "convRate": 0, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "totals_7d": {"cl": 0, "im": 0, "cost": 0, "cv": 0, "ctr": 0, "cpc": 0, "costPerConv": null, "convRate": 0, "impressionShare": null, "lostIsBudget": null, "lostIsRank": null}, "insights": [{"color": "red", "tag": "action", "title": "CTR at risk \u2014 0.0%", "body": "CTR has dropped to 0.0% \u2014 below the 5% minimum required by Google Ad Grants. Immediate action needed."}, {"color": "red", "tag": "action", "title": "Grant severely under-utilized \u2014 0%", "body": "Only $0 of the $10,000 monthly grant is being used. Significant opportunity to build more campaigns."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 0/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": false, "ga4_pages": [], "ga4_states": [], "ga4_cities": [], "keywords": {"top_performers": [], "compliance_risks": [], "quality_score_distribution": {"high": 0, "medium": 0, "low": 0}}, "ads": {"top_headlines": [], "top_ads": []}, "day_of_week": [{"day": "Monday", "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"day": "Tuesday", "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"day": "Wednesday", "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"day": "Thursday", "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"day": "Friday", "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"day": "Saturday", "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"day": "Sunday", "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}], "hour_of_day": [{"hour": 0, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 1, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 2, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 3, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 4, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 5, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 6, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 7, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 8, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 9, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 10, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 11, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 12, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 13, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 14, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 15, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 16, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 17, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 18, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 19, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 20, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 21, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 22, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 23, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}], "search_terms": {"top_terms": [], "potential_negatives": []}, "seo_enrolled": false, "seo": null};
 window.REPORT_DATA = {'30d':{totals:{cl:0,im:0,ctr:0,cost:0,cv:0,cpc:0,costPerConv:0,convRate:0},campaigns:[{n:"Lawyers Guide to Pet Trusts",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Pet Trust Education-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"FL Lawyers-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax- FL Lawyers-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search -donation 10-27",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],convs:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],spend:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],cpc:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},devices:[{n:'Desktop',cl:0,im:0,cost:0.0,cv:0,cvRate:0},{n:'Mobile',cl:0,im:0,cost:0.0,cv:0,cvRate:0},{n:'Tablet',cl:0,im:0,cost:0.0,cv:0,cvRate:0}]},'7d':{totals:{cl:0,im:0,ctr:0,cost:0,cv:0,cpc:0,costPerConv:0,convRate:0},campaigns:[{n:"Lawyers Guide to Pet Trusts",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Pet Trust Education-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"FL Lawyers-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax- FL Lawyers-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search -donation 10-27",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[0, 0, 0, 0, 0, 0, 0],convs:[0, 0, 0, 0, 0, 0, 0],spend:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],cpc:[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},devices:[{n:'Desktop',cl:0,im:0,cost:0.0,cv:0,cvRate:0},{n:'Mobile',cl:0,im:0,cost:0.0,cv:0,cvRate:0},{n:'Tablet',cl:0,im:0,cost:0.0,cv:0,cvRate:0}]}};
 window.LP_DATA     = [];
 window.STATE_DATA  = [];

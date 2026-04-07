@@ -344,6 +344,12 @@ tr:hover td{background:#F5F9FF}
 .gbp-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
 .gbp-unlock-btn:hover{background:#006AA3;transform:translateY(-1px)}
 
+/* No Data State - neutral styling */
+.no-data-card{background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center}
+.no-data-icon{font-size:32px;margin-bottom:12px;opacity:0.5}
+.no-data-title{font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px}
+.no-data-desc{font-size:13px;color:var(--gray-600)}
+
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
@@ -1007,12 +1013,10 @@ function render(){
   }
 
   // Visibility
-  // Visibility section — use real impression share data
   const impShare = t.impressionShare;
   const lostBudget = t.lostIsBudget;
   const lostRank = t.lostIsRank;
   
-  // Build visibility cards only if we have data
   let visCards = '';
   
   if (impShare !== null && impShare !== undefined) {
@@ -1057,7 +1061,6 @@ function render(){
     </div>`;
   }
   
-  // If no impression share data available, show placeholder message
   if (!visCards) {
     visCards = `
     <div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666;">
@@ -1068,14 +1071,15 @@ function render(){
   
   document.getElementById('visibilityGrid').innerHTML = visCards;
 
-  // SEO Section
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SEO Section — GATED to seo_enrolled clients only
+  // ═══════════════════════════════════════════════════════════════════════════
   const seoContainer = document.getElementById('seoContent');
   const seoEnrolled = window.CLIENT_DATA?.seo_enrolled || false;
   const seoData = window.CLIENT_DATA?.seo || null;
   
   if (seoEnrolled && seoData && seoData.enrolled) {
     // Enrolled client with data - show full SEO metrics
-    // Check for actual data vs null/0
     const ps = seoData.pagespeed_mobile;
     const psDesk = seoData.pagespeed_desktop;
     const seoScore = seoData.seo_score;
@@ -1085,7 +1089,6 @@ function render(){
     const avgPos = seoData.avg_position;
     const topQueries = seoData.top_queries || [];
     
-    // Helper to display value or N/A
     const valOrNA = (v) => (v !== null && v !== undefined && v !== 0) ? v : 'N/A';
     const hasData = (v) => v !== null && v !== undefined && v !== 0;
     
@@ -1110,7 +1113,6 @@ function render(){
       queriesHTML += '</div>';
     }
     
-    // CWV display logic
     const cwvIcon = cwvPass === null ? '⏳' : (cwvPass ? '✅' : '⚠️');
     const cwvText = cwvPass === null ? 'Pending' : (cwvPass ? 'Passing' : 'Needs Work');
     const cwvColor = cwvPass === null ? 'var(--gray-400)' : (cwvPass ? 'var(--green)' : 'var(--amber)');
@@ -1155,7 +1157,7 @@ function render(){
     `;
     document.getElementById('seoSubtitle').textContent = 'Organic search & site speed · Last updated ' + (seoData.fetched_at ? new Date(seoData.fetched_at).toLocaleDateString() : 'recently');
   } else {
-    // Not enrolled - show fields with N/A and upsell note
+    // Not enrolled - show fields with N/A and upsell note (SEO package gating)
     seoContainer.innerHTML = `
       <div class="seo-grid" style="opacity:0.5;">
         <div class="seo-card">
@@ -1199,7 +1201,9 @@ function render(){
     document.getElementById('seoSubtitle').textContent = 'Available with SEO package';
   }
 
-  // ── KEYWORDS SECTION ──────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // KEYWORDS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const kwData = window.CLIENT_DATA?.keywords;
   if (kwData && kwData.top_performers && kwData.top_performers.length > 0) {
     // Has keyword data - render tables
@@ -1209,14 +1213,14 @@ function render(){
     
     const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
     const qsClass = (qs) => qs === null ? 'na' : qs >= 7 ? 'high' : qs >= 4 ? 'med' : 'low';
-    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m);
+    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m || '—');
     
     document.getElementById('topKeywordsBody').innerHTML = topKW.map(k => `
       <tr>
         <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
         <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
         <td>${fmtN(k.clicks)}</td>
-        <td class="kw-ctr ${ctrClass(k.ctr)}">${k.ctr.toFixed(1)}%</td>
+        <td class="kw-ctr ${ctrClass(k.ctr)}">${(k.ctr||0).toFixed(1)}%</td>
         <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
       </tr>
     `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--gray-400)">No data</td></tr>';
@@ -1226,7 +1230,7 @@ function render(){
         <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
         <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
         <td>${fmtN(k.impressions)}</td>
-        <td class="kw-ctr bad">${k.ctr.toFixed(1)}%</td>
+        <td class="kw-ctr bad">${(k.ctr||0).toFixed(1)}%</td>
         <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
       </tr>
     `).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--green)">✓ No compliance risks</td></tr>';
@@ -1238,122 +1242,129 @@ function render(){
       <div class="qs-item" style="color:var(--gray-400)">Unknown: ${qsDist.unknown || 0}</div>
     `;
   } else {
-    // No keyword data
+    // No keyword data — neutral message (NOT gated to SEO package)
     document.getElementById('keywordsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔑</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Keyword Performance</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Keyword%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🔑</div>
+        <div class="no-data-title">Keyword data not yet available</div>
+        <div class="no-data-desc">Keyword performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── ADS SECTION ───────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ADS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const adsData = window.CLIENT_DATA?.ads;
   if (adsData && adsData.top_headlines && adsData.top_headlines.length > 0) {
     document.getElementById('topHeadlines').innerHTML = adsData.top_headlines.map(h => `
       <div class="headline-item">
-        <span class="headline-text" title="${h.text}">${h.text}</span>
+        <span class="headline-text" title="${h.headline || h.text || ''}">${h.headline || h.text || ''}</span>
         <div class="headline-stats">
-          <span><strong>${h.ctr.toFixed(1)}%</strong> CTR</span>
+          <span><strong>${(h.ctr||0).toFixed(1)}%</strong> CTR</span>
           <span>${fmtN(h.clicks)} clicks</span>
         </div>
       </div>
     `).join('');
     
-    const topAds = adsData.top_ads.slice(0, 4);
+    const topAds = (adsData.top_ads || []).slice(0, 4);
     document.getElementById('topAds').innerHTML = topAds.map(a => `
       <div class="ad-item">
-        <div class="ad-headlines">${(a.headlines || []).slice(0,3).join(' | ')}</div>
-        <div class="ad-desc">${(a.descriptions || []).slice(0,1).join(' ')}</div>
+        <div class="ad-headlines">${(a.headlines || [a.headline]).slice(0,3).join(' | ')}</div>
+        <div class="ad-desc">${(a.descriptions || [a.description]).slice(0,1).join(' ')}</div>
         <div class="ad-stats">
-          <span>📊 ${a.ctr.toFixed(1)}% CTR</span>
+          <span>📊 ${(a.ctr||0).toFixed(1)}% CTR</span>
           <span>👆 ${fmtN(a.clicks)} clicks</span>
-          <span>🎯 ${fmtN(Math.round(a.conversions))} conv.</span>
+          <span>🎯 ${fmtN(Math.round(a.conversions||0))} conv.</span>
         </div>
       </div>
     `).join('');
   } else {
+    // No ads data — neutral message (NOT gated to SEO package)
     document.getElementById('adsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">✨</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Ad Copy Performance</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Ad%20Copy%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">✨</div>
+        <div class="no-data-title">Ad copy data not yet available</div>
+        <div class="no-data-desc">Ad performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── TIMING SECTION ────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TIMING Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const dowData = window.CLIENT_DATA?.day_of_week;
   const hourData = window.CLIENT_DATA?.hour_of_day;
   if (dowData && dowData.length > 0) {
     const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
     document.getElementById('dowGrid').innerHTML = dowData.map(d => `
       <div class="dow-item">
-        <div class="dow-day">${d.day.slice(0,3)}</div>
+        <div class="dow-day">${(d.day||'').slice(0,3)}</div>
         <div class="dow-clicks">${fmtN(d.clicks)}</div>
-        <div class="dow-ctr ${ctrClass(d.ctr)}">${d.ctr.toFixed(1)}%</div>
+        <div class="dow-ctr ${ctrClass(d.ctr||0)}">${(d.ctr||0).toFixed(1)}%</div>
       </div>
     `).join('');
     
     if (hourData && hourData.length > 0) {
-      const maxClicks = Math.max(...hourData.map(h => h.clicks)) || 1;
+      const maxClicks = Math.max(...hourData.map(h => h.clicks||0)) || 1;
       document.getElementById('hourHeatmap').innerHTML = hourData.map(h => {
-        const intensity = h.clicks / maxClicks;
+        const intensity = (h.clicks||0) / maxClicks;
         const bg = intensity > 0.7 ? 'var(--blue)' : intensity > 0.4 ? 'rgba(0,131,198,0.5)' : intensity > 0.1 ? 'rgba(0,131,198,0.2)' : 'var(--gray-100)';
         const color = intensity > 0.5 ? '#fff' : 'var(--navy)';
         return `<div class="hour-cell" style="background:${bg};color:${color}" data-tooltip="${h.hour}:00 - ${h.clicks} clicks">${h.hour}</div>`;
       }).join('');
     }
   } else {
+    // No timing data — neutral message (NOT gated to SEO package)
     document.getElementById('timingContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🕐</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Performance by Time</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Timing%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🕐</div>
+        <div class="no-data-title">Timing data not yet available</div>
+        <div class="no-data-desc">Day and hour performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── SEARCH TERMS SECTION ──────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SEARCH TERMS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const stData = window.CLIENT_DATA?.search_terms;
   if (stData && stData.top_terms && stData.top_terms.length > 0) {
     const topTerms = stData.top_terms.slice(0, 10);
-    const negTerms = stData.potential_negatives.slice(0, 8);
+    const negTerms = (stData.potential_negatives || []).slice(0, 8);
     
     document.getElementById('topSearchTermsBody').innerHTML = topTerms.map(t => `
       <tr>
-        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
         <td>${fmtN(t.clicks)}</td>
-        <td>${t.ctr.toFixed(1)}%</td>
-        <td>${fmtN(Math.round(t.conversions))}</td>
+        <td>${(t.ctr||0).toFixed(1)}%</td>
+        <td>${fmtN(Math.round(t.conversions||0))}</td>
       </tr>
     `).join('');
     
     document.getElementById('negativeTermsBody').innerHTML = negTerms.length > 0 ? negTerms.map(t => `
       <tr>
-        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
         <td>${fmtN(t.impressions)}</td>
-        <td style="color:var(--red)">${t.ctr.toFixed(1)}%</td>
+        <td style="color:var(--red)">${(t.ctr||0).toFixed(1)}%</td>
         <td><span class="st-negative">Review</span></td>
       </tr>
     `).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--green)">✓ No low-CTR terms found</td></tr>';
   } else {
+    // No search terms data — neutral message (NOT gated to SEO package)
     document.getElementById('searchTermsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔍</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Search Terms Analysis</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Search%20Terms%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🔍</div>
+        <div class="no-data-title">Search terms data not yet available</div>
+        <div class="no-data-desc">Search term data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── GOOGLE BUSINESS PROFILE SECTION ───────────────────────────────────────
-  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || false;
+  // ═══════════════════════════════════════════════════════════════════════════
+  // GBP Section — GATED to seo_enrolled clients only
+  // ═══════════════════════════════════════════════════════════════════════════
+  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || window.CLIENT_DATA?.seo_enrolled || false;
   const gbpData = window.CLIENT_DATA?.gbp || null;
   const gbpContainer = document.getElementById('gbpContent');
   
@@ -1361,7 +1372,7 @@ function render(){
     // Has GBP data - render metrics (future implementation)
     gbpContainer.innerHTML = `<div>GBP data coming soon...</div>`;
   } else {
-    // Locked state - show upsell
+    // Locked state - show upsell (SEO package gating)
     gbpContainer.innerHTML = `
       <div class="gbp-locked">
         <div class="gbp-locked-overlay">
@@ -1524,8 +1535,8 @@ window.addEventListener('load',()=>{
 
 <script>
 // Injected by generate_reports_v2.py — Pup Profile (334-205-8352) — 2026-04-07
-window.CLIENT_DATA = {"slug": "pup-profile", "name": "Pup Profile", "account_id": "334-205-8352", "website": "https://pupprofile.org", "org_model": "location_based", "animal_type": null, "report_date": "April 07, 2026", "gps": 93, "gps_components": {"ctr": 77, "utilization": 100, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 1540.0, "im": 11185.0, "cost": 10023.83, "cv": 1049.0, "ctr": 13.77, "cpc": 6.51, "costPerConv": 9.56, "convRate": 68.12, "impressionShare": 10.0, "lostIsBudget": 41.9, "lostIsRank": 57.0}, "totals_7d": {"cl": 300.0, "im": 2475.0, "cost": 2341.87, "cv": 193.0, "ctr": 12.12, "cpc": 7.81, "costPerConv": 12.13, "convRate": 64.33, "impressionShare": 10.0, "lostIsBudget": 37.0, "lostIsRank": 61.8}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 13.8%", "body": "Account CTR is 13.8% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "green", "tag": "win", "title": "Grant utilization strong \u2014 100% used", "body": "Spending $10,024 of the $10,000 monthly grant. On pace to maximize full grant value this month."}, {"color": "green", "tag": "win", "title": "1049 conversions tracked at $9.56 CPA", "body": "Campaigns recorded 1049 conversions this month at $9.56 per conversion."}, {"color": "amber", "tag": "action", "title": "3 campaign(s) with no tracked conversions", "body": "Urgent Need-San Diego, Urgent Need-LA, Shop Pup-Profile \u2014 spending $2,288 combined with 0 conversions. Verify conversion tracking or pause."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 93/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/browse", "sessions": "567", "averageSessionDuration": "109.94648494532628", "bounceRate": "0.0017636684303350969", "engagementRate": "0.99823633156966485", "conversions": "3033"}, {"landingPage": "/", "sessions": "280", "averageSessionDuration": "123.72785088214285", "bounceRate": "0", "engagementRate": "1", "conversions": "1730"}, {"landingPage": "/browse/R9ESGL", "sessions": "117", "averageSessionDuration": "95.7271158034188", "bounceRate": "0", "engagementRate": "1", "conversions": "733"}, {"landingPage": "/browse/ZZH2ZB", "sessions": "100", "averageSessionDuration": "117.14215022999998", "bounceRate": "0", "engagementRate": "1", "conversions": "644"}, {"landingPage": "/donate", "sessions": "86", "averageSessionDuration": "75.3291303139535", "bounceRate": "0", "engagementRate": "1", "conversions": "523"}, {"landingPage": "/browse/G5I4YV", "sessions": "85", "averageSessionDuration": "70.1499408", "bounceRate": "0", "engagementRate": "1", "conversions": "540"}, {"landingPage": "/pups-fund/donate", "sessions": "50", "averageSessionDuration": "134.95065438", "bounceRate": "0", "engagementRate": "1", "conversions": "338"}, {"landingPage": "/browse/JDU1IO", "sessions": "41", "averageSessionDuration": "96.634827560975609", "bounceRate": "0", "engagementRate": "1", "conversions": "231"}, {"landingPage": "(not set)", "sessions": "31", "averageSessionDuration": "0.16989874193548385", "bounceRate": "0.0967741935483871", "engagementRate": "0.90322580645161288", "conversions": "62"}, {"landingPage": "/browse/A1941495", "sessions": "30", "averageSessionDuration": "81.280435", "bounceRate": "0", "engagementRate": "1", "conversions": "208"}], "ga4_states": [{"region": "California", "sessions": "544", "totalUsers": "441"}, {"region": "Florida", "sessions": "85", "totalUsers": "82"}, {"region": "Arizona", "sessions": "83", "totalUsers": "80"}, {"region": "New York", "sessions": "69", "totalUsers": "68"}, {"region": "Texas", "sessions": "64", "totalUsers": "59"}, {"region": "Ohio", "sessions": "50", "totalUsers": "45"}, {"region": "Oregon", "sessions": "45", "totalUsers": "42"}, {"region": "Virginia", "sessions": "42", "totalUsers": "40"}, {"region": "North Carolina", "sessions": "40", "totalUsers": "40"}, {"region": "Washington", "sessions": "37", "totalUsers": "36"}], "ga4_cities": [{"city": "Los Angeles", "sessions": "119", "totalUsers": "106"}, {"city": "San Diego", "sessions": "82", "totalUsers": "54"}, {"city": "Phoenix", "sessions": "34", "totalUsers": "34"}, {"city": "New York", "sessions": "21", "totalUsers": "20"}, {"city": "San Jose", "sessions": "14", "totalUsers": "12"}, {"city": "Long Beach", "sessions": "11", "totalUsers": "10"}, {"city": "Columbus", "sessions": "10", "totalUsers": "9"}, {"city": "Houston", "sessions": "10", "totalUsers": "6"}, {"city": "Rancho Santa Fe", "sessions": "10", "totalUsers": "2"}, {"city": "Las Vegas", "sessions": "9", "totalUsers": "8"}], "seo_enrolled": false, "seo": null};
-window.REPORT_DATA = {'30d':{totals:{cl:1540.0,im:11185.0,ctr:13.77,cost:10023.83,cv:1049.0,cpc:6.51,costPerConv:9.56,convRate:68.12},campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:16.78,cl:464.0,im:2766.0,cost:2486.83,cv:378.0,cpc:5.36,cpa:6.58},{n:"Awareness",s:"ENABLED",ctr:9.98,cl:231.0,im:2315.0,cost:759.41,cv:189.0,cpc:3.29,cpa:4.02},{n:"California Donate - Pmax",s:"ENABLED",ctr:15.02,cl:231.0,im:1538.0,cost:2167.44,cv:177.5,cpc:9.38,cpa:12.21},{n:"Search-Donate",s:"ENABLED",ctr:20.59,cl:125.0,im:607.0,cost:878.18,cv:98.5,cpc:7.03,cpa:8.92},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:10.19,cl:110.0,im:1079.0,cost:461.66,cv:94.0,cpc:4.2,cpa:4.91},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:13.58,cl:101.0,im:744.0,cost:1031.18,cv:0,cpc:10.21,cpa:null},{n:"Urgent Need Arizona",s:"ENABLED",ctr:14.42,cl:95.0,im:659.0,cost:657.56,cv:73.0,cpc:6.92,cpa:9.01},{n:"Urgent Need-LA",s:"ENABLED",ctr:13.15,cl:81.0,im:616.0,cost:768.3,cv:0,cpc:9.49,cpa:null},{n:"Shop Pup-Profile",s:"ENABLED",ctr:11.71,cl:52.0,im:444.0,cost:488.44,cv:0,cpc:9.39,cpa:null},{n:"Urgent Need River Side",s:"ENABLED",ctr:11.99,cl:50.0,im:417.0,cost:324.84,cv:39.0,cpc:6.5,cpa:8.33},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[31, 46, 62, 46, 46, 62, 46, 46, 46, 62, 46, 46, 62, 46, 46, 62, 46, 46, 46, 62, 46, 46, 62, 46, 46, 62, 46, 46, 62, 46],convs:[21, 31, 42, 31, 31, 42, 31, 31, 31, 42, 31, 31, 42, 31, 31, 42, 31, 31, 31, 42, 31, 31, 42, 31, 31, 42, 31, 31, 42, 31],spend:[200.48, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71],cpc:[6.47, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54, 6.54, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54, 6.54, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54]},devices:[{n:'Desktop',cl:1001,im:7270,cost:6515.49,cv:713,cvRate:0},{n:'Mobile',cl:493,im:3579,cost:3207.63,cv:304,cvRate:0},{n:'Tablet',cl:46,im:336,cost:300.71,cv:31,cvRate:0}]},'7d':{totals:{cl:300.0,im:2475.0,ctr:12.12,cost:2341.87,cv:193.0,cpc:7.81,costPerConv:12.13,convRate:64.33},campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:13.22,cl:89.0,im:673.0,cost:574.19,cv:70.0,cpc:6.45,cpa:8.2},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:11.94,cl:40.0,im:335.0,cost:530.87,cv:0,cpc:13.27,cpa:null},{n:"California Donate - Pmax",s:"ENABLED",ctr:11.47,cl:39.0,im:340.0,cost:451.52,cv:29.0,cpc:11.58,cpa:15.57},{n:"Awareness",s:"ENABLED",ctr:9.77,cl:30.0,im:307.0,cost:91.62,cv:29.0,cpc:3.05,cpa:3.16},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:10.32,cl:26.0,im:252.0,cost:103.65,cv:20.0,cpc:3.99,cpa:5.18},{n:"Urgent Need Arizona",s:"ENABLED",ctr:15.29,cl:26.0,im:170.0,cost:199.23,cv:23.0,cpc:7.66,cpa:8.66},{n:"Search-Donate",s:"ENABLED",ctr:17.65,cl:21.0,im:119.0,cost:145.31,cv:16.0,cpc:6.92,cpa:9.08},{n:"Urgent Need-LA",s:"ENABLED",ctr:11.35,cl:16.0,im:141.0,cost:154.33,cv:0,cpc:9.65,cpa:null},{n:"Urgent Need River Side",s:"ENABLED",ctr:11.11,cl:11.0,im:99.0,cost:70.79,cv:6.0,cpc:6.44,cpa:11.8},{n:"Shop Pup-Profile",s:"ENABLED",ctr:5.13,cl:2.0,im:39.0,cost:20.37,cv:0,cpc:10.18,cpa:null},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[36, 48, 39, 42, 45, 39, 51],convs:[23, 31, 25, 27, 29, 25, 33],spend:[281.02, 374.7, 304.44, 327.86, 351.28, 304.44, 398.12],cpc:[7.81, 7.81, 7.81, 7.81, 7.81, 7.81, 7.81]},devices:[{n:'Desktop',cl:195,im:1609,cost:1522.22,cv:131,cvRate:0},{n:'Mobile',cl:96,im:792,cost:749.4,cv:56,cvRate:0},{n:'Tablet',cl:9,im:74,cost:70.26,cv:6,cvRate:0}]}};
+window.CLIENT_DATA = {"slug": "pup-profile", "name": "Pup Profile", "account_id": "334-205-8352", "website": "https://pupprofile.org", "org_model": "location_based", "animal_type": null, "report_date": "April 07, 2026", "gps": 93, "gps_components": {"ctr": 77, "utilization": 100, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 1540.0, "im": 11185.0, "cost": 10023.83, "cv": 1050.0, "ctr": 13.77, "cpc": 6.51, "costPerConv": 9.55, "convRate": 68.18, "impressionShare": 10.0, "lostIsBudget": 41.9, "lostIsRank": 57.0}, "totals_7d": {"cl": 300.0, "im": 2475.0, "cost": 2341.87, "cv": 193.0, "ctr": 12.12, "cpc": 7.81, "costPerConv": 12.13, "convRate": 64.33, "impressionShare": 10.0, "lostIsBudget": 37.0, "lostIsRank": 61.8}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 13.8%", "body": "Account CTR is 13.8% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "green", "tag": "win", "title": "Grant utilization strong \u2014 100% used", "body": "Spending $10,024 of the $10,000 monthly grant. On pace to maximize full grant value this month."}, {"color": "green", "tag": "win", "title": "1050 conversions tracked at $9.55 CPA", "body": "Campaigns recorded 1050 conversions this month at $9.55 per conversion."}, {"color": "amber", "tag": "action", "title": "3 campaign(s) with no tracked conversions", "body": "Urgent Need-San Diego, Urgent Need-LA, Shop Pup-Profile \u2014 spending $2,288 combined with 0 conversions. Verify conversion tracking or pause."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 93/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/browse", "sessions": "567", "averageSessionDuration": "109.94648494532628", "bounceRate": "0.0017636684303350969", "engagementRate": "0.99823633156966485", "conversions": "3033"}, {"landingPage": "/", "sessions": "280", "averageSessionDuration": "123.72785088214285", "bounceRate": "0", "engagementRate": "1", "conversions": "1730"}, {"landingPage": "/browse/R9ESGL", "sessions": "117", "averageSessionDuration": "95.7271158034188", "bounceRate": "0", "engagementRate": "1", "conversions": "733"}, {"landingPage": "/browse/ZZH2ZB", "sessions": "100", "averageSessionDuration": "117.14215022999998", "bounceRate": "0", "engagementRate": "1", "conversions": "644"}, {"landingPage": "/donate", "sessions": "86", "averageSessionDuration": "75.3291303139535", "bounceRate": "0", "engagementRate": "1", "conversions": "523"}, {"landingPage": "/browse/G5I4YV", "sessions": "85", "averageSessionDuration": "70.1499408", "bounceRate": "0", "engagementRate": "1", "conversions": "540"}, {"landingPage": "/pups-fund/donate", "sessions": "50", "averageSessionDuration": "134.95065438", "bounceRate": "0", "engagementRate": "1", "conversions": "338"}, {"landingPage": "/browse/JDU1IO", "sessions": "41", "averageSessionDuration": "96.634827560975609", "bounceRate": "0", "engagementRate": "1", "conversions": "231"}, {"landingPage": "(not set)", "sessions": "31", "averageSessionDuration": "0.16989874193548385", "bounceRate": "0.0967741935483871", "engagementRate": "0.90322580645161288", "conversions": "62"}, {"landingPage": "/browse/A1941495", "sessions": "30", "averageSessionDuration": "81.280435", "bounceRate": "0", "engagementRate": "1", "conversions": "208"}], "ga4_states": [{"region": "California", "sessions": "544", "totalUsers": "441"}, {"region": "Florida", "sessions": "85", "totalUsers": "82"}, {"region": "Arizona", "sessions": "83", "totalUsers": "80"}, {"region": "New York", "sessions": "69", "totalUsers": "68"}, {"region": "Texas", "sessions": "64", "totalUsers": "59"}, {"region": "Ohio", "sessions": "50", "totalUsers": "45"}, {"region": "Oregon", "sessions": "45", "totalUsers": "42"}, {"region": "Virginia", "sessions": "42", "totalUsers": "40"}, {"region": "North Carolina", "sessions": "40", "totalUsers": "40"}, {"region": "Washington", "sessions": "37", "totalUsers": "36"}], "ga4_cities": [{"city": "Los Angeles", "sessions": "119", "totalUsers": "106"}, {"city": "San Diego", "sessions": "82", "totalUsers": "54"}, {"city": "Phoenix", "sessions": "34", "totalUsers": "34"}, {"city": "New York", "sessions": "21", "totalUsers": "20"}, {"city": "San Jose", "sessions": "14", "totalUsers": "12"}, {"city": "Long Beach", "sessions": "11", "totalUsers": "10"}, {"city": "Columbus", "sessions": "10", "totalUsers": "9"}, {"city": "Houston", "sessions": "10", "totalUsers": "6"}, {"city": "Rancho Santa Fe", "sessions": "10", "totalUsers": "2"}, {"city": "Las Vegas", "sessions": "9", "totalUsers": "8"}], "keywords": {"top_performers": [{"keyword": "find a pup", "ctr": 9.94, "clicks": 230, "impressions": 2313, "quality_score": null, "cost": 755.87, "conversions": 187.0}, {"keyword": "dogs in need", "ctr": 20.25, "clicks": 64, "impressions": 316, "quality_score": 5, "cost": 458.11, "conversions": 54.0}, {"keyword": "Adopt adult dog", "ctr": 13.7, "clicks": 57, "impressions": 416, "quality_score": null, "cost": 414.75, "conversions": 41.0}, {"keyword": "animal rescue", "ctr": 21.35, "clicks": 57, "impressions": 267, "quality_score": null, "cost": 393.36, "conversions": 42.0}, {"keyword": "poodle rescue california", "ctr": 12.06, "clicks": 48, "impressions": 398, "quality_score": null, "cost": 208.7, "conversions": 39.0}, {"keyword": "animal shelter riverside", "ctr": 16.11, "clicks": 24, "impressions": 149, "quality_score": 5, "cost": 157.48, "conversions": 20.0}, {"keyword": "los angeles animal shelter", "ctr": 14.94, "clicks": 23, "impressions": 154, "quality_score": 3, "cost": 189.55, "conversions": 0}, {"keyword": "san diego animal shelter", "ctr": 11.67, "clicks": 21, "impressions": 180, "quality_score": 7, "cost": 216.4, "conversions": 0}, {"keyword": "san diego animal shelter", "ctr": 12.03, "clicks": 19, "impressions": 158, "quality_score": 5, "cost": 227.09, "conversions": 0}, {"keyword": "catahoula puppies for adoption", "ctr": 18.56, "clicks": 18, "impressions": 97, "quality_score": null, "cost": 114.15, "conversions": 14.0}], "compliance_risks": [{"keyword": "rescue dog adoption", "ctr": 4.71, "clicks": 4, "impressions": 85, "quality_score": null, "cost": 34.8, "conversions": 0}, {"keyword": "petfinder california", "ctr": 4.76, "clicks": 2, "impressions": 42, "quality_score": null, "cost": 5.97, "conversions": 2.0}, {"keyword": "adopt a dog", "ctr": 4.76, "clicks": 1, "impressions": 21, "quality_score": 7, "cost": 6.03, "conversions": 0}, {"keyword": "free puppy adoption los angeles", "ctr": 0, "clicks": 0, "impressions": 19, "quality_score": 6, "cost": 0, "conversions": 0}, {"keyword": "dogs for adoption", "ctr": 0, "clicks": 0, "impressions": 12, "quality_score": null, "cost": 0, "conversions": 0}], "quality_score_distribution": {"high": 19, "medium": 37, "low": 13}}, "ads": {"top_headlines": [{"headline": "Browse Adoptable Dogs", "ctr": 9.98, "clicks": 231}, {"headline": "Save A Life", "ctr": 9.98, "clicks": 231}, {"headline": "Find A Shelter Near You", "ctr": 9.98, "clicks": 231}, {"headline": "Meet Cash Today", "ctr": 14.42, "clicks": 95}, {"headline": "Adopt Cash Now", "ctr": 14.42, "clicks": 95}, {"headline": "Fun, Loyal Cash Awaits", "ctr": 14.42, "clicks": 95}, {"headline": "Adopt A Dog Near You", "ctr": 11.54, "clicks": 77}, {"headline": "Browse Dog Profiles", "ctr": 11.54, "clicks": 77}, {"headline": "Adopt a Dog, Save a Life", "ctr": 11.54, "clicks": 77}, {"headline": "Help Local Rescue Dogs", "ctr": 19.82, "clicks": 65}], "top_ads": [{"headline": "Browse Adoptable Dogs", "description": "Pup Profile showcases dogs in need and connects them with forever homes.", "ctr": 9.98, "clicks": 231, "conversions": 189.0}, {"headline": "Meet Cash Today", "description": "Cash is a loving 5-year-old Catahoula mix ready for a forever home in Tucson", "ctr": 14.42, "clicks": 95, "conversions": 73.0}, {"headline": "Adopt A Dog Near You", "description": "Adopt a High Risk Dog from an overcrowded shelter near you. Save a life a mile away.", "ctr": 11.54, "clicks": 77, "conversions": 62.0}, {"headline": "Help Local Rescue Dogs", "description": "Donate now to save abandoned dogs in California. Every dollar makes a difference.", "ctr": 19.82, "clicks": 65, "conversions": 54.5}, {"headline": "Pup Profile Needs You", "description": "Donate to specific dogs' rescue or The Pups Fund at Pup Profile.", "ctr": 21.11, "clicks": 57, "conversions": 42.0}]}, "day_of_week": [{"day": "Monday", "clicks": 238, "impressions": 1799, "cost": 1669.17, "conversions": 160.0, "ctr": 13.23}, {"day": "Tuesday", "clicks": 201, "impressions": 1352, "cost": 1344.39, "conversions": 149.0, "ctr": 14.87}, {"day": "Wednesday", "clicks": 211, "impressions": 1406, "cost": 1334.23, "conversions": 142.0, "ctr": 15.01}, {"day": "Thursday", "clicks": 196, "impressions": 1579, "cost": 1325.47, "conversions": 143.0, "ctr": 12.41}, {"day": "Friday", "clicks": 219, "impressions": 1532, "cost": 1346.85, "conversions": 147.5, "ctr": 14.3}, {"day": "Saturday", "clicks": 197, "impressions": 1452, "cost": 1335.54, "conversions": 126.0, "ctr": 13.57}, {"day": "Sunday", "clicks": 278, "impressions": 2065, "cost": 1668.17, "conversions": 182.5, "ctr": 13.46}], "hour_of_day": [{"hour": 0, "clicks": 54, "impressions": 364, "cost": 482.59, "conversions": 32.0, "ctr": 14.84}, {"hour": 1, "clicks": 37, "impressions": 291, "cost": 302.58, "conversions": 23.0, "ctr": 12.71}, {"hour": 2, "clicks": 31, "impressions": 186, "cost": 239.86, "conversions": 25.0, "ctr": 16.67}, {"hour": 3, "clicks": 27, "impressions": 205, "cost": 192.91, "conversions": 19.5, "ctr": 13.17}, {"hour": 4, "clicks": 44, "impressions": 288, "cost": 321.81, "conversions": 29.0, "ctr": 15.28}, {"hour": 5, "clicks": 51, "impressions": 458, "cost": 296.63, "conversions": 44.5, "ctr": 11.14}, {"hour": 6, "clicks": 133, "impressions": 802, "cost": 794.48, "conversions": 101.0, "ctr": 16.58}, {"hour": 7, "clicks": 194, "impressions": 1331, "cost": 1240.76, "conversions": 132.0, "ctr": 14.58}, {"hour": 8, "clicks": 267, "impressions": 1817, "cost": 1674.57, "conversions": 172.5, "ctr": 14.69}, {"hour": 9, "clicks": 252, "impressions": 2040, "cost": 1662.05, "conversions": 173.0, "ctr": 12.35}, {"hour": 10, "clicks": 212, "impressions": 1605, "cost": 1346.78, "conversions": 140.0, "ctr": 13.21}, {"hour": 11, "clicks": 125, "impressions": 1011, "cost": 808.97, "conversions": 82.5, "ctr": 12.36}, {"hour": 12, "clicks": 74, "impressions": 542, "cost": 423.0, "conversions": 57.0, "ctr": 13.65}, {"hour": 13, "clicks": 20, "impressions": 141, "cost": 130.85, "conversions": 8.0, "ctr": 14.18}, {"hour": 14, "clicks": 18, "impressions": 74, "cost": 104.64, "conversions": 11.0, "ctr": 24.32}, {"hour": 15, "clicks": 0, "impressions": 4, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 16, "clicks": 0, "impressions": 5, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 17, "clicks": 0, "impressions": 2, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 18, "clicks": 0, "impressions": 2, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 19, "clicks": 0, "impressions": 3, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 20, "clicks": 1, "impressions": 11, "cost": 1.33, "conversions": 0.0, "ctr": 9.09}, {"hour": 21, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 22, "clicks": 0, "impressions": 1, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 23, "clicks": 0, "impressions": 2, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}], "search_terms": {"top_terms": [{"term": "adopt a pet", "ctr": 14.55, "clicks": 8, "impressions": 55, "conversions": 0}, {"term": "rescue dogs for adoption", "ctr": 44.44, "clicks": 8, "impressions": 18, "conversions": 8.0}, {"term": "small dog rescue scottsdale", "ctr": 63.64, "clicks": 7, "impressions": 11, "conversions": 3.0}, {"term": "dogs available for adoption", "ctr": 25.0, "clicks": 6, "impressions": 24, "conversions": 3.0}, {"term": "rescue dogs for adoption", "ctr": 45.45, "clicks": 5, "impressions": 11, "conversions": 8.0}, {"term": "riverside animal shelter", "ctr": 9.8, "clicks": 5, "impressions": 51, "conversions": 5.0}, {"term": "puppies for sale", "ctr": 16.67, "clicks": 4, "impressions": 24, "conversions": 2.0}, {"term": "rescue dogs for adoption", "ctr": 23.53, "clicks": 4, "impressions": 17, "conversions": 3.0}, {"term": "los angeles animal shelter", "ctr": 18.18, "clicks": 4, "impressions": 22, "conversions": 0}, {"term": "san diego animal shelter", "ctr": 30.77, "clicks": 4, "impressions": 13, "conversions": 0}], "potential_negatives": [{"term": "dogs", "ctr": 0, "clicks": 0, "impressions": 25, "conversions": 0}, {"term": "san diego humane society", "ctr": 0, "clicks": 0, "impressions": 21, "conversions": 0}]}, "seo_enrolled": false, "seo": null};
+window.REPORT_DATA = {'30d':{totals:{cl:1540.0,im:11185.0,ctr:13.77,cost:10023.83,cv:1050.0,cpc:6.51,costPerConv:9.55,convRate:68.18},campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:16.78,cl:464.0,im:2766.0,cost:2486.83,cv:378.0,cpc:5.36,cpa:6.58},{n:"Awareness",s:"ENABLED",ctr:9.98,cl:231.0,im:2315.0,cost:759.41,cv:189.0,cpc:3.29,cpa:4.02},{n:"California Donate - Pmax",s:"ENABLED",ctr:15.02,cl:231.0,im:1538.0,cost:2167.44,cv:177.5,cpc:9.38,cpa:12.21},{n:"Search-Donate",s:"ENABLED",ctr:20.59,cl:125.0,im:607.0,cost:878.18,cv:99.5,cpc:7.03,cpa:8.83},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:10.19,cl:110.0,im:1079.0,cost:461.66,cv:94.0,cpc:4.2,cpa:4.91},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:13.58,cl:101.0,im:744.0,cost:1031.18,cv:0,cpc:10.21,cpa:null},{n:"Urgent Need Arizona",s:"ENABLED",ctr:14.42,cl:95.0,im:659.0,cost:657.56,cv:73.0,cpc:6.92,cpa:9.01},{n:"Urgent Need-LA",s:"ENABLED",ctr:13.15,cl:81.0,im:616.0,cost:768.3,cv:0,cpc:9.49,cpa:null},{n:"Shop Pup-Profile",s:"ENABLED",ctr:11.71,cl:52.0,im:444.0,cost:488.44,cv:0,cpc:9.39,cpa:null},{n:"Urgent Need River Side",s:"ENABLED",ctr:11.99,cl:50.0,im:417.0,cost:324.84,cv:39.0,cpc:6.5,cpa:8.33},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[31, 46, 62, 46, 46, 62, 46, 46, 46, 62, 46, 46, 62, 46, 46, 62, 46, 46, 46, 62, 46, 46, 62, 46, 46, 62, 46, 46, 62, 46],convs:[21, 32, 42, 32, 32, 42, 32, 32, 32, 42, 32, 32, 42, 32, 32, 42, 32, 32, 32, 42, 32, 32, 42, 32, 32, 42, 32, 32, 42, 32],spend:[200.48, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71, 300.71, 400.95, 300.71],cpc:[6.47, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54, 6.54, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54, 6.54, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54, 6.54, 6.47, 6.54]},devices:[{n:'Desktop',cl:1001,im:7270,cost:6515.49,cv:714,cvRate:0},{n:'Mobile',cl:493,im:3579,cost:3207.63,cv:304,cvRate:0},{n:'Tablet',cl:46,im:336,cost:300.71,cv:32,cvRate:0}]},'7d':{totals:{cl:300.0,im:2475.0,ctr:12.12,cost:2341.87,cv:193.0,cpc:7.81,costPerConv:12.13,convRate:64.33},campaigns:[{n:"P Max Donate",s:"ENABLED",ctr:13.22,cl:89.0,im:673.0,cost:574.19,cv:70.0,cpc:6.45,cpa:8.2},{n:"Urgent Need-San Diego",s:"ENABLED",ctr:11.94,cl:40.0,im:335.0,cost:530.87,cv:0,cpc:13.27,cpa:null},{n:"California Donate - Pmax",s:"ENABLED",ctr:11.47,cl:39.0,im:340.0,cost:451.52,cv:29.0,cpc:11.58,cpa:15.57},{n:"Awareness",s:"ENABLED",ctr:9.77,cl:30.0,im:307.0,cost:91.62,cv:29.0,cpc:3.05,cpa:3.16},{n:"Adoptions-Website Traffic",s:"ENABLED",ctr:10.32,cl:26.0,im:252.0,cost:103.65,cv:20.0,cpc:3.99,cpa:5.18},{n:"Urgent Need Arizona",s:"ENABLED",ctr:15.29,cl:26.0,im:170.0,cost:199.23,cv:23.0,cpc:7.66,cpa:8.66},{n:"Search-Donate",s:"ENABLED",ctr:17.65,cl:21.0,im:119.0,cost:145.31,cv:16.0,cpc:6.92,cpa:9.08},{n:"Urgent Need-LA",s:"ENABLED",ctr:11.35,cl:16.0,im:141.0,cost:154.33,cv:0,cpc:9.65,cpa:null},{n:"Urgent Need River Side",s:"ENABLED",ctr:11.11,cl:11.0,im:99.0,cost:70.79,cv:6.0,cpc:6.44,cpa:11.8},{n:"Shop Pup-Profile",s:"ENABLED",ctr:5.13,cl:2.0,im:39.0,cost:20.37,cv:0,cpc:10.18,cpa:null},{n:"Donations-Website traffic (OLD)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Shop-Website traffic",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Remarketing Campaign - Donate Page Visitors",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Orange County (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need-Central CA (SLO) (temp pause, no active dogs)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Donate A/B Test - Donation Landing Page",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Urgent need PMAX - LA",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMAX Urgent Need - San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need - Arizona",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Riverside",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max Urgent Need-Central CA (SLO)",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-Adoption-San Diego",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Adoption- Orange County",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[36, 48, 39, 42, 45, 39, 51],convs:[23, 31, 25, 27, 29, 25, 33],spend:[281.02, 374.7, 304.44, 327.86, 351.28, 304.44, 398.12],cpc:[7.81, 7.81, 7.81, 7.81, 7.81, 7.81, 7.81]},devices:[{n:'Desktop',cl:195,im:1609,cost:1522.22,cv:131,cvRate:0},{n:'Mobile',cl:96,im:792,cost:749.4,cv:56,cvRate:0},{n:'Tablet',cl:9,im:74,cost:70.26,cv:6,cvRate:0}]}};
 window.LP_DATA     = [{"page": "/browse", "sessions": 567, "pct": 49, "avgTime": "109s", "engaged": true, "convs": 3033}, {"page": "/", "sessions": 280, "pct": 24, "avgTime": "123s", "engaged": true, "convs": 1730}, {"page": "/browse/R9ESGL", "sessions": 117, "pct": 10, "avgTime": "95s", "engaged": true, "convs": 733}, {"page": "/browse/ZZH2ZB", "sessions": 100, "pct": 9, "avgTime": "117s", "engaged": true, "convs": 644}, {"page": "/donate", "sessions": 86, "pct": 7, "avgTime": "75s", "engaged": true, "convs": 523}];
 window.STATE_DATA  = [{"state": "California", "sessions": 544, "pct": 51}, {"state": "Florida", "sessions": 85, "pct": 8}, {"state": "Arizona", "sessions": 83, "pct": 8}, {"state": "New York", "sessions": 69, "pct": 7}, {"state": "Texas", "sessions": 64, "pct": 6}, {"state": "Ohio", "sessions": 50, "pct": 5}, {"state": "Oregon", "sessions": 45, "pct": 4}, {"state": "Virginia", "sessions": 42, "pct": 4}, {"state": "North Carolina", "sessions": 40, "pct": 4}, {"state": "Washington", "sessions": 37, "pct": 3}];
 window.CITY_DATA   = [{"city": "Los Angeles", "state": "", "sessions": 119}, {"city": "San Diego", "state": "", "sessions": 82}, {"city": "Phoenix", "state": "", "sessions": 34}, {"city": "New York", "state": "", "sessions": 21}, {"city": "San Jose", "state": "", "sessions": 14}, {"city": "Long Beach", "state": "", "sessions": 11}, {"city": "Columbus", "state": "", "sessions": 10}, {"city": "Houston", "state": "", "sessions": 10}, {"city": "Rancho Santa Fe", "state": "", "sessions": 10}, {"city": "Las Vegas", "state": "", "sessions": 9}];

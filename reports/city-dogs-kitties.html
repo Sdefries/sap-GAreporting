@@ -344,6 +344,12 @@ tr:hover td{background:#F5F9FF}
 .gbp-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
 .gbp-unlock-btn:hover{background:#006AA3;transform:translateY(-1px)}
 
+/* No Data State - neutral styling */
+.no-data-card{background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center}
+.no-data-icon{font-size:32px;margin-bottom:12px;opacity:0.5}
+.no-data-title{font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px}
+.no-data-desc{font-size:13px;color:var(--gray-600)}
+
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
@@ -1007,12 +1013,10 @@ function render(){
   }
 
   // Visibility
-  // Visibility section — use real impression share data
   const impShare = t.impressionShare;
   const lostBudget = t.lostIsBudget;
   const lostRank = t.lostIsRank;
   
-  // Build visibility cards only if we have data
   let visCards = '';
   
   if (impShare !== null && impShare !== undefined) {
@@ -1057,7 +1061,6 @@ function render(){
     </div>`;
   }
   
-  // If no impression share data available, show placeholder message
   if (!visCards) {
     visCards = `
     <div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666;">
@@ -1068,14 +1071,15 @@ function render(){
   
   document.getElementById('visibilityGrid').innerHTML = visCards;
 
-  // SEO Section
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SEO Section — GATED to seo_enrolled clients only
+  // ═══════════════════════════════════════════════════════════════════════════
   const seoContainer = document.getElementById('seoContent');
   const seoEnrolled = window.CLIENT_DATA?.seo_enrolled || false;
   const seoData = window.CLIENT_DATA?.seo || null;
   
   if (seoEnrolled && seoData && seoData.enrolled) {
     // Enrolled client with data - show full SEO metrics
-    // Check for actual data vs null/0
     const ps = seoData.pagespeed_mobile;
     const psDesk = seoData.pagespeed_desktop;
     const seoScore = seoData.seo_score;
@@ -1085,7 +1089,6 @@ function render(){
     const avgPos = seoData.avg_position;
     const topQueries = seoData.top_queries || [];
     
-    // Helper to display value or N/A
     const valOrNA = (v) => (v !== null && v !== undefined && v !== 0) ? v : 'N/A';
     const hasData = (v) => v !== null && v !== undefined && v !== 0;
     
@@ -1110,7 +1113,6 @@ function render(){
       queriesHTML += '</div>';
     }
     
-    // CWV display logic
     const cwvIcon = cwvPass === null ? '⏳' : (cwvPass ? '✅' : '⚠️');
     const cwvText = cwvPass === null ? 'Pending' : (cwvPass ? 'Passing' : 'Needs Work');
     const cwvColor = cwvPass === null ? 'var(--gray-400)' : (cwvPass ? 'var(--green)' : 'var(--amber)');
@@ -1155,7 +1157,7 @@ function render(){
     `;
     document.getElementById('seoSubtitle').textContent = 'Organic search & site speed · Last updated ' + (seoData.fetched_at ? new Date(seoData.fetched_at).toLocaleDateString() : 'recently');
   } else {
-    // Not enrolled - show fields with N/A and upsell note
+    // Not enrolled - show fields with N/A and upsell note (SEO package gating)
     seoContainer.innerHTML = `
       <div class="seo-grid" style="opacity:0.5;">
         <div class="seo-card">
@@ -1199,7 +1201,9 @@ function render(){
     document.getElementById('seoSubtitle').textContent = 'Available with SEO package';
   }
 
-  // ── KEYWORDS SECTION ──────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // KEYWORDS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const kwData = window.CLIENT_DATA?.keywords;
   if (kwData && kwData.top_performers && kwData.top_performers.length > 0) {
     // Has keyword data - render tables
@@ -1209,14 +1213,14 @@ function render(){
     
     const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
     const qsClass = (qs) => qs === null ? 'na' : qs >= 7 ? 'high' : qs >= 4 ? 'med' : 'low';
-    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m);
+    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m || '—');
     
     document.getElementById('topKeywordsBody').innerHTML = topKW.map(k => `
       <tr>
         <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
         <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
         <td>${fmtN(k.clicks)}</td>
-        <td class="kw-ctr ${ctrClass(k.ctr)}">${k.ctr.toFixed(1)}%</td>
+        <td class="kw-ctr ${ctrClass(k.ctr)}">${(k.ctr||0).toFixed(1)}%</td>
         <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
       </tr>
     `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--gray-400)">No data</td></tr>';
@@ -1226,7 +1230,7 @@ function render(){
         <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
         <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
         <td>${fmtN(k.impressions)}</td>
-        <td class="kw-ctr bad">${k.ctr.toFixed(1)}%</td>
+        <td class="kw-ctr bad">${(k.ctr||0).toFixed(1)}%</td>
         <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
       </tr>
     `).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--green)">✓ No compliance risks</td></tr>';
@@ -1238,122 +1242,129 @@ function render(){
       <div class="qs-item" style="color:var(--gray-400)">Unknown: ${qsDist.unknown || 0}</div>
     `;
   } else {
-    // No keyword data
+    // No keyword data — neutral message (NOT gated to SEO package)
     document.getElementById('keywordsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔑</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Keyword Performance</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Keyword%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🔑</div>
+        <div class="no-data-title">Keyword data not yet available</div>
+        <div class="no-data-desc">Keyword performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── ADS SECTION ───────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ADS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const adsData = window.CLIENT_DATA?.ads;
   if (adsData && adsData.top_headlines && adsData.top_headlines.length > 0) {
     document.getElementById('topHeadlines').innerHTML = adsData.top_headlines.map(h => `
       <div class="headline-item">
-        <span class="headline-text" title="${h.text}">${h.text}</span>
+        <span class="headline-text" title="${h.headline || h.text || ''}">${h.headline || h.text || ''}</span>
         <div class="headline-stats">
-          <span><strong>${h.ctr.toFixed(1)}%</strong> CTR</span>
+          <span><strong>${(h.ctr||0).toFixed(1)}%</strong> CTR</span>
           <span>${fmtN(h.clicks)} clicks</span>
         </div>
       </div>
     `).join('');
     
-    const topAds = adsData.top_ads.slice(0, 4);
+    const topAds = (adsData.top_ads || []).slice(0, 4);
     document.getElementById('topAds').innerHTML = topAds.map(a => `
       <div class="ad-item">
-        <div class="ad-headlines">${(a.headlines || []).slice(0,3).join(' | ')}</div>
-        <div class="ad-desc">${(a.descriptions || []).slice(0,1).join(' ')}</div>
+        <div class="ad-headlines">${(a.headlines || [a.headline]).slice(0,3).join(' | ')}</div>
+        <div class="ad-desc">${(a.descriptions || [a.description]).slice(0,1).join(' ')}</div>
         <div class="ad-stats">
-          <span>📊 ${a.ctr.toFixed(1)}% CTR</span>
+          <span>📊 ${(a.ctr||0).toFixed(1)}% CTR</span>
           <span>👆 ${fmtN(a.clicks)} clicks</span>
-          <span>🎯 ${fmtN(Math.round(a.conversions))} conv.</span>
+          <span>🎯 ${fmtN(Math.round(a.conversions||0))} conv.</span>
         </div>
       </div>
     `).join('');
   } else {
+    // No ads data — neutral message (NOT gated to SEO package)
     document.getElementById('adsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">✨</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Ad Copy Performance</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Ad%20Copy%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">✨</div>
+        <div class="no-data-title">Ad copy data not yet available</div>
+        <div class="no-data-desc">Ad performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── TIMING SECTION ────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TIMING Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const dowData = window.CLIENT_DATA?.day_of_week;
   const hourData = window.CLIENT_DATA?.hour_of_day;
   if (dowData && dowData.length > 0) {
     const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
     document.getElementById('dowGrid').innerHTML = dowData.map(d => `
       <div class="dow-item">
-        <div class="dow-day">${d.day.slice(0,3)}</div>
+        <div class="dow-day">${(d.day||'').slice(0,3)}</div>
         <div class="dow-clicks">${fmtN(d.clicks)}</div>
-        <div class="dow-ctr ${ctrClass(d.ctr)}">${d.ctr.toFixed(1)}%</div>
+        <div class="dow-ctr ${ctrClass(d.ctr||0)}">${(d.ctr||0).toFixed(1)}%</div>
       </div>
     `).join('');
     
     if (hourData && hourData.length > 0) {
-      const maxClicks = Math.max(...hourData.map(h => h.clicks)) || 1;
+      const maxClicks = Math.max(...hourData.map(h => h.clicks||0)) || 1;
       document.getElementById('hourHeatmap').innerHTML = hourData.map(h => {
-        const intensity = h.clicks / maxClicks;
+        const intensity = (h.clicks||0) / maxClicks;
         const bg = intensity > 0.7 ? 'var(--blue)' : intensity > 0.4 ? 'rgba(0,131,198,0.5)' : intensity > 0.1 ? 'rgba(0,131,198,0.2)' : 'var(--gray-100)';
         const color = intensity > 0.5 ? '#fff' : 'var(--navy)';
         return `<div class="hour-cell" style="background:${bg};color:${color}" data-tooltip="${h.hour}:00 - ${h.clicks} clicks">${h.hour}</div>`;
       }).join('');
     }
   } else {
+    // No timing data — neutral message (NOT gated to SEO package)
     document.getElementById('timingContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🕐</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Performance by Time</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Timing%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🕐</div>
+        <div class="no-data-title">Timing data not yet available</div>
+        <div class="no-data-desc">Day and hour performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── SEARCH TERMS SECTION ──────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SEARCH TERMS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const stData = window.CLIENT_DATA?.search_terms;
   if (stData && stData.top_terms && stData.top_terms.length > 0) {
     const topTerms = stData.top_terms.slice(0, 10);
-    const negTerms = stData.potential_negatives.slice(0, 8);
+    const negTerms = (stData.potential_negatives || []).slice(0, 8);
     
     document.getElementById('topSearchTermsBody').innerHTML = topTerms.map(t => `
       <tr>
-        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
         <td>${fmtN(t.clicks)}</td>
-        <td>${t.ctr.toFixed(1)}%</td>
-        <td>${fmtN(Math.round(t.conversions))}</td>
+        <td>${(t.ctr||0).toFixed(1)}%</td>
+        <td>${fmtN(Math.round(t.conversions||0))}</td>
       </tr>
     `).join('');
     
     document.getElementById('negativeTermsBody').innerHTML = negTerms.length > 0 ? negTerms.map(t => `
       <tr>
-        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
         <td>${fmtN(t.impressions)}</td>
-        <td style="color:var(--red)">${t.ctr.toFixed(1)}%</td>
+        <td style="color:var(--red)">${(t.ctr||0).toFixed(1)}%</td>
         <td><span class="st-negative">Review</span></td>
       </tr>
     `).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--green)">✓ No low-CTR terms found</td></tr>';
   } else {
+    // No search terms data — neutral message (NOT gated to SEO package)
     document.getElementById('searchTermsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔍</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Search Terms Analysis</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Search%20Terms%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🔍</div>
+        <div class="no-data-title">Search terms data not yet available</div>
+        <div class="no-data-desc">Search term data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── GOOGLE BUSINESS PROFILE SECTION ───────────────────────────────────────
-  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || false;
+  // ═══════════════════════════════════════════════════════════════════════════
+  // GBP Section — GATED to seo_enrolled clients only
+  // ═══════════════════════════════════════════════════════════════════════════
+  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || window.CLIENT_DATA?.seo_enrolled || false;
   const gbpData = window.CLIENT_DATA?.gbp || null;
   const gbpContainer = document.getElementById('gbpContent');
   
@@ -1361,7 +1372,7 @@ function render(){
     // Has GBP data - render metrics (future implementation)
     gbpContainer.innerHTML = `<div>GBP data coming soon...</div>`;
   } else {
-    // Locked state - show upsell
+    // Locked state - show upsell (SEO package gating)
     gbpContainer.innerHTML = `
       <div class="gbp-locked">
         <div class="gbp-locked-overlay">
@@ -1524,11 +1535,11 @@ window.addEventListener('load',()=>{
 
 <script>
 // Injected by generate_reports_v2.py — City Dogs and City Kitties Rescue (295-631-4618) — 2026-04-07
-window.CLIENT_DATA = {"slug": "city-dogs-kitties", "name": "City Dogs and City Kitties Rescue", "account_id": "295-631-4618", "website": "https://citydogsandkitties.org", "org_model": "location_based", "animal_type": null, "report_date": "April 07, 2026", "gps": 78, "gps_components": {"ctr": 70, "utilization": 58, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 1019.0, "im": 8820.0, "cost": 5792.89, "cv": 1.0, "ctr": 11.55, "cpc": 5.68, "costPerConv": 5792.89, "convRate": 0.1, "impressionShare": 10.0, "lostIsBudget": 7.3, "lostIsRank": 89.6}, "totals_7d": {"cl": 290.0, "im": 2283.0, "cost": 2256.37, "cv": 0, "ctr": 12.7, "cpc": 7.78, "costPerConv": null, "convRate": 0.0, "impressionShare": 10.0, "lostIsBudget": 15.0, "lostIsRank": 84.2}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 11.6%", "body": "Account CTR is 11.6% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "amber", "tag": "watch", "title": "Grant at 58% utilization", "body": "Using $5,793 of the available $10,000 grant. Expanding keyword coverage will capture more free traffic."}, {"color": "green", "tag": "win", "title": "1 conversions tracked at $5792.89 CPA", "body": "Campaigns recorded 1 conversions this month at $5792.89 per conversion."}, {"color": "amber", "tag": "action", "title": "4 campaign(s) with no tracked conversions", "body": "Donate - Pmax, Search-Adopt a Cat, P Max- Event and more \u2014 spending $5,166 combined with 0 conversions. Verify conversion tracking or pause."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 78/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/", "sessions": "8424", "averageSessionDuration": "360.07350505769227", "bounceRate": "0.00023741690408357076", "engagementRate": "0.99976258309591648", "conversions": "113499"}, {"landingPage": "/adopt-foster/adopt-a-dog", "sessions": "3516", "averageSessionDuration": "329.15117743031857", "bounceRate": "0.0076791808873720134", "engagementRate": "0.992320819112628", "conversions": "32415"}, {"landingPage": "/adopt-foster/adopt-a-cat", "sessions": "2347", "averageSessionDuration": "371.08171994588838", "bounceRate": "0.0097997443544951", "engagementRate": "0.99020025564550485", "conversions": "19024"}, {"landingPage": "/adopt-foster/foster-a-dog", "sessions": "978", "averageSessionDuration": "303.50095883537836", "bounceRate": "0.0051124744376278121", "engagementRate": "0.99488752556237214", "conversions": "8667"}, {"landingPage": "(not set)", "sessions": "769", "averageSessionDuration": "24.291216665799741", "bounceRate": "0.0052015604681404422", "engagementRate": "0.99479843953185954", "conversions": "3034"}, {"landingPage": "/adopt-foster/foster-a-cat", "sessions": "615", "averageSessionDuration": "397.69376410243905", "bounceRate": "0.0016260162601626016", "engagementRate": "0.99837398373983743", "conversions": "5103"}, {"landingPage": "/adopt-foster", "sessions": "369", "averageSessionDuration": "428.33952276964766", "bounceRate": "0.067750677506775062", "engagementRate": "0.9322493224932249", "conversions": "4030"}, {"landingPage": "/volunteer", "sessions": "350", "averageSessionDuration": "358.29665690285714", "bounceRate": "0.02", "engagementRate": "0.98", "conversions": "3138"}, {"landingPage": "/Donate/Index/41889", "sessions": "346", "averageSessionDuration": "45.033944933526008", "bounceRate": "0.0028901734104046241", "engagementRate": "0.99710982658959535", "conversions": "2235"}, {"landingPage": "/donate", "sessions": "272", "averageSessionDuration": "329.14122158823528", "bounceRate": "0", "engagementRate": "1", "conversions": "3445"}], "ga4_states": [{"region": "District of Columbia", "sessions": "4311", "totalUsers": "2430"}, {"region": "Virginia", "sessions": "3859", "totalUsers": "3030"}, {"region": "Maryland", "sessions": "2262", "totalUsers": "1413"}, {"region": "New York", "sessions": "1052", "totalUsers": "798"}, {"region": "Florida", "sessions": "773", "totalUsers": "599"}, {"region": "Ohio", "sessions": "764", "totalUsers": "601"}, {"region": "Georgia", "sessions": "754", "totalUsers": "559"}, {"region": "North Carolina", "sessions": "698", "totalUsers": "562"}, {"region": "Michigan", "sessions": "683", "totalUsers": "511"}, {"region": "Pennsylvania", "sessions": "613", "totalUsers": "452"}], "ga4_cities": [{"city": "Washington", "sessions": "4329", "totalUsers": "2438"}, {"city": "Ashburn", "sessions": "1802", "totalUsers": "1722"}, {"city": "Baltimore", "sessions": "675", "totalUsers": "451"}, {"city": "New York", "sessions": "453", "totalUsers": "359"}, {"city": "Arlington", "sessions": "305", "totalUsers": "172"}, {"city": "Singapore", "sessions": "270", "totalUsers": "268"}, {"city": "Reston", "sessions": "211", "totalUsers": "131"}, {"city": "Alexandria", "sessions": "190", "totalUsers": "123"}, {"city": "Bethesda", "sessions": "157", "totalUsers": "83"}, {"city": "Silver Spring", "sessions": "144", "totalUsers": "82"}], "seo_enrolled": false, "seo": null};
+window.CLIENT_DATA = {"slug": "city-dogs-kitties", "name": "City Dogs and City Kitties Rescue", "account_id": "295-631-4618", "website": "https://citydogsandkitties.org", "org_model": "location_based", "animal_type": null, "report_date": "April 07, 2026", "gps": 78, "gps_components": {"ctr": 70, "utilization": 58, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 1019.0, "im": 8820.0, "cost": 5792.89, "cv": 1.0, "ctr": 11.55, "cpc": 5.68, "costPerConv": 5792.89, "convRate": 0.1, "impressionShare": 10.0, "lostIsBudget": 7.3, "lostIsRank": 89.6}, "totals_7d": {"cl": 290.0, "im": 2283.0, "cost": 2256.37, "cv": 0, "ctr": 12.7, "cpc": 7.78, "costPerConv": null, "convRate": 0.0, "impressionShare": 10.0, "lostIsBudget": 15.0, "lostIsRank": 84.2}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 11.6%", "body": "Account CTR is 11.6% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "amber", "tag": "watch", "title": "Grant at 58% utilization", "body": "Using $5,793 of the available $10,000 grant. Expanding keyword coverage will capture more free traffic."}, {"color": "green", "tag": "win", "title": "1 conversions tracked at $5792.89 CPA", "body": "Campaigns recorded 1 conversions this month at $5792.89 per conversion."}, {"color": "amber", "tag": "action", "title": "4 campaign(s) with no tracked conversions", "body": "Donate - Pmax, Search-Adopt a Cat, P Max- Event and more \u2014 spending $5,166 combined with 0 conversions. Verify conversion tracking or pause."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 78/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/", "sessions": "8431", "averageSessionDuration": "359.99721191258448", "bounceRate": "0.00011860989206499822", "engagementRate": "0.999881390107935", "conversions": "113620"}, {"landingPage": "/adopt-foster/adopt-a-dog", "sessions": "3520", "averageSessionDuration": "328.77714218977269", "bounceRate": "0.0082386363636363629", "engagementRate": "0.99176136363636369", "conversions": "32420"}, {"landingPage": "/adopt-foster/adopt-a-cat", "sessions": "2348", "averageSessionDuration": "371.46812593441229", "bounceRate": "0.0093696763202725727", "engagementRate": "0.99063032367972748", "conversions": "19032"}, {"landingPage": "/adopt-foster/foster-a-dog", "sessions": "981", "averageSessionDuration": "302.5770825310907", "bounceRate": "0.0050968399592252805", "engagementRate": "0.99490316004077473", "conversions": "8680"}, {"landingPage": "(not set)", "sessions": "769", "averageSessionDuration": "24.291216665799741", "bounceRate": "0.0052015604681404422", "engagementRate": "0.99479843953185954", "conversions": "3034"}, {"landingPage": "/adopt-foster/foster-a-cat", "sessions": "616", "averageSessionDuration": "397.135114301948", "bounceRate": "0.0016233766233766235", "engagementRate": "0.99837662337662336", "conversions": "5107"}, {"landingPage": "/adopt-foster", "sessions": "369", "averageSessionDuration": "428.33952276964766", "bounceRate": "0.067750677506775062", "engagementRate": "0.9322493224932249", "conversions": "4030"}, {"landingPage": "/volunteer", "sessions": "352", "averageSessionDuration": "360.43164451136363", "bounceRate": "0.019886363636363636", "engagementRate": "0.98011363636363635", "conversions": "3170"}, {"landingPage": "/Donate/Index/41889", "sessions": "346", "averageSessionDuration": "45.033944933526008", "bounceRate": "0.0028901734104046241", "engagementRate": "0.99710982658959535", "conversions": "2235"}, {"landingPage": "/donate", "sessions": "272", "averageSessionDuration": "329.14122158823528", "bounceRate": "0", "engagementRate": "1", "conversions": "3445"}], "ga4_states": [{"region": "District of Columbia", "sessions": "4321", "totalUsers": "2435"}, {"region": "Virginia", "sessions": "3864", "totalUsers": "3030"}, {"region": "Maryland", "sessions": "2263", "totalUsers": "1414"}, {"region": "New York", "sessions": "1053", "totalUsers": "798"}, {"region": "Florida", "sessions": "773", "totalUsers": "599"}, {"region": "Ohio", "sessions": "765", "totalUsers": "602"}, {"region": "Georgia", "sessions": "754", "totalUsers": "559"}, {"region": "North Carolina", "sessions": "699", "totalUsers": "563"}, {"region": "Michigan", "sessions": "684", "totalUsers": "512"}, {"region": "Pennsylvania", "sessions": "615", "totalUsers": "452"}], "ga4_cities": [{"city": "Washington", "sessions": "4343", "totalUsers": "2443"}, {"city": "Ashburn", "sessions": "1802", "totalUsers": "1722"}, {"city": "Baltimore", "sessions": "675", "totalUsers": "451"}, {"city": "New York", "sessions": "454", "totalUsers": "359"}, {"city": "Arlington", "sessions": "306", "totalUsers": "172"}, {"city": "Singapore", "sessions": "270", "totalUsers": "268"}, {"city": "Reston", "sessions": "211", "totalUsers": "131"}, {"city": "Alexandria", "sessions": "190", "totalUsers": "123"}, {"city": "Bethesda", "sessions": "157", "totalUsers": "83"}, {"city": "Silver Spring", "sessions": "144", "totalUsers": "82"}], "keywords": {"top_performers": [{"keyword": "Pet Adoption Near Me", "ctr": 11.88, "clicks": 144, "impressions": 1212, "quality_score": 3, "cost": 1222.7, "conversions": 0}, {"keyword": "cats needing homes near me", "ctr": 12.87, "clicks": 39, "impressions": 303, "quality_score": 6, "cost": 318.04, "conversions": 0}, {"keyword": "Dog adoption", "ctr": 15.17, "clicks": 27, "impressions": 178, "quality_score": 5, "cost": 236.2, "conversions": 0}, {"keyword": "adopt a kitten near me", "ctr": 13.76, "clicks": 26, "impressions": 189, "quality_score": 7, "cost": 196.66, "conversions": 0}, {"keyword": "Dog & Cat Adoption Center", "ctr": 15.48, "clicks": 26, "impressions": 168, "quality_score": null, "cost": 189.83, "conversions": 0}, {"keyword": "small dogs for adoption", "ctr": 15.7, "clicks": 19, "impressions": 121, "quality_score": 7, "cost": 118.8, "conversions": 1.0}, {"keyword": "pet adoption", "ctr": 11.11, "clicks": 14, "impressions": 126, "quality_score": 7, "cost": 100.71, "conversions": 0}, {"keyword": "adoptable pets", "ctr": 6.76, "clicks": 10, "impressions": 148, "quality_score": null, "cost": 36.6, "conversions": 0}, {"keyword": "adoptable pets", "ctr": 21.62, "clicks": 8, "impressions": 37, "quality_score": null, "cost": 54.6, "conversions": 0}, {"keyword": "Adopt a canine", "ctr": 13.79, "clicks": 4, "impressions": 29, "quality_score": null, "cost": 36.98, "conversions": 0}], "compliance_risks": [{"keyword": "rescue dog", "ctr": 0, "clicks": 0, "impressions": 11, "quality_score": 8, "cost": 0, "conversions": 0}], "quality_score_distribution": {"high": 8, "medium": 3, "low": 2}}, "ads": {"top_headlines": [{"headline": "Meet Adoptable Cats", "ctr": 12.49, "clicks": 235}, {"headline": "Rescue Pets Ready For Homes", "ctr": 12.49, "clicks": 235}, {"headline": "Start Your Adoption Today", "ctr": 12.49, "clicks": 235}, {"headline": "Dogs For Adoption Near You", "ctr": 13.49, "clicks": 34}, {"headline": "Small Dogs For Adoption", "ctr": 13.49, "clicks": 34}, {"headline": "Puppies Seeking Playful Homes", "ctr": 13.49, "clicks": 34}, {"headline": "Adopt Rocco", "ctr": 15.17, "clicks": 27}, {"headline": "Meet Rocco", "ctr": 15.17, "clicks": 27}, {"headline": "Rocco Needs Home", "ctr": 15.17, "clicks": 27}, {"headline": "Adopt Blitz Today", "ctr": 6.76, "clicks": 10}], "top_ads": [{"headline": "Meet Adoptable Cats", "description": "Browse adoptables, apply online, and meet your new best friend.", "ctr": 12.49, "clicks": 235, "conversions": 0}, {"headline": "Dogs For Adoption Near You", "description": "City Dogs & City Kitties Rescue is a non-profit cat & dog rescue in Washington, D.C.", "ctr": 13.49, "clicks": 34, "conversions": 1.0}, {"headline": "Adopt Rocco", "description": "Rocco is a gentle 5-year-old bulldog mix ready for a loving forever home.", "ctr": 15.17, "clicks": 27, "conversions": 0}, {"headline": "Adopt Blitz Today", "description": "At 82 lbs, he\u2019s a big, friendly boy with an even bigger heart.", "ctr": 6.76, "clicks": 10, "conversions": 0}, {"headline": "Adopt Hercules Today", "description": "Hercules is an adorable 8-year-old Corgi mix looking for a warm, loving forever home.", "ctr": 21.62, "clicks": 8, "conversions": 0}]}, "day_of_week": [{"day": "Monday", "clicks": 201, "impressions": 1670, "cost": 1051.39, "conversions": 0.0, "ctr": 12.04}, {"day": "Tuesday", "clicks": 159, "impressions": 1280, "cost": 970.66, "conversions": 0.0, "ctr": 12.42}, {"day": "Wednesday", "clicks": 157, "impressions": 1256, "cost": 810.71, "conversions": 0.0, "ctr": 12.5}, {"day": "Thursday", "clicks": 138, "impressions": 1181, "cost": 797.69, "conversions": 0.0, "ctr": 11.69}, {"day": "Friday", "clicks": 129, "impressions": 1270, "cost": 744.66, "conversions": 0.0, "ctr": 10.16}, {"day": "Saturday", "clicks": 104, "impressions": 986, "cost": 708.39, "conversions": 1.0, "ctr": 10.55}, {"day": "Sunday", "clicks": 131, "impressions": 1177, "cost": 709.37, "conversions": 0.0, "ctr": 11.13}], "hour_of_day": [{"hour": 0, "clicks": 28, "impressions": 183, "cost": 113.09, "conversions": 0.0, "ctr": 15.3}, {"hour": 1, "clicks": 11, "impressions": 147, "cost": 57.37, "conversions": 0.0, "ctr": 7.48}, {"hour": 2, "clicks": 9, "impressions": 91, "cost": 53.52, "conversions": 0.0, "ctr": 9.89}, {"hour": 3, "clicks": 1, "impressions": 27, "cost": 7.22, "conversions": 0.0, "ctr": 3.7}, {"hour": 4, "clicks": 1, "impressions": 49, "cost": 1.37, "conversions": 0.0, "ctr": 2.04}, {"hour": 5, "clicks": 3, "impressions": 49, "cost": 31.06, "conversions": 0.0, "ctr": 6.12}, {"hour": 6, "clicks": 3, "impressions": 51, "cost": 6.52, "conversions": 0.0, "ctr": 5.88}, {"hour": 7, "clicks": 12, "impressions": 93, "cost": 105.95, "conversions": 0.0, "ctr": 12.9}, {"hour": 8, "clicks": 16, "impressions": 132, "cost": 100.16, "conversions": 1.0, "ctr": 12.12}, {"hour": 9, "clicks": 40, "impressions": 298, "cost": 243.6, "conversions": 0.0, "ctr": 13.42}, {"hour": 10, "clicks": 52, "impressions": 444, "cost": 301.27, "conversions": 0.0, "ctr": 11.71}, {"hour": 11, "clicks": 61, "impressions": 556, "cost": 362.51, "conversions": 0.0, "ctr": 10.97}, {"hour": 12, "clicks": 82, "impressions": 678, "cost": 591.31, "conversions": 0.0, "ctr": 12.09}, {"hour": 13, "clicks": 89, "impressions": 681, "cost": 845.78, "conversions": 0.0, "ctr": 13.07}, {"hour": 14, "clicks": 92, "impressions": 787, "cost": 561.21, "conversions": 0.0, "ctr": 11.69}, {"hour": 15, "clicks": 107, "impressions": 794, "cost": 582.35, "conversions": 0.0, "ctr": 13.48}, {"hour": 16, "clicks": 88, "impressions": 728, "cost": 556.56, "conversions": 0.0, "ctr": 12.09}, {"hour": 17, "clicks": 59, "impressions": 624, "cost": 324.1, "conversions": 0.0, "ctr": 9.46}, {"hour": 18, "clicks": 53, "impressions": 554, "cost": 249.84, "conversions": 0.0, "ctr": 9.57}, {"hour": 19, "clicks": 47, "impressions": 432, "cost": 183.1, "conversions": 0.0, "ctr": 10.88}, {"hour": 20, "clicks": 50, "impressions": 405, "cost": 145.98, "conversions": 0.0, "ctr": 12.35}, {"hour": 21, "clicks": 38, "impressions": 402, "cost": 87.87, "conversions": 0.0, "ctr": 9.45}, {"hour": 22, "clicks": 44, "impressions": 360, "cost": 180.34, "conversions": 0.0, "ctr": 12.22}, {"hour": 23, "clicks": 33, "impressions": 255, "cost": 100.81, "conversions": 0.0, "ctr": 12.94}], "search_terms": {"top_terms": [{"term": "cat adoption near me", "ctr": 17.65, "clicks": 3, "impressions": 17, "conversions": 0}], "potential_negatives": [{"term": "animal shelters near me", "ctr": 0, "clicks": 0, "impressions": 27, "conversions": 0}]}, "seo_enrolled": false, "seo": null};
 window.REPORT_DATA = {'30d':{totals:{cl:1019.0,im:8820.0,ctr:11.55,cost:5792.89,cv:1.0,cpc:5.68,costPerConv:5792.89,convRate:0.1},campaigns:[{n:"Donate - Pmax",s:"ENABLED",ctr:11.42,cl:527.0,im:4615.0,cost:2596.1,cv:0,cpc:4.93,cpa:null},{n:"Search-Adopt a Cat",s:"ENABLED",ctr:12.49,cl:235.0,im:1882.0,cost:1927.23,cv:0,cpc:8.2,cpa:null},{n:"P Max- Event",s:"ENABLED",ctr:10.88,cl:140.0,im:1287.0,cost:477.58,cv:0,cpc:3.41,cpa:null},{n:"Adopt a Dog",s:"ENABLED",ctr:12.5,cl:85.0,im:680.0,cost:590.38,cv:1.0,cpc:6.95,cpa:590.38},{n:"Adopt a Cat - Pmax",s:"ENABLED",ctr:9.59,cl:26.0,im:271.0,cost:165.09,cv:0,cpc:6.35,cpa:null},{n:"Foster Dog & Cat",s:"ENABLED",ctr:6.56,cl:4.0,im:61.0,cost:35.4,cv:0,cpc:8.85,cpa:null},{n:"Adopt a Dog - PMax",s:"ENABLED",ctr:8.33,cl:2.0,im:24.0,cost:1.12,cv:0,cpc:0.56,cpa:null},{n:"11/2015:  Pies",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"11/2015:  CFC",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search Volunteer",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[20, 31, 41, 31, 31, 41, 31, 31, 31, 41, 31, 31, 41, 31, 31, 41, 31, 31, 31, 41, 31, 31, 41, 31, 31, 41, 31, 31, 41, 31],convs:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],spend:[115.86, 173.79, 231.72, 173.79, 173.79, 231.72, 173.79, 173.79, 173.79, 231.72, 173.79, 173.79, 231.72, 173.79, 173.79, 231.72, 173.79, 173.79, 173.79, 231.72, 173.79, 173.79, 231.72, 173.79, 173.79, 231.72, 173.79, 173.79, 231.72, 173.79],cpc:[5.79, 5.61, 5.65, 5.61, 5.61, 5.65, 5.61, 5.61, 5.61, 5.65, 5.61, 5.61, 5.65, 5.61, 5.61, 5.65, 5.61, 5.61, 5.61, 5.65, 5.61, 5.61, 5.65, 5.61, 5.61, 5.65, 5.61, 5.61, 5.65, 5.61]},devices:[{n:'Desktop',cl:662,im:5733,cost:3765.38,cv:1,cvRate:0},{n:'Mobile',cl:326,im:2822,cost:1853.72,cv:0,cvRate:0},{n:'Tablet',cl:31,im:265,cost:173.79,cv:0,cvRate:0}]},'7d':{totals:{cl:290.0,im:2283.0,ctr:12.7,cost:2256.37,cv:0,cpc:7.78,costPerConv:0,convRate:0.0},campaigns:[{n:"Search-Adopt a Cat",s:"ENABLED",ctr:12.39,cl:205.0,im:1654.0,cost:1763.0,cv:0,cpc:8.6,cpa:null},{n:"Donate - Pmax",s:"ENABLED",ctr:15.6,cl:66.0,im:423.0,cost:372.12,cv:0,cpc:5.64,cpa:null},{n:"P Max- Event",s:"ENABLED",ctr:7.41,cl:8.0,im:108.0,cost:16.43,cv:0,cpc:2.05,cpa:null},{n:"Adopt a Dog",s:"ENABLED",ctr:23.08,cl:6.0,im:26.0,cost:70.15,cv:0,cpc:11.69,cpa:null},{n:"Foster Dog & Cat",s:"ENABLED",ctr:10.71,cl:3.0,im:28.0,cost:30.14,cv:0,cpc:10.05,cpa:null},{n:"Adopt a Cat - Pmax",s:"ENABLED",ctr:5.13,cl:2.0,im:39.0,cost:4.53,cv:0,cpc:2.27,cpa:null},{n:"11/2015:  Pies",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"11/2015:  CFC",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Adopt a Dog - PMax",s:"ENABLED",ctr:0,cl:0,im:5.0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search Volunteer",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[35, 46, 38, 41, 44, 38, 49],convs:[0, 0, 0, 0, 0, 0, 0],spend:[270.76, 361.02, 293.33, 315.89, 338.46, 293.33, 383.58],cpc:[7.74, 7.85, 7.72, 7.7, 7.69, 7.72, 7.83]},devices:[{n:'Desktop',cl:188,im:1484,cost:1466.64,cv:0,cvRate:0},{n:'Mobile',cl:93,im:731,cost:722.04,cv:0,cvRate:0},{n:'Tablet',cl:9,im:68,cost:67.69,cv:0,cvRate:0}]}};
-window.LP_DATA     = [{"page": "/", "sessions": 8424, "pct": 53, "avgTime": "360s", "engaged": true, "convs": 113499}, {"page": "/adopt-foster/adopt-a-dog", "sessions": 3516, "pct": 22, "avgTime": "329s", "engaged": true, "convs": 32415}, {"page": "/adopt-foster/adopt-a-cat", "sessions": 2347, "pct": 15, "avgTime": "371s", "engaged": true, "convs": 19024}, {"page": "/adopt-foster/foster-a-dog", "sessions": 978, "pct": 6, "avgTime": "303s", "engaged": true, "convs": 8667}, {"page": "(not set)", "sessions": 769, "pct": 5, "avgTime": "24s", "engaged": true, "convs": 3034}];
-window.STATE_DATA  = [{"state": "District of Columbia", "sessions": 4311, "pct": 27}, {"state": "Virginia", "sessions": 3859, "pct": 24}, {"state": "Maryland", "sessions": 2262, "pct": 14}, {"state": "New York", "sessions": 1052, "pct": 7}, {"state": "Florida", "sessions": 773, "pct": 5}, {"state": "Ohio", "sessions": 764, "pct": 5}, {"state": "Georgia", "sessions": 754, "pct": 5}, {"state": "North Carolina", "sessions": 698, "pct": 4}, {"state": "Michigan", "sessions": 683, "pct": 4}, {"state": "Pennsylvania", "sessions": 613, "pct": 4}];
-window.CITY_DATA   = [{"city": "Washington", "state": "", "sessions": 4329}, {"city": "Ashburn", "state": "", "sessions": 1802}, {"city": "Baltimore", "state": "", "sessions": 675}, {"city": "New York", "state": "", "sessions": 453}, {"city": "Arlington", "state": "", "sessions": 305}, {"city": "Singapore", "state": "", "sessions": 270}, {"city": "Reston", "state": "", "sessions": 211}, {"city": "Alexandria", "state": "", "sessions": 190}, {"city": "Bethesda", "state": "", "sessions": 157}, {"city": "Silver Spring", "state": "", "sessions": 144}];
+window.LP_DATA     = [{"page": "/", "sessions": 8431, "pct": 53, "avgTime": "359s", "engaged": true, "convs": 113620}, {"page": "/adopt-foster/adopt-a-dog", "sessions": 3520, "pct": 22, "avgTime": "328s", "engaged": true, "convs": 32420}, {"page": "/adopt-foster/adopt-a-cat", "sessions": 2348, "pct": 15, "avgTime": "371s", "engaged": true, "convs": 19032}, {"page": "/adopt-foster/foster-a-dog", "sessions": 981, "pct": 6, "avgTime": "302s", "engaged": true, "convs": 8680}, {"page": "(not set)", "sessions": 769, "pct": 5, "avgTime": "24s", "engaged": true, "convs": 3034}];
+window.STATE_DATA  = [{"state": "District of Columbia", "sessions": 4321, "pct": 27}, {"state": "Virginia", "sessions": 3864, "pct": 24}, {"state": "Maryland", "sessions": 2263, "pct": 14}, {"state": "New York", "sessions": 1053, "pct": 7}, {"state": "Florida", "sessions": 773, "pct": 5}, {"state": "Ohio", "sessions": 765, "pct": 5}, {"state": "Georgia", "sessions": 754, "pct": 5}, {"state": "North Carolina", "sessions": 699, "pct": 4}, {"state": "Michigan", "sessions": 684, "pct": 4}, {"state": "Pennsylvania", "sessions": 615, "pct": 4}];
+window.CITY_DATA   = [{"city": "Washington", "state": "", "sessions": 4343}, {"city": "Ashburn", "state": "", "sessions": 1802}, {"city": "Baltimore", "state": "", "sessions": 675}, {"city": "New York", "state": "", "sessions": 454}, {"city": "Arlington", "state": "", "sessions": 306}, {"city": "Singapore", "state": "", "sessions": 270}, {"city": "Reston", "state": "", "sessions": 211}, {"city": "Alexandria", "state": "", "sessions": 190}, {"city": "Bethesda", "state": "", "sessions": 157}, {"city": "Silver Spring", "state": "", "sessions": 144}];
 </script>
 
 </body>

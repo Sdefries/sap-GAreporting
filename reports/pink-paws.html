@@ -344,6 +344,12 @@ tr:hover td{background:#F5F9FF}
 .gbp-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
 .gbp-unlock-btn:hover{background:#006AA3;transform:translateY(-1px)}
 
+/* No Data State - neutral styling */
+.no-data-card{background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center}
+.no-data-icon{font-size:32px;margin-bottom:12px;opacity:0.5}
+.no-data-title{font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px}
+.no-data-desc{font-size:13px;color:var(--gray-600)}
+
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
@@ -1007,12 +1013,10 @@ function render(){
   }
 
   // Visibility
-  // Visibility section — use real impression share data
   const impShare = t.impressionShare;
   const lostBudget = t.lostIsBudget;
   const lostRank = t.lostIsRank;
   
-  // Build visibility cards only if we have data
   let visCards = '';
   
   if (impShare !== null && impShare !== undefined) {
@@ -1057,7 +1061,6 @@ function render(){
     </div>`;
   }
   
-  // If no impression share data available, show placeholder message
   if (!visCards) {
     visCards = `
     <div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666;">
@@ -1068,14 +1071,15 @@ function render(){
   
   document.getElementById('visibilityGrid').innerHTML = visCards;
 
-  // SEO Section
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SEO Section — GATED to seo_enrolled clients only
+  // ═══════════════════════════════════════════════════════════════════════════
   const seoContainer = document.getElementById('seoContent');
   const seoEnrolled = window.CLIENT_DATA?.seo_enrolled || false;
   const seoData = window.CLIENT_DATA?.seo || null;
   
   if (seoEnrolled && seoData && seoData.enrolled) {
     // Enrolled client with data - show full SEO metrics
-    // Check for actual data vs null/0
     const ps = seoData.pagespeed_mobile;
     const psDesk = seoData.pagespeed_desktop;
     const seoScore = seoData.seo_score;
@@ -1085,7 +1089,6 @@ function render(){
     const avgPos = seoData.avg_position;
     const topQueries = seoData.top_queries || [];
     
-    // Helper to display value or N/A
     const valOrNA = (v) => (v !== null && v !== undefined && v !== 0) ? v : 'N/A';
     const hasData = (v) => v !== null && v !== undefined && v !== 0;
     
@@ -1110,7 +1113,6 @@ function render(){
       queriesHTML += '</div>';
     }
     
-    // CWV display logic
     const cwvIcon = cwvPass === null ? '⏳' : (cwvPass ? '✅' : '⚠️');
     const cwvText = cwvPass === null ? 'Pending' : (cwvPass ? 'Passing' : 'Needs Work');
     const cwvColor = cwvPass === null ? 'var(--gray-400)' : (cwvPass ? 'var(--green)' : 'var(--amber)');
@@ -1155,7 +1157,7 @@ function render(){
     `;
     document.getElementById('seoSubtitle').textContent = 'Organic search & site speed · Last updated ' + (seoData.fetched_at ? new Date(seoData.fetched_at).toLocaleDateString() : 'recently');
   } else {
-    // Not enrolled - show fields with N/A and upsell note
+    // Not enrolled - show fields with N/A and upsell note (SEO package gating)
     seoContainer.innerHTML = `
       <div class="seo-grid" style="opacity:0.5;">
         <div class="seo-card">
@@ -1199,7 +1201,9 @@ function render(){
     document.getElementById('seoSubtitle').textContent = 'Available with SEO package';
   }
 
-  // ── KEYWORDS SECTION ──────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // KEYWORDS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const kwData = window.CLIENT_DATA?.keywords;
   if (kwData && kwData.top_performers && kwData.top_performers.length > 0) {
     // Has keyword data - render tables
@@ -1209,14 +1213,14 @@ function render(){
     
     const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
     const qsClass = (qs) => qs === null ? 'na' : qs >= 7 ? 'high' : qs >= 4 ? 'med' : 'low';
-    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m);
+    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m || '—');
     
     document.getElementById('topKeywordsBody').innerHTML = topKW.map(k => `
       <tr>
         <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
         <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
         <td>${fmtN(k.clicks)}</td>
-        <td class="kw-ctr ${ctrClass(k.ctr)}">${k.ctr.toFixed(1)}%</td>
+        <td class="kw-ctr ${ctrClass(k.ctr)}">${(k.ctr||0).toFixed(1)}%</td>
         <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
       </tr>
     `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--gray-400)">No data</td></tr>';
@@ -1226,7 +1230,7 @@ function render(){
         <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
         <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
         <td>${fmtN(k.impressions)}</td>
-        <td class="kw-ctr bad">${k.ctr.toFixed(1)}%</td>
+        <td class="kw-ctr bad">${(k.ctr||0).toFixed(1)}%</td>
         <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
       </tr>
     `).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--green)">✓ No compliance risks</td></tr>';
@@ -1238,122 +1242,129 @@ function render(){
       <div class="qs-item" style="color:var(--gray-400)">Unknown: ${qsDist.unknown || 0}</div>
     `;
   } else {
-    // No keyword data
+    // No keyword data — neutral message (NOT gated to SEO package)
     document.getElementById('keywordsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔑</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Keyword Performance</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Keyword%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🔑</div>
+        <div class="no-data-title">Keyword data not yet available</div>
+        <div class="no-data-desc">Keyword performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── ADS SECTION ───────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ADS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const adsData = window.CLIENT_DATA?.ads;
   if (adsData && adsData.top_headlines && adsData.top_headlines.length > 0) {
     document.getElementById('topHeadlines').innerHTML = adsData.top_headlines.map(h => `
       <div class="headline-item">
-        <span class="headline-text" title="${h.text}">${h.text}</span>
+        <span class="headline-text" title="${h.headline || h.text || ''}">${h.headline || h.text || ''}</span>
         <div class="headline-stats">
-          <span><strong>${h.ctr.toFixed(1)}%</strong> CTR</span>
+          <span><strong>${(h.ctr||0).toFixed(1)}%</strong> CTR</span>
           <span>${fmtN(h.clicks)} clicks</span>
         </div>
       </div>
     `).join('');
     
-    const topAds = adsData.top_ads.slice(0, 4);
+    const topAds = (adsData.top_ads || []).slice(0, 4);
     document.getElementById('topAds').innerHTML = topAds.map(a => `
       <div class="ad-item">
-        <div class="ad-headlines">${(a.headlines || []).slice(0,3).join(' | ')}</div>
-        <div class="ad-desc">${(a.descriptions || []).slice(0,1).join(' ')}</div>
+        <div class="ad-headlines">${(a.headlines || [a.headline]).slice(0,3).join(' | ')}</div>
+        <div class="ad-desc">${(a.descriptions || [a.description]).slice(0,1).join(' ')}</div>
         <div class="ad-stats">
-          <span>📊 ${a.ctr.toFixed(1)}% CTR</span>
+          <span>📊 ${(a.ctr||0).toFixed(1)}% CTR</span>
           <span>👆 ${fmtN(a.clicks)} clicks</span>
-          <span>🎯 ${fmtN(Math.round(a.conversions))} conv.</span>
+          <span>🎯 ${fmtN(Math.round(a.conversions||0))} conv.</span>
         </div>
       </div>
     `).join('');
   } else {
+    // No ads data — neutral message (NOT gated to SEO package)
     document.getElementById('adsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">✨</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Ad Copy Performance</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Ad%20Copy%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">✨</div>
+        <div class="no-data-title">Ad copy data not yet available</div>
+        <div class="no-data-desc">Ad performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── TIMING SECTION ────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TIMING Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const dowData = window.CLIENT_DATA?.day_of_week;
   const hourData = window.CLIENT_DATA?.hour_of_day;
   if (dowData && dowData.length > 0) {
     const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
     document.getElementById('dowGrid').innerHTML = dowData.map(d => `
       <div class="dow-item">
-        <div class="dow-day">${d.day.slice(0,3)}</div>
+        <div class="dow-day">${(d.day||'').slice(0,3)}</div>
         <div class="dow-clicks">${fmtN(d.clicks)}</div>
-        <div class="dow-ctr ${ctrClass(d.ctr)}">${d.ctr.toFixed(1)}%</div>
+        <div class="dow-ctr ${ctrClass(d.ctr||0)}">${(d.ctr||0).toFixed(1)}%</div>
       </div>
     `).join('');
     
     if (hourData && hourData.length > 0) {
-      const maxClicks = Math.max(...hourData.map(h => h.clicks)) || 1;
+      const maxClicks = Math.max(...hourData.map(h => h.clicks||0)) || 1;
       document.getElementById('hourHeatmap').innerHTML = hourData.map(h => {
-        const intensity = h.clicks / maxClicks;
+        const intensity = (h.clicks||0) / maxClicks;
         const bg = intensity > 0.7 ? 'var(--blue)' : intensity > 0.4 ? 'rgba(0,131,198,0.5)' : intensity > 0.1 ? 'rgba(0,131,198,0.2)' : 'var(--gray-100)';
         const color = intensity > 0.5 ? '#fff' : 'var(--navy)';
         return `<div class="hour-cell" style="background:${bg};color:${color}" data-tooltip="${h.hour}:00 - ${h.clicks} clicks">${h.hour}</div>`;
       }).join('');
     }
   } else {
+    // No timing data — neutral message (NOT gated to SEO package)
     document.getElementById('timingContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🕐</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Performance by Time</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Timing%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🕐</div>
+        <div class="no-data-title">Timing data not yet available</div>
+        <div class="no-data-desc">Day and hour performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── SEARCH TERMS SECTION ──────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SEARCH TERMS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const stData = window.CLIENT_DATA?.search_terms;
   if (stData && stData.top_terms && stData.top_terms.length > 0) {
     const topTerms = stData.top_terms.slice(0, 10);
-    const negTerms = stData.potential_negatives.slice(0, 8);
+    const negTerms = (stData.potential_negatives || []).slice(0, 8);
     
     document.getElementById('topSearchTermsBody').innerHTML = topTerms.map(t => `
       <tr>
-        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
         <td>${fmtN(t.clicks)}</td>
-        <td>${t.ctr.toFixed(1)}%</td>
-        <td>${fmtN(Math.round(t.conversions))}</td>
+        <td>${(t.ctr||0).toFixed(1)}%</td>
+        <td>${fmtN(Math.round(t.conversions||0))}</td>
       </tr>
     `).join('');
     
     document.getElementById('negativeTermsBody').innerHTML = negTerms.length > 0 ? negTerms.map(t => `
       <tr>
-        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
         <td>${fmtN(t.impressions)}</td>
-        <td style="color:var(--red)">${t.ctr.toFixed(1)}%</td>
+        <td style="color:var(--red)">${(t.ctr||0).toFixed(1)}%</td>
         <td><span class="st-negative">Review</span></td>
       </tr>
     `).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--green)">✓ No low-CTR terms found</td></tr>';
   } else {
+    // No search terms data — neutral message (NOT gated to SEO package)
     document.getElementById('searchTermsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔍</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Search Terms Analysis</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Search%20Terms%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🔍</div>
+        <div class="no-data-title">Search terms data not yet available</div>
+        <div class="no-data-desc">Search term data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── GOOGLE BUSINESS PROFILE SECTION ───────────────────────────────────────
-  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || false;
+  // ═══════════════════════════════════════════════════════════════════════════
+  // GBP Section — GATED to seo_enrolled clients only
+  // ═══════════════════════════════════════════════════════════════════════════
+  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || window.CLIENT_DATA?.seo_enrolled || false;
   const gbpData = window.CLIENT_DATA?.gbp || null;
   const gbpContainer = document.getElementById('gbpContent');
   
@@ -1361,7 +1372,7 @@ function render(){
     // Has GBP data - render metrics (future implementation)
     gbpContainer.innerHTML = `<div>GBP data coming soon...</div>`;
   } else {
-    // Locked state - show upsell
+    // Locked state - show upsell (SEO package gating)
     gbpContainer.innerHTML = `
       <div class="gbp-locked">
         <div class="gbp-locked-overlay">
@@ -1524,11 +1535,11 @@ window.addEventListener('load',()=>{
 
 <script>
 // Injected by generate_reports_v2.py — Pink Paws For The Cause (566-368-6847) — 2026-04-07
-window.CLIENT_DATA = {"slug": "pink-paws", "name": "Pink Paws For The Cause", "account_id": "566-368-6847", "website": "", "org_model": "location_based", "animal_type": null, "report_date": "April 07, 2026", "gps": 77, "gps_components": {"ctr": 67, "utilization": 60, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 792.0, "im": 7560.0, "cost": 5955.28, "cv": 105.0, "ctr": 10.48, "cpc": 7.52, "costPerConv": 56.72, "convRate": 13.26, "impressionShare": 10.0, "lostIsBudget": 10.9, "lostIsRank": 86.4}, "totals_7d": {"cl": 188.0, "im": 1947.0, "cost": 1685.82, "cv": 6.0, "ctr": 9.66, "cpc": 8.97, "costPerConv": 280.97, "convRate": 3.19, "impressionShare": 10.0, "lostIsBudget": 12.1, "lostIsRank": 84.6}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 10.5%", "body": "Account CTR is 10.5% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "amber", "tag": "watch", "title": "Grant at 60% utilization", "body": "Using $5,955 of the available $10,000 grant. Expanding keyword coverage will capture more free traffic."}, {"color": "green", "tag": "win", "title": "105 conversions tracked at $56.72 CPA", "body": "Campaigns recorded 105 conversions this month at $56.72 per conversion."}, {"color": "amber", "tag": "action", "title": "2 campaign(s) with no tracked conversions", "body": "General Awareness-PMax-1, Search - Adoption - San Mateo at PetSmart, individual cats \u2014 spending $797 combined with 0 conversions. Verify conversion tracking or pause."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 77/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/", "sessions": "568", "averageSessionDuration": "167.37526800880278", "bounceRate": "0.22183098591549297", "engagementRate": "0.778169014084507", "conversions": "47"}, {"landingPage": "/adopt-a-cat-bay-area", "sessions": "392", "averageSessionDuration": "176.6387545994898", "bounceRate": "0.40561224489795916", "engagementRate": "0.59438775510204078", "conversions": "17"}, {"landingPage": "/donate-cat-rescue-bay-area", "sessions": "202", "averageSessionDuration": "106.18012642574259", "bounceRate": "0.39603960396039606", "engagementRate": "0.60396039603960394", "conversions": "9"}, {"landingPage": "/adopt", "sessions": "82", "averageSessionDuration": "136.16839202439024", "bounceRate": "0.36585365853658536", "engagementRate": "0.63414634146341464", "conversions": "6"}, {"landingPage": "/donate", "sessions": "77", "averageSessionDuration": "95.469037675324671", "bounceRate": "0", "engagementRate": "1", "conversions": "98"}, {"landingPage": "(not set)", "sessions": "61", "averageSessionDuration": "0.0016782131147540984", "bounceRate": "1", "engagementRate": "0", "conversions": "1"}, {"landingPage": "/available-kitties", "sessions": "44", "averageSessionDuration": "96.659873727272739", "bounceRate": "0.36363636363636365", "engagementRate": "0.63636363636363635", "conversions": "12"}, {"landingPage": "", "sessions": "38", "averageSessionDuration": "14.956731763157896", "bounceRate": "1", "engagementRate": "0", "conversions": "1"}, {"landingPage": "/event/kitten-cat-adoption-at-petsmart-san-mateo", "sessions": "20", "averageSessionDuration": "79.11153575", "bounceRate": "0.3", "engagementRate": "0.7", "conversions": "0"}, {"landingPage": "/events", "sessions": "16", "averageSessionDuration": "108.4235030625", "bounceRate": "0.5625", "engagementRate": "0.4375", "conversions": "1"}], "ga4_states": [{"region": "California", "sessions": "1024", "totalUsers": "702"}, {"region": "Washington", "sessions": "52", "totalUsers": "41"}, {"region": "England", "sessions": "34", "totalUsers": "33"}, {"region": "Florida", "sessions": "28", "totalUsers": "27"}, {"region": "Texas", "sessions": "28", "totalUsers": "24"}, {"region": "Virginia", "sessions": "18", "totalUsers": "18"}, {"region": "Oregon", "sessions": "17", "totalUsers": "16"}, {"region": "Ohio", "sessions": "15", "totalUsers": "14"}, {"region": "Colorado", "sessions": "13", "totalUsers": "13"}, {"region": "Ontario", "sessions": "13", "totalUsers": "11"}], "ga4_cities": [{"city": "San Jose", "sessions": "242", "totalUsers": "179"}, {"city": "San Francisco", "sessions": "227", "totalUsers": "158"}, {"city": "Palo Alto", "sessions": "49", "totalUsers": "13"}, {"city": "Seattle", "sessions": "42", "totalUsers": "31"}, {"city": "San Mateo", "sessions": "31", "totalUsers": "19"}, {"city": "Los Angeles", "sessions": "26", "totalUsers": "19"}, {"city": "Anaheim", "sessions": "25", "totalUsers": "23"}, {"city": "Oakland", "sessions": "23", "totalUsers": "17"}, {"city": "Fremont", "sessions": "22", "totalUsers": "17"}, {"city": "Berkeley", "sessions": "21", "totalUsers": "19"}], "seo_enrolled": false, "seo": null};
+window.CLIENT_DATA = {"slug": "pink-paws", "name": "Pink Paws For The Cause", "account_id": "566-368-6847", "website": "", "org_model": "location_based", "animal_type": null, "report_date": "April 07, 2026", "gps": 77, "gps_components": {"ctr": 67, "utilization": 60, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 792.0, "im": 7560.0, "cost": 5955.28, "cv": 105.0, "ctr": 10.48, "cpc": 7.52, "costPerConv": 56.72, "convRate": 13.26, "impressionShare": 10.0, "lostIsBudget": 10.9, "lostIsRank": 86.4}, "totals_7d": {"cl": 188.0, "im": 1947.0, "cost": 1685.82, "cv": 6.0, "ctr": 9.66, "cpc": 8.97, "costPerConv": 280.97, "convRate": 3.19, "impressionShare": 10.0, "lostIsBudget": 12.1, "lostIsRank": 84.6}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 10.5%", "body": "Account CTR is 10.5% \u2014 above the 5% minimum. We monitor this closely and will alert you if it dips."}, {"color": "amber", "tag": "watch", "title": "Grant at 60% utilization", "body": "Using $5,955 of the available $10,000 grant. Expanding keyword coverage will capture more free traffic."}, {"color": "green", "tag": "win", "title": "105 conversions tracked at $56.72 CPA", "body": "Campaigns recorded 105 conversions this month at $56.72 per conversion."}, {"color": "amber", "tag": "action", "title": "2 campaign(s) with no tracked conversions", "body": "General Awareness-PMax-1, Search - Adoption - San Mateo at PetSmart, individual cats \u2014 spending $797 combined with 0 conversions. Verify conversion tracking or pause."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 77/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/", "sessions": "569", "averageSessionDuration": "167.08111112302282", "bounceRate": "0.22319859402460457", "engagementRate": "0.77680140597539538", "conversions": "47"}, {"landingPage": "/adopt-a-cat-bay-area", "sessions": "392", "averageSessionDuration": "176.63875459948977", "bounceRate": "0.40561224489795916", "engagementRate": "0.59438775510204078", "conversions": "17"}, {"landingPage": "/donate-cat-rescue-bay-area", "sessions": "203", "averageSessionDuration": "105.76968406403941", "bounceRate": "0.39901477832512317", "engagementRate": "0.60098522167487689", "conversions": "9"}, {"landingPage": "/adopt", "sessions": "82", "averageSessionDuration": "136.16839202439024", "bounceRate": "0.36585365853658536", "engagementRate": "0.63414634146341464", "conversions": "6"}, {"landingPage": "/donate", "sessions": "77", "averageSessionDuration": "95.469037675324671", "bounceRate": "0", "engagementRate": "1", "conversions": "98"}, {"landingPage": "(not set)", "sessions": "61", "averageSessionDuration": "0.0016782131147540984", "bounceRate": "1", "engagementRate": "0", "conversions": "1"}, {"landingPage": "/available-kitties", "sessions": "44", "averageSessionDuration": "96.659873727272725", "bounceRate": "0.36363636363636365", "engagementRate": "0.63636363636363635", "conversions": "12"}, {"landingPage": "", "sessions": "38", "averageSessionDuration": "14.956731763157896", "bounceRate": "1", "engagementRate": "0", "conversions": "1"}, {"landingPage": "/event/kitten-cat-adoption-at-petsmart-san-mateo", "sessions": "20", "averageSessionDuration": "79.11153575", "bounceRate": "0.3", "engagementRate": "0.7", "conversions": "0"}, {"landingPage": "/events", "sessions": "16", "averageSessionDuration": "108.4235030625", "bounceRate": "0.5625", "engagementRate": "0.4375", "conversions": "1"}], "ga4_states": [{"region": "California", "sessions": "1025", "totalUsers": "703"}, {"region": "Washington", "sessions": "52", "totalUsers": "41"}, {"region": "England", "sessions": "34", "totalUsers": "33"}, {"region": "Florida", "sessions": "28", "totalUsers": "27"}, {"region": "Texas", "sessions": "28", "totalUsers": "24"}, {"region": "Virginia", "sessions": "18", "totalUsers": "18"}, {"region": "Oregon", "sessions": "17", "totalUsers": "16"}, {"region": "Ohio", "sessions": "15", "totalUsers": "14"}, {"region": "Colorado", "sessions": "13", "totalUsers": "13"}, {"region": "Ontario", "sessions": "13", "totalUsers": "11"}], "ga4_cities": [{"city": "San Jose", "sessions": "243", "totalUsers": "180"}, {"city": "San Francisco", "sessions": "227", "totalUsers": "158"}, {"city": "Palo Alto", "sessions": "49", "totalUsers": "13"}, {"city": "Seattle", "sessions": "42", "totalUsers": "31"}, {"city": "San Mateo", "sessions": "31", "totalUsers": "19"}, {"city": "Los Angeles", "sessions": "26", "totalUsers": "19"}, {"city": "Anaheim", "sessions": "25", "totalUsers": "23"}, {"city": "Oakland", "sessions": "23", "totalUsers": "17"}, {"city": "Fremont", "sessions": "22", "totalUsers": "17"}, {"city": "Berkeley", "sessions": "21", "totalUsers": "19"}], "keywords": {"top_performers": [{"keyword": "animal charities to donate to", "ctr": 10.69, "clicks": 118, "impressions": 1104, "quality_score": 3, "cost": 711.24, "conversions": 37.0}, {"keyword": "kittens for adoption", "ctr": 11.13, "clicks": 62, "impressions": 557, "quality_score": 8, "cost": 447.01, "conversions": 0}, {"keyword": "cat rescue near me", "ctr": 14.22, "clicks": 29, "impressions": 204, "quality_score": 3, "cost": 222.85, "conversions": 1.0}, {"keyword": "cat rescue donations", "ctr": 15.18, "clicks": 29, "impressions": 191, "quality_score": 2, "cost": 85.45, "conversions": 7.0}, {"keyword": "kitten rescue San Jose", "ctr": 11.9, "clicks": 25, "impressions": 210, "quality_score": null, "cost": 222.71, "conversions": 0}, {"keyword": "cat adoption San Francisco", "ctr": 15.24, "clicks": 25, "impressions": 164, "quality_score": 8, "cost": 200.54, "conversions": 1.0}, {"keyword": "local cat rescue near me", "ctr": 19.83, "clicks": 23, "impressions": 116, "quality_score": null, "cost": 183.82, "conversions": 0}, {"keyword": "East Bay animal rescue", "ctr": 10.38, "clicks": 19, "impressions": 183, "quality_score": null, "cost": 182.1, "conversions": 0}, {"keyword": "cat for adoption", "ctr": 8.79, "clicks": 16, "impressions": 182, "quality_score": 7, "cost": 176.33, "conversions": 0}, {"keyword": "feral cat adoption", "ctr": 13.25, "clicks": 11, "impressions": 83, "quality_score": null, "cost": 117.92, "conversions": 0}], "compliance_risks": [{"keyword": "kittens for adoption Bay Area", "ctr": 2.38, "clicks": 1, "impressions": 42, "quality_score": 7, "cost": 8.58, "conversions": 0}, {"keyword": "animal rescue redwood city", "ctr": 0, "clicks": 0, "impressions": 12, "quality_score": 3, "cost": 0, "conversions": 0}], "quality_score_distribution": {"high": 13, "medium": 8, "low": 6}}, "ads": {"top_headlines": [{"headline": "{KeyWord:Cat Adoption San Francisco}", "ctr": 11.96, "clicks": 176}, {"headline": "Adopt a Kitten East Bay", "ctr": 11.96, "clicks": 176}, {"headline": "Local Cat Rescue Near Me", "ctr": 11.96, "clicks": 176}, {"headline": "Join rescue mission", "ctr": 11.56, "clicks": 164}, {"headline": "100% Volunteer Run Rescue", "ctr": 11.56, "clicks": 164}, {"headline": "Donate to Save a Life", "ctr": 11.56, "clicks": 164}, {"headline": "Pink Paws for the Cause", "ctr": 11.45, "clicks": 34}, {"headline": "Save a Bay Area Kitten", "ctr": 11.45, "clicks": 34}, {"headline": "Help Abandoned Kittens", "ctr": 11.45, "clicks": 34}, {"headline": "Help Goldie Find Home", "ctr": 8.99, "clicks": 17}], "top_ads": [{"headline": "{KeyWord:Cat Adoption San Francisco}", "description": "Find cat adoption San Francisco options today. Meet our rescue kittens ready for homes.", "ctr": 11.96, "clicks": 176, "conversions": 1.0}, {"headline": "Join rescue mission", "description": "We are 100% volunteer. Your donation goes directly to saving kittens.", "ctr": 11.56, "clicks": 164, "conversions": 53.0}, {"headline": "Pink Paws for the Cause", "description": "We rescue, rehab, and rehome kittens in the SF Bay Area.", "ctr": 11.45, "clicks": 34, "conversions": 1.0}, {"headline": "Help Goldie Find Home", "description": "Visit Goldie and other adoptable cats at PetSmart San Mateo. Your new friend is waiting.", "ctr": 8.99, "clicks": 17, "conversions": 0}, {"headline": "Find Your Furry Valentine", "description": "Find your purr-fect match this Feb 14th! Adopt a cat and give the gift of a forever home.", "ctr": 11.63, "clicks": 5, "conversions": 1.0}]}, "day_of_week": [{"day": "Monday", "clicks": 142, "impressions": 1259, "cost": 1164.34, "conversions": 16.0, "ctr": 11.28}, {"day": "Tuesday", "clicks": 93, "impressions": 873, "cost": 864.06, "conversions": 12.0, "ctr": 10.65}, {"day": "Wednesday", "clicks": 87, "impressions": 922, "cost": 642.04, "conversions": 22.0, "ctr": 9.44}, {"day": "Thursday", "clicks": 110, "impressions": 1197, "cost": 719.01, "conversions": 23.0, "ctr": 9.19}, {"day": "Friday", "clicks": 103, "impressions": 1040, "cost": 798.33, "conversions": 6.0, "ctr": 9.9}, {"day": "Saturday", "clicks": 111, "impressions": 1018, "cost": 728.88, "conversions": 3.0, "ctr": 10.9}, {"day": "Sunday", "clicks": 146, "impressions": 1251, "cost": 1038.62, "conversions": 23.0, "ctr": 11.67}], "hour_of_day": [{"hour": 0, "clicks": 56, "impressions": 452, "cost": 546.64, "conversions": 17.0, "ctr": 12.39}, {"hour": 1, "clicks": 57, "impressions": 447, "cost": 538.42, "conversions": 13.0, "ctr": 12.75}, {"hour": 2, "clicks": 31, "impressions": 271, "cost": 233.23, "conversions": 3.0, "ctr": 11.44}, {"hour": 3, "clicks": 24, "impressions": 135, "cost": 174.2, "conversions": 8.0, "ctr": 17.78}, {"hour": 4, "clicks": 8, "impressions": 68, "cost": 77.96, "conversions": 3.0, "ctr": 11.76}, {"hour": 5, "clicks": 8, "impressions": 66, "cost": 49.85, "conversions": 2.0, "ctr": 12.12}, {"hour": 6, "clicks": 9, "impressions": 68, "cost": 68.67, "conversions": 2.0, "ctr": 13.24}, {"hour": 7, "clicks": 15, "impressions": 76, "cost": 104.74, "conversions": 9.0, "ctr": 19.74}, {"hour": 8, "clicks": 5, "impressions": 72, "cost": 24.0, "conversions": 5.0, "ctr": 6.94}, {"hour": 9, "clicks": 9, "impressions": 87, "cost": 76.81, "conversions": 4.0, "ctr": 10.34}, {"hour": 10, "clicks": 8, "impressions": 139, "cost": 79.42, "conversions": 1.0, "ctr": 5.76}, {"hour": 11, "clicks": 18, "impressions": 227, "cost": 144.74, "conversions": 1.0, "ctr": 7.93}, {"hour": 12, "clicks": 26, "impressions": 300, "cost": 229.53, "conversions": 4.0, "ctr": 8.67}, {"hour": 13, "clicks": 36, "impressions": 373, "cost": 338.11, "conversions": 8.0, "ctr": 9.65}, {"hour": 14, "clicks": 41, "impressions": 397, "cost": 329.54, "conversions": 3.0, "ctr": 10.33}, {"hour": 15, "clicks": 34, "impressions": 385, "cost": 333.09, "conversions": 1.0, "ctr": 8.83}, {"hour": 16, "clicks": 42, "impressions": 461, "cost": 303.62, "conversions": 2.0, "ctr": 9.11}, {"hour": 17, "clicks": 39, "impressions": 501, "cost": 251.12, "conversions": 1.0, "ctr": 7.78}, {"hour": 18, "clicks": 48, "impressions": 500, "cost": 365.46, "conversions": 5.0, "ctr": 9.6}, {"hour": 19, "clicks": 39, "impressions": 477, "cost": 237.11, "conversions": 1.0, "ctr": 8.18}, {"hour": 20, "clicks": 46, "impressions": 530, "cost": 305.76, "conversions": 2.0, "ctr": 8.68}, {"hour": 21, "clicks": 79, "impressions": 579, "cost": 434.4, "conversions": 9.0, "ctr": 13.64}, {"hour": 22, "clicks": 54, "impressions": 497, "cost": 373.44, "conversions": 1.0, "ctr": 10.87}, {"hour": 23, "clicks": 60, "impressions": 452, "cost": 335.43, "conversions": 0.0, "ctr": 13.27}], "search_terms": {"top_terms": [{"term": "cat shelters near me", "ctr": 17.07, "clicks": 7, "impressions": 41, "conversions": 0}, {"term": "cat rescue", "ctr": 11.76, "clicks": 6, "impressions": 51, "conversions": 3.0}, {"term": "cat rescue near me", "ctr": 10.53, "clicks": 6, "impressions": 57, "conversions": 1.0}, {"term": "cat adoption near me", "ctr": 29.41, "clicks": 5, "impressions": 17, "conversions": 0}, {"term": "cat adoption", "ctr": 13.79, "clicks": 4, "impressions": 29, "conversions": 4.0}, {"term": "cats for adoption", "ctr": 12.12, "clicks": 4, "impressions": 33, "conversions": 3.0}, {"term": "rescue cats", "ctr": 18.75, "clicks": 3, "impressions": 16, "conversions": 2.0}, {"term": "cat shelter near me", "ctr": 11.76, "clicks": 2, "impressions": 17, "conversions": 0}, {"term": "cat adoption san francisco", "ctr": 13.33, "clicks": 2, "impressions": 15, "conversions": 0}, {"term": "cat adoption near me", "ctr": 4.0, "clicks": 1, "impressions": 25, "conversions": 1.0}], "potential_negatives": []}, "seo_enrolled": false, "seo": null};
 window.REPORT_DATA = {'30d':{totals:{cl:792.0,im:7560.0,ctr:10.48,cost:5955.28,cv:105.0,cpc:7.52,costPerConv:56.72,convRate:13.26},campaigns:[{n:"Donation - US wide-PMax-1",s:"ENABLED",ctr:8.97,cl:196.0,im:2185.0,cost:1193.48,cv:47.0,cpc:6.09,cpa:25.39},{n:"Adoption-Search-1",s:"ENABLED",ctr:11.95,cl:181.0,im:1515.0,cost:1508.44,cv:2.0,cpc:8.33,cpa:754.22},{n:"Donation - US wide - Search-1",s:"ENABLED",ctr:11.56,cl:164.0,im:1419.0,cost:874.2,cv:53.0,cpc:5.33,cpa:16.49},{n:"Adoption-PMax-1",s:"ENABLED",ctr:10.31,cl:142.0,im:1377.0,cost:1326.62,cv:2.0,cpc:9.34,cpa:663.31},{n:"General Awareness-PMax-1",s:"ENABLED",ctr:11.28,cl:51.0,im:452.0,cost:567.64,cv:0,cpc:11.13,cpa:null},{n:"General Awareness-Search-1",s:"ENABLED",ctr:11.41,cl:34.0,im:298.0,cost:255.21,cv:1.0,cpc:7.51,cpa:255.21},{n:"Search - Adoption - San Mateo at PetSmart, individual cats",s:"ENABLED",ctr:7.67,cl:24.0,im:313.0,cost:229.7,cv:0,cpc:9.57,cpa:null},{n:"Fosters - PMax1- $40 budget",s:"ENABLED",ctr:0,cl:0,im:1.0,cost:0,cv:0,cpc:0,cpa:null},{n:"Fosters-Search-1 - $40 budget",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax - Adoption - San Mateo at PetSmart, individual cats",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[16, 24, 32, 24, 24, 32, 24, 24, 24, 32, 24, 24, 32, 24, 24, 32, 24, 24, 24, 32, 24, 24, 32, 24, 24, 32, 24, 24, 32, 24],convs:[2, 3, 4, 3, 3, 4, 3, 3, 3, 4, 3, 3, 4, 3, 3, 4, 3, 3, 3, 4, 3, 3, 4, 3, 3, 4, 3, 3, 4, 3],spend:[119.11, 178.66, 238.21, 178.66, 178.66, 238.21, 178.66, 178.66, 178.66, 238.21, 178.66, 178.66, 238.21, 178.66, 178.66, 238.21, 178.66, 178.66, 178.66, 238.21, 178.66, 178.66, 238.21, 178.66, 178.66, 238.21, 178.66, 178.66, 238.21, 178.66],cpc:[7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44]},devices:[{n:'Desktop',cl:515,im:4914,cost:3870.93,cv:71,cvRate:0},{n:'Mobile',cl:253,im:2419,cost:1905.69,cv:30,cvRate:0},{n:'Tablet',cl:24,im:227,cost:178.66,cv:3,cvRate:0}]},'7d':{totals:{cl:188.0,im:1947.0,ctr:9.66,cost:1685.82,cv:6.0,cpc:8.97,costPerConv:280.97,convRate:3.19},campaigns:[{n:"Donation - US wide - Search-1",s:"ENABLED",ctr:9.71,cl:40.0,im:412.0,cost:282.04,cv:2.0,cpc:7.05,cpa:141.02},{n:"Adoption-Search-1",s:"ENABLED",ctr:10.72,cl:37.0,im:345.0,cost:347.43,cv:1.0,cpc:9.39,cpa:347.43},{n:"Adoption-PMax-1",s:"ENABLED",ctr:10.86,cl:34.0,im:313.0,cost:319.69,cv:2.0,cpc:9.4,cpa:159.84},{n:"Donation - US wide-PMax-1",s:"ENABLED",ctr:7.04,cl:28.0,im:398.0,cost:258.55,cv:0,cpc:9.23,cpa:null},{n:"General Awareness-Search-1",s:"ENABLED",ctr:11.48,cl:24.0,im:209.0,cost:179.19,cv:1.0,cpc:7.47,cpa:179.19},{n:"Search - Adoption - San Mateo at PetSmart, individual cats",s:"ENABLED",ctr:7.69,cl:14.0,im:182.0,cost:160.45,cv:0,cpc:11.46,cpa:null},{n:"General Awareness-PMax-1",s:"ENABLED",ctr:12.5,cl:11.0,im:88.0,cost:138.48,cv:0,cpc:12.59,cpa:null},{n:"Fosters - PMax1- $40 budget",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Fosters-Search-1 - $40 budget",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax - Adoption - San Mateo at PetSmart, individual cats",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[23, 30, 24, 26, 28, 24, 32],convs:[1, 1, 1, 1, 1, 1, 1],spend:[202.3, 269.73, 219.16, 236.02, 252.87, 219.16, 286.59],cpc:[8.8, 8.99, 9.13, 9.08, 9.03, 9.13, 8.96]},devices:[{n:'Desktop',cl:122,im:1266,cost:1095.78,cv:4,cvRate:0},{n:'Mobile',cl:60,im:623,cost:539.46,cv:2,cvRate:0},{n:'Tablet',cl:6,im:58,cost:50.57,cv:0,cvRate:0}]}};
-window.LP_DATA     = [{"page": "/", "sessions": 568, "pct": 43, "avgTime": "167s", "engaged": true, "convs": 47}, {"page": "/adopt-a-cat-bay-area", "sessions": 392, "pct": 30, "avgTime": "176s", "engaged": true, "convs": 17}, {"page": "/donate-cat-rescue-bay-area", "sessions": 202, "pct": 15, "avgTime": "106s", "engaged": true, "convs": 9}, {"page": "/adopt", "sessions": 82, "pct": 6, "avgTime": "136s", "engaged": true, "convs": 6}, {"page": "/donate", "sessions": 77, "pct": 6, "avgTime": "95s", "engaged": true, "convs": 98}];
-window.STATE_DATA  = [{"state": "California", "sessions": 1024, "pct": 82}, {"state": "Washington", "sessions": 52, "pct": 4}, {"state": "England", "sessions": 34, "pct": 3}, {"state": "Florida", "sessions": 28, "pct": 2}, {"state": "Texas", "sessions": 28, "pct": 2}, {"state": "Virginia", "sessions": 18, "pct": 1}, {"state": "Oregon", "sessions": 17, "pct": 1}, {"state": "Ohio", "sessions": 15, "pct": 1}, {"state": "Colorado", "sessions": 13, "pct": 1}, {"state": "Ontario", "sessions": 13, "pct": 1}];
-window.CITY_DATA   = [{"city": "San Jose", "state": "", "sessions": 242}, {"city": "San Francisco", "state": "", "sessions": 227}, {"city": "Palo Alto", "state": "", "sessions": 49}, {"city": "Seattle", "state": "", "sessions": 42}, {"city": "San Mateo", "state": "", "sessions": 31}, {"city": "Los Angeles", "state": "", "sessions": 26}, {"city": "Anaheim", "state": "", "sessions": 25}, {"city": "Oakland", "state": "", "sessions": 23}, {"city": "Fremont", "state": "", "sessions": 22}, {"city": "Berkeley", "state": "", "sessions": 21}];
+window.LP_DATA     = [{"page": "/", "sessions": 569, "pct": 43, "avgTime": "167s", "engaged": true, "convs": 47}, {"page": "/adopt-a-cat-bay-area", "sessions": 392, "pct": 30, "avgTime": "176s", "engaged": true, "convs": 17}, {"page": "/donate-cat-rescue-bay-area", "sessions": 203, "pct": 15, "avgTime": "105s", "engaged": true, "convs": 9}, {"page": "/adopt", "sessions": 82, "pct": 6, "avgTime": "136s", "engaged": true, "convs": 6}, {"page": "/donate", "sessions": 77, "pct": 6, "avgTime": "95s", "engaged": true, "convs": 98}];
+window.STATE_DATA  = [{"state": "California", "sessions": 1025, "pct": 82}, {"state": "Washington", "sessions": 52, "pct": 4}, {"state": "England", "sessions": 34, "pct": 3}, {"state": "Florida", "sessions": 28, "pct": 2}, {"state": "Texas", "sessions": 28, "pct": 2}, {"state": "Virginia", "sessions": 18, "pct": 1}, {"state": "Oregon", "sessions": 17, "pct": 1}, {"state": "Ohio", "sessions": 15, "pct": 1}, {"state": "Colorado", "sessions": 13, "pct": 1}, {"state": "Ontario", "sessions": 13, "pct": 1}];
+window.CITY_DATA   = [{"city": "San Jose", "state": "", "sessions": 243}, {"city": "San Francisco", "state": "", "sessions": 227}, {"city": "Palo Alto", "state": "", "sessions": 49}, {"city": "Seattle", "state": "", "sessions": 42}, {"city": "San Mateo", "state": "", "sessions": 31}, {"city": "Los Angeles", "state": "", "sessions": 26}, {"city": "Anaheim", "state": "", "sessions": 25}, {"city": "Oakland", "state": "", "sessions": 23}, {"city": "Fremont", "state": "", "sessions": 22}, {"city": "Berkeley", "state": "", "sessions": 21}];
 </script>
 
 </body>

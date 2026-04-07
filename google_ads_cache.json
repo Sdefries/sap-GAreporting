@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetched_at": "2026-04-07T18:38:39.174938+00:00",
+    "fetched_at": "2026-04-07T21:43:03.545465+00:00",
     "source": "google_ads_api",
     "account_count": 15
   },
@@ -10690,7 +10690,7 @@
       "impressions": 2821.0,
       "ctr": 0.11662531017369727,
       "cost": 5310.27865,
-      "conversions": 1431.0,
+      "conversions": 1434.0,
       "search_impression_share": 10.0,
       "lost_is_budget": 23.1,
       "lost_is_rank": 76.1
@@ -11315,7 +11315,7 @@
       "impressions": 607.0,
       "ctr": 0.20593080724876442,
       "cost": 878.18361,
-      "conversions": 98.5,
+      "conversions": 99.5,
       "search_impression_share": 10.0,
       "lost_is_budget": 41.9,
       "lost_is_rank": 57.9
@@ -11997,7 +11997,7 @@
       "impressions": 316,
       "ctr": 20.25,
       "cost": 458.11,
-      "conversions": 53.0,
+      "conversions": 54.0,
       "avg_cpc": 7.16
     },
     {
@@ -13374,7 +13374,7 @@
       "clicks": 65,
       "impressions": 328,
       "ctr": 19.82,
-      "conversions": 53.5
+      "conversions": 54.5
     },
     {
       "ad_group": "Animal Rescue Organizations",
@@ -14287,7 +14287,7 @@
       "clicks": 201,
       "impressions": 1352,
       "cost": 1344.39,
-      "conversions": 148.0,
+      "conversions": 149.0,
       "ctr": 14.87
     },
     {
@@ -14393,7 +14393,7 @@
       "clicks": 194,
       "impressions": 1331,
       "cost": 1240.76,
-      "conversions": 131.0,
+      "conversions": 132.0,
       "ctr": 14.58
     },
     {

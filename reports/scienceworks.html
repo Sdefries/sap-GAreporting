@@ -344,6 +344,12 @@ tr:hover td{background:#F5F9FF}
 .gbp-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
 .gbp-unlock-btn:hover{background:#006AA3;transform:translateY(-1px)}
 
+/* No Data State - neutral styling */
+.no-data-card{background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center}
+.no-data-icon{font-size:32px;margin-bottom:12px;opacity:0.5}
+.no-data-title{font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px}
+.no-data-desc{font-size:13px;color:var(--gray-600)}
+
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
@@ -1007,12 +1013,10 @@ function render(){
   }
 
   // Visibility
-  // Visibility section — use real impression share data
   const impShare = t.impressionShare;
   const lostBudget = t.lostIsBudget;
   const lostRank = t.lostIsRank;
   
-  // Build visibility cards only if we have data
   let visCards = '';
   
   if (impShare !== null && impShare !== undefined) {
@@ -1057,7 +1061,6 @@ function render(){
     </div>`;
   }
   
-  // If no impression share data available, show placeholder message
   if (!visCards) {
     visCards = `
     <div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666;">
@@ -1068,14 +1071,15 @@ function render(){
   
   document.getElementById('visibilityGrid').innerHTML = visCards;
 
-  // SEO Section
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SEO Section — GATED to seo_enrolled clients only
+  // ═══════════════════════════════════════════════════════════════════════════
   const seoContainer = document.getElementById('seoContent');
   const seoEnrolled = window.CLIENT_DATA?.seo_enrolled || false;
   const seoData = window.CLIENT_DATA?.seo || null;
   
   if (seoEnrolled && seoData && seoData.enrolled) {
     // Enrolled client with data - show full SEO metrics
-    // Check for actual data vs null/0
     const ps = seoData.pagespeed_mobile;
     const psDesk = seoData.pagespeed_desktop;
     const seoScore = seoData.seo_score;
@@ -1085,7 +1089,6 @@ function render(){
     const avgPos = seoData.avg_position;
     const topQueries = seoData.top_queries || [];
     
-    // Helper to display value or N/A
     const valOrNA = (v) => (v !== null && v !== undefined && v !== 0) ? v : 'N/A';
     const hasData = (v) => v !== null && v !== undefined && v !== 0;
     
@@ -1110,7 +1113,6 @@ function render(){
       queriesHTML += '</div>';
     }
     
-    // CWV display logic
     const cwvIcon = cwvPass === null ? '⏳' : (cwvPass ? '✅' : '⚠️');
     const cwvText = cwvPass === null ? 'Pending' : (cwvPass ? 'Passing' : 'Needs Work');
     const cwvColor = cwvPass === null ? 'var(--gray-400)' : (cwvPass ? 'var(--green)' : 'var(--amber)');
@@ -1155,7 +1157,7 @@ function render(){
     `;
     document.getElementById('seoSubtitle').textContent = 'Organic search & site speed · Last updated ' + (seoData.fetched_at ? new Date(seoData.fetched_at).toLocaleDateString() : 'recently');
   } else {
-    // Not enrolled - show fields with N/A and upsell note
+    // Not enrolled - show fields with N/A and upsell note (SEO package gating)
     seoContainer.innerHTML = `
       <div class="seo-grid" style="opacity:0.5;">
         <div class="seo-card">
@@ -1199,7 +1201,9 @@ function render(){
     document.getElementById('seoSubtitle').textContent = 'Available with SEO package';
   }
 
-  // ── KEYWORDS SECTION ──────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // KEYWORDS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const kwData = window.CLIENT_DATA?.keywords;
   if (kwData && kwData.top_performers && kwData.top_performers.length > 0) {
     // Has keyword data - render tables
@@ -1209,14 +1213,14 @@ function render(){
     
     const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
     const qsClass = (qs) => qs === null ? 'na' : qs >= 7 ? 'high' : qs >= 4 ? 'med' : 'low';
-    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m);
+    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m || '—');
     
     document.getElementById('topKeywordsBody').innerHTML = topKW.map(k => `
       <tr>
         <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
         <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
         <td>${fmtN(k.clicks)}</td>
-        <td class="kw-ctr ${ctrClass(k.ctr)}">${k.ctr.toFixed(1)}%</td>
+        <td class="kw-ctr ${ctrClass(k.ctr)}">${(k.ctr||0).toFixed(1)}%</td>
         <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
       </tr>
     `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--gray-400)">No data</td></tr>';
@@ -1226,7 +1230,7 @@ function render(){
         <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
         <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
         <td>${fmtN(k.impressions)}</td>
-        <td class="kw-ctr bad">${k.ctr.toFixed(1)}%</td>
+        <td class="kw-ctr bad">${(k.ctr||0).toFixed(1)}%</td>
         <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
       </tr>
     `).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--green)">✓ No compliance risks</td></tr>';
@@ -1238,122 +1242,129 @@ function render(){
       <div class="qs-item" style="color:var(--gray-400)">Unknown: ${qsDist.unknown || 0}</div>
     `;
   } else {
-    // No keyword data
+    // No keyword data — neutral message (NOT gated to SEO package)
     document.getElementById('keywordsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔑</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Keyword Performance</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Keyword%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🔑</div>
+        <div class="no-data-title">Keyword data not yet available</div>
+        <div class="no-data-desc">Keyword performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── ADS SECTION ───────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ADS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const adsData = window.CLIENT_DATA?.ads;
   if (adsData && adsData.top_headlines && adsData.top_headlines.length > 0) {
     document.getElementById('topHeadlines').innerHTML = adsData.top_headlines.map(h => `
       <div class="headline-item">
-        <span class="headline-text" title="${h.text}">${h.text}</span>
+        <span class="headline-text" title="${h.headline || h.text || ''}">${h.headline || h.text || ''}</span>
         <div class="headline-stats">
-          <span><strong>${h.ctr.toFixed(1)}%</strong> CTR</span>
+          <span><strong>${(h.ctr||0).toFixed(1)}%</strong> CTR</span>
           <span>${fmtN(h.clicks)} clicks</span>
         </div>
       </div>
     `).join('');
     
-    const topAds = adsData.top_ads.slice(0, 4);
+    const topAds = (adsData.top_ads || []).slice(0, 4);
     document.getElementById('topAds').innerHTML = topAds.map(a => `
       <div class="ad-item">
-        <div class="ad-headlines">${(a.headlines || []).slice(0,3).join(' | ')}</div>
-        <div class="ad-desc">${(a.descriptions || []).slice(0,1).join(' ')}</div>
+        <div class="ad-headlines">${(a.headlines || [a.headline]).slice(0,3).join(' | ')}</div>
+        <div class="ad-desc">${(a.descriptions || [a.description]).slice(0,1).join(' ')}</div>
         <div class="ad-stats">
-          <span>📊 ${a.ctr.toFixed(1)}% CTR</span>
+          <span>📊 ${(a.ctr||0).toFixed(1)}% CTR</span>
           <span>👆 ${fmtN(a.clicks)} clicks</span>
-          <span>🎯 ${fmtN(Math.round(a.conversions))} conv.</span>
+          <span>🎯 ${fmtN(Math.round(a.conversions||0))} conv.</span>
         </div>
       </div>
     `).join('');
   } else {
+    // No ads data — neutral message (NOT gated to SEO package)
     document.getElementById('adsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">✨</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Ad Copy Performance</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Ad%20Copy%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">✨</div>
+        <div class="no-data-title">Ad copy data not yet available</div>
+        <div class="no-data-desc">Ad performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── TIMING SECTION ────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TIMING Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const dowData = window.CLIENT_DATA?.day_of_week;
   const hourData = window.CLIENT_DATA?.hour_of_day;
   if (dowData && dowData.length > 0) {
     const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
     document.getElementById('dowGrid').innerHTML = dowData.map(d => `
       <div class="dow-item">
-        <div class="dow-day">${d.day.slice(0,3)}</div>
+        <div class="dow-day">${(d.day||'').slice(0,3)}</div>
         <div class="dow-clicks">${fmtN(d.clicks)}</div>
-        <div class="dow-ctr ${ctrClass(d.ctr)}">${d.ctr.toFixed(1)}%</div>
+        <div class="dow-ctr ${ctrClass(d.ctr||0)}">${(d.ctr||0).toFixed(1)}%</div>
       </div>
     `).join('');
     
     if (hourData && hourData.length > 0) {
-      const maxClicks = Math.max(...hourData.map(h => h.clicks)) || 1;
+      const maxClicks = Math.max(...hourData.map(h => h.clicks||0)) || 1;
       document.getElementById('hourHeatmap').innerHTML = hourData.map(h => {
-        const intensity = h.clicks / maxClicks;
+        const intensity = (h.clicks||0) / maxClicks;
         const bg = intensity > 0.7 ? 'var(--blue)' : intensity > 0.4 ? 'rgba(0,131,198,0.5)' : intensity > 0.1 ? 'rgba(0,131,198,0.2)' : 'var(--gray-100)';
         const color = intensity > 0.5 ? '#fff' : 'var(--navy)';
         return `<div class="hour-cell" style="background:${bg};color:${color}" data-tooltip="${h.hour}:00 - ${h.clicks} clicks">${h.hour}</div>`;
       }).join('');
     }
   } else {
+    // No timing data — neutral message (NOT gated to SEO package)
     document.getElementById('timingContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🕐</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Performance by Time</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Timing%20Analysis%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🕐</div>
+        <div class="no-data-title">Timing data not yet available</div>
+        <div class="no-data-desc">Day and hour performance data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── SEARCH TERMS SECTION ──────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SEARCH TERMS Section — Google Ads data, available to ALL clients
+  // ═══════════════════════════════════════════════════════════════════════════
   const stData = window.CLIENT_DATA?.search_terms;
   if (stData && stData.top_terms && stData.top_terms.length > 0) {
     const topTerms = stData.top_terms.slice(0, 10);
-    const negTerms = stData.potential_negatives.slice(0, 8);
+    const negTerms = (stData.potential_negatives || []).slice(0, 8);
     
     document.getElementById('topSearchTermsBody').innerHTML = topTerms.map(t => `
       <tr>
-        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
         <td>${fmtN(t.clicks)}</td>
-        <td>${t.ctr.toFixed(1)}%</td>
-        <td>${fmtN(Math.round(t.conversions))}</td>
+        <td>${(t.ctr||0).toFixed(1)}%</td>
+        <td>${fmtN(Math.round(t.conversions||0))}</td>
       </tr>
     `).join('');
     
     document.getElementById('negativeTermsBody').innerHTML = negTerms.length > 0 ? negTerms.map(t => `
       <tr>
-        <td class="st-term" title="${t.search_term}">${t.search_term}</td>
+        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
         <td>${fmtN(t.impressions)}</td>
-        <td style="color:var(--red)">${t.ctr.toFixed(1)}%</td>
+        <td style="color:var(--red)">${(t.ctr||0).toFixed(1)}%</td>
         <td><span class="st-negative">Review</span></td>
       </tr>
     `).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--green)">✓ No low-CTR terms found</td></tr>';
   } else {
+    // No search terms data — neutral message (NOT gated to SEO package)
     document.getElementById('searchTermsContent').innerHTML = `
-      <div style="background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;opacity:0.5">🔍</div>
-        <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px">Search Terms Analysis</div>
-        <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px">N/A — Available with SEO package</div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=Search%20Terms%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;display:inline-block">Learn More</a>
+      <div class="no-data-card">
+        <div class="no-data-icon">🔍</div>
+        <div class="no-data-title">Search terms data not yet available</div>
+        <div class="no-data-desc">Search term data will appear here once campaigns have sufficient activity.</div>
       </div>
     `;
   }
 
-  // ── GOOGLE BUSINESS PROFILE SECTION ───────────────────────────────────────
-  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || false;
+  // ═══════════════════════════════════════════════════════════════════════════
+  // GBP Section — GATED to seo_enrolled clients only
+  // ═══════════════════════════════════════════════════════════════════════════
+  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || window.CLIENT_DATA?.seo_enrolled || false;
   const gbpData = window.CLIENT_DATA?.gbp || null;
   const gbpContainer = document.getElementById('gbpContent');
   
@@ -1361,7 +1372,7 @@ function render(){
     // Has GBP data - render metrics (future implementation)
     gbpContainer.innerHTML = `<div>GBP data coming soon...</div>`;
   } else {
-    // Locked state - show upsell
+    // Locked state - show upsell (SEO package gating)
     gbpContainer.innerHTML = `
       <div class="gbp-locked">
         <div class="gbp-locked-overlay">
@@ -1524,11 +1535,11 @@ window.addEventListener('load',()=>{
 
 <script>
 // Injected by generate_reports_v2.py — ScienceWorks Grant Account (932-847-2468) — 2026-04-07
-window.CLIENT_DATA = {"slug": "scienceworks", "name": "ScienceWorks Grant Account", "account_id": "932-847-2468", "website": "https://scienceworksmuseum.org", "org_model": "location_based", "animal_type": null, "report_date": "April 07, 2026", "gps": 67, "gps_components": {"ctr": 83, "utilization": 7, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 162.0, "im": 1021.0, "cost": 672.21, "cv": 3.0, "ctr": 15.87, "cpc": 4.15, "costPerConv": 224.07, "convRate": 1.85, "impressionShare": 12.4, "lostIsBudget": 0.0, "lostIsRank": 87.6}, "totals_7d": {"cl": 31.0, "im": 205.0, "cost": 122.18, "cv": 1.0, "ctr": 15.12, "cpc": 3.94, "costPerConv": 122.18, "convRate": 3.23, "impressionShare": 13.5, "lostIsBudget": 0.0, "lostIsRank": 86.5}, "insights": [{"color": "green", "tag": "win", "title": "Exceptional CTR \u2014 15.9%", "body": "Your campaigns are achieving 15.9% CTR \u2014 well above the industry average. Strong ad relevance and keyword targeting."}, {"color": "red", "tag": "action", "title": "Grant severely under-utilized \u2014 7%", "body": "Only $672 of the $10,000 monthly grant is being used. Significant opportunity to build more campaigns."}, {"color": "green", "tag": "win", "title": "3 conversions tracked at $224.07 CPA", "body": "Campaigns recorded 3 conversions this month at $224.07 per conversion."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 67/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/", "sessions": "2575", "averageSessionDuration": "206.31447425320388", "bounceRate": "0.09592233009708738", "engagementRate": "0.90407766990291261", "conversions": "26"}, {"landingPage": "/camps", "sessions": "536", "averageSessionDuration": "103.39009052798505", "bounceRate": "0.15485074626865672", "engagementRate": "0.84514925373134331", "conversions": "2"}, {"landingPage": "/events", "sessions": "443", "averageSessionDuration": "68.5323321738149", "bounceRate": "0.13769751693002258", "engagementRate": "0.86230248306997748", "conversions": "0"}, {"landingPage": "/visit", "sessions": "311", "averageSessionDuration": "167.78255372347266", "bounceRate": "0.15112540192926044", "engagementRate": "0.84887459807073951", "conversions": "0"}, {"landingPage": "/museumlab", "sessions": "280", "averageSessionDuration": "83.130708782142861", "bounceRate": "0.12857142857142856", "engagementRate": "0.87142857142857144", "conversions": "0"}, {"landingPage": "/earth-day", "sessions": "275", "averageSessionDuration": "387.93294047999996", "bounceRate": "0.13818181818181818", "engagementRate": "0.86181818181818182", "conversions": "0"}, {"landingPage": "(not set)", "sessions": "269", "averageSessionDuration": "3.9732844460966539", "bounceRate": "0.96282527881040891", "engagementRate": "0.03717472118959108", "conversions": "0"}, {"landingPage": "/np/clients/scienceworksmuseum/tellFriend.jsp", "sessions": "262", "averageSessionDuration": "21.106696248091602", "bounceRate": "0.12977099236641221", "engagementRate": "0.87022900763358779", "conversions": "0"}, {"landingPage": "/sparking-action", "sessions": "159", "averageSessionDuration": "275.26708471069185", "bounceRate": "0.15094339622641509", "engagementRate": "0.84905660377358494", "conversions": "0"}, {"landingPage": "/calling-all-food-trucks", "sessions": "130", "averageSessionDuration": "9.5796043461538467", "bounceRate": "0.15384615384615385", "engagementRate": "0.84615384615384615", "conversions": "0"}], "ga4_states": [{"region": "Oregon", "sessions": "3234", "totalUsers": "2291"}, {"region": "California", "sessions": "1195", "totalUsers": "929"}, {"region": "Washington", "sessions": "431", "totalUsers": "371"}, {"region": "Alabama", "sessions": "168", "totalUsers": "166"}, {"region": "Nevada", "sessions": "156", "totalUsers": "140"}, {"region": "Saint Petersburg", "sessions": "109", "totalUsers": "109"}, {"region": "Texas", "sessions": "103", "totalUsers": "88"}, {"region": "Illinois", "sessions": "95", "totalUsers": "21"}, {"region": "Iowa", "sessions": "68", "totalUsers": "67"}, {"region": "Colorado", "sessions": "65", "totalUsers": "65"}], "ga4_cities": [{"city": "Medford", "sessions": "1059", "totalUsers": "831"}, {"city": "Ashland", "sessions": "856", "totalUsers": "443"}, {"city": "Portland", "sessions": "354", "totalUsers": "298"}, {"city": "Singapore", "sessions": "321", "totalUsers": "322"}, {"city": "Birmingham", "sessions": "153", "totalUsers": "151"}, {"city": "San Jose", "sessions": "149", "totalUsers": "125"}, {"city": "Central Point", "sessions": "145", "totalUsers": "108"}, {"city": "Saint Petersburg", "sessions": "109", "totalUsers": "109"}, {"city": "Grants Pass", "sessions": "108", "totalUsers": "89"}, {"city": "Los Angeles", "sessions": "106", "totalUsers": "96"}], "seo_enrolled": false, "seo": null};
+window.CLIENT_DATA = {"slug": "scienceworks", "name": "ScienceWorks Grant Account", "account_id": "932-847-2468", "website": "https://scienceworksmuseum.org", "org_model": "location_based", "animal_type": null, "report_date": "April 07, 2026", "gps": 67, "gps_components": {"ctr": 83, "utilization": 7, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 162.0, "im": 1021.0, "cost": 672.21, "cv": 3.0, "ctr": 15.87, "cpc": 4.15, "costPerConv": 224.07, "convRate": 1.85, "impressionShare": 12.4, "lostIsBudget": 0.0, "lostIsRank": 87.6}, "totals_7d": {"cl": 31.0, "im": 205.0, "cost": 122.18, "cv": 1.0, "ctr": 15.12, "cpc": 3.94, "costPerConv": 122.18, "convRate": 3.23, "impressionShare": 13.5, "lostIsBudget": 0.0, "lostIsRank": 86.5}, "insights": [{"color": "green", "tag": "win", "title": "Exceptional CTR \u2014 15.9%", "body": "Your campaigns are achieving 15.9% CTR \u2014 well above the industry average. Strong ad relevance and keyword targeting."}, {"color": "red", "tag": "action", "title": "Grant severely under-utilized \u2014 7%", "body": "Only $672 of the $10,000 monthly grant is being used. Significant opportunity to build more campaigns."}, {"color": "green", "tag": "win", "title": "3 conversions tracked at $224.07 CPA", "body": "Campaigns recorded 3 conversions this month at $224.07 per conversion."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 67/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/", "sessions": "2578", "averageSessionDuration": "206.07699873739335", "bounceRate": "0.0969743987587277", "engagementRate": "0.90302560124127229", "conversions": "26"}, {"landingPage": "/camps", "sessions": "536", "averageSessionDuration": "103.39009052798507", "bounceRate": "0.15485074626865672", "engagementRate": "0.84514925373134331", "conversions": "2"}, {"landingPage": "/events", "sessions": "444", "averageSessionDuration": "68.480979443693684", "bounceRate": "0.13963963963963963", "engagementRate": "0.86036036036036034", "conversions": "0"}, {"landingPage": "/visit", "sessions": "311", "averageSessionDuration": "167.78255372347269", "bounceRate": "0.15112540192926044", "engagementRate": "0.84887459807073951", "conversions": "0"}, {"landingPage": "/museumlab", "sessions": "280", "averageSessionDuration": "83.130708782142861", "bounceRate": "0.12857142857142856", "engagementRate": "0.87142857142857144", "conversions": "0"}, {"landingPage": "/earth-day", "sessions": "276", "averageSessionDuration": "386.88051795289851", "bounceRate": "0.14130434782608695", "engagementRate": "0.85869565217391308", "conversions": "0"}, {"landingPage": "(not set)", "sessions": "269", "averageSessionDuration": "3.9732844460966539", "bounceRate": "0.96282527881040891", "engagementRate": "0.03717472118959108", "conversions": "0"}, {"landingPage": "/np/clients/scienceworksmuseum/tellFriend.jsp", "sessions": "262", "averageSessionDuration": "21.106696248091602", "bounceRate": "0.12977099236641221", "engagementRate": "0.87022900763358779", "conversions": "0"}, {"landingPage": "/sparking-action", "sessions": "159", "averageSessionDuration": "275.26708471069185", "bounceRate": "0.15094339622641509", "engagementRate": "0.84905660377358494", "conversions": "0"}, {"landingPage": "/calling-all-food-trucks", "sessions": "130", "averageSessionDuration": "9.5796043461538467", "bounceRate": "0.15384615384615385", "engagementRate": "0.84615384615384615", "conversions": "0"}], "ga4_states": [{"region": "Oregon", "sessions": "3248", "totalUsers": "2294"}, {"region": "California", "sessions": "1195", "totalUsers": "929"}, {"region": "Washington", "sessions": "431", "totalUsers": "371"}, {"region": "Alabama", "sessions": "168", "totalUsers": "166"}, {"region": "Nevada", "sessions": "156", "totalUsers": "140"}, {"region": "Saint Petersburg", "sessions": "109", "totalUsers": "109"}, {"region": "Texas", "sessions": "103", "totalUsers": "88"}, {"region": "Illinois", "sessions": "96", "totalUsers": "21"}, {"region": "Iowa", "sessions": "68", "totalUsers": "67"}, {"region": "Colorado", "sessions": "66", "totalUsers": "66"}], "ga4_cities": [{"city": "Medford", "sessions": "1060", "totalUsers": "831"}, {"city": "Ashland", "sessions": "856", "totalUsers": "443"}, {"city": "Portland", "sessions": "354", "totalUsers": "298"}, {"city": "Singapore", "sessions": "321", "totalUsers": "322"}, {"city": "Birmingham", "sessions": "153", "totalUsers": "151"}, {"city": "San Jose", "sessions": "149", "totalUsers": "125"}, {"city": "Central Point", "sessions": "146", "totalUsers": "108"}, {"city": "Saint Petersburg", "sessions": "109", "totalUsers": "109"}, {"city": "Grants Pass", "sessions": "108", "totalUsers": "89"}, {"city": "Los Angeles", "sessions": "106", "totalUsers": "96"}], "keywords": {"top_performers": [], "compliance_risks": [], "quality_score_distribution": {"high": 1, "medium": 0, "low": 1}}, "ads": {"top_headlines": [{"headline": "ScienceWorks Museum", "ctr": 0, "clicks": 0}, {"headline": "Explore and Discover Science", "ctr": 0, "clicks": 0}, {"headline": "Science Center for All Ages", "ctr": 0, "clicks": 0}, {"headline": "Interactive Science Museum", "ctr": 0, "clicks": 0}, {"headline": "Your Science Adventure Awaits", "ctr": 0, "clicks": 0}, {"headline": "Experience Science & Art", "ctr": 0, "clicks": 0}], "top_ads": []}, "day_of_week": [{"day": "Monday", "clicks": 41, "impressions": 227, "cost": 200.19, "conversions": 2.0, "ctr": 18.06}, {"day": "Tuesday", "clicks": 27, "impressions": 156, "cost": 86.45, "conversions": 0.0, "ctr": 17.31}, {"day": "Wednesday", "clicks": 20, "impressions": 156, "cost": 91.15, "conversions": 0.0, "ctr": 12.82}, {"day": "Thursday", "clicks": 12, "impressions": 123, "cost": 29.61, "conversions": 0.0, "ctr": 9.76}, {"day": "Friday", "clicks": 19, "impressions": 114, "cost": 71.34, "conversions": 1.0, "ctr": 16.67}, {"day": "Saturday", "clicks": 23, "impressions": 101, "cost": 93.1, "conversions": 0.0, "ctr": 22.77}, {"day": "Sunday", "clicks": 20, "impressions": 144, "cost": 100.38, "conversions": 0.0, "ctr": 13.89}], "hour_of_day": [{"hour": 0, "clicks": 2, "impressions": 10, "cost": 5.22, "conversions": 0.0, "ctr": 20.0}, {"hour": 1, "clicks": 1, "impressions": 6, "cost": 6.53, "conversions": 0.0, "ctr": 16.67}, {"hour": 2, "clicks": 0, "impressions": 2, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 3, "clicks": 0, "impressions": 2, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 4, "clicks": 1, "impressions": 4, "cost": 1.51, "conversions": 0.0, "ctr": 25.0}, {"hour": 5, "clicks": 0, "impressions": 11, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 6, "clicks": 2, "impressions": 7, "cost": 7.44, "conversions": 0.0, "ctr": 28.57}, {"hour": 7, "clicks": 2, "impressions": 24, "cost": 3.47, "conversions": 0.0, "ctr": 8.33}, {"hour": 8, "clicks": 11, "impressions": 43, "cost": 73.72, "conversions": 0.0, "ctr": 25.58}, {"hour": 9, "clicks": 8, "impressions": 76, "cost": 41.65, "conversions": 0.0, "ctr": 10.53}, {"hour": 10, "clicks": 13, "impressions": 94, "cost": 58.74, "conversions": 0.0, "ctr": 13.83}, {"hour": 11, "clicks": 17, "impressions": 102, "cost": 50.54, "conversions": 0.0, "ctr": 16.67}, {"hour": 12, "clicks": 14, "impressions": 77, "cost": 36.32, "conversions": 0.0, "ctr": 18.18}, {"hour": 13, "clicks": 19, "impressions": 87, "cost": 69.32, "conversions": 0.0, "ctr": 21.84}, {"hour": 14, "clicks": 9, "impressions": 70, "cost": 39.31, "conversions": 0.0, "ctr": 12.86}, {"hour": 15, "clicks": 12, "impressions": 80, "cost": 80.04, "conversions": 2.0, "ctr": 15.0}, {"hour": 16, "clicks": 7, "impressions": 50, "cost": 16.63, "conversions": 0.0, "ctr": 14.0}, {"hour": 17, "clicks": 10, "impressions": 57, "cost": 68.33, "conversions": 0.0, "ctr": 17.54}, {"hour": 18, "clicks": 8, "impressions": 49, "cost": 19.39, "conversions": 0.0, "ctr": 16.33}, {"hour": 19, "clicks": 8, "impressions": 44, "cost": 21.1, "conversions": 0.0, "ctr": 18.18}, {"hour": 20, "clicks": 3, "impressions": 39, "cost": 10.6, "conversions": 1.0, "ctr": 7.69}, {"hour": 21, "clicks": 10, "impressions": 42, "cost": 31.75, "conversions": 0.0, "ctr": 23.81}, {"hour": 22, "clicks": 2, "impressions": 26, "cost": 11.7, "conversions": 0.0, "ctr": 7.69}, {"hour": 23, "clicks": 3, "impressions": 19, "cost": 18.89, "conversions": 0.0, "ctr": 15.79}], "search_terms": {"top_terms": [], "potential_negatives": []}, "seo_enrolled": false, "seo": null};
 window.REPORT_DATA = {'30d':{totals:{cl:162.0,im:1021.0,ctr:15.87,cost:672.21,cv:3.0,cpc:4.15,costPerConv:224.07,convRate:1.85},campaigns:[{n:"P Max Camps",s:"ENABLED",ctr:13.66,cl:91.0,im:666.0,cost:364.43,cv:1.0,cpc:4.0,cpa:364.43},{n:"P Max Birthday Venue Rentals",s:"ENABLED",ctr:20.14,cl:28.0,im:139.0,cost:188.82,cv:1.0,cpc:6.74,cpa:188.82},{n:"P Max MemberShip",s:"ENABLED",ctr:22.22,cl:24.0,im:108.0,cost:60.72,cv:0,cpc:2.53,cpa:null},{n:"Book Your Next Event - v2",s:"ENABLED",ctr:18.27,cl:19.0,im:104.0,cost:58.25,cv:1.0,cpc:3.07,cpa:58.25},{n:"General Awareness Campaign-Improve keywords",s:"ENABLED",ctr:0,cl:0,im:2.0,cost:0,cv:0,cpc:0,cpa:null},{n:"Robotics Program Fundraising #2",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Camps Campaign",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Book Your Next Event",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Field Trips",s:"ENABLED",ctr:0,cl:0,im:2.0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search - MemberShips",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-General Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 09", "Mar 10", "Mar 11", "Mar 12", "Mar 13", "Mar 14", "Mar 15", "Mar 16", "Mar 17", "Mar 18", "Mar 19", "Mar 20", "Mar 21", "Mar 22", "Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[3, 5, 6, 5, 5, 6, 5, 5, 5, 6, 5, 5, 6, 5, 5, 6, 5, 5, 5, 6, 5, 5, 6, 5, 5, 6, 5, 5, 6, 5],convs:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],spend:[13.44, 20.17, 26.89, 20.17, 20.17, 26.89, 20.17, 20.17, 20.17, 26.89, 20.17, 20.17, 26.89, 20.17, 20.17, 26.89, 20.17, 20.17, 20.17, 26.89, 20.17, 20.17, 26.89, 20.17, 20.17, 26.89, 20.17, 20.17, 26.89, 20.17],cpc:[4.48, 4.03, 4.48, 4.03, 4.03, 4.48, 4.03, 4.03, 4.03, 4.48, 4.03, 4.03, 4.48, 4.03, 4.03, 4.48, 4.03, 4.03, 4.03, 4.48, 4.03, 4.03, 4.48, 4.03, 4.03, 4.48, 4.03, 4.03, 4.48, 4.03]},devices:[{n:'Desktop',cl:105,im:664,cost:436.94,cv:2,cvRate:0},{n:'Mobile',cl:52,im:327,cost:215.11,cv:1,cvRate:0},{n:'Tablet',cl:5,im:31,cost:20.17,cv:0,cvRate:0}]},'7d':{totals:{cl:31.0,im:205.0,ctr:15.12,cost:122.18,cv:1.0,cpc:3.94,costPerConv:122.18,convRate:3.23},campaigns:[{n:"P Max Camps",s:"ENABLED",ctr:9.17,cl:11.0,im:120.0,cost:42.81,cv:0,cpc:3.89,cpa:null},{n:"P Max Birthday Venue Rentals",s:"ENABLED",ctr:28.57,cl:10.0,im:35.0,cost:72.39,cv:0,cpc:7.24,cpa:null},{n:"Book Your Next Event - v2",s:"ENABLED",ctr:22.73,cl:5.0,im:22.0,cost:3.16,cv:1.0,cpc:0.63,cpa:3.16},{n:"P Max MemberShip",s:"ENABLED",ctr:19.23,cl:5.0,im:26.0,cost:3.82,cv:0,cpc:0.76,cpa:null},{n:"General Awareness Campaign-Improve keywords",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Robotics Program Fundraising #2",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Camps Campaign",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Book Your Next Event",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Field Trips",s:"ENABLED",ctr:0,cl:0,im:2.0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search - MemberShips",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-General Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-Donation",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07"],clicks:[4, 5, 4, 4, 5, 4, 5],convs:[0, 0, 0, 0, 0, 0, 0],spend:[14.66, 19.55, 15.88, 17.11, 18.33, 15.88, 20.77],cpc:[3.67, 3.91, 3.97, 4.28, 3.67, 3.97, 4.15]},devices:[{n:'Desktop',cl:20,im:133,cost:79.42,cv:1,cvRate:0},{n:'Mobile',cl:10,im:66,cost:39.1,cv:0,cvRate:0},{n:'Tablet',cl:1,im:6,cost:3.67,cv:0,cvRate:0}]}};
-window.LP_DATA     = [{"page": "/", "sessions": 2575, "pct": 62, "avgTime": "206s", "engaged": true, "convs": 26}, {"page": "/camps", "sessions": 536, "pct": 13, "avgTime": "103s", "engaged": true, "convs": 2}, {"page": "/events", "sessions": 443, "pct": 11, "avgTime": "68s", "engaged": true, "convs": 0}, {"page": "/visit", "sessions": 311, "pct": 8, "avgTime": "167s", "engaged": true, "convs": 0}, {"page": "/museumlab", "sessions": 280, "pct": 7, "avgTime": "83s", "engaged": true, "convs": 0}];
-window.STATE_DATA  = [{"state": "Oregon", "sessions": 3234, "pct": 58}, {"state": "California", "sessions": 1195, "pct": 21}, {"state": "Washington", "sessions": 431, "pct": 8}, {"state": "Alabama", "sessions": 168, "pct": 3}, {"state": "Nevada", "sessions": 156, "pct": 3}, {"state": "Saint Petersburg", "sessions": 109, "pct": 2}, {"state": "Texas", "sessions": 103, "pct": 2}, {"state": "Illinois", "sessions": 95, "pct": 2}, {"state": "Iowa", "sessions": 68, "pct": 1}, {"state": "Colorado", "sessions": 65, "pct": 1}];
-window.CITY_DATA   = [{"city": "Medford", "state": "", "sessions": 1059}, {"city": "Ashland", "state": "", "sessions": 856}, {"city": "Portland", "state": "", "sessions": 354}, {"city": "Singapore", "state": "", "sessions": 321}, {"city": "Birmingham", "state": "", "sessions": 153}, {"city": "San Jose", "state": "", "sessions": 149}, {"city": "Central Point", "state": "", "sessions": 145}, {"city": "Saint Petersburg", "state": "", "sessions": 109}, {"city": "Grants Pass", "state": "", "sessions": 108}, {"city": "Los Angeles", "state": "", "sessions": 106}];
+window.LP_DATA     = [{"page": "/", "sessions": 2578, "pct": 62, "avgTime": "206s", "engaged": true, "convs": 26}, {"page": "/camps", "sessions": 536, "pct": 13, "avgTime": "103s", "engaged": true, "convs": 2}, {"page": "/events", "sessions": 444, "pct": 11, "avgTime": "68s", "engaged": true, "convs": 0}, {"page": "/visit", "sessions": 311, "pct": 7, "avgTime": "167s", "engaged": true, "convs": 0}, {"page": "/museumlab", "sessions": 280, "pct": 7, "avgTime": "83s", "engaged": true, "convs": 0}];
+window.STATE_DATA  = [{"state": "Oregon", "sessions": 3248, "pct": 58}, {"state": "California", "sessions": 1195, "pct": 21}, {"state": "Washington", "sessions": 431, "pct": 8}, {"state": "Alabama", "sessions": 168, "pct": 3}, {"state": "Nevada", "sessions": 156, "pct": 3}, {"state": "Saint Petersburg", "sessions": 109, "pct": 2}, {"state": "Texas", "sessions": 103, "pct": 2}, {"state": "Illinois", "sessions": 96, "pct": 2}, {"state": "Iowa", "sessions": 68, "pct": 1}, {"state": "Colorado", "sessions": 66, "pct": 1}];
+window.CITY_DATA   = [{"city": "Medford", "state": "", "sessions": 1060}, {"city": "Ashland", "state": "", "sessions": 856}, {"city": "Portland", "state": "", "sessions": 354}, {"city": "Singapore", "state": "", "sessions": 321}, {"city": "Birmingham", "state": "", "sessions": 153}, {"city": "San Jose", "state": "", "sessions": 149}, {"city": "Central Point", "state": "", "sessions": 146}, {"city": "Saint Petersburg", "state": "", "sessions": 109}, {"city": "Grants Pass", "state": "", "sessions": 108}, {"city": "Los Angeles", "state": "", "sessions": 106}];
 </script>
 
 </body>
