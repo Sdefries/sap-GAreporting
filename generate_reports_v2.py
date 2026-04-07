@@ -15,7 +15,7 @@ def load_cache(path):
         with open(path) as f: return json.load(f)
     except: return {}
 
-WINDSOR_CACHE = load_cache("windsor_cache.json")
+WINDSOR_CACHE = load_cache("google_ads_cache.json")
 GA4_CACHE     = load_cache("ga4_cache.json")
 SEO_CACHE     = load_cache("seo_cache.json")
 TEMPLATE      = open("report_template.html").read()
