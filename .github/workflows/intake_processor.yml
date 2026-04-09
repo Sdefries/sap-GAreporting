@@ -1,0 +1,90 @@
+name: Process Intake Form
+
+on:
+  repository_dispatch:
+    types: [intake_form_submitted]
+  
+  # Also allow manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      test_data:
+        description: 'JSON intake data for testing'
+        required: false
+        type: string
+
+env:
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+jobs:
+  process-intake:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install anthropic requests beautifulsoup4
+      
+      - name: Save intake data to file
+        run: |
+          # Get intake data from webhook payload or manual input
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo '${{ toJson(github.event.client_payload) }}' > intake_data.json
+          elif [ -n "${{ github.event.inputs.test_data }}" ]; then
+            echo '${{ github.event.inputs.test_data }}' > intake_data.json
+          else
+            echo '{"org_name": "Test Organization", "org_url": "https://example.org", "np_type": "Animal Welfare", "np_type_key": "animal", "city": "Sacramento", "state": "California", "mission": "Test mission statement"}' > intake_data.json
+          fi
+          
+          echo "📋 Intake data received:"
+          cat intake_data.json | head -50
+      
+      - name: Process intake form
+        id: process
+        run: |
+          python scripts/process_intake.py
+        env:
+          INTAKE_FILE: intake_data.json
+      
+      - name: Commit draft to repository
+        run: |
+          git config user.name "SAP Intake Bot"
+          git config user.email "bot@sponsorapurpose.org"
+          
+          # Check if there are new drafts to commit
+          if [ -n "$(git status drafts/ --porcelain)" ]; then
+            git add drafts/
+            git commit -m "🎯 New campaign draft: $(cat intake_data.json | jq -r '.org_name // "Unknown"')"
+            git push
+            echo "✅ Draft committed to repository"
+          else
+            echo "⚠️ No new drafts to commit"
+          fi
+      
+      - name: Post error to Slack if failed
+        if: failure()
+        run: |
+          ORG_NAME=$(cat intake_data.json | jq -r '.org_name // "Unknown"')
+          curl -X POST $SLACK_WEBHOOK \
+            -H 'Content-type: application/json' \
+            -d "{
+              \"text\": \"❌ Intake processing failed\",
+              \"blocks\": [
+                {\"type\": \"header\", \"text\": {\"type\": \"plain_text\", \"text\": \"❌ Intake Processing Failed\"}},
+                {\"type\": \"section\", \"fields\": [
+                  {\"type\": \"mrkdwn\", \"text\": \"*Organization*\n${ORG_NAME}\"},
+                  {\"type\": \"mrkdwn\", \"text\": \"*Workflow*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View logs>\"}
+                ]},
+                {\"type\": \"context\", \"elements\": [{\"type\": \"mrkdwn\", \"text\": \"Check the workflow logs for details\"}]}
+              ]
+            }"
