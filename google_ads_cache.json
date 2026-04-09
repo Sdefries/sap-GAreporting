@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "fetched_at": "2026-04-09T14:48:25.756446+00:00",
+    "fetched_at": "2026-04-09T21:51:52.937539+00:00",
     "source": "google_ads_api",
     "account_count": 15
   },
@@ -1672,7 +1672,7 @@
       "keyword": "senior cats for adoption near me",
       "match_type": "BROAD",
       "status": "ENABLED",
-      "quality_score": 8,
+      "quality_score": 6,
       "clicks": 0,
       "impressions": 2,
       "ctr": 0.0,
@@ -9062,7 +9062,7 @@
       "impressions": 9077.0,
       "ctr": 0.10587198413572767,
       "cost": 5071.539521,
-      "conversions": 5491.610763,
+      "conversions": 5491.630398,
       "search_impression_share": 10.0,
       "lost_is_budget": 36.9,
       "lost_is_rank": 62.9
@@ -9168,7 +9168,7 @@
       "impressions": 1314.0,
       "ctr": 0.13470319634703196,
       "cost": 1017.542134,
-      "conversions": 991.773716,
+      "conversions": 991.793351,
       "search_impression_share": 10.0,
       "lost_is_budget": 26.7,
       "lost_is_rank": 73.2
@@ -9297,7 +9297,7 @@
       "keyword": "pet adoption near me",
       "match_type": "BROAD",
       "status": "ENABLED",
-      "quality_score": 1,
+      "quality_score": 3,
       "clicks": 2,
       "impressions": 42,
       "ctr": 4.76,
@@ -9485,7 +9485,7 @@
       "clicks": 188,
       "impressions": 1895,
       "cost": 1319.0,
-      "conversions": 1127.6892560000001,
+      "conversions": 1127.708891,
       "ctr": 9.92
     }
   ],
@@ -9559,7 +9559,7 @@
       "clicks": 141,
       "impressions": 1381,
       "cost": 1149.22,
-      "conversions": 843.223342,
+      "conversions": 843.2429770000001,
       "ctr": 10.21
     },
     {
@@ -11402,7 +11402,7 @@
       "impressions": 641.0,
       "ctr": 0.20904836193447737,
       "cost": 962.628213,
-      "conversions": 108.5,
+      "conversions": 107.5,
       "search_impression_share": 10.0,
       "lost_is_budget": 42.4,
       "lost_is_rank": 57.5
@@ -12084,7 +12084,7 @@
       "impressions": 332,
       "ctr": 21.08,
       "cost": 514.47,
-      "conversions": 60.0,
+      "conversions": 59.0,
       "avg_cpc": 7.35
     },
     {
@@ -13461,7 +13461,7 @@
       "clicks": 71,
       "impressions": 344,
       "ctr": 20.64,
-      "conversions": 60.5
+      "conversions": 59.5
     },
     {
       "ad_group": "Animal Rescue Organizations",
@@ -14374,7 +14374,7 @@
       "clicks": 249,
       "impressions": 1599,
       "cost": 1680.16,
-      "conversions": 185.0,
+      "conversions": 184.0,
       "ctr": 15.57
     },
     {
@@ -14480,7 +14480,7 @@
       "clicks": 189,
       "impressions": 1259,
       "cost": 1225.08,
-      "conversions": 127.0,
+      "conversions": 126.0,
       "ctr": 15.01
     },
     {
