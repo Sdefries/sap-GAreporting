@@ -1,12 +1,13 @@
 name: SAP Ad Grants Automation
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Fix Node.js 20 deprecation warning
+
 on:
   schedule:
-    - cron: '0 13 * * *'
-    - cron: '0 21 * * *'
-    - cron: '0 13 * * 1'
-    - cron: '0 14 1 * *'
-    - cron: '0 11 * * 0'
+    - cron: '0 13 * * *'    # Alert watcher 6am PST daily
+    - cron: '0 21 * * *'    # Alert watcher 2pm PST daily
+    - cron: '0 16 * * 1'    # Weekly reports Monday 9am PST
 
   workflow_dispatch:
     inputs:
@@ -25,153 +26,173 @@ on:
 
 jobs:
 
+  # ── ALERT WATCHER ─────────────────────────────────────────────────────
   alerts:
     name: Alert watcher
     runs-on: ubuntu-latest
     if: |
       (github.event_name == 'workflow_dispatch' &&
-      (github.event.inputs.job == 'alerts' || github.event.inputs.job == 'all')) ||
+       (github.event.inputs.job == 'alerts' || github.event.inputs.job == 'all')) ||
       (github.event_name == 'schedule' &&
-      (github.event.schedule == '0 13 * * *' || github.event.schedule == '0 21 * * *'))
+       (github.event.schedule == '0 13 * * *' || github.event.schedule == '0 21 * * *'))
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install dependencies
         run: pip install requests google-ads google-auth google-auth-httplib2 pyyaml
+
       - name: Write google-ads.yaml
         run: echo "$GOOGLE_ADS_YAML" > google-ads.yaml
         env:
           GOOGLE_ADS_YAML: ${{ secrets.GOOGLE_ADS_YAML }}
+
       - name: Fetch Google Ads data
         run: python fetch_google_ads.py
-      - name: Commit Google Ads cache
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "SAP Automation"
-          git add google_ads_cache.json
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Update Google Ads cache $(date +'%Y-%m-%d %H:%M')" && git pull --rebase origin main && git push)
+
       - name: Run alert watcher
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
         run: python alert_watcher.py
 
+  # ── MONDAY DIGEST ─────────────────────────────────────────────────────
   digest:
     name: Monday digest
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'schedule' && github.event.schedule == '0 13 * * 1') ||
       (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.job == 'digest' || github.event.inputs.job == 'all'))
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install dependencies
         run: pip install requests google-ads google-auth google-auth-httplib2 pyyaml
+
       - name: Write google-ads.yaml
         run: echo "$GOOGLE_ADS_YAML" > google-ads.yaml
         env:
           GOOGLE_ADS_YAML: ${{ secrets.GOOGLE_ADS_YAML }}
+
       - name: Fetch Google Ads data
         run: python fetch_google_ads.py
-      - name: Commit Google Ads cache
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "SAP Automation"
-          git add google_ads_cache.json
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Update Google Ads cache $(date +'%Y-%m-%d %H:%M')" && git pull --rebase origin main && git push)
+
       - name: Run Slack digest
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run: python slack_digest.py
 
-  fetch_ga4:
-    name: Fetch GA4 data
-    runs-on: ubuntu-latest
-    if: |
-      (github.event_name == 'schedule' && github.event.schedule == '0 14 1 * *') ||
-      (github.event_name == 'workflow_dispatch' &&
-       (github.event.inputs.job == 'fetch_ga4' || github.event.inputs.job == 'reports' || github.event.inputs.job == 'all'))
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Install dependencies
-        run: pip install google-analytics-data
-      - name: Fetch GA4 data for all clients
-        env:
-          GA_SERVICE_ACCOUNT: ${{ secrets.GA_SERVICE_ACCOUNT }}
-        run: python fetch_ga4.py
-      - name: Commit GA4 cache
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "SAP Automation"
-          git add ga4_cache.json
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Update GA4 cache $(date +'%Y-%m-%d')" && git pull --rebase origin main && git push)
-
-  fetch_seo:
-    name: Fetch SEO data
-    runs-on: ubuntu-latest
-    if: |
-      (github.event_name == 'schedule' && github.event.schedule == '0 11 * * 0') ||
-      (github.event_name == 'workflow_dispatch' &&
-       (github.event.inputs.job == 'fetch_seo' || github.event.inputs.job == 'all'))
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Install dependencies
-        run: pip install requests google-auth google-auth-httplib2 pyyaml
-      - name: Fetch SEO data for enrolled clients
-        env:
-          GOOGLE_ADS_YAML: ${{ secrets.GOOGLE_ADS_YAML }}
-          DATAFORSEO_LOGIN: ${{ secrets.DATAFORSEO_LOGIN }}
-          DATAFORSEO_PASSWORD: ${{ secrets.DATAFORSEO_PASSWORD }}
-        run: python fetch_seo.py
-      - name: Commit SEO cache
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "SAP Automation"
-          git add seo_cache.json
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Update SEO cache $(date +'%Y-%m-%d')" && git pull --rebase origin main && git push)
-
+  # ── WEEKLY REPORTS (Monday 9am PST) ───────────────────────────────────
   reports:
-    name: Monthly client reports
+    name: Weekly client reports
     runs-on: ubuntu-latest
-    needs: fetch_ga4
     if: |
-      (github.event_name == 'schedule' && github.event.schedule == '0 14 1 * *') ||
+      (github.event_name == 'schedule' && github.event.schedule == '0 16 * * 1') ||
       (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.job == 'reports' || github.event.inputs.job == 'all'))
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install dependencies
         run: pip install requests google-ads google-auth google-auth-httplib2 pyyaml
+
       - name: Write google-ads.yaml
         run: echo "$GOOGLE_ADS_YAML" > google-ads.yaml
         env:
           GOOGLE_ADS_YAML: ${{ secrets.GOOGLE_ADS_YAML }}
+
       - name: Fetch Google Ads data
         run: python fetch_google_ads.py
+
       - name: Generate all client reports v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
         run: python generate_reports_v2.py
+
       - name: Validate reports
         run: python generate_reports_v2.py --validate-only
+
       - name: Commit reports to GitHub Pages
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
-          git add google_ads_cache.json reports/
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Monthly reports $(date +'%B %Y')" && git pull --rebase origin main && git push)
+          git add reports/
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Weekly reports $(date +'%B %d, %Y')" && git pull --rebase origin main && git push)
+
+  # ── FETCH GA4 DATA ────────────────────────────────────────────────────
+  fetch_ga4:
+    name: Fetch GA4 data
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.job == 'fetch_ga4' || github.event.inputs.job == 'all'))
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install google-analytics-data google-auth
+
+      - name: Write GA service account
+        run: echo "$GA_SERVICE_ACCOUNT" > ga_service_account.json
+        env:
+          GA_SERVICE_ACCOUNT: ${{ secrets.GA_SERVICE_ACCOUNT }}
+
+      - name: Fetch GA4 data
+        run: python fetch_ga4.py
+
+      - name: Commit GA4 cache
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "SAP Automation"
+          git add ga4_cache.json || true
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update GA4 cache" && git pull --rebase origin main && git push)
+
+  # ── FETCH SEO DATA ────────────────────────────────────────────────────
+  fetch_seo:
+    name: Fetch SEO data
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.job == 'fetch_seo' || github.event.inputs.job == 'all'))
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch SEO data
+        env:
+          PAGESPEED_API_KEY: ${{ secrets.PAGESPEED_API_KEY }}
+        run: python fetch_seo.py
+
+      - name: Commit SEO cache
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "SAP Automation"
+          git add seo_cache.json || true
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update SEO cache" && git pull --rebase origin main && git push)
