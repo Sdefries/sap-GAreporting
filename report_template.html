@@ -213,6 +213,73 @@ tr:hover td{background:#F5F9FF}
 .tag-watch{background:#FEF6E6;color:#9A6010}
 .tag-win{background:#E4F7ED;color:#1A6E3E}
 
+/* ── GA4 TRAFFIC OVERVIEW ── */
+.ga4-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.ga4-stat{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden}
+.ga4-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0}
+.ga4-stat.c-blue::before{background:var(--blue)}
+.ga4-stat.c-purple::before{background:var(--purple)}
+.ga4-stat.c-green::before{background:var(--green)}
+.ga4-stat.c-amber::before{background:var(--amber)}
+.ga4-stat.c-teal::before{background:#0BADA8}
+.ga4-stat.c-red::before{background:var(--red)}
+.ga4-stat-lbl{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
+.ga4-stat-val{font-family:var(--font-head);font-size:26px;font-weight:800;color:var(--navy);line-height:1;margin-bottom:5px}
+.ga4-delta{font-size:11px;font-weight:700}
+.ga4-delta.up{color:var(--green)}
+.ga4-delta.down{color:var(--red)}
+.ga4-charts-row{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:14px}
+.utm-list{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.utm-row-name{font-size:12px;font-weight:600;color:var(--navy)}
+.utm-row-tag{font-size:9px;color:var(--gray-400);font-family:monospace;margin-top:1px}
+.utm-row-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.utm-pct{font-size:12px;font-weight:800;min-width:32px;text-align:right}
+.utm-sessions{font-size:11px;color:var(--gray-400);min-width:36px;text-align:right}
+.utm-bar-wrap{flex:1;height:5px;background:var(--gray-200);border-radius:3px;overflow:hidden;min-width:60px}
+.utm-bar-fill{height:100%;border-radius:3px}
+
+/* ── GA4 DEVICE PERFORMANCE ── */
+.device-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.device-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px 20px;position:relative;overflow:hidden}
+.device-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0}
+.device-card.mobile::before{background:var(--blue)}
+.device-card.desktop::before{background:var(--green)}
+.device-card.tablet::before{background:var(--amber)}
+.device-name{font-family:var(--font-head);font-weight:800;font-size:15px;color:var(--navy);margin-bottom:12px}
+.device-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.device-stat-lbl{font-size:9px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px}
+.device-stat-val{font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--navy)}
+.device-stat-val.accent-blue{color:var(--blue)}
+.device-stat-val.accent-green{color:var(--green)}
+.device-stat-val.accent-amber{color:var(--amber)}
+.device-stat-val.accent-red{color:var(--red)}
+.device-share-bar{height:5px;background:var(--gray-200);border-radius:3px;overflow:hidden;margin-top:12px}
+.device-share-fill{height:100%;border-radius:3px}
+.device-share-lbl{font-size:10px;color:var(--gray-400);margin-top:4px}
+.device-charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.browser-list{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.browser-row{display:flex;align-items:center;gap:10px}
+.browser-name{font-size:12px;font-weight:600;color:var(--navy);min-width:70px}
+.browser-bar-wrap{flex:1;height:7px;background:var(--gray-200);border-radius:3px;overflow:hidden}
+.browser-bar-fill{height:100%;border-radius:3px}
+.browser-pct{font-size:12px;font-weight:800;min-width:34px;text-align:right}
+
+/* ── GA4 DEMOGRAPHICS ── */
+.demo-section-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--gray-400);padding:14px 0 8px;border-bottom:1px solid var(--gray-200);margin-bottom:14px}
+.gender-row{display:grid;grid-template-columns:1fr 1.6fr;gap:14px;margin-bottom:14px}
+.donut-wrap{display:flex;align-items:center;gap:16px}
+.donut-legend{display:flex;flex-direction:column;gap:8px}
+.donut-legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--navy);font-weight:600}
+.donut-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.age-row{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
+.age-share-list{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.age-share-item{display:flex;align-items:center;gap:10px}
+.age-lbl{font-size:12px;font-weight:600;color:var(--navy);min-width:44px}
+.age-bar-wrap{flex:1;height:6px;background:var(--gray-200);border-radius:3px;overflow:hidden}
+.age-bar-fill{height:100%;border-radius:3px}
+.age-pct{font-size:11px;font-weight:700;min-width:32px;text-align:right}
+.age-conv{font-size:11px;color:var(--gray-400);min-width:48px;text-align:right}
+
 /* SEO Section */
 .seo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .seo-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px 20px;text-align:center}
@@ -236,8 +303,6 @@ tr:hover td{background:#F5F9FF}
 .seo-query-stats{display:flex;gap:16px}
 .seo-query-stat{font-size:11px;color:var(--gray-600)}
 .seo-query-stat strong{color:var(--navy)}
-
-/* SEO Locked State */
 .seo-locked{position:relative;min-height:280px}
 .seo-locked-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,43,91,0.03) 0%,rgba(0,131,198,0.06) 100%);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:10;backdrop-filter:blur(2px)}
 .seo-locked-icon{font-size:48px;margin-bottom:16px;opacity:0.6}
@@ -248,10 +313,6 @@ tr:hover td{background:#F5F9FF}
 .seo-locked-feature::before{content:'✓';color:var(--green);font-weight:700}
 .seo-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
 .seo-unlock-btn:hover{background:#006AA3;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,131,198,0.3)}
-.seo-locked-bg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;opacity:0.15;filter:blur(1px);pointer-events:none}
-.seo-locked-bg .seo-card{background:var(--gray-100);border:1px dashed var(--border)}
-
-/* Keywords Section */
 .kw-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .kw-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
 .kw-card-title{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:8px}
@@ -277,8 +338,6 @@ tr:hover td{background:#F5F9FF}
 .qs-dot.high{background:var(--green)}
 .qs-dot.med{background:var(--amber)}
 .qs-dot.low{background:var(--red)}
-
-/* Ads Section */
 .ads-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .ads-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
 .ads-card-title{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px}
@@ -292,12 +351,8 @@ tr:hover td{background:#F5F9FF}
 .ad-headlines{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:4px}
 .ad-desc{font-size:11px;color:var(--gray-600);margin-bottom:8px;line-height:1.4}
 .ad-stats{display:flex;gap:16px;font-size:11px;color:var(--gray-400)}
-.ad-stats span{display:flex;align-items:center;gap:4px}
-
-/* Timing Section */
 .timing-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .timing-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
-.timing-card.full{grid-column:span 2}
 .timing-title{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--navy);margin-bottom:14px}
 .dow-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
 .dow-item{text-align:center;padding:12px 6px;background:var(--gray-100);border-radius:8px}
@@ -310,8 +365,6 @@ tr:hover td{background:#F5F9FF}
 .hour-heatmap{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
 .hour-cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--navy);position:relative;cursor:default}
 .hour-cell:hover::after{content:attr(data-tooltip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:4px 8px;border-radius:4px;font-size:10px;white-space:nowrap;z-index:10}
-
-/* Search Terms Section */
 .st-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .st-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
 .st-card-title{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:8px}
@@ -321,18 +374,7 @@ tr:hover td{background:#F5F9FF}
 .st-table td{padding:10px 6px;border-bottom:1px solid var(--gray-100)}
 .st-table tr:last-child td{border-bottom:none}
 .st-term{font-weight:600;color:var(--navy);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.st-matched{font-size:10px;color:var(--gray-400)}
 .st-negative{background:#FDEAEA;color:#A02020;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
-
-/* GBP Section */
-.gbp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.gbp-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px 20px;text-align:center}
-.gbp-card.wide{grid-column:span 2}
-.gbp-card.full{grid-column:span 4}
-.gbp-icon{font-size:24px;margin-bottom:8px}
-.gbp-label{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
-.gbp-value{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-1px}
-.gbp-sub{font-size:11px;color:var(--gray-400);margin-top:4px}
 .gbp-locked{position:relative;min-height:200px}
 .gbp-locked-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,43,91,0.03) 0%,rgba(0,131,198,0.06) 100%);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:10}
 .gbp-locked-icon{font-size:48px;margin-bottom:16px;opacity:0.6}
@@ -343,13 +385,10 @@ tr:hover td{background:#F5F9FF}
 .gbp-feature::before{content:'✓';color:var(--green);font-weight:700}
 .gbp-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
 .gbp-unlock-btn:hover{background:#006AA3;transform:translateY(-1px)}
-
-/* No Data State - neutral styling */
 .no-data-card{background:var(--gray-100);border-radius:var(--radius);padding:40px;text-align:center}
 .no-data-icon{font-size:32px;margin-bottom:12px;opacity:0.5}
 .no-data-title{font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:8px}
 .no-data-desc{font-size:13px;color:var(--gray-600)}
-
 .pf{background:var(--navy);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 .pf-l{font-size:11px;color:rgba(255,255,255,0.32);font-weight:500}
 .pf-r{font-family:var(--font-head);font-size:13px;font-weight:800;color:rgba(255,255,255,0.55)}
@@ -366,8 +405,8 @@ tr:hover td{background:#F5F9FF}
 .cw{position:relative;width:100%}
 @media(max-width:960px){
   .sidebar{display:none}.main{margin-left:0}
-  .kpi-grid,.action-grid{grid-template-columns:repeat(2,1fr)}
-  .g2,.g3,.isg{grid-template-columns:1fr}
+  .kpi-grid,.action-grid,.ga4-stat-grid,.device-cards{grid-template-columns:repeat(2,1fr)}
+  .g2,.g3,.isg,.gender-row,.age-row,.ga4-charts-row,.device-charts-row{grid-template-columns:1fr}
   .content{padding:18px 14px 48px}
   .funnel-steps{flex-direction:column;gap:8px}
   .funnel-step::after{display:none}
@@ -383,7 +422,7 @@ tr:hover td{background:#F5F9FF}
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-box">
     <div class="loading-spinner"></div>
-    <div class="loading-text">Loading report...</div>
+    <div class="loading-text" id="loadingText">Loading report...</div>
   </div>
 </div>
 
@@ -420,6 +459,9 @@ tr:hover td{background:#F5F9FF}
     <a href="#sec-search-terms"><span class="dot"></span>Search Terms</a>
     <a href="#sec-audience"><span class="dot"></span>Audience</a>
     <a href="#sec-landing"><span class="dot"></span>Landing pages</a>
+    <a href="#sec-ga4-traffic"><span class="dot"></span>Traffic overview</a>
+    <a href="#sec-ga4-devices"><span class="dot"></span>Device performance</a>
+    <a href="#sec-ga4-demographics"><span class="dot"></span>Demographics</a>
     <a href="#sec-location"><span class="dot"></span>Location</a>
     <a href="#sec-visibility"><span class="dot"></span>Visibility</a>
     <a href="#sec-seo"><span class="dot"></span>SEO</a>
@@ -462,10 +504,7 @@ tr:hover td{background:#F5F9FF}
 
     <!-- GPS SCORE -->
     <div class="section" id="sec-score">
-      <div class="sh">
-        <div class="sh-title">Grant Performance Score</div>
-        <div class="sh-sub" id="gpsDateSub">—</div>
-      </div>
+      <div class="sh"><div class="sh-title">Grant Performance Score</div><div class="sh-sub" id="gpsDateSub">—</div></div>
       <div class="gps-card">
         <div>
           <div class="gps-label">This month's score</div>
@@ -473,45 +512,23 @@ tr:hover td{background:#F5F9FF}
           <div class="gps-desc" id="gpsDesc">Loading...</div>
         </div>
         <div class="gps-right">
-          <div class="gps-item">
-            <div class="gps-item-lbl">CTR health</div>
-            <div class="gps-item-bar"><div class="gps-item-fill" id="gpsCtrBar" style="width:0%"></div></div>
-            <div class="gps-item-val" id="gpsCtrVal">—</div>
-          </div>
-          <div class="gps-item">
-            <div class="gps-item-lbl">Grant utilization</div>
-            <div class="gps-item-bar"><div class="gps-item-fill" id="gpsUtilBar" style="width:0%"></div></div>
-            <div class="gps-item-val" id="gpsUtilVal">—</div>
-          </div>
-          <div class="gps-item">
-            <div class="gps-item-lbl">Conversion tracking</div>
-            <div class="gps-item-bar"><div class="gps-item-fill" id="gpsConvBar" style="width:0%"></div></div>
-            <div class="gps-item-val" id="gpsConvVal">—</div>
-          </div>
-          <div class="gps-item">
-            <div class="gps-item-lbl">Budget pacing</div>
-            <div class="gps-item-bar"><div class="gps-item-fill" id="gpsBudgetBar" style="width:0%"></div></div>
-            <div class="gps-item-val" id="gpsBudgetVal">—</div>
-          </div>
+          <div class="gps-item"><div class="gps-item-lbl">CTR health</div><div class="gps-item-bar"><div class="gps-item-fill" id="gpsCtrBar" style="width:0%"></div></div><div class="gps-item-val" id="gpsCtrVal">—</div></div>
+          <div class="gps-item"><div class="gps-item-lbl">Grant utilization</div><div class="gps-item-bar"><div class="gps-item-fill" id="gpsUtilBar" style="width:0%"></div></div><div class="gps-item-val" id="gpsUtilVal">—</div></div>
+          <div class="gps-item"><div class="gps-item-lbl">Conversion tracking</div><div class="gps-item-bar"><div class="gps-item-fill" id="gpsConvBar" style="width:0%"></div></div><div class="gps-item-val" id="gpsConvVal">—</div></div>
+          <div class="gps-item"><div class="gps-item-lbl">Budget pacing</div><div class="gps-item-bar"><div class="gps-item-fill" id="gpsBudgetBar" style="width:0%"></div></div><div class="gps-item-val" id="gpsBudgetVal">—</div></div>
         </div>
       </div>
     </div>
 
     <!-- OVERVIEW -->
     <div class="section" id="sec-overview">
-      <div class="sh">
-        <div class="sh-title">Overview</div>
-        <div class="sh-sub" id="rangeLabel">Last 30 days</div>
-      </div>
+      <div class="sh"><div class="sh-title">Overview</div><div class="sh-sub" id="rangeLabel">Last 30 days</div></div>
       <div class="kpi-grid" id="kpiGrid"></div>
     </div>
 
     <!-- DONOR FUNNEL -->
     <div class="section" id="sec-funnel">
-      <div class="sh">
-        <div class="sh-title">Donor funnel</div>
-        <div class="sh-sub" id="funnelSub">Campaign performance · 30 days</div>
-      </div>
+      <div class="sh"><div class="sh-title">Donor funnel</div><div class="sh-sub" id="funnelSub">Campaign performance · 30 days</div></div>
       <div class="funnel-wrap">
         <div class="funnel-steps" id="funnelSteps"></div>
         <div id="funnelCallout"></div>
@@ -520,19 +537,13 @@ tr:hover td{background:#F5F9FF}
 
     <!-- COST METRICS -->
     <div class="section" id="sec-metrics">
-      <div class="sh">
-        <div class="sh-title">Cost metrics</div>
-        <div class="sh-sub">Efficiency breakdown</div>
-      </div>
+      <div class="sh"><div class="sh-title">Cost metrics</div><div class="sh-sub">Efficiency breakdown</div></div>
       <div class="g3" id="metricsGrid"></div>
     </div>
 
     <!-- TRENDS -->
     <div class="section" id="sec-trends">
-      <div class="sh">
-        <div class="sh-title">Performance trends</div>
-        <div class="sh-sub" id="trendsLabel">Daily · Last 30 days</div>
-      </div>
+      <div class="sh"><div class="sh-title">Performance trends</div><div class="sh-sub" id="trendsLabel">Daily · Last 30 days</div></div>
       <div class="chart-card" style="margin-bottom:14px">
         <div class="chart-header">
           <div class="chart-title">Clicks &amp; conversions</div>
@@ -553,10 +564,7 @@ tr:hover td{background:#F5F9FF}
         <div class="chart-card">
           <div class="chart-header">
             <div class="chart-title">Daily spend &amp; CPC</div>
-            <div class="chart-legend">
-              <span><span class="legend-dot" style="background:#0F2B5B"></span>Spend</span>
-              <span><span class="legend-dot" style="background:#E8A020"></span>CPC</span>
-            </div>
+            <div class="chart-legend"><span><span class="legend-dot" style="background:#0F2B5B"></span>Spend</span><span><span class="legend-dot" style="background:#E8A020"></span>CPC</span></div>
           </div>
           <div class="cw" style="height:190px"><canvas id="spendChart"></canvas></div>
         </div>
@@ -569,17 +577,10 @@ tr:hover td{background:#F5F9FF}
 
     <!-- CAMPAIGNS -->
     <div class="section" id="sec-campaigns">
-      <div class="sh">
-        <div class="sh-title">Campaigns</div>
-        <div class="sh-sub">All active campaigns</div>
-      </div>
+      <div class="sh"><div class="sh-title">Campaigns</div><div class="sh-sub">All active campaigns</div></div>
       <div class="card" style="padding:0;overflow:hidden">
         <div class="tscroll"><table>
-          <thead><tr>
-            <th>Campaign</th><th>Status</th><th>CTR</th>
-            <th>Clicks</th><th>Impressions</th><th>Spend</th>
-            <th>Conv.</th><th>CPA</th><th>Avg. CPC</th>
-          </tr></thead>
+          <thead><tr><th>Campaign</th><th>Status</th><th>CTR</th><th>Clicks</th><th>Impressions</th><th>Spend</th><th>Conv.</th><th>CPA</th><th>Avg. CPC</th></tr></thead>
           <tbody id="campBody"></tbody>
         </table></div>
       </div>
@@ -587,27 +588,18 @@ tr:hover td{background:#F5F9FF}
 
     <!-- KEYWORDS -->
     <div class="section" id="sec-keywords">
-      <div class="sh">
-        <div class="sh-title">Keyword Performance</div>
-        <div class="sh-sub">Top performers &amp; compliance risks · Last 30 days</div>
-      </div>
+      <div class="sh"><div class="sh-title">Keyword Performance</div><div class="sh-sub">Top performers &amp; compliance risks · Last 30 days</div></div>
       <div id="keywordsContent">
         <div class="kw-grid">
           <div class="kw-card">
             <div class="kw-card-title">🏆 Top Performers</div>
             <div class="kw-card-sub">Keywords driving the most clicks</div>
-            <table class="kw-table">
-              <thead><tr><th>Keyword</th><th>Match</th><th>Clicks</th><th>CTR</th><th>QS</th></tr></thead>
-              <tbody id="topKeywordsBody"></tbody>
-            </table>
+            <table class="kw-table"><thead><tr><th>Keyword</th><th>Match</th><th>Clicks</th><th>CTR</th><th>QS</th></tr></thead><tbody id="topKeywordsBody"></tbody></table>
           </div>
           <div class="kw-card">
             <div class="kw-card-title">⚠️ Compliance Risks</div>
             <div class="kw-card-sub">Keywords below 5% CTR with significant impressions</div>
-            <table class="kw-table">
-              <thead><tr><th>Keyword</th><th>Match</th><th>Impr.</th><th>CTR</th><th>QS</th></tr></thead>
-              <tbody id="lowCtrKeywordsBody"></tbody>
-            </table>
+            <table class="kw-table"><thead><tr><th>Keyword</th><th>Match</th><th>Impr.</th><th>CTR</th><th>QS</th></tr></thead><tbody id="lowCtrKeywordsBody"></tbody></table>
           </div>
         </div>
         <div class="card" style="margin-top:14px;padding:16px 20px">
@@ -619,42 +611,28 @@ tr:hover td{background:#F5F9FF}
 
     <!-- AD COPY -->
     <div class="section" id="sec-ads">
-      <div class="sh">
-        <div class="sh-title">Ad Copy Performance</div>
-        <div class="sh-sub">Best performing headlines &amp; ads</div>
-      </div>
+      <div class="sh"><div class="sh-title">Ad Copy Performance</div><div class="sh-sub">Best performing headlines &amp; ads</div></div>
       <div id="adsContent">
         <div class="ads-grid">
-          <div class="ads-card">
-            <div class="ads-card-title">✨ Top Headlines</div>
-            <div id="topHeadlines"></div>
-          </div>
-          <div class="ads-card">
-            <div class="ads-card-title">📝 Best Performing Ads</div>
-            <div id="topAds"></div>
-          </div>
+          <div class="ads-card"><div class="ads-card-title">✨ Top Headlines</div><div id="topHeadlines"></div></div>
+          <div class="ads-card"><div class="ads-card-title">📝 Best Performing Ads</div><div id="topAds"></div></div>
         </div>
       </div>
     </div>
 
     <!-- TIMING -->
     <div class="section" id="sec-timing">
-      <div class="sh">
-        <div class="sh-title">Performance by Time</div>
-        <div class="sh-sub">When your ads perform best</div>
-      </div>
+      <div class="sh"><div class="sh-title">Performance by Time</div><div class="sh-sub">When your ads perform best</div></div>
       <div id="timingContent">
         <div class="timing-grid">
+          <div class="timing-card"><div class="timing-title">📅 Day of Week</div><div class="dow-grid" id="dowGrid"></div></div>
           <div class="timing-card">
-            <div class="timing-title">📅 Day of Week</div>
-            <div class="dow-grid" id="dowGrid"></div>
-          </div>
-          <div class="timing-card">
-            <div class="timing-title">🕐 Hour of Day</div>
-            <div class="hour-heatmap" id="hourHeatmap"></div>
-            <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--gray-400)">
-              <span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>11pm</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div class="timing-title" style="margin-bottom:0">🕐 Hour of Day</div>
+              <div id="hourTzLabel" style="font-size:10px;font-weight:700;color:var(--gray-400);background:var(--gray-100);padding:3px 9px;border-radius:6px;border:1px solid var(--border)"></div>
             </div>
+            <div class="hour-heatmap" id="hourHeatmap"></div>
+            <div id="hourAxisLabels" style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--gray-400)"></div>
           </div>
         </div>
       </div>
@@ -662,38 +640,26 @@ tr:hover td{background:#F5F9FF}
 
     <!-- SEARCH TERMS -->
     <div class="section" id="sec-search-terms">
-      <div class="sh">
-        <div class="sh-title">Search Terms</div>
-        <div class="sh-sub">Actual queries triggering your ads</div>
-      </div>
+      <div class="sh"><div class="sh-title">Search Terms</div><div class="sh-sub">Actual queries triggering your ads</div></div>
       <div id="searchTermsContent">
         <div class="st-grid">
           <div class="st-card">
             <div class="st-card-title">🔍 Top Search Terms</div>
             <div class="st-card-sub">Most clicked queries</div>
-            <table class="st-table">
-              <thead><tr><th>Search Term</th><th>Clicks</th><th>CTR</th><th>Conv.</th></tr></thead>
-              <tbody id="topSearchTermsBody"></tbody>
-            </table>
+            <table class="st-table"><thead><tr><th>Search Term</th><th>Clicks</th><th>CTR</th><th>Conv.</th></tr></thead><tbody id="topSearchTermsBody"></tbody></table>
           </div>
           <div class="st-card">
             <div class="st-card-title">🚫 Potential Negative Keywords</div>
             <div class="st-card-sub">Low CTR terms to consider excluding</div>
-            <table class="st-table">
-              <thead><tr><th>Search Term</th><th>Impr.</th><th>CTR</th><th></th></tr></thead>
-              <tbody id="negativeTermsBody"></tbody>
-            </table>
+            <table class="st-table"><thead><tr><th>Search Term</th><th>Impr.</th><th>CTR</th><th></th></tr></thead><tbody id="negativeTermsBody"></tbody></table>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- AUDIENCE -->
+    <!-- AUDIENCE (Ad Grants device) -->
     <div class="section" id="sec-audience">
-      <div class="sh">
-        <div class="sh-title">Audience</div>
-        <div class="sh-sub">Device breakdown</div>
-      </div>
+      <div class="sh"><div class="sh-title">Audience</div><div class="sh-sub">Device breakdown</div></div>
       <div class="g2">
         <div class="card">
           <div class="sh-title" style="font-size:14px;margin-bottom:16px">Clicks by device</div>
@@ -709,28 +675,58 @@ tr:hover td{background:#F5F9FF}
 
     <!-- LANDING PAGES -->
     <div class="section" id="sec-landing">
-      <div class="sh">
-        <div class="sh-title">Landing pages</div>
-        <div class="sh-sub" id="lpSub">Top pages by sessions</div>
-      </div>
+      <div class="sh"><div class="sh-title">Landing pages</div><div class="sh-sub" id="lpSub">Top pages by sessions</div></div>
       <div class="card" style="padding:0;overflow:hidden">
         <table class="lp-table">
-          <thead><tr>
-            <th>Page</th><th>Sessions</th><th>Traffic share</th>
-            <th>Avg. time on page</th><th>Engagement</th><th>Conversions</th>
-          </tr></thead>
+          <thead><tr><th>Page</th><th>Sessions</th><th>Traffic share</th><th>Avg. time on page</th><th>Engagement</th><th>Conversions</th></tr></thead>
           <tbody id="lpBody"></tbody>
         </table>
       </div>
       <div id="lpCallout"></div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 TRAFFIC OVERVIEW
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-ga4-traffic">
+      <div class="sh">
+        <div class="sh-title">Website Traffic Overview</div>
+        <div class="sh-sub" id="ga4TrafficSub">GA4 · Last 30 days</div>
+      </div>
+      <div id="ga4TrafficContent">
+        <!-- Populated by renderGA4Traffic() -->
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 DEVICE PERFORMANCE
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-ga4-devices">
+      <div class="sh">
+        <div class="sh-title">Device Performance</div>
+        <div class="sh-sub">Sessions, conversions &amp; engagement by device</div>
+      </div>
+      <div id="ga4DevicesContent">
+        <!-- Populated by renderGA4Devices() -->
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 DEMOGRAPHICS
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-ga4-demographics">
+      <div class="sh">
+        <div class="sh-title">Audience Demographics</div>
+        <div class="sh-sub">Gender &amp; age breakdown from GA4</div>
+      </div>
+      <div id="ga4DemoContent">
+        <!-- Populated by renderGA4Demographics() -->
+      </div>
+    </div>
+
     <!-- LOCATION -->
     <div class="section" id="sec-location">
-      <div class="sh">
-        <div class="sh-title">Audience location</div>
-        <div class="sh-sub" id="locationSub">Sessions by city &amp; state</div>
-      </div>
+      <div class="sh"><div class="sh-title">Audience location</div><div class="sh-sub" id="locationSub">Sessions by city &amp; state</div></div>
       <div class="g2">
         <div class="card">
           <div class="sh-title" style="font-size:14px;margin-bottom:16px">Top states</div>
@@ -747,41 +743,25 @@ tr:hover td{background:#F5F9FF}
 
     <!-- VISIBILITY -->
     <div class="section" id="sec-visibility">
-      <div class="sh">
-        <div class="sh-title">Visibility</div>
-        <div class="sh-sub">Impression share &amp; top-of-page</div>
-      </div>
+      <div class="sh"><div class="sh-title">Visibility</div><div class="sh-sub">Impression share &amp; top-of-page</div></div>
       <div class="isg" id="visibilityGrid"></div>
     </div>
 
     <!-- SEO -->
     <div class="section" id="sec-seo">
-      <div class="sh">
-        <div class="sh-title">SEO Performance</div>
-        <div class="sh-sub" id="seoSubtitle">Organic search &amp; site speed</div>
-      </div>
-      <div id="seoContent">
-        <!-- JS will populate based on enrollment status -->
-      </div>
+      <div class="sh"><div class="sh-title">SEO Performance</div><div class="sh-sub" id="seoSubtitle">Organic search &amp; site speed</div></div>
+      <div id="seoContent"></div>
     </div>
 
     <!-- GOOGLE BUSINESS PROFILE -->
     <div class="section" id="sec-gbp">
-      <div class="sh">
-        <div class="sh-title">Google Business Profile</div>
-        <div class="sh-sub" id="gbpSubtitle">Local presence &amp; reviews</div>
-      </div>
-      <div id="gbpContent">
-        <!-- JS will populate based on enrollment status -->
-      </div>
+      <div class="sh"><div class="sh-title">Google Business Profile</div><div class="sh-sub" id="gbpSubtitle">Local presence &amp; reviews</div></div>
+      <div id="gbpContent"></div>
     </div>
 
     <!-- ACTIONS -->
     <div class="section" id="sec-actions">
-      <div class="sh">
-        <div class="sh-title">Actions &amp; focus</div>
-        <div class="sh-sub">From your SAP team</div>
-      </div>
+      <div class="sh"><div class="sh-title">Actions &amp; focus</div><div class="sh-sub">From your SAP team</div></div>
       <div class="action-grid" id="actionsGrid">
         <div class="action-card ac-did">
           <div class="ac-label">✅ This month</div>
@@ -798,27 +778,21 @@ tr:hover td{background:#F5F9FF}
 
     <!-- INSIGHTS -->
     <div class="section" id="sec-insights">
-      <div class="sh">
-        <div class="sh-title">Recommendations</div>
-        <div class="sh-sub">Specific, actionable · prioritized by impact</div>
-      </div>
+      <div class="sh"><div class="sh-title">Recommendations</div><div class="sh-sub">Specific, actionable · prioritized by impact</div></div>
       <div class="insights-grid" id="insightsGrid"></div>
     </div>
 
   </div><!-- /content -->
 
   <div class="pf">
-    <div class="pf-l" id="pfDate">Data via Google Ads API</div>
+    <div class="pf-l" id="pfDate">Data via Google Ads API &amp; GA4</div>
     <img src="../logo.png" alt="Sponsor a Purpose" class="pf-logo">
   </div>
 </div>
 </div>
 
 <script>
-// ── DATA — injected by generate_reports_v2.py ─────────────────────────────
-// window.CLIENT_DATA and window.REPORT_DATA are set below this script tag
-// by the Python generator. This script reads from those objects only.
-
+// ── HELPERS ───────────────────────────────────────────────────────────────────
 let range = '30d';
 let charts = {};
 const tk={maxTicksLimit:8,maxRotation:0,font:{size:10,family:"'Montserrat',sans-serif"},color:'#9EABBE'};
@@ -829,22 +803,292 @@ function fmt$(v){if(!v&&v!==0)return'—';return'$'+(+v).toLocaleString('en-US',
 function fmtN(v){if(!v&&v!==0)return'—';return(+v).toLocaleString()}
 function fmtPct(v){if(v===null||v===undefined)return'—';return(+v).toFixed(1)+'%'}
 function colorBar(pct){return pct>=80?'#3DAA69':pct>=50?'#E8A020':'#D94F3D'}
+function fmtDelta(v){
+  if(v===null||v===undefined)return'';
+  const cls=v<0?'down':'up';
+  const arrow=v<0?'▼':'▲';
+  return`<span class="ga4-delta ${cls}">${arrow} ${Math.abs(v).toFixed(1)}% vs prior period</span>`;
+}
 
 function destroyCharts(){
   Object.values(charts).forEach(c=>{if(c)c.destroy()});
   charts={};
 }
 
-function render(){
-  if(!window.REPORT_DATA) return;
-  const d = window.REPORT_DATA[range];
-  if(!d) return;
-  const t = d.totals;
+// ── GA4 TRAFFIC OVERVIEW ─────────────────────────────────────────────────────
+function renderGA4Traffic(){
+  const ga4 = window.GA4_DATA;
+  const container = document.getElementById('ga4TrafficContent');
 
-  document.getElementById('rangeLabel').textContent = range==='30d'?'Last 30 days':'Last 7 days';
-  document.getElementById('trendsLabel').textContent = range==='30d'?'Daily · Last 30 days':'Daily · Last 7 days';
-  document.getElementById('funnelSub').textContent = 'Campaign performance · '+(range==='30d'?'30':'7')+' days';
-  document.getElementById('pfDate').textContent = 'Data via Google Ads API · '+(window.CLIENT_DATA?.report_date||'');
+  if(!ga4 || !ga4.overview){
+    container.innerHTML=`<div class="no-data-card"><div class="no-data-icon">📊</div><div class="no-data-title">GA4 traffic data not yet available</div><div class="no-data-desc">Connect GA4 to unlock traffic overview, UTM source breakdown, and sessions over time.</div></div>`;
+    return;
+  }
+
+  const o = ga4.overview;
+  // 8 stat cards
+  const stats=[
+    {lbl:'Sessions',       val:fmtN(o.sessions),       delta:o.sessions_delta,      cls:'c-blue'},
+    {lbl:'Users',          val:fmtN(o.users),           delta:o.users_delta,         cls:'c-purple'},
+    {lbl:'New Users',      val:fmtN(o.new_users),       delta:o.new_users_delta,     cls:'c-green'},
+    {lbl:'Pageviews',      val:fmtN(o.pageviews),       delta:o.pageviews_delta,     cls:'c-teal'},
+    {lbl:'Engagement Rate',val:fmtPct(o.engagement_rate),delta:o.engagement_delta,  cls:'c-green'},
+    {lbl:'Bounce Rate',    val:fmtPct(o.bounce_rate),   delta:o.bounce_delta,        cls:'c-red'},
+    {lbl:'Avg Duration',   val:o.avg_duration||'—',     delta:o.duration_delta,      cls:'c-blue'},
+    {lbl:'Conversions',    val:fmtN(o.conversions),     delta:o.conv_delta,          cls:'c-amber'},
+  ];
+
+  container.innerHTML=`
+    <div class="ga4-stat-grid">
+      ${stats.map((s,i)=>`
+        <div class="ga4-stat ${s.cls} fade" style="animation-delay:${i*.04}s">
+          <div class="ga4-stat-lbl">${s.lbl}</div>
+          <div class="ga4-stat-val">${s.val}</div>
+          ${fmtDelta(s.delta)}
+        </div>`).join('')}
+    </div>
+    <div class="ga4-charts-row">
+      <div class="chart-card">
+        <div class="chart-header"><div class="chart-title">Sessions Over Time</div></div>
+        <div class="cw" style="height:220px"><canvas id="ga4SessionsChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div class="chart-title">Traffic by Source (UTM)</div></div>
+        <div class="utm-list" id="utmList"></div>
+      </div>
+    </div>`;
+
+  // Sessions over time chart
+  const trend = ga4.sessions_trend || [];
+  charts.ga4sessions = new Chart(document.getElementById('ga4SessionsChart'),{
+    type:'line',
+    data:{
+      labels: trend.map(d=>d.date),
+      datasets:[{
+        label:'Sessions', data:trend.map(d=>d.sessions),
+        borderColor:'#0083C6', backgroundColor:'rgba(0,131,198,0.08)',
+        borderWidth:2.5, fill:true, tension:0.35, pointRadius:2, pointBackgroundColor:'#0083C6'
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
+  });
+
+  // UTM sources list
+  const utmColors=['#0083C6','#3DAA69','#5BC8F0','#E8A020','#7C3AED','#D94F3D','#0BADA8','#9EABBE','#0F2B5B'];
+  const sources = ga4.utm_sources || [];
+  document.getElementById('utmList').innerHTML = sources.map((s,i)=>`
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+        <div>
+          <div class="utm-row-name">${s.name}</div>
+          <div class="utm-row-tag">${s.utm||''}</div>
+        </div>
+        <div class="utm-row-right">
+          <span class="utm-pct" style="color:${utmColors[i]||'#9EABBE'}">${s.pct}%</span>
+          <span class="utm-sessions">${fmtN(s.sessions)}</span>
+        </div>
+      </div>
+      <div class="utm-bar-wrap" style="height:5px;background:var(--gray-200);border-radius:3px;overflow:hidden">
+        <div class="utm-bar-fill" style="width:${s.pct}%;background:${utmColors[i]||'#9EABBE'}"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ── GA4 DEVICE PERFORMANCE ───────────────────────────────────────────────────
+function renderGA4Devices(){
+  const ga4 = window.GA4_DATA;
+  const container = document.getElementById('ga4DevicesContent');
+
+  if(!ga4 || !ga4.devices){
+    container.innerHTML=`<div class="no-data-card"><div class="no-data-icon">📱</div><div class="no-data-title">Device data not yet available</div><div class="no-data-desc">GA4 device performance data will appear here once connected.</div></div>`;
+    return;
+  }
+
+  const devices = ga4.devices;
+  const devConf = [
+    {key:'mobile',  cls:'mobile',  accentSessions:'accent-blue',  accentConv:'accent-green', accentBounce:'accent-red',  barColor:'#0083C6'},
+    {key:'desktop', cls:'desktop', accentSessions:'accent-green', accentConv:'accent-green', accentBounce:'accent-blue', barColor:'#3DAA69'},
+    {key:'tablet',  cls:'tablet',  accentSessions:'accent-amber', accentConv:'accent-green', accentBounce:'accent-red',  barColor:'#E8A020'},
+  ];
+
+  container.innerHTML=`
+    <div class="device-cards">
+      ${devConf.map(dc=>{
+        const d = devices[dc.key]||{};
+        const bounceHigh = (d.bounce_rate||0)>50;
+        return`<div class="device-card ${dc.cls}">
+          <div class="device-name">${dc.key.charAt(0).toUpperCase()+dc.key.slice(1)}</div>
+          <div class="device-stats">
+            <div><div class="device-stat-lbl">Sessions</div><div class="device-stat-val ${dc.accentSessions}">${fmtN(d.sessions)}</div></div>
+            <div><div class="device-stat-lbl">Users</div><div class="device-stat-val">${fmtN(d.users)}</div></div>
+            <div><div class="device-stat-lbl">Conv.</div><div class="device-stat-val accent-green">${fmtN(d.conversions)}</div></div>
+            <div><div class="device-stat-lbl">Eng.</div><div class="device-stat-val">${fmtPct(d.engagement_rate)}</div></div>
+            <div><div class="device-stat-lbl">Avg Time</div><div class="device-stat-val">${d.avg_time||'—'}</div></div>
+            <div><div class="device-stat-lbl">Bounce</div><div class="device-stat-val ${bounceHigh?'accent-red':'accent-blue'}">${fmtPct(d.bounce_rate)}</div></div>
+          </div>
+          <div class="device-share-bar"><div class="device-share-fill" style="width:${d.share||0}%;background:${dc.barColor}"></div></div>
+          <div class="device-share-lbl">${d.share||0}% of sessions</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="device-charts-row">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Sessions by Device</div>
+          <div class="chart-legend">
+            <span><span class="legend-dot" style="background:#3DAA69"></span>Conversions</span>
+            <span><span class="legend-dot" style="background:#93C5FD"></span>Sessions</span>
+          </div>
+        </div>
+        <div class="cw" style="height:200px"><canvas id="ga4DeviceChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div class="chart-title">Browser Breakdown</div></div>
+        <div class="browser-list" id="browserList"></div>
+      </div>
+    </div>`;
+
+  // Device grouped bar chart
+  const devList = ['mobile','desktop','tablet'];
+  const devLabels = devList.map(d=>d.charAt(0).toUpperCase()+d.slice(1));
+  charts.ga4devices = new Chart(document.getElementById('ga4DeviceChart'),{
+    type:'bar',
+    data:{
+      labels:devLabels,
+      datasets:[
+        {label:'Conversions', data:devList.map(d=>(devices[d]||{}).conversions||0), backgroundColor:'#3DAA69', borderRadius:4},
+        {label:'Sessions',    data:devList.map(d=>(devices[d]||{}).sessions||0),    backgroundColor:'#93C5FD', borderRadius:4},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
+  });
+
+  // Browser breakdown
+  const browserColors=['#0083C6','#3DAA69','#E8A020','#7C3AED','#9EABBE'];
+  const browsers = ga4.browsers || [];
+  document.getElementById('browserList').innerHTML = browsers.map((b,i)=>`
+    <div class="browser-row">
+      <span class="browser-name">${b.name}</span>
+      <div class="browser-bar-wrap"><div class="browser-bar-fill" style="width:${b.pct}%;background:${browserColors[i]||'#9EABBE'}"></div></div>
+      <span class="browser-pct" style="color:${browserColors[i]||'#9EABBE'}">${b.pct}%</span>
+    </div>`).join('');
+}
+
+// ── GA4 DEMOGRAPHICS ─────────────────────────────────────────────────────────
+function renderGA4Demographics(){
+  const ga4 = window.GA4_DATA;
+  const container = document.getElementById('ga4DemoContent');
+
+  if(!ga4 || !ga4.demographics){
+    container.innerHTML=`<div class="no-data-card"><div class="no-data-icon">👥</div><div class="no-data-title">Demographics data not yet available</div><div class="no-data-desc">Enable Google Signals in GA4 to unlock gender and age demographic reporting.</div></div>`;
+    return;
+  }
+
+  const demo = ga4.demographics;
+  const genderColors={'Female':'#0083C6','Male':'#3DAA69','Other':'#9EABBE'};
+  const ageColors=['#A78BFA','#0083C6','#3DAA69','#E8A020','#D94F3D','#9EABBE'];
+
+  container.innerHTML=`
+    <div class="demo-section-lbl">Gender</div>
+    <div class="gender-row">
+      <div class="chart-card">
+        <div class="chart-header"><div class="chart-title">Gender Split</div></div>
+        <div class="donut-wrap" style="margin-top:8px">
+          <div class="cw" style="height:130px;width:130px;flex-shrink:0"><canvas id="ga4GenderDonut"></canvas></div>
+          <div class="donut-legend" id="genderLegend"></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div class="chart-title">Gender Engagement Comparison</div></div>
+        <div class="cw" style="height:160px"><canvas id="ga4GenderChart"></canvas></div>
+      </div>
+    </div>
+    <div class="demo-section-lbl" style="margin-top:6px">Age Demographics</div>
+    <div class="age-row">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Sessions by Age</div>
+          <div class="chart-legend">
+            <span><span class="legend-dot" style="background:#3DAA69"></span>Conversions</span>
+            <span><span class="legend-dot" style="background:#93C5FD"></span>Sessions</span>
+          </div>
+        </div>
+        <div class="cw" style="height:180px"><canvas id="ga4AgeChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><div class="chart-title">Age Group Share</div></div>
+        <div class="age-share-list" id="ageShareList"></div>
+      </div>
+    </div>`;
+
+  // Gender donut
+  const genders = demo.gender || [];
+  charts.ga4gender = new Chart(document.getElementById('ga4GenderDonut'),{
+    type:'doughnut',
+    data:{
+      labels:genders.map(g=>g.name),
+      datasets:[{data:genders.map(g=>g.value), backgroundColor:genders.map(g=>genderColors[g.name]||'#9EABBE'), borderWidth:0, hoverOffset:3}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}
+  });
+
+  document.getElementById('genderLegend').innerHTML = genders.map(g=>`
+    <div class="donut-legend-item">
+      <span class="donut-dot" style="background:${genderColors[g.name]||'#9EABBE'}"></span>
+      ${g.name} <strong>${g.value}%</strong>
+    </div>`).join('');
+
+  // Gender engagement grouped bar
+  const gEngagement = demo.gender_engagement || [];
+  charts.ga4genderEng = new Chart(document.getElementById('ga4GenderChart'),{
+    type:'bar',
+    data:{
+      labels: gEngagement.map(g=>g.metric),
+      datasets:[
+        {label:'Female', data:gEngagement.map(g=>g.female||0), backgroundColor:'#0083C6', borderRadius:4},
+        {label:'Male',   data:gEngagement.map(g=>g.male||0),   backgroundColor:'#3DAA69', borderRadius:4},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10,family:"'Montserrat',sans-serif"},color:'#5A6A82',boxWidth:10,padding:10}}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
+  });
+
+  // Age grouped bar
+  const ages = demo.age_groups || [];
+  charts.ga4age = new Chart(document.getElementById('ga4AgeChart'),{
+    type:'bar',
+    data:{
+      labels: ages.map(a=>a.age),
+      datasets:[
+        {label:'Conversions', data:ages.map(a=>a.conversions||0), backgroundColor:'#3DAA69', borderRadius:3},
+        {label:'Sessions',    data:ages.map(a=>a.sessions||0),    backgroundColor:'#93C5FD', borderRadius:3},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
+  });
+
+  // Age share bars
+  document.getElementById('ageShareList').innerHTML = ages.map((a,i)=>`
+    <div class="age-share-item">
+      <span class="age-lbl">${a.age}</span>
+      <div class="age-bar-wrap"><div class="age-bar-fill" style="width:${(a.share||0)*3}%;background:${ageColors[i]||'#9EABBE'}"></div></div>
+      <span class="age-pct" style="color:${ageColors[i]||'#9EABBE'}">${a.share||0}%</span>
+      <span class="age-conv">${fmtN(a.conversions||0)} cv</span>
+    </div>`).join('');
+}
+
+// ── MAIN RENDER ───────────────────────────────────────────────────────────────
+function render(){
+  if(!window.REPORT_DATA)return;
+  const d=window.REPORT_DATA[range];
+  if(!d)return;
+  const t=d.totals;
+
+
+  document.getElementById('rangeLabel').textContent=range==='30d'?'Last 30 days':'Last 7 days';
+  document.getElementById('trendsLabel').textContent=range==='30d'?'Daily · Last 30 days':'Daily · Last 7 days';
+  document.getElementById('funnelSub').textContent='Campaign performance · '+(range==='30d'?'30':'7')+' days';
+  document.getElementById('pfDate').textContent='Data via Google Ads API &amp; GA4 · '+(window.CLIENT_DATA?.report_date||'');
+  document.getElementById('ga4TrafficSub').textContent='GA4 · '+(range==='30d'?'Last 30 days':'Last 7 days');
 
   destroyCharts();
 
@@ -873,72 +1117,55 @@ function render(){
     {icon:'📊',lbl:'Grant Used',val:fmtPct(Math.min(100,t.cost/10000*100)),rate:t.cost>=8000?'Strong':'Building',cls:t.cost>=8000?'fs-ok':'fs-warn',sub:'of $10,000/month'},
   ];
   document.getElementById('funnelSteps').innerHTML=funnelSteps.map(s=>`
-    <div class="funnel-step">
-      <div class="fs-inner">
-        <div class="fs-icon">${s.icon}</div>
-        <div class="fs-label">${s.lbl}</div>
-        <div class="fs-value">${s.val}</div>
-        <div class="fs-rate ${s.cls}">${s.rate}</div>
-        <div class="fs-sub">${s.sub}</div>
-      </div>
-    </div>`).join('');
+    <div class="funnel-step"><div class="fs-inner">
+      <div class="fs-icon">${s.icon}</div>
+      <div class="fs-label">${s.lbl}</div>
+      <div class="fs-value">${s.val}</div>
+      <div class="fs-rate ${s.cls}">${s.rate}</div>
+      <div class="fs-sub">${s.sub}</div>
+    </div></div>`).join('');
 
-  // Metrics grid
+  // Metrics
   const pmaxCl=d.campaigns.filter(c=>c.n.toLowerCase().includes('max')).reduce((s,c)=>s+c.cl,0);
   const pmaxCost=d.campaigns.filter(c=>c.n.toLowerCase().includes('max')).reduce((s,c)=>s+c.cost,0);
   document.getElementById('metricsGrid').innerHTML=`
-    <div class="card">
-      <div class="sh-title" style="font-size:14px;margin-bottom:12px">Cost efficiency</div>
+    <div class="card"><div class="sh-title" style="font-size:14px;margin-bottom:12px">Cost efficiency</div>
       <div class="sp">
         <div class="si"><div class="si-lbl">Avg. CPC</div><div class="si-val">${fmt$(t.cpc)}</div><div class="si-sub">per click</div></div>
         <div class="si"><div class="si-lbl">Cost/Conv.</div><div class="si-val">${t.costPerConv?fmt$(t.costPerConv):'—'}</div><div class="si-sub">blended avg.</div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="sh-title" style="font-size:14px;margin-bottom:12px">Conversion rate</div>
+      </div></div>
+    <div class="card"><div class="sh-title" style="font-size:14px;margin-bottom:12px">Conversion rate</div>
       <div class="sp">
         <div class="si"><div class="si-lbl">Conv. Rate</div><div class="si-val">${fmtPct(t.convRate)}</div><div class="si-sub">clicks → conv.</div></div>
         <div class="si"><div class="si-lbl">Grant Used</div><div class="si-val">${fmtPct(Math.min(100,t.cost/10000*100))}</div><div class="si-sub">of $10k/mo</div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="sh-title" style="font-size:14px;margin-bottom:12px">PMax vs Search</div>
+      </div></div>
+    <div class="card"><div class="sh-title" style="font-size:14px;margin-bottom:12px">PMax vs Search</div>
       <div class="sp">
         <div class="si"><div class="si-lbl">PMax</div><div class="si-val">${fmtN(pmaxCl)}</div><div class="si-sub">clicks · ${fmt$(pmaxCost)}</div></div>
         <div class="si"><div class="si-lbl">Search</div><div class="si-val">${fmtN(t.cl-pmaxCl)}</div><div class="si-sub">clicks · ${fmt$(t.cost-pmaxCost)}</div></div>
-      </div>
-    </div>`;
+      </div></div>`;
 
   // Campaign table
   const tb=document.getElementById('campBody');
   tb.innerHTML='';
   d.campaigns.forEach(c=>{
     const ctrCls=c.ctr>=5?'ct-g':c.ctr>=2?'ct-a':'ct-b';
-    const convFlag=c.cv===0&&c.s==='ENABLED';
     const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td class="tn" title="${c.n}">${c.n}</td>
+    tr.innerHTML=`<td class="tn" title="${c.n}">${c.n}</td>
       <td><span class="stag ${c.s==='ENABLED'?'st-e':'st-p'}">${c.s.toLowerCase()}</span></td>
       <td><span class="ctag ${ctrCls}">${fmtPct(c.ctr)}</span></td>
-      <td>${fmtN(c.cl)}</td><td>${fmtN(c.im)}</td>
-      <td>${fmt$(c.cost)}</td>
-      <td class="${convFlag?'flag':''}">${c.cv===0?'0 ⚠':fmtN(c.cv)}</td>
-      <td>${c.cpa?fmt$(c.cpa):'—'}</td>
-      <td>${fmt$(c.cpc)}</td>`;
+      <td>${fmtN(c.cl)}</td><td>${fmtN(c.im)}</td><td>${fmt$(c.cost)}</td>
+      <td class="${c.cv===0&&c.s==='ENABLED'?'flag':''}">${c.cv===0?'0 ⚠':fmtN(c.cv)}</td>
+      <td>${c.cpa?fmt$(c.cpa):'—'}</td><td>${fmt$(c.cpc)}</td>`;
     tb.appendChild(tr);
   });
 
-  // Devices
+  // Devices (Ad Grants donut)
   const devs=d.devices;
   const totDev=devs.reduce((s,dv)=>s+dv.cl,0)||1;
   document.getElementById('devRows').innerHTML=devs.map((dv,i)=>{
     const p=Math.round(dv.cl/totDev*100);
-    return`<div class="drow">
-      <div class="dn">${dv.n}</div>
-      <div class="dbb"><div class="dbf" style="width:${p}%;background:${dc[i]}"></div></div>
-      <div class="dpct">${p}%</div>
-      <div class="ddet">${fmtN(dv.cl)} clicks</div>
-    </div>`;
+    return`<div class="drow"><div class="dn">${dv.n}</div><div class="dbb"><div class="dbf" style="width:${p}%;background:${dc[i]}"></div></div><div class="dpct">${p}%</div><div class="ddet">${fmtN(dv.cl)} clicks</div></div>`;
   }).join('');
   charts.device=new Chart(document.getElementById('deviceDonut'),{
     type:'doughnut',
@@ -984,6 +1211,11 @@ function render(){
       <td style="text-align:right" class="${lp.convs>0?'':'flag'}">${lp.convs===0?'0 ⚠':fmtN(lp.convs)}</td>
     </tr>`).join('');
 
+  // ── GA4 sections ──
+  renderGA4Traffic();
+  renderGA4Devices();
+  renderGA4Demographics();
+
   // Location
   const stateData=window.STATE_DATA||[];
   const cityData=window.CITY_DATA||[];
@@ -1013,385 +1245,165 @@ function render(){
   }
 
   // Visibility
-  const impShare = t.impressionShare;
-  const lostBudget = t.lostIsBudget;
-  const lostRank = t.lostIsRank;
-  
-  let visCards = '';
-  
-  if (impShare !== null && impShare !== undefined) {
-    const isColor = impShare >= 20 ? 'var(--green)' : impShare >= 10 ? 'var(--amber)' : 'var(--red)';
-    const isNote = impShare >= 30 ? 'Strong visibility in eligible auctions.' :
-                   impShare >= 15 ? 'Moderate visibility — room for growth.' :
-                   'Low visibility — significant growth opportunity available.';
-    visCards += `
-    <div class="isc">
-      <div class="isl">Search impression share</div>
-      <div class="isbb"><div class="isbf" style="width:${Math.min(impShare,100)}%;background:${isColor}"></div></div>
-      <div class="isv">${impShare.toFixed(1)}%</div>
-      <div class="isn">${isNote}</div>
-    </div>`;
+  const impShare=t.impressionShare,lostBudget=t.lostIsBudget,lostRank=t.lostIsRank;
+  let visCards='';
+  if(impShare!==null&&impShare!==undefined){
+    const isColor=impShare>=20?'var(--green)':impShare>=10?'var(--amber)':'var(--red)';
+    visCards+=`<div class="isc"><div class="isl">Search impression share</div><div class="isbb"><div class="isbf" style="width:${Math.min(impShare,100)}%;background:${isColor}"></div></div><div class="isv">${impShare.toFixed(1)}%</div><div class="isn">${impShare>=30?'Strong visibility.':impShare>=15?'Moderate — room for growth.':'Low visibility — significant opportunity.'}</div></div>`;
   }
-  
-  if (lostRank !== null && lostRank !== undefined) {
-    const lrColor = lostRank <= 20 ? 'var(--green)' : lostRank <= 50 ? 'var(--amber)' : 'var(--red)';
-    const lrNote = lostRank <= 20 ? 'Excellent ad quality — minimal loss to rank.' :
-                   lostRank <= 40 ? 'Moderate loss — improve keyword relevance and ad strength.' :
-                   'High loss to ad rank — focus on quality score and relevance.';
-    visCards += `
-    <div class="isc">
-      <div class="isl">Lost IS — Ad Rank</div>
-      <div class="isbb"><div class="isbf" style="width:${Math.min(lostRank,100)}%;background:${lrColor}"></div></div>
-      <div class="isv">${lostRank.toFixed(1)}%</div>
-      <div class="isn">${lrNote}</div>
-    </div>`;
+  if(lostRank!==null&&lostRank!==undefined){
+    const lrColor=lostRank<=20?'var(--green)':lostRank<=50?'var(--amber)':'var(--red)';
+    visCards+=`<div class="isc"><div class="isl">Lost IS — Ad Rank</div><div class="isbb"><div class="isbf" style="width:${Math.min(lostRank,100)}%;background:${lrColor}"></div></div><div class="isv">${lostRank.toFixed(1)}%</div><div class="isn">${lostRank<=20?'Excellent ad quality.':lostRank<=40?'Moderate — improve relevance.':'High loss — focus on quality score.'}</div></div>`;
   }
-  
-  if (lostBudget !== null && lostBudget !== undefined) {
-    const lbColor = lostBudget <= 10 ? 'var(--green)' : lostBudget <= 30 ? 'var(--amber)' : 'var(--red)';
-    const lbNote = lostBudget <= 10 ? 'Budget is not the primary constraint — focus on ad quality.' :
-                   lostBudget <= 30 ? 'Some budget constraints — consider reallocating from low performers.' :
-                   'Significant budget limitation — review daily caps and prioritize top campaigns.';
-    visCards += `
-    <div class="isc">
-      <div class="isl">Lost IS — Budget</div>
-      <div class="isbb"><div class="isbf" style="width:${Math.min(lostBudget,100)}%;background:${lbColor}"></div></div>
-      <div class="isv">${lostBudget.toFixed(1)}%</div>
-      <div class="isn">${lbNote}</div>
-    </div>`;
+  if(lostBudget!==null&&lostBudget!==undefined){
+    const lbColor=lostBudget<=10?'var(--green)':lostBudget<=30?'var(--amber)':'var(--red)';
+    visCards+=`<div class="isc"><div class="isl">Lost IS — Budget</div><div class="isbb"><div class="isbf" style="width:${Math.min(lostBudget,100)}%;background:${lbColor}"></div></div><div class="isv">${lostBudget.toFixed(1)}%</div><div class="isn">${lostBudget<=10?'Budget not primary constraint.':lostBudget<=30?'Some budget constraints.':'Significant budget limitation.'}</div></div>`;
   }
-  
-  if (!visCards) {
-    visCards = `
-    <div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666;">
-      <div style="font-size:14px;">Impression share data not available for this period.</div>
-      <div style="font-size:12px;margin-top:8px;">This data requires Standard API access — coming soon.</div>
-    </div>`;
-  }
-  
-  document.getElementById('visibilityGrid').innerHTML = visCards;
+  if(!visCards)visCards=`<div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666"><div>Impression share data not available for this period.</div></div>`;
+  document.getElementById('visibilityGrid').innerHTML=visCards;
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SEO Section — GATED to seo_enrolled clients only
-  // ═══════════════════════════════════════════════════════════════════════════
-  const seoContainer = document.getElementById('seoContent');
-  const seoEnrolled = window.CLIENT_DATA?.seo_enrolled || false;
-  const seoData = window.CLIENT_DATA?.seo || null;
-  
-  if (seoEnrolled && seoData && seoData.enrolled) {
-    // Enrolled client with data - show full SEO metrics
-    const ps = seoData.pagespeed_mobile;
-    const psDesk = seoData.pagespeed_desktop;
-    const seoScore = seoData.seo_score;
-    const cwvPass = seoData.cwv_pass;
-    const orgClicks = seoData.organic_clicks;
-    const orgImps = seoData.organic_impressions;
-    const avgPos = seoData.avg_position;
-    const topQueries = seoData.top_queries || [];
-    
-    const valOrNA = (v) => (v !== null && v !== undefined && v !== 0) ? v : 'N/A';
-    const hasData = (v) => v !== null && v !== undefined && v !== 0;
-    
-    const psColor = hasData(ps) ? (ps >= 90 ? 'green' : ps >= 50 ? 'amber' : 'red') : '';
-    const psDeskColor = hasData(psDesk) ? (psDesk >= 90 ? 'green' : psDesk >= 50 ? 'amber' : 'red') : '';
-    const seoColor = hasData(seoScore) ? (seoScore >= 90 ? 'green' : seoScore >= 50 ? 'amber' : 'red') : '';
-    
-    let queriesHTML = '';
-    if (topQueries.length > 0) {
-      queriesHTML = '<div class="seo-queries">';
-      topQueries.slice(0, 5).forEach(q => {
-        queriesHTML += `
-          <div class="seo-query-row">
-            <span class="seo-query-term">${q.query || q.keyword || ''}</span>
-            <div class="seo-query-stats">
-              <span class="seo-query-stat"><strong>${fmtN(q.clicks || 0)}</strong> clicks</span>
-              <span class="seo-query-stat"><strong>${fmtN(q.impressions || 0)}</strong> impr</span>
-              <span class="seo-query-stat">Pos <strong>${(q.position || 0).toFixed(1)}</strong></span>
-            </div>
-          </div>`;
-      });
-      queriesHTML += '</div>';
+  // SEO
+  const seoContainer=document.getElementById('seoContent');
+  const seoEnrolled=window.CLIENT_DATA?.seo_enrolled||false;
+  const seoData=window.CLIENT_DATA?.seo||null;
+  if(seoEnrolled&&seoData&&seoData.enrolled){
+    const ps=seoData.pagespeed_mobile,psDesk=seoData.pagespeed_desktop,seoScore=seoData.seo_score,cwvPass=seoData.cwv_pass;
+    const orgClicks=seoData.organic_clicks,orgImps=seoData.organic_impressions,avgPos=seoData.avg_position;
+    const topQueries=seoData.top_queries||[];
+    const hasData=v=>v!==null&&v!==undefined&&v!==0;
+    const valOrNA=v=>hasData(v)?v:'N/A';
+    const psColor=hasData(ps)?(ps>=90?'green':ps>=50?'amber':'red'):'';
+    const psDeskColor=hasData(psDesk)?(psDesk>=90?'green':psDesk>=50?'amber':'red'):'';
+    const seoColor=hasData(seoScore)?(seoScore>=90?'green':seoScore>=50?'amber':'red'):'';
+    const cwvIcon=cwvPass===null?'⏳':(cwvPass?'✅':'⚠️');
+    const cwvText=cwvPass===null?'Pending':(cwvPass?'Passing':'Needs Work');
+    const cwvColor=cwvPass===null?'var(--gray-400)':(cwvPass?'var(--green)':'var(--amber)');
+    let queriesHTML='';
+    if(topQueries.length>0){
+      queriesHTML='<div class="seo-queries">'+topQueries.slice(0,5).map(q=>`<div class="seo-query-row"><span class="seo-query-term">${q.query||q.keyword||''}</span><div class="seo-query-stats"><span class="seo-query-stat"><strong>${fmtN(q.clicks||0)}</strong> clicks</span><span class="seo-query-stat"><strong>${fmtN(q.impressions||0)}</strong> impr</span><span class="seo-query-stat">Pos <strong>${(q.position||0).toFixed(1)}</strong></span></div></div>`).join('')+'</div>';
     }
-    
-    const cwvIcon = cwvPass === null ? '⏳' : (cwvPass ? '✅' : '⚠️');
-    const cwvText = cwvPass === null ? 'Pending' : (cwvPass ? 'Passing' : 'Needs Work');
-    const cwvColor = cwvPass === null ? 'var(--gray-400)' : (cwvPass ? 'var(--green)' : 'var(--amber)');
-    
-    seoContainer.innerHTML = `
-      <div class="seo-grid">
-        <div class="seo-card">
-          <div class="seo-icon">📱</div>
-          <div class="seo-label">Mobile Speed</div>
-          <div class="seo-value ${psColor}" style="${!hasData(ps) ? 'color:var(--gray-400)' : ''}">${valOrNA(ps)}</div>
-          <div class="seo-bar"><div class="seo-fill ${psColor}" style="width:${hasData(ps) ? ps : 0}%"></div></div>
-        </div>
-        <div class="seo-card">
-          <div class="seo-icon">💻</div>
-          <div class="seo-label">Desktop Speed</div>
-          <div class="seo-value ${psDeskColor}" style="${!hasData(psDesk) ? 'color:var(--gray-400)' : ''}">${valOrNA(psDesk)}</div>
-          <div class="seo-bar"><div class="seo-fill ${psDeskColor}" style="width:${hasData(psDesk) ? psDesk : 0}%"></div></div>
-        </div>
-        <div class="seo-card">
-          <div class="seo-icon">🔍</div>
-          <div class="seo-label">SEO Score</div>
-          <div class="seo-value ${seoColor}" style="${!hasData(seoScore) ? 'color:var(--gray-400)' : ''}">${valOrNA(seoScore)}</div>
-          <div class="seo-bar"><div class="seo-fill ${seoColor}" style="width:${hasData(seoScore) ? seoScore : 0}%"></div></div>
-        </div>
-        <div class="seo-card">
-          <div class="seo-icon">${cwvIcon}</div>
-          <div class="seo-label">Core Web Vitals</div>
-          <div class="seo-value" style="font-size:18px;color:${cwvColor}">${cwvText}</div>
-          <div class="seo-sub">${seoData.lcp || '—'} LCP · ${seoData.cls || '—'} CLS</div>
-        </div>
-        <div class="seo-card wide">
-          <div class="seo-icon">🔎</div>
-          <div class="seo-label">Organic Clicks (30d)</div>
-          <div class="seo-value" style="${!hasData(orgClicks) ? 'color:var(--gray-400)' : ''}">${hasData(orgClicks) ? fmtN(orgClicks) : 'N/A'}</div>
-          <div class="seo-sub">${hasData(orgImps) ? fmtN(orgImps) + ' impressions' : 'No data'} · Avg position ${avgPos ? avgPos.toFixed(1) : '—'}</div>
-        </div>
-        <div class="seo-card wide">
-          <div class="seo-label" style="margin-bottom:10px">Top Search Queries</div>
-          ${queriesHTML || '<div class="seo-sub">Requires Search Console access</div>'}
-        </div>
-      </div>
-    `;
-    document.getElementById('seoSubtitle').textContent = 'Organic search & site speed · Last updated ' + (seoData.fetched_at ? new Date(seoData.fetched_at).toLocaleDateString() : 'recently');
+    seoContainer.innerHTML=`<div class="seo-grid">
+      <div class="seo-card"><div class="seo-icon">📱</div><div class="seo-label">Mobile Speed</div><div class="seo-value ${psColor}">${valOrNA(ps)}</div><div class="seo-bar"><div class="seo-fill ${psColor}" style="width:${hasData(ps)?ps:0}%"></div></div></div>
+      <div class="seo-card"><div class="seo-icon">💻</div><div class="seo-label">Desktop Speed</div><div class="seo-value ${psDeskColor}">${valOrNA(psDesk)}</div><div class="seo-bar"><div class="seo-fill ${psDeskColor}" style="width:${hasData(psDesk)?psDesk:0}%"></div></div></div>
+      <div class="seo-card"><div class="seo-icon">🔍</div><div class="seo-label">SEO Score</div><div class="seo-value ${seoColor}">${valOrNA(seoScore)}</div><div class="seo-bar"><div class="seo-fill ${seoColor}" style="width:${hasData(seoScore)?seoScore:0}%"></div></div></div>
+      <div class="seo-card"><div class="seo-icon">${cwvIcon}</div><div class="seo-label">Core Web Vitals</div><div class="seo-value" style="font-size:18px;color:${cwvColor}">${cwvText}</div><div class="seo-sub">${seoData.lcp||'—'} LCP · ${seoData.cls||'—'} CLS</div></div>
+      <div class="seo-card wide"><div class="seo-icon">🔎</div><div class="seo-label">Organic Clicks (30d)</div><div class="seo-value">${hasData(orgClicks)?fmtN(orgClicks):'N/A'}</div><div class="seo-sub">${hasData(orgImps)?fmtN(orgImps)+' impressions':'No data'} · Avg position ${avgPos?avgPos.toFixed(1):'—'}</div></div>
+      <div class="seo-card wide"><div class="seo-label" style="margin-bottom:10px">Top Search Queries</div>${queriesHTML||'<div class="seo-sub">Requires Search Console access</div>'}</div>
+    </div>`;
+    document.getElementById('seoSubtitle').textContent='Organic search & site speed · Last updated '+(seoData.fetched_at?new Date(seoData.fetched_at).toLocaleDateString():'recently');
   } else {
-    // Not enrolled - show fields with N/A and upsell note (SEO package gating)
-    seoContainer.innerHTML = `
-      <div class="seo-grid" style="opacity:0.5;">
-        <div class="seo-card">
-          <div class="seo-icon">📱</div>
-          <div class="seo-label">Mobile Speed</div>
-          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
-        </div>
-        <div class="seo-card">
-          <div class="seo-icon">💻</div>
-          <div class="seo-label">Desktop Speed</div>
-          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
-        </div>
-        <div class="seo-card">
-          <div class="seo-icon">🔍</div>
-          <div class="seo-label">SEO Score</div>
-          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
-        </div>
-        <div class="seo-card">
-          <div class="seo-icon">📊</div>
-          <div class="seo-label">Core Web Vitals</div>
-          <div class="seo-value" style="font-size:18px;color:var(--gray-400)">N/A</div>
-        </div>
-        <div class="seo-card wide">
-          <div class="seo-icon">🔎</div>
-          <div class="seo-label">Organic Clicks (30d)</div>
-          <div class="seo-value" style="color:var(--gray-400)">N/A</div>
-        </div>
-        <div class="seo-card wide">
-          <div class="seo-label">Top Search Queries</div>
-          <div class="seo-value" style="font-size:16px;color:var(--gray-400);margin-top:12px">N/A</div>
-        </div>
+    seoContainer.innerHTML=`
+      <div class="seo-grid" style="opacity:0.5">
+        <div class="seo-card"><div class="seo-icon">📱</div><div class="seo-label">Mobile Speed</div><div class="seo-value" style="color:var(--gray-400)">N/A</div></div>
+        <div class="seo-card"><div class="seo-icon">💻</div><div class="seo-label">Desktop Speed</div><div class="seo-value" style="color:var(--gray-400)">N/A</div></div>
+        <div class="seo-card"><div class="seo-icon">🔍</div><div class="seo-label">SEO Score</div><div class="seo-value" style="color:var(--gray-400)">N/A</div></div>
+        <div class="seo-card"><div class="seo-icon">📊</div><div class="seo-label">Core Web Vitals</div><div class="seo-value" style="font-size:18px;color:var(--gray-400)">N/A</div></div>
+        <div class="seo-card wide"><div class="seo-icon">🔎</div><div class="seo-label">Organic Clicks (30d)</div><div class="seo-value" style="color:var(--gray-400)">N/A</div></div>
+        <div class="seo-card wide"><div class="seo-label">Top Search Queries</div><div class="seo-value" style="font-size:16px;color:var(--gray-400);margin-top:12px">N/A</div></div>
       </div>
-      <div style="background:var(--gray-100);border-radius:var(--radius-sm);padding:16px 20px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-        <div>
-          <div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--navy);margin-bottom:4px;">Interested in SEO insights?</div>
-          <div style="font-size:12px;color:var(--gray-600);">PageSpeed scores, keyword rankings, and organic traffic data are available as part of our SEO package.</div>
-        </div>
-        <a href="mailto:scott@sponsorapurpose.org?subject=SEO%20Package%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">Learn More</a>
-      </div>
-    `;
-    document.getElementById('seoSubtitle').textContent = 'Available with SEO package';
+      <div style="background:var(--gray-100);border-radius:var(--radius-sm);padding:16px 20px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div><div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--navy);margin-bottom:4px">Interested in SEO insights?</div><div style="font-size:12px;color:var(--gray-600)">PageSpeed scores, keyword rankings, and organic traffic data are available as part of our SEO package.</div></div>
+        <a href="mailto:scott@sponsorapurpose.org?subject=SEO%20Package%20Interest" style="background:var(--blue);color:#fff;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none">Learn More</a>
+      </div>`;
+    document.getElementById('seoSubtitle').textContent='Available with SEO package';
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // KEYWORDS Section — Google Ads data, available to ALL clients
-  // ═══════════════════════════════════════════════════════════════════════════
-  const kwData = window.CLIENT_DATA?.keywords;
-  if (kwData && kwData.top_performers && kwData.top_performers.length > 0) {
-    // Has keyword data - render tables
-    const topKW = kwData.top_performers.slice(0, 8);
-    const lowKW = kwData.compliance_risks.slice(0, 8);
-    const qsDist = kwData.quality_score_distribution || {};
-    
-    const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
-    const qsClass = (qs) => qs === null ? 'na' : qs >= 7 ? 'high' : qs >= 4 ? 'med' : 'low';
-    const matchShort = (m) => ({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m] || m || '—');
-    
-    document.getElementById('topKeywordsBody').innerHTML = topKW.map(k => `
-      <tr>
-        <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
-        <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
-        <td>${fmtN(k.clicks)}</td>
-        <td class="kw-ctr ${ctrClass(k.ctr)}">${(k.ctr||0).toFixed(1)}%</td>
-        <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
-      </tr>
-    `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--gray-400)">No data</td></tr>';
-    
-    document.getElementById('lowCtrKeywordsBody').innerHTML = lowKW.length > 0 ? lowKW.map(k => `
-      <tr>
-        <td class="kw-keyword" title="${k.keyword}">${k.keyword}</td>
-        <td><span class="kw-match">${matchShort(k.match_type)}</span></td>
-        <td>${fmtN(k.impressions)}</td>
-        <td class="kw-ctr bad">${(k.ctr||0).toFixed(1)}%</td>
-        <td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score || '—'}</span></td>
-      </tr>
-    `).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--green)">✓ No compliance risks</td></tr>';
-    
-    document.getElementById('qsDistribution').innerHTML = `
-      <div class="qs-item"><span class="qs-dot high"></span> High (7-10): <strong>${qsDist.high || 0}</strong></div>
-      <div class="qs-item"><span class="qs-dot med"></span> Medium (4-6): <strong>${qsDist.medium || 0}</strong></div>
-      <div class="qs-item"><span class="qs-dot low"></span> Low (1-3): <strong>${qsDist.low || 0}</strong></div>
-      <div class="qs-item" style="color:var(--gray-400)">Unknown: ${qsDist.unknown || 0}</div>
-    `;
+  // Keywords
+  const kwData=window.CLIENT_DATA?.keywords;
+  if(kwData&&kwData.top_performers&&kwData.top_performers.length>0){
+    const ctrClass=ctr=>ctr>=5?'good':ctr>=3?'warn':'bad';
+    const qsClass=qs=>qs===null?'na':qs>=7?'high':qs>=4?'med':'low';
+    const matchShort=m=>({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m]||m||'—');
+    document.getElementById('topKeywordsBody').innerHTML=kwData.top_performers.slice(0,8).map(k=>`<tr><td class="kw-keyword" title="${k.keyword}">${k.keyword}</td><td><span class="kw-match">${matchShort(k.match_type)}</span></td><td>${fmtN(k.clicks)}</td><td class="kw-ctr ${ctrClass(k.ctr)}">${(k.ctr||0).toFixed(1)}%</td><td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score||'—'}</span></td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--gray-400)">No data</td></tr>';
+    const lowKW=kwData.compliance_risks.slice(0,8);
+    document.getElementById('lowCtrKeywordsBody').innerHTML=lowKW.length>0?lowKW.map(k=>`<tr><td class="kw-keyword" title="${k.keyword}">${k.keyword}</td><td><span class="kw-match">${matchShort(k.match_type)}</span></td><td>${fmtN(k.impressions)}</td><td class="kw-ctr bad">${(k.ctr||0).toFixed(1)}%</td><td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score||'—'}</span></td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--green)">✓ No compliance risks</td></tr>';
+    const qsDist=kwData.quality_score_distribution||{};
+    document.getElementById('qsDistribution').innerHTML=`<div class="qs-item"><span class="qs-dot high"></span> High (7-10): <strong>${qsDist.high||0}</strong></div><div class="qs-item"><span class="qs-dot med"></span> Medium (4-6): <strong>${qsDist.medium||0}</strong></div><div class="qs-item"><span class="qs-dot low"></span> Low (1-3): <strong>${qsDist.low||0}</strong></div><div class="qs-item" style="color:var(--gray-400)">Unknown: ${qsDist.unknown||0}</div>`;
   } else {
-    // No keyword data — neutral message (NOT gated to SEO package)
-    document.getElementById('keywordsContent').innerHTML = `
-      <div class="no-data-card">
-        <div class="no-data-icon">🔑</div>
-        <div class="no-data-title">Keyword data not yet available</div>
-        <div class="no-data-desc">Keyword performance data will appear here once campaigns have sufficient activity.</div>
-      </div>
-    `;
+    document.getElementById('keywordsContent').innerHTML=`<div class="no-data-card"><div class="no-data-icon">🔑</div><div class="no-data-title">Keyword data not yet available</div><div class="no-data-desc">Will appear once campaigns have sufficient activity.</div></div>`;
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // ADS Section — Google Ads data, available to ALL clients
-  // ═══════════════════════════════════════════════════════════════════════════
-  const adsData = window.CLIENT_DATA?.ads;
-  if (adsData && adsData.top_headlines && adsData.top_headlines.length > 0) {
-    document.getElementById('topHeadlines').innerHTML = adsData.top_headlines.map(h => `
-      <div class="headline-item">
-        <span class="headline-text" title="${h.headline || h.text || ''}">${h.headline || h.text || ''}</span>
-        <div class="headline-stats">
-          <span><strong>${(h.ctr||0).toFixed(1)}%</strong> CTR</span>
-          <span>${fmtN(h.clicks)} clicks</span>
-        </div>
-      </div>
-    `).join('');
-    
-    const topAds = (adsData.top_ads || []).slice(0, 4);
-    document.getElementById('topAds').innerHTML = topAds.map(a => `
-      <div class="ad-item">
-        <div class="ad-headlines">${(a.headlines || [a.headline]).slice(0,3).join(' | ')}</div>
-        <div class="ad-desc">${(a.descriptions || [a.description]).slice(0,1).join(' ')}</div>
-        <div class="ad-stats">
-          <span>📊 ${(a.ctr||0).toFixed(1)}% CTR</span>
-          <span>👆 ${fmtN(a.clicks)} clicks</span>
-          <span>🎯 ${fmtN(Math.round(a.conversions||0))} conv.</span>
-        </div>
-      </div>
-    `).join('');
+  // Ads
+  const adsData=window.CLIENT_DATA?.ads;
+  if(adsData&&adsData.top_headlines&&adsData.top_headlines.length>0){
+    document.getElementById('topHeadlines').innerHTML=adsData.top_headlines.map(h=>`<div class="headline-item"><span class="headline-text" title="${h.headline||h.text||''}">${h.headline||h.text||''}</span><div class="headline-stats"><span><strong>${(h.ctr||0).toFixed(1)}%</strong> CTR</span><span>${fmtN(h.clicks)} clicks</span></div></div>`).join('');
+    document.getElementById('topAds').innerHTML=(adsData.top_ads||[]).slice(0,4).map(a=>`<div class="ad-item"><div class="ad-headlines">${(a.headlines||[a.headline]).slice(0,3).join(' | ')}</div><div class="ad-desc">${(a.descriptions||[a.description]).slice(0,1).join(' ')}</div><div class="ad-stats"><span>📊 ${(a.ctr||0).toFixed(1)}% CTR</span><span>👆 ${fmtN(a.clicks)} clicks</span><span>🎯 ${fmtN(Math.round(a.conversions||0))} conv.</span></div></div>`).join('');
   } else {
-    // No ads data — neutral message (NOT gated to SEO package)
-    document.getElementById('adsContent').innerHTML = `
-      <div class="no-data-card">
-        <div class="no-data-icon">✨</div>
-        <div class="no-data-title">Ad copy data not yet available</div>
-        <div class="no-data-desc">Ad performance data will appear here once campaigns have sufficient activity.</div>
-      </div>
-    `;
+    document.getElementById('adsContent').innerHTML=`<div class="no-data-card"><div class="no-data-icon">✨</div><div class="no-data-title">Ad copy data not yet available</div><div class="no-data-desc">Will appear once campaigns have sufficient activity.</div></div>`;
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // TIMING Section — Google Ads data, available to ALL clients
-  // ═══════════════════════════════════════════════════════════════════════════
-  const dowData = window.CLIENT_DATA?.day_of_week;
-  const hourData = window.CLIENT_DATA?.hour_of_day;
-  if (dowData && dowData.length > 0) {
-    const ctrClass = (ctr) => ctr >= 5 ? 'good' : ctr >= 3 ? 'warn' : 'bad';
-    document.getElementById('dowGrid').innerHTML = dowData.map(d => `
-      <div class="dow-item">
-        <div class="dow-day">${(d.day||'').slice(0,3)}</div>
-        <div class="dow-clicks">${fmtN(d.clicks)}</div>
-        <div class="dow-ctr ${ctrClass(d.ctr||0)}">${(d.ctr||0).toFixed(1)}%</div>
-      </div>
-    `).join('');
-    
-    if (hourData && hourData.length > 0) {
-      const maxClicks = Math.max(...hourData.map(h => h.clicks||0)) || 1;
-      document.getElementById('hourHeatmap').innerHTML = hourData.map(h => {
-        const intensity = (h.clicks||0) / maxClicks;
-        const bg = intensity > 0.7 ? 'var(--blue)' : intensity > 0.4 ? 'rgba(0,131,198,0.5)' : intensity > 0.1 ? 'rgba(0,131,198,0.2)' : 'var(--gray-100)';
-        const color = intensity > 0.5 ? '#fff' : 'var(--navy)';
-        return `<div class="hour-cell" style="background:${bg};color:${color}" data-tooltip="${h.hour}:00 - ${h.clicks} clicks">${h.hour}</div>`;
+  // Timing
+  const dowData=window.CLIENT_DATA?.day_of_week;
+  const hourData=window.CLIENT_DATA?.hour_of_day;
+  if(dowData&&dowData.length>0){
+    const ctrCls=ctr=>ctr>=5?'good':ctr>=3?'warn':'bad';
+    document.getElementById('dowGrid').innerHTML=dowData.map(d=>`<div class="dow-item"><div class="dow-day">${(d.day||'').slice(0,3)}</div><div class="dow-clicks">${fmtN(d.clicks)}</div><div class="dow-ctr ${ctrCls(d.ctr||0)}">${(d.ctr||0).toFixed(1)}%</div></div>`).join('');
+    if(hourData&&hourData.length>0){
+      // Convert 0-23 to 12-hour display (12am, 1am … 12pm, 1pm …)
+      function fmtHour(h){
+        if(h===0) return'12am';
+        if(h<12)  return h+'am';
+        if(h===12)return'12pm';
+        return (h-12)+'pm';
+      }
+      // Timezone label — use account timezone from CLIENT_DATA, fallback to browser tz
+      const acctTz = window.CLIENT_DATA?.timezone || null;
+      const displayTz = acctTz || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const tzEl = document.getElementById('hourTzLabel');
+      if(tzEl) tzEl.textContent = displayTz + (acctTz ? ' (account)' : ' (your browser)');
+
+      const maxClicks=Math.max(...hourData.map(h=>h.clicks||0))||1;
+      document.getElementById('hourHeatmap').innerHTML=hourData.map(h=>{
+        const intensity=(h.clicks||0)/maxClicks;
+        const bg=intensity>0.7?'var(--blue)':intensity>0.4?'rgba(0,131,198,0.5)':intensity>0.1?'rgba(0,131,198,0.2)':'var(--gray-100)';
+        const label=fmtHour(h.hour);
+        const tooltip=label+' — '+fmtN(h.clicks)+' clicks';
+        return`<div class="hour-cell" style="background:${bg};color:${intensity>0.5?'#fff':'var(--navy)'}" data-tooltip="${tooltip}">${label}</div>`;
       }).join('');
+
+      // Axis labels: 12am, 6am, 12pm, 6pm, 11pm — evenly spaced across 24 cells
+      const axisEl=document.getElementById('hourAxisLabels');
+      if(axisEl) axisEl.innerHTML=['12am','6am','12pm','6pm','11pm'].map(t=>`<span>${t}</span>`).join('');
     }
   } else {
-    // No timing data — neutral message (NOT gated to SEO package)
-    document.getElementById('timingContent').innerHTML = `
-      <div class="no-data-card">
-        <div class="no-data-icon">🕐</div>
-        <div class="no-data-title">Timing data not yet available</div>
-        <div class="no-data-desc">Day and hour performance data will appear here once campaigns have sufficient activity.</div>
-      </div>
-    `;
+    document.getElementById('timingContent').innerHTML=`<div class="no-data-card"><div class="no-data-icon">🕐</div><div class="no-data-title">Timing data not yet available</div><div class="no-data-desc">Will appear once campaigns have sufficient activity.</div></div>`;
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SEARCH TERMS Section — Google Ads data, available to ALL clients
-  // ═══════════════════════════════════════════════════════════════════════════
-  const stData = window.CLIENT_DATA?.search_terms;
-  if (stData && stData.top_terms && stData.top_terms.length > 0) {
-    const topTerms = stData.top_terms.slice(0, 10);
-    const negTerms = (stData.potential_negatives || []).slice(0, 8);
-    
-    document.getElementById('topSearchTermsBody').innerHTML = topTerms.map(t => `
-      <tr>
-        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
-        <td>${fmtN(t.clicks)}</td>
-        <td>${(t.ctr||0).toFixed(1)}%</td>
-        <td>${fmtN(Math.round(t.conversions||0))}</td>
-      </tr>
-    `).join('');
-    
-    document.getElementById('negativeTermsBody').innerHTML = negTerms.length > 0 ? negTerms.map(t => `
-      <tr>
-        <td class="st-term" title="${t.term || t.search_term || ''}">${t.term || t.search_term || ''}</td>
-        <td>${fmtN(t.impressions)}</td>
-        <td style="color:var(--red)">${(t.ctr||0).toFixed(1)}%</td>
-        <td><span class="st-negative">Review</span></td>
-      </tr>
-    `).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--green)">✓ No low-CTR terms found</td></tr>';
+  // Search terms
+  const stData=window.CLIENT_DATA?.search_terms;
+  if(stData&&stData.top_terms&&stData.top_terms.length>0){
+    document.getElementById('topSearchTermsBody').innerHTML=stData.top_terms.slice(0,10).map(t=>`<tr><td class="st-term" title="${t.term||t.search_term||''}">${t.term||t.search_term||''}</td><td>${fmtN(t.clicks)}</td><td>${(t.ctr||0).toFixed(1)}%</td><td>${fmtN(Math.round(t.conversions||0))}</td></tr>`).join('');
+    const negTerms=(stData.potential_negatives||[]).slice(0,8);
+    document.getElementById('negativeTermsBody').innerHTML=negTerms.length>0?negTerms.map(t=>`<tr><td class="st-term">${t.term||t.search_term||''}</td><td>${fmtN(t.impressions)}</td><td style="color:var(--red)">${(t.ctr||0).toFixed(1)}%</td><td><span class="st-negative">Review</span></td></tr>`).join(''):'<tr><td colspan="4" style="text-align:center;color:var(--green)">✓ No low-CTR terms found</td></tr>';
   } else {
-    // No search terms data — neutral message (NOT gated to SEO package)
-    document.getElementById('searchTermsContent').innerHTML = `
-      <div class="no-data-card">
-        <div class="no-data-icon">🔍</div>
-        <div class="no-data-title">Search terms data not yet available</div>
-        <div class="no-data-desc">Search term data will appear here once campaigns have sufficient activity.</div>
-      </div>
-    `;
+    document.getElementById('searchTermsContent').innerHTML=`<div class="no-data-card"><div class="no-data-icon">🔍</div><div class="no-data-title">Search terms data not yet available</div><div class="no-data-desc">Will appear once campaigns have sufficient activity.</div></div>`;
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // GBP Section — GATED to seo_enrolled clients only
-  // ═══════════════════════════════════════════════════════════════════════════
-  const gbpEnrolled = window.CLIENT_DATA?.gbp_enrolled || window.CLIENT_DATA?.seo_enrolled || false;
-  const gbpData = window.CLIENT_DATA?.gbp || null;
-  const gbpContainer = document.getElementById('gbpContent');
-  
-  if (gbpEnrolled && gbpData && !gbpData.pending_access) {
-    // Has GBP data - render metrics (future implementation)
-    gbpContainer.innerHTML = `<div>GBP data coming soon...</div>`;
+  // GBP
+  const gbpEnrolled=window.CLIENT_DATA?.gbp_enrolled||window.CLIENT_DATA?.seo_enrolled||false;
+  const gbpData=window.CLIENT_DATA?.gbp||null;
+  const gbpContainer=document.getElementById('gbpContent');
+  if(gbpEnrolled&&gbpData&&!gbpData.pending_access){
+    gbpContainer.innerHTML=`<div>GBP data coming soon...</div>`;
   } else {
-    // Locked state - show upsell (SEO package gating)
-    gbpContainer.innerHTML = `
-      <div class="gbp-locked">
-        <div class="gbp-locked-overlay">
-          <div class="gbp-locked-icon">📍</div>
-          <div class="gbp-locked-title">Google Business Profile Insights</div>
-          <div class="gbp-locked-desc">Track your local presence, reviews, direction requests, and phone calls from your Google Business Profile.</div>
-          <div class="gbp-features">
-            <span class="gbp-feature">Direction Requests</span>
-            <span class="gbp-feature">Phone Calls</span>
-            <span class="gbp-feature">Reviews & Rating</span>
-            <span class="gbp-feature">Photo Views</span>
-            <span class="gbp-feature">Discovery Searches</span>
-          </div>
-          <a href="mailto:scott@sponsorapurpose.org?subject=GBP%20Insights%20Interest" class="gbp-unlock-btn">Learn More →</a>
-        </div>
-      </div>
-    `;
-    document.getElementById('gbpSubtitle').textContent = 'Available with SEO package';
+    gbpContainer.innerHTML=`<div class="gbp-locked"><div class="gbp-locked-overlay"><div class="gbp-locked-icon">📍</div><div class="gbp-locked-title">Google Business Profile Insights</div><div class="gbp-locked-desc">Track your local presence, reviews, direction requests, and phone calls from your Google Business Profile.</div><div class="gbp-features"><span class="gbp-feature">Direction Requests</span><span class="gbp-feature">Phone Calls</span><span class="gbp-feature">Reviews & Rating</span><span class="gbp-feature">Photo Views</span><span class="gbp-feature">Discovery Searches</span></div><a href="mailto:scott@sponsorapurpose.org?subject=GBP%20Insights%20Interest" class="gbp-unlock-btn">Learn More →</a></div></div>`;
+    document.getElementById('gbpSubtitle').textContent='Available with SEO package';
   }
+
+  // Insights
+  const ig=document.getElementById('insightsGrid');
+  if(window.CLIENT_DATA?.insights?.length){
+    const tagLabel={win:'Performing well',action:'Action required',watch:'Under review'};
+    ig.innerHTML=window.CLIENT_DATA.insights.map((ins,i)=>`<div class="insight-card fade" style="animation-delay:${i*.06}s"><div class="insight-bar ${ins.color||'blue'}"></div><div><div class="insight-title">${ins.title||''}</div><div class="insight-body">${ins.body||''}</div><span class="insight-tag tag-${ins.tag||'watch'}">${tagLabel[ins.tag]||'Under review'}</span></div></div>`).join('');
+  }
+
+  // Actions
+  const actions=window.CLIENT_DATA?.actions||{};
+  const did=actions.did||{},next=actions.next||{};
+  if(did.title)document.getElementById('actionDidTitle').textContent=did.title;
+  if(did.body)document.getElementById('actionDidBody').textContent=did.body;
+  if(next.title)document.getElementById('actionNextTitle').textContent=next.title;
+  if(next.body)document.getElementById('actionNextBody').textContent=next.body;
 
   updateSidebarActive();
 }
@@ -1406,7 +1418,7 @@ function buildMain(type){
       {label:'Clicks',data:dy.clicks,backgroundColor:type==='bar'?'rgba(0,131,198,0.4)':'transparent',borderColor:'#0083C6',borderWidth:type==='line'?2.5:1,borderRadius:type==='bar'?3:0,fill:type==='line',tension:0.35,pointRadius:type==='line'?2:0,yAxisID:'y',order:2},
       {label:'Conversions',data:dy.convs,type:'line',borderColor:'#3DAA69',backgroundColor:'rgba(61,170,105,0.08)',borderWidth:2.5,pointRadius:2,pointBackgroundColor:'#3DAA69',fill:true,tension:0.35,yAxisID:'y',order:1}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmtN(ctx.parsed.y)}}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 }
 window.swapMain=(t,el)=>{buildMain(t);document.querySelectorAll('.ctab').forEach(x=>x.classList.remove('active'));el.classList.add('active')};
@@ -1416,7 +1428,6 @@ function setRange(r,btn){
   document.querySelectorAll('.dt-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   const overlay=document.getElementById('loadingOverlay');
-  document.getElementById('loadingText')&&(document.getElementById('loadingText').textContent='Updating data...');
   overlay.classList.add('show');
   setTimeout(()=>{render();overlay.classList.remove('show');},350);
 }
@@ -1424,50 +1435,34 @@ function setRange(r,btn){
 function initClient(){
   const cd=window.CLIENT_DATA;
   if(!cd)return;
-
-  // Page title + client name
   document.title=cd.name+' — Google Ads Report';
   document.getElementById('sbClientName').textContent=cd.name;
   document.getElementById('sbClientId').textContent='Account '+cd.account_id;
   document.getElementById('topbarTitle').textContent=cd.name;
   document.getElementById('sbFoot').textContent='Data via Google Ads API · '+cd.report_date;
   document.getElementById('gpsDateSub').textContent='Calculated '+cd.report_date;
-
-  // GPS
-  const gps=cd.gps||0;
-  const gc=cd.gps_components||{};
+  const gps=cd.gps||0,gc=cd.gps_components||{};
   document.getElementById('sbGpsScore').innerHTML=gps+'<span style="font-size:16px;color:rgba(255,255,255,0.35)">/100</span>';
   document.getElementById('gpsScoreDisplay').innerHTML=gps+'<span>/100</span>';
   document.getElementById('sbGpsFill').style.width=gps+'%';
   document.getElementById('sbGpsSub').textContent=gps>=80?'Excellent':gps>=60?'Good':gps>=40?'Fair':'Needs attention';
   document.getElementById('gpsDesc').textContent=gps>=80?'Excellent — top performing account':gps>=60?'Good — performing well with room to improve':gps>=40?'Fair — several areas need attention':'Needs attention — immediate action recommended';
-
-  function setBar(barId,valId,pct){
-    const b=document.getElementById(barId),v=document.getElementById(valId);
-    if(b){b.style.width=pct+'%';b.style.background=colorBar(pct);}
-    if(v)v.textContent=pct+'%';
-  }
+  function setBar(bId,vId,pct){const b=document.getElementById(bId),v=document.getElementById(vId);if(b){b.style.width=pct+'%';b.style.background=colorBar(pct);}if(v)v.textContent=pct+'%';}
   setBar('gpsCtrBar','gpsCtrVal',gc.ctr||0);
   setBar('gpsUtilBar','gpsUtilVal',gc.utilization||0);
   setBar('gpsConvBar','gpsConvVal',gc.conv_tracking||0);
   setBar('gpsBudgetBar','gpsBudgetVal',gc.budget||0);
-
-  // Compliance
-  const ctr=cd.totals_30d?.ctr||0;
-  const compliance=cd.compliance||'unknown';
-  const banner=document.getElementById('compBanner');
-  const pill=document.getElementById('compliancePill');
+  const ctr=cd.totals_30d?.ctr||0,compliance=cd.compliance||'unknown';
+  const banner=document.getElementById('compBanner'),pill=document.getElementById('compliancePill');
   if(compliance==='compliant'){
-    banner.className='compliance-banner cb-green';
-    pill.className='compliance-pill pill-green';
+    banner.className='compliance-banner cb-green';pill.className='compliance-pill pill-green';
     document.getElementById('compliancePillText').textContent='CTR Compliant';
     document.getElementById('compTitle').textContent='Ad Grants Compliance — Compliant';
     document.getElementById('compBody').textContent=ctr.toFixed(1)+'% CTR over the last 30 days — above the 5% minimum required by Google Ad Grants.';
     document.getElementById('compPillText').textContent=ctr.toFixed(1)+'% CTR';
     document.getElementById('compPill').className='compliance-pill pill-green';
   } else if(compliance==='at_risk'){
-    banner.className='compliance-banner cb-red';
-    pill.className='compliance-pill pill-red';
+    banner.className='compliance-banner cb-red';pill.className='compliance-pill pill-red';
     document.getElementById('compliancePillText').textContent='CTR At Risk';
     document.getElementById('compTitle').textContent='Ad Grants Compliance — At Risk';
     document.getElementById('compBody').textContent='CTR is '+ctr.toFixed(1)+'% — below the 5% minimum. Action required to avoid account suspension.';
@@ -1476,40 +1471,16 @@ function initClient(){
   } else {
     banner.className='compliance-banner cb-amber';
     document.getElementById('compTitle').textContent='Ad Grants — Low Activity';
-    document.getElementById('compBody').textContent='Insufficient data to assess compliance. Ensure campaigns are active and running.';
+    document.getElementById('compBody').textContent='Insufficient data to assess compliance.';
     document.getElementById('compPillText').textContent='Low Activity';
     document.getElementById('compPill').className='compliance-pill pill-amber';
     document.getElementById('compliancePillText').textContent='Low Activity';
     pill.className='compliance-pill pill-amber';
   }
-
-  // Actions
-  const actions=cd.actions||{};
-  const did=actions.did||{};
-  const next=actions.next||{};
-  if(did.title)document.getElementById('actionDidTitle').textContent=did.title;
-  if(did.body)document.getElementById('actionDidBody').textContent=did.body;
-  if(next.title)document.getElementById('actionNextTitle').textContent=next.title;
-  if(next.body)document.getElementById('actionNextBody').textContent=next.body;
-
-  // Insights
-  const ig=document.getElementById('insightsGrid');
-  if(cd.insights&&cd.insights.length){
-    const tagLabel={win:'Performing well',action:'Action required',watch:'Under review'};
-    ig.innerHTML=cd.insights.map((ins,i)=>`
-      <div class="insight-card fade" style="animation-delay:${i*.06}s">
-        <div class="insight-bar ${ins.color||'blue'}"></div>
-        <div>
-          <div class="insight-title">${ins.title||''}</div>
-          <div class="insight-body">${ins.body||''}</div>
-          <span class="insight-tag tag-${ins.tag||'watch'}">${tagLabel[ins.tag]||'Under review'}</span>
-        </div>
-      </div>`).join('');
-  }
 }
 
 function updateSidebarActive(){
-  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-keywords','sec-ads','sec-timing','sec-search-terms','sec-audience','sec-landing','sec-location','sec-visibility','sec-seo','sec-gbp','sec-actions','sec-insights'];
+  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-keywords','sec-ads','sec-timing','sec-search-terms','sec-audience','sec-landing','sec-ga4-traffic','sec-ga4-devices','sec-ga4-demographics','sec-location','sec-visibility','sec-seo','sec-gbp','sec-actions','sec-insights'];
   const links=document.querySelectorAll('.sb-nav a');
   function check(){
     let cur=ids[0];
@@ -1525,13 +1496,319 @@ function updateSidebarActive(){
 // Boot
 const overlay=document.getElementById('loadingOverlay');
 overlay.classList.add('show');
-window.addEventListener('load',()=>{
-  initClient();
-  render();
-  overlay.classList.remove('show');
-});
+window.addEventListener('load',()=>{initClient();render();overlay.classList.remove('show');});
 </script>
 
-<!-- CLIENT DATA INJECTED HERE BY generate_reports_v2.py -->
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DATA INJECTED BY generate_reports_v2.py
+     
+     window.CLIENT_DATA  — Ad Grants + client metadata
+     window.REPORT_DATA  — { '30d': {...}, '7d': {...} }
+     window.LP_DATA      — Landing page rows
+     window.STATE_DATA   — State rows
+     window.CITY_DATA    — City rows
+
+     window.GA4_DATA = {
+       overview: {
+         sessions, users, new_users, pageviews,
+         engagement_rate, bounce_rate, avg_duration, conversions,
+         sessions_delta, users_delta, new_users_delta, pageviews_delta,
+         engagement_delta, bounce_delta, duration_delta, conv_delta
+       },
+       sessions_trend: [ { date, sessions }, ... ],
+       utm_sources: [ { name, pct, sessions, utm }, ... ],
+       devices: {
+         mobile:  { sessions, users, conversions, engagement_rate, avg_time, bounce_rate, share },
+         desktop: { ... },
+         tablet:  { ... }
+       },
+       browsers: [ { name, pct }, ... ],
+       demographics: {
+         gender:            [ { name, value }, ... ],
+         gender_engagement: [ { metric, female, male }, ... ],
+         age_groups:        [ { age, sessions, conversions, share }, ... ]
+       }
+     }
+════════════════════════════════════════════════════════════════════════════ -->
+
+<script>
+// ─── SAMPLE DATA — Pup Profile Rescue (demo client) ──────────────────────────
+
+window.CLIENT_DATA = {
+  name: "Pup Profile Rescue",
+  account_id: "123-456-7890",
+  timezone: "America/Los_Angeles",
+  report_date: "April 2025",
+  gps: 74,
+  gps_components: { ctr: 85, utilization: 68, conv_tracking: 100, budget: 72 },
+  compliance: "compliant",
+  totals_30d: { ctr: 8.4 },
+  seo_enrolled: false,
+  gbp_enrolled: false,
+  actions: {
+    did: {
+      title: "Expanded adoption keyword set",
+      body: "Added 47 new long-tail adoption-intent keywords across the Adopt a Dog and Adopt a Cat campaigns. Paused 12 broad-match terms with CTR below 2% that were dragging compliance metrics."
+    },
+    next: {
+      title: "Landing page conversion audit",
+      body: "Running a full review of the /adopt and /donate landing pages to identify drop-off points. Goal is to lift the current 3.1% conversion rate by improving above-the-fold CTAs and form length."
+    }
+  },
+  insights: [
+    { title: "CTR is strong — compliance is safe", body: "Your 8.4% account-level CTR is well above Google's 5% minimum. The Adopt a Dog campaign is the primary driver at 11.2% CTR. No immediate compliance risk.", color: "green", tag: "win" },
+    { title: "Grant utilization at 68% — room to spend more", body: "You're leaving roughly $3,200 of your monthly $10,000 grant on the table. Expanding to foster-related and volunteering keywords could absorb the remaining budget without diluting CTR.", color: "amber", tag: "action" },
+    { title: "Mobile converts 40% better than desktop", body: "Mobile sessions are driving a 4.8% conversion rate vs 3.4% on desktop. Consider a mobile-specific landing page experience and ensure the donation form is fully thumb-friendly.", color: "blue", tag: "win" },
+    { title: "Senior dog keywords underperforming", body: "Three keywords targeting senior dog adoption have CTR below 3% with 800+ impressions each. Recommend tightening match types to Phrase or testing new ad copy that leads with the emotional story.", color: "amber", tag: "watch" }
+  ],
+  keywords: {
+    top_performers: [
+      { keyword: "adopt a dog near me",        match_type: "PHRASE", clicks: 842,  ctr: 12.4, quality_score: 9 },
+      { keyword: "rescue dogs available",       match_type: "BROAD",  clicks: 631,  ctr: 9.8,  quality_score: 8 },
+      { keyword: "puppy adoption",              match_type: "EXACT",  clicks: 584,  ctr: 11.2, quality_score: 9 },
+      { keyword: "dog adoption center",         match_type: "PHRASE", clicks: 476,  ctr: 8.6,  quality_score: 7 },
+      { keyword: "adopt a shelter dog",         match_type: "EXACT",  clicks: 412,  ctr: 10.1, quality_score: 8 },
+      { keyword: "rescue puppy near me",        match_type: "PHRASE", clicks: 388,  ctr: 9.3,  quality_score: 8 },
+      { keyword: "dog rescue organization",     match_type: "BROAD",  clicks: 294,  ctr: 7.2,  quality_score: 6 },
+      { keyword: "adopt a cat",                 match_type: "EXACT",  clicks: 271,  ctr: 8.9,  quality_score: 7 },
+    ],
+    compliance_risks: [
+      { keyword: "free dogs",                   match_type: "BROAD",  impressions: 1240, ctr: 1.8, quality_score: 3 },
+      { keyword: "buy a puppy",                 match_type: "BROAD",  impressions: 980,  ctr: 2.1, quality_score: 4 },
+      { keyword: "senior dog adoption",         match_type: "BROAD",  impressions: 820,  ctr: 2.9, quality_score: 5 },
+    ],
+    quality_score_distribution: { high: 14, medium: 9, low: 3, unknown: 4 }
+  },
+  ads: {
+    top_headlines: [
+      { headline: "Give a Rescue Dog a Forever Home", ctr: 14.2, clicks: 1240 },
+      { headline: "Adopt, Don't Shop — Meet Your Match", ctr: 11.8, clicks: 984 },
+      { headline: "Dogs Waiting for You Today",         ctr: 10.3, clicks: 876 },
+      { headline: "Free Adoption Events This Weekend",  ctr: 9.7,  clicks: 821 },
+    ],
+    top_ads: [
+      {
+        headlines: ["Give a Rescue Dog a Forever Home", "Adopt Today — All Ages & Breeds", "Every Dog Deserves Love"],
+        descriptions: ["Browse available rescue dogs in your area. Adoption fees include vaccinations, microchip, and spay/neuter."],
+        ctr: 12.4, clicks: 1840, conversions: 94
+      },
+      {
+        headlines: ["Adopt a Cat or Dog Near You", "Open 7 Days — Walk-Ins Welcome", "Find Your New Best Friend"],
+        descriptions: ["Our rescue has 80+ animals looking for homes. Same-day adoption available for approved applicants."],
+        ctr: 9.8, clicks: 1210, conversions: 61
+      }
+    ]
+  },
+  day_of_week: [
+    { day: "Monday",    clicks: 842,  ctr: 8.1 },
+    { day: "Tuesday",   clicks: 794,  ctr: 7.9 },
+    { day: "Wednesday", clicks: 910,  ctr: 8.6 },
+    { day: "Thursday",  clicks: 876,  ctr: 8.4 },
+    { day: "Friday",    clicks: 1024, ctr: 9.2 },
+    { day: "Saturday",  clicks: 1380, ctr: 11.4 },
+    { day: "Sunday",    clicks: 1198, ctr: 10.8 },
+  ],
+  hour_of_day: [
+    {hour:0,clicks:42},{hour:1,clicks:28},{hour:2,clicks:18},{hour:3,clicks:14},
+    {hour:4,clicks:22},{hour:5,clicks:48},{hour:6,clicks:124},{hour:7,clicks:218},
+    {hour:8,clicks:384},{hour:9,clicks:512},{hour:10,clicks:598},{hour:11,clicks:641},
+    {hour:12,clicks:724},{hour:13,clicks:698},{hour:14,clicks:672},{hour:15,clicks:714},
+    {hour:16,clicks:748},{hour:17,clicks:812},{hour:18,clicks:934},{hour:19,clicks:876},
+    {hour:20,clicks:742},{hour:21,clicks:584},{hour:22,clicks:312},{hour:23,clicks:148},
+  ],
+  search_terms: {
+    top_terms: [
+      { term: "adopt a dog near me",               clicks: 412, ctr: 13.2, conversions: 28 },
+      { term: "rescue puppies for adoption",        clicks: 344, ctr: 11.8, conversions: 21 },
+      { term: "dog adoption near me",               clicks: 298, ctr: 10.4, conversions: 18 },
+      { term: "adopt a shelter dog",                clicks: 276, ctr: 9.9,  conversions: 16 },
+      { term: "puppy adoption center",              clicks: 241, ctr: 9.1,  conversions: 14 },
+      { term: "rescue cat adoption",                clicks: 198, ctr: 8.7,  conversions: 11 },
+      { term: "animals for adoption near me",       clicks: 184, ctr: 8.2,  conversions: 9  },
+      { term: "adopt a dog free",                   clicks: 162, ctr: 7.6,  conversions: 8  },
+      { term: "dog adoption events this weekend",   clicks: 147, ctr: 12.4, conversions: 12 },
+      { term: "local animal rescue adoption",       clicks: 138, ctr: 7.1,  conversions: 7  },
+    ],
+    potential_negatives: [
+      { term: "dog breeders near me",          impressions: 640, ctr: 1.4 },
+      { term: "buy a golden retriever puppy",  impressions: 520, ctr: 0.9 },
+      { term: "pet store puppies",             impressions: 410, ctr: 1.8 },
+    ]
+  }
+};
+
+// ─── Ad Grants performance data (30d + 7d) ───────────────────────────────────
+const _daily30 = (()=>{
+  const labels=[],clicks=[],convs=[],spend=[],cpc=[];
+  const base=[88,102,94,118,141,196,172,96,108,114,128,144,192,168,101,112,118,132,148,198,174,108,116,124,138,152,204,182,114,122];
+  base.forEach((c,i)=>{
+    const d=new Date(2025,2,2+i);
+    labels.push((d.getMonth()+1)+'/'+(d.getDate()));
+    clicks.push(c);
+    convs.push(Math.round(c*0.038));
+    spend.push(+(c*0.82).toFixed(2));
+    cpc.push(+(0.78+Math.random()*0.18).toFixed(2));
+  });
+  return {labels,clicks,convs,spend,cpc};
+})();
+
+const _daily7 = (()=>{
+  const labels=[],clicks=[],convs=[],spend=[],cpc=[];
+  const base=[138,152,204,182,114,116,124];
+  base.forEach((c,i)=>{
+    const d=new Date(2025,3,9+i);
+    labels.push((d.getMonth()+1)+'/'+(d.getDate()));
+    clicks.push(c);
+    convs.push(Math.round(c*0.041));
+    spend.push(+(c*0.82).toFixed(2));
+    cpc.push(+(0.80+Math.random()*0.14).toFixed(2));
+  });
+  return {labels,clicks,convs,spend,cpc};
+})();
+
+window.REPORT_DATA = {
+  '30d': {
+    totals: {
+      cl: 4024, im: 47908, ctr: 8.4, cost: 6842,
+      cv: 153, convRate: 3.8, costPerConv: 44.72, cpc: 1.70,
+      impressionShare: 24.6, lostIsRank: 38.2, lostIsBudget: 11.4
+    },
+    campaigns: [
+      { n:"Adopt a Dog",          s:"ENABLED", ctr:11.2, cl:1840, im:16428, cost:2840, cv:72,  cpa:39.44, cpc:1.54 },
+      { n:"Adopt a Cat",          s:"ENABLED", ctr:8.9,  cl:984,  im:11056, cost:1612, cv:38,  cpa:42.42, cpc:1.64 },
+      { n:"Donate — General",     s:"ENABLED", ctr:6.4,  cl:712,  im:11125, cost:1240, cv:28,  cpa:44.29, cpc:1.74 },
+      { n:"Foster a Dog",         s:"ENABLED", ctr:7.8,  cl:488,  im:6256,  cost:848,  cv:15,  cpa:56.53, cpc:1.74 },
+      { n:"Volunteer Sign-Up",    s:"ENABLED", ctr:5.2,  cl:0,    im:0,     cost:302,  cv:0,   cpa:null,  cpc:0    },
+    ],
+    devices: [
+      {n:"Mobile",  cl:2494},
+      {n:"Desktop", cl:1167},
+      {n:"Tablet",  cl:363},
+    ],
+    daily: _daily30
+  },
+  '7d': {
+    totals: {
+      cl: 830, im: 9884, ctr: 8.4, cost: 1414,
+      cv: 34, convRate: 4.1, costPerConv: 41.59, cpc: 1.70,
+      impressionShare: 26.1, lostIsRank: 34.8, lostIsBudget: 9.2
+    },
+    campaigns: [
+      { n:"Adopt a Dog",          s:"ENABLED", ctr:11.4, cl:382, im:3351, cost:588,  cv:16, cpa:36.75, cpc:1.54 },
+      { n:"Adopt a Cat",          s:"ENABLED", ctr:9.1,  cl:198, im:2176, cost:324,  cv:8,  cpa:40.50, cpc:1.64 },
+      { n:"Donate — General",     s:"ENABLED", ctr:6.6,  cl:148, im:2242, cost:258,  cv:6,  cpa:43.00, cpc:1.74 },
+      { n:"Foster a Dog",         s:"ENABLED", ctr:7.9,  cl:102, im:1291, cost:178,  cv:4,  cpa:44.50, cpc:1.74 },
+      { n:"Volunteer Sign-Up",    s:"ENABLED", ctr:5.4,  cl:0,   im:0,    cost:66,   cv:0,  cpa:null,  cpc:0    },
+    ],
+    devices: [
+      {n:"Mobile",  cl:517},
+      {n:"Desktop", cl:241},
+      {n:"Tablet",  cl:72},
+    ],
+    daily: _daily7
+  }
+};
+
+// ─── Landing pages ───────────────────────────────────────────────────────────
+window.LP_DATA = [
+  { page:"/adopt",         sessions:4840, pct:42, avgTime:"2m 48s", engaged:true,  convs:94  },
+  { page:"/donate",        sessions:2210, pct:19, avgTime:"2m 12s", engaged:true,  convs:58  },
+  { page:"/dogs",          sessions:1820, pct:16, avgTime:"3m 04s", engaged:true,  convs:31  },
+  { page:"/foster",        sessions:980,  pct:8,  avgTime:"1m 52s", engaged:true,  convs:12  },
+  { page:"/volunteer",     sessions:690,  pct:6,  avgTime:"1m 18s", engaged:false, convs:0   },
+  { page:"/",              sessions:580,  pct:5,  avgTime:"0m 48s", engaged:false, convs:4   },
+  { page:"/events",        sessions:380,  pct:3,  avgTime:"1m 34s", engaged:true,  convs:8   },
+  { page:"/about",         sessions:110,  pct:1,  avgTime:"0m 52s", engaged:false, convs:0   },
+];
+
+// ─── Location ─────────────────────────────────────────────────────────────────
+window.STATE_DATA = [
+  {state:"California",   pct:38, sessions:"4,380"},
+  {state:"Texas",        pct:14, sessions:"1,610"},
+  {state:"Florida",      pct:9,  sessions:"1,035"},
+  {state:"New York",     pct:8,  sessions:"920"},
+  {state:"Washington",   pct:7,  sessions:"805"},
+  {state:"Oregon",       pct:5,  sessions:"575"},
+  {state:"Colorado",     pct:4,  sessions:"460"},
+  {state:"Arizona",      pct:3,  sessions:"345"},
+];
+
+window.CITY_DATA = [
+  {city:"Los Angeles",   state:"CA", sessions:1840},
+  {city:"San Francisco", state:"CA", sessions:1120},
+  {city:"San Diego",     state:"CA", sessions:840},
+  {city:"Houston",       state:"TX", sessions:720},
+  {city:"Seattle",       state:"WA", sessions:680},
+  {city:"Portland",      state:"OR", sessions:510},
+  {city:"Miami",         state:"FL", sessions:490},
+  {city:"New York",      state:"NY", sessions:460},
+  {city:"Dallas",        state:"TX", sessions:420},
+  {city:"Denver",        state:"CO", sessions:390},
+];
+
+// ─── GA4 Data ─────────────────────────────────────────────────────────────────
+window.GA4_DATA = {
+  overview: {
+    sessions: 11520,        sessions_delta:  14.2,
+    users:    8840,         users_delta:     9.8,
+    new_users: 3910,        new_users_delta: 7.4,
+    pageviews: 31480,       pageviews_delta: 11.6,
+    engagement_rate: 64.8,  engagement_delta: 3.1,
+    bounce_rate: 35.2,      bounce_delta:    -2.4,
+    avg_duration: "2m 38s", duration_delta:  6.2,
+    conversions: 207,       conv_delta:      18.4
+  },
+  sessions_trend: [
+    {date:"Mar 2",  sessions:312},{date:"Mar 4",  sessions:348},{date:"Mar 6",  sessions:284},
+    {date:"Mar 8",  sessions:268},{date:"Mar 10", sessions:310},{date:"Mar 12", sessions:398},
+    {date:"Mar 14", sessions:442},{date:"Mar 16", sessions:380},{date:"Mar 18", sessions:362},
+    {date:"Mar 20", sessions:418},{date:"Mar 22", sessions:484},{date:"Mar 24", sessions:512},
+    {date:"Mar 26", sessions:468},{date:"Mar 28", sessions:524},{date:"Mar 30", sessions:196},
+  ],
+  utm_sources: [
+    { name:"google / cpc",        pct:36, sessions:4147, utm:"utm_source=google&utm_medium=cpc",          color:"#0083C6" },
+    { name:"google / organic",    pct:28, sessions:3226, utm:"utm_source=google&utm_medium=organic",      color:"#3DAA69" },
+    { name:"direct / none",       pct:14, sessions:1613, utm:"utm_source=direct",                         color:"#5BC8F0" },
+    { name:"email / newsletter",  pct:9,  sessions:1037, utm:"utm_source=email&utm_medium=newsletter",   color:"#E8A020" },
+    { name:"facebook / social",   pct:6,  sessions:691,  utm:"utm_source=facebook&utm_medium=social",    color:"#7C3AED" },
+    { name:"referral / partner",  pct:4,  sessions:461,  utm:"utm_source=referral&utm_medium=referral",  color:"#D94F3D" },
+    { name:"instagram / social",  pct:2,  sessions:230,  utm:"utm_source=instagram&utm_medium=social",   color:"#9EABBE" },
+    { name:"email / automation",  pct:1,  sessions:115,  utm:"utm_source=email&utm_medium=automation",   color:"#0F2B5B" },
+  ],
+  devices: {
+    mobile:  { sessions:6682, users:5136, conversions:120, engagement_rate:67.2, avg_time:"2m 18s", bounce_rate:32.8, share:58 },
+    desktop: { sessions:4147, users:3191, conversions:72,  engagement_rate:61.4, avg_time:"3m 02s", bounce_rate:38.4, share:36 },
+    tablet:  { sessions:691,  users:513,  conversions:15,  engagement_rate:58.6, avg_time:"2m 44s", bounce_rate:41.2, share:6  },
+  },
+  browsers: [
+    { name:"Chrome",  pct:52 },
+    { name:"Safari",  pct:31 },
+    { name:"Firefox", pct:7  },
+    { name:"Edge",    pct:5  },
+    { name:"Other",   pct:5  },
+  ],
+  demographics: {
+    gender: [
+      { name:"Female", value:68 },
+      { name:"Male",   value:28 },
+      { name:"Other",  value:4  },
+    ],
+    gender_engagement: [
+      { metric:"Open Rate",  female:42, male:28 },
+      { metric:"Click Rate", female:11, male:7  },
+      { metric:"Conv. Rate", female:8,  male:5  },
+      { metric:"Eng. Rate",  female:70, male:58 },
+    ],
+    age_groups: [
+      { age:"18-24", sessions:1152, conversions:18,  share:10 },
+      { age:"25-34", sessions:3110, conversions:62,  share:27 },
+      { age:"35-44", sessions:3226, conversions:71,  share:28 },
+      { age:"45-54", sessions:2074, conversions:38,  share:18 },
+      { age:"55-64", sessions:1267, conversions:14,  share:11 },
+      { age:"65+",   sessions:691,  conversions:4,   share:6  },
+    ]
+  }
+};
+</script>
 </body>
 </html>
