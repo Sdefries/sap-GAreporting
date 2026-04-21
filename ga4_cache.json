@@ -2,13 +2,13 @@
   "scienceworks": {
     "ga4_id": "345894114",
     "client": "scienceworks",
-    "fetched_at": "2026-04-21T23:17:20.709261",
+    "fetched_at": "2026-04-21T23:27:54.435062",
     "overview_30d": {
       "sessions": "6978",
       "totalUsers": "4997",
       "newUsers": "4604",
       "screenPageViews": "15358",
-      "averageSessionDuration": "139.40061728131269",
+      "averageSessionDuration": "139.40121791659502",
       "bounceRate": "0.38420750931499",
       "engagementRate": "0.61579249068501007",
       "conversions": "24",
@@ -26,7 +26,7 @@
       "totalUsers": "1372",
       "newUsers": "1125",
       "screenPageViews": "2824",
-      "averageSessionDuration": "130.14992667036012",
+      "averageSessionDuration": "130.1522486831025",
       "bounceRate": "0.55457063711911359",
       "engagementRate": "0.44542936288088641",
       "conversions": "3"
@@ -349,7 +349,7 @@
       {
         "landingPage": "/",
         "sessions": "2690",
-        "averageSessionDuration": "188.5297823386617",
+        "averageSessionDuration": "188.53134041784386",
         "bounceRate": "0.21078066914498142",
         "engagementRate": "0.78921933085501861",
         "conversions": "15"
@@ -607,18 +607,18 @@
   "justice-accountability-la": {
     "ga4_id": "521218906",
     "client": "justice-accountability-la",
-    "fetched_at": "2026-04-21T23:17:25.555477",
+    "fetched_at": "2026-04-21T23:28:03.568907",
     "overview_30d": {
       "sessions": "3862",
-      "totalUsers": "3047",
+      "totalUsers": "3048",
       "newUsers": "2083",
       "screenPageViews": "4852",
       "averageSessionDuration": "229.37356539176591",
       "bounceRate": "0.36172967374417403",
       "engagementRate": "0.638270326255826",
-      "conversions": "28",
+      "conversions": "30",
       "sessions_delta": 6.2,
-      "users_delta": 11.9,
+      "users_delta": 12.0,
       "new_users_delta": 2.4,
       "pageviews_delta": 8.1,
       "engagement_delta": -0.6,
@@ -627,14 +627,14 @@
       "conv_delta": null
     },
     "overview_7d": {
-      "sessions": "1108",
-      "totalUsers": "921",
+      "sessions": "1109",
+      "totalUsers": "922",
       "newUsers": "567",
       "screenPageViews": "1359",
-      "averageSessionDuration": "203.51190580144404",
-      "bounceRate": "0.42057761732851984",
-      "engagementRate": "0.57942238267148016",
-      "conversions": "28"
+      "averageSessionDuration": "203.32839641839496",
+      "bounceRate": "0.42110009017132549",
+      "engagementRate": "0.57889990982867445",
+      "conversions": "30"
     },
     "sessions_trend": [
       {
@@ -759,7 +759,7 @@
       },
       {
         "date": "Apr 21",
-        "sessions": 185
+        "sessions": 186
       }
     ],
     "utm_sources": [
@@ -820,9 +820,9 @@
     ],
     "devices": {
       "mobile": {
-        "sessions": 2199,
-        "users": 1795,
-        "conversions": 16,
+        "sessions": 2200,
+        "users": 1796,
+        "conversions": 18,
         "engagement_rate": 64.0,
         "avg_time": "3m 44s",
         "bounce_rate": 36.0,
@@ -859,7 +859,7 @@
     "browsers": [
       {
         "name": "Chrome",
-        "pct": 48.2
+        "pct": 48.1
       },
       {
         "name": "Safari",
@@ -926,16 +926,16 @@
       },
       {
         "landingPage": "",
-        "sessions": "98",
-        "averageSessionDuration": "187.19573093877551",
+        "sessions": "99",
+        "averageSessionDuration": "185.30486496969698",
         "bounceRate": "1",
         "engagementRate": "0",
-        "conversions": "28"
+        "conversions": "30"
       },
       {
         "landingPage": "/events",
         "sessions": "94",
-        "averageSessionDuration": "166.50250799999998",
+        "averageSessionDuration": "166.502508",
         "bounceRate": "0.36170212765957449",
         "engagementRate": "0.63829787234042556",
         "conversions": "0"
@@ -943,7 +943,7 @@
       {
         "landingPage": "/clean-slate",
         "sessions": "53",
-        "averageSessionDuration": "152.55185949056602",
+        "averageSessionDuration": "152.55185949056604",
         "bounceRate": "0.50943396226415094",
         "engagementRate": "0.49056603773584906",
         "conversions": "0"
@@ -959,7 +959,7 @@
       {
         "landingPage": "/donate",
         "sessions": "28",
-        "averageSessionDuration": "13.650072071428571",
+        "averageSessionDuration": "13.650072071428569",
         "bounceRate": "0.6785714285714286",
         "engagementRate": "0.32142857142857145",
         "conversions": "0"
@@ -973,8 +973,8 @@
       },
       {
         "region": "Texas",
-        "sessions": "800",
-        "totalUsers": "664"
+        "sessions": "801",
+        "totalUsers": "665"
       },
       {
         "region": "Alabama",
@@ -1027,8 +1027,8 @@
       {
         "city": "Dallas",
         "region": "Texas",
-        "sessions": "529",
-        "totalUsers": "436"
+        "sessions": "530",
+        "totalUsers": "437"
       },
       {
         "city": "Birmingham",
@@ -1100,9 +1100,9 @@
       },
       {
         "sessionDefaultChannelGroup": "Unassigned",
-        "sessions": "168",
-        "totalUsers": "156",
-        "conversions": "28"
+        "sessions": "169",
+        "totalUsers": "157",
+        "conversions": "30"
       },
       {
         "sessionDefaultChannelGroup": "Organic Social",
@@ -1121,34 +1121,34 @@
   "city-dogs-kitties": {
     "ga4_id": "490392378",
     "client": "city-dogs-kitties",
-    "fetched_at": "2026-04-21T23:17:32.722441",
+    "fetched_at": "2026-04-21T23:28:09.166472",
     "overview_30d": {
-      "sessions": "19336",
-      "totalUsers": "11511",
-      "newUsers": "20498",
-      "screenPageViews": "76263",
-      "averageSessionDuration": "332.87534425511996",
-      "bounceRate": "0.0048613984278030615",
-      "engagementRate": "0.99513860157219691",
-      "conversions": "210321",
-      "sessions_delta": 6.1,
-      "users_delta": 14.8,
+      "sessions": "19359",
+      "totalUsers": "11516",
+      "newUsers": "20511",
+      "screenPageViews": "76308",
+      "averageSessionDuration": "332.67673649852782",
+      "bounceRate": "0.0048556227077844929",
+      "engagementRate": "0.9951443772922155",
+      "conversions": "210449",
+      "sessions_delta": 6.3,
+      "users_delta": 14.9,
       "new_users_delta": 16.9,
-      "pageviews_delta": 3.2,
+      "pageviews_delta": 3.3,
       "engagement_delta": -0.1,
-      "bounce_delta": 40.6,
+      "bounce_delta": 40.4,
       "duration_delta": -5.1,
-      "conv_delta": 3.5
+      "conv_delta": 3.6
     },
     "overview_7d": {
-      "sessions": "4083",
-      "totalUsers": "2555",
-      "newUsers": "3701",
-      "screenPageViews": "16647",
-      "averageSessionDuration": "368.05029336566253",
-      "bounceRate": "0.0073475385745775165",
-      "engagementRate": "0.99265246142542252",
-      "conversions": "45499"
+      "sessions": "4093",
+      "totalUsers": "2561",
+      "newUsers": "3714",
+      "screenPageViews": "16692",
+      "averageSessionDuration": "368.08224607134133",
+      "bounceRate": "0.0058636696799413629",
+      "engagementRate": "0.99413633032005866",
+      "conversions": "45627"
     },
     "sessions_trend": [
       {
@@ -1273,19 +1273,19 @@
       },
       {
         "date": "Apr 21",
-        "sessions": 206
+        "sessions": 218
       }
     ],
     "utm_sources": [
       {
         "name": "google / organic",
-        "sessions": 8873,
+        "sessions": 8892,
         "pct": 72.0,
         "utm": "utm_source=google&utm_medium=organic"
       },
       {
         "name": "google / cpc",
-        "sessions": 1242,
+        "sessions": 1244,
         "pct": 10.1,
         "utm": "utm_source=google&utm_medium=cpc"
       },
@@ -1334,18 +1334,18 @@
     ],
     "devices": {
       "mobile": {
-        "sessions": 11326,
-        "users": 5839,
-        "conversions": 119700,
+        "sessions": 11332,
+        "users": 5843,
+        "conversions": 119766,
         "engagement_rate": 98.9,
         "avg_time": "5m 26s",
         "bounce_rate": 1.1,
         "share": 57.7
       },
       "desktop": {
-        "sessions": 8135,
-        "users": 5579,
-        "conversions": 88693,
+        "sessions": 8142,
+        "users": 5581,
+        "conversions": 88751,
         "engagement_rate": 99.6,
         "avg_time": "5m 31s",
         "bounce_rate": 0.4,
@@ -1354,9 +1354,9 @@
       "tablet": {
         "sessions": 159,
         "users": 106,
-        "conversions": 1899,
+        "conversions": 1903,
         "engagement_rate": 99.4,
-        "avg_time": "4m 29s",
+        "avg_time": "4m 30s",
         "bounce_rate": 0.6,
         "share": 0.8
       },
@@ -1415,7 +1415,7 @@
         },
         {
           "metric": "Conv. Rate",
-          "female": 1311.5,
+          "female": 1312.0,
           "male": 1270.2
         }
       ],
@@ -1428,14 +1428,14 @@
         },
         {
           "age": "25-34",
-          "sessions": 873,
-          "conversions": 10539,
+          "sessions": 874,
+          "conversions": 10546,
           "share": 4.5
         },
         {
           "age": "35-44",
           "sessions": 395,
-          "conversions": 5423,
+          "conversions": 5429,
           "share": 2.0
         },
         {
@@ -1453,13 +1453,13 @@
         {
           "age": "65+",
           "sessions": 282,
-          "conversions": 3672,
+          "conversions": 3676,
           "share": 1.5
         },
         {
           "age": "unknown",
-          "sessions": 16621,
-          "conversions": 174601,
+          "sessions": 16656,
+          "conversions": 174712,
           "share": 85.8
         }
       ]
@@ -1468,18 +1468,18 @@
       {
         "landingPage": "/",
         "sessions": "8491",
-        "averageSessionDuration": "365.45113834377577",
+        "averageSessionDuration": "365.46974161995053",
         "bounceRate": "0.00070663054999411143",
         "engagementRate": "0.99929336945000591",
-        "conversions": "113512"
+        "conversions": "113526"
       },
       {
         "landingPage": "/adopt-foster/adopt-a-dog",
         "sessions": "3228",
-        "averageSessionDuration": "333.284574319083",
+        "averageSessionDuration": "333.35854512949192",
         "bounceRate": "0.0086741016109045856",
         "engagementRate": "0.99132589838909546",
-        "conversions": "29981"
+        "conversions": "29984"
       },
       {
         "landingPage": "/adopt-foster/adopt-a-cat",
@@ -1487,15 +1487,15 @@
         "averageSessionDuration": "371.16872853454544",
         "bounceRate": "0.010101010101010102",
         "engagementRate": "0.98989898989899",
-        "conversions": "19861"
+        "conversions": "19863"
       },
       {
         "landingPage": "/adopt-foster/foster-a-dog",
-        "sessions": "940",
-        "averageSessionDuration": "289.198279206383",
-        "bounceRate": "0.0031914893617021275",
-        "engagementRate": "0.9968085106382979",
-        "conversions": "8471"
+        "sessions": "941",
+        "averageSessionDuration": "288.98434846865035",
+        "bounceRate": "0.003188097768331562",
+        "engagementRate": "0.99681190223166849",
+        "conversions": "8476"
       },
       {
         "landingPage": "(not set)",
@@ -1508,7 +1508,7 @@
       {
         "landingPage": "/adopt-foster/foster-a-cat",
         "sessions": "661",
-        "averageSessionDuration": "385.63968432526468",
+        "averageSessionDuration": "385.63968432526474",
         "bounceRate": "0.0060514372163388806",
         "engagementRate": "0.99394856278366117",
         "conversions": "5432"
@@ -1540,17 +1540,17 @@
       {
         "landingPage": "/volunteer",
         "sessions": "305",
-        "averageSessionDuration": "381.65535274754103",
+        "averageSessionDuration": "381.655352747541",
         "bounceRate": "0.036065573770491806",
         "engagementRate": "0.9639344262295082",
-        "conversions": "2656"
+        "conversions": "2659"
       }
     ],
     "states": [
       {
         "region": "District of Columbia",
-        "sessions": "4313",
-        "totalUsers": "2391"
+        "sessions": "4314",
+        "totalUsers": "2392"
       },
       {
         "region": "Virginia",
@@ -1602,8 +1602,8 @@
       {
         "city": "Washington",
         "region": "District of Columbia",
-        "sessions": "4313",
-        "totalUsers": "2391"
+        "sessions": "4314",
+        "totalUsers": "2392"
       },
       {
         "city": "Ashburn",
@@ -1663,21 +1663,21 @@
     "channels": [
       {
         "sessionDefaultChannelGroup": "Organic Search",
-        "sessions": "9270",
-        "totalUsers": "4724",
-        "conversions": "113386"
+        "sessions": "9278",
+        "totalUsers": "4725",
+        "conversions": "113402"
       },
       {
         "sessionDefaultChannelGroup": "Direct",
         "sessions": "6472",
-        "totalUsers": "4564",
-        "conversions": "57592"
+        "totalUsers": "4565",
+        "conversions": "57606"
       },
       {
         "sessionDefaultChannelGroup": "Referral",
         "sessions": "1142",
         "totalUsers": "546",
-        "conversions": "11499"
+        "conversions": "11501"
       },
       {
         "sessionDefaultChannelGroup": "Cross-network",
@@ -1726,7 +1726,7 @@
   "guardian-pet-trust": {
     "ga4_id": "482775564",
     "client": "guardian-pet-trust",
-    "fetched_at": "2026-04-21T23:17:39.142683",
+    "fetched_at": "2026-04-21T23:28:15.364977",
     "overview_30d": {
       "sessions": "942",
       "totalUsers": "851",
@@ -2231,7 +2231,7 @@
   "earth-organization": {
     "ga4_id": "515557533",
     "client": "earth-organization",
-    "fetched_at": "2026-04-21T23:17:44.121759",
+    "fetched_at": "2026-04-21T23:28:19.329988",
     "overview_30d": {
       "sessions": "2",
       "totalUsers": "2",
@@ -2348,13 +2348,13 @@
   "ziva": {
     "ga4_id": "504662809",
     "client": "ziva",
-    "fetched_at": "2026-04-21T23:17:51.437930",
+    "fetched_at": "2026-04-21T23:28:25.399341",
     "overview_30d": {
       "sessions": "4164",
       "totalUsers": "2833",
       "newUsers": "2672",
-      "screenPageViews": "9700",
-      "averageSessionDuration": "148.27140580763691",
+      "screenPageViews": "9701",
+      "averageSessionDuration": "148.36252457300674",
       "bounceRate": "0.35350624399615754",
       "engagementRate": "0.64649375600384251",
       "conversions": "0",
@@ -2371,8 +2371,8 @@
       "sessions": "1096",
       "totalUsers": "784",
       "newUsers": "670",
-      "screenPageViews": "2727",
-      "averageSessionDuration": "172.63983951094895",
+      "screenPageViews": "2728",
+      "averageSessionDuration": "172.98602430930657",
       "bounceRate": "0.3731751824817518",
       "engagementRate": "0.62682481751824815",
       "conversions": "0"
@@ -2565,7 +2565,7 @@
         "users": 1740,
         "conversions": 0,
         "engagement_rate": 65.4,
-        "avg_time": "2m 28s",
+        "avg_time": "2m 29s",
         "bounce_rate": 34.6,
         "share": 63.4
       },
@@ -2619,7 +2619,7 @@
       {
         "landingPage": "/adoptable-dogs",
         "sessions": "1534",
-        "averageSessionDuration": "129.58379331029988",
+        "averageSessionDuration": "129.8311326447197",
         "bounceRate": "0.30899608865710559",
         "engagementRate": "0.69100391134289441",
         "conversions": "0"
@@ -2725,7 +2725,7 @@
       },
       {
         "region": "Connecticut",
-        "sessions": "193",
+        "sessions": "194",
         "totalUsers": "137"
       },
       {
@@ -2859,33 +2859,33 @@
   "pink-paws": {
     "ga4_id": "521209710",
     "client": "pink-paws",
-    "fetched_at": "2026-04-21T23:17:57.270239",
+    "fetched_at": "2026-04-21T23:28:29.892015",
     "overview_30d": {
-      "sessions": "1417",
+      "sessions": "1418",
       "totalUsers": "974",
       "newUsers": "912",
-      "screenPageViews": "2563",
-      "averageSessionDuration": "138.13759586309104",
-      "bounceRate": "0.35850388143966128",
-      "engagementRate": "0.64149611856033872",
+      "screenPageViews": "2564",
+      "averageSessionDuration": "138.04106869957687",
+      "bounceRate": "0.35895627644569816",
+      "engagementRate": "0.64104372355430184",
       "conversions": "111",
-      "sessions_delta": -10.0,
+      "sessions_delta": -9.9,
       "users_delta": -20.9,
       "new_users_delta": -23.0,
-      "pageviews_delta": -17.3,
+      "pageviews_delta": -17.2,
       "engagement_delta": -12.0,
-      "bounce_delta": 32.2,
-      "duration_delta": -7.4,
+      "bounce_delta": 32.3,
+      "duration_delta": -7.5,
       "conv_delta": -76.4
     },
     "overview_7d": {
-      "sessions": "320",
+      "sessions": "321",
       "totalUsers": "228",
       "newUsers": "176",
-      "screenPageViews": "555",
-      "averageSessionDuration": "151.41631169375",
-      "bounceRate": "0.403125",
-      "engagementRate": "0.596875",
+      "screenPageViews": "556",
+      "averageSessionDuration": "150.94854149532711",
+      "bounceRate": "0.40498442367601245",
+      "engagementRate": "0.59501557632398749",
       "conversions": "30"
     },
     "sessions_trend": [
@@ -3011,7 +3011,7 @@
       },
       {
         "date": "Apr 21",
-        "sessions": 21
+        "sessions": 22
       }
     ],
     "utm_sources": [
@@ -3023,8 +3023,8 @@
       },
       {
         "name": "google / organic",
-        "sessions": 422,
-        "pct": 37.4,
+        "sessions": 423,
+        "pct": 37.5,
         "utm": "utm_source=google&utm_medium=organic"
       },
       {
@@ -3072,12 +3072,12 @@
     ],
     "devices": {
       "desktop": {
-        "sessions": 734,
+        "sessions": 735,
         "users": 550,
         "conversions": 67,
-        "engagement_rate": 67.0,
+        "engagement_rate": 66.9,
         "avg_time": "2m 35s",
-        "bounce_rate": 33.0,
+        "bounce_rate": 33.1,
         "share": 51.8
       },
       "mobile": {
@@ -3102,7 +3102,7 @@
     "browsers": [
       {
         "name": "Chrome",
-        "pct": 57.1
+        "pct": 57.2
       },
       {
         "name": "Safari",
@@ -3114,7 +3114,7 @@
       },
       {
         "name": "Firefox",
-        "pct": 0.9
+        "pct": 0.8
       },
       {
         "name": "Samsung Internet",
@@ -3138,7 +3138,7 @@
       {
         "landingPage": "/adopt-a-cat-bay-area",
         "sessions": "410",
-        "averageSessionDuration": "135.47673091951222",
+        "averageSessionDuration": "135.47980915853657",
         "bounceRate": "0.49024390243902438",
         "engagementRate": "0.50975609756097562",
         "conversions": "2"
@@ -3201,8 +3201,8 @@
       },
       {
         "landingPage": "",
-        "sessions": "10",
-        "averageSessionDuration": "15.1483353",
+        "sessions": "11",
+        "averageSessionDuration": "13.771213909090909",
         "bounceRate": "1",
         "engagementRate": "0",
         "conversions": "1"
@@ -3211,7 +3211,7 @@
     "states": [
       {
         "region": "California",
-        "sessions": "1069",
+        "sessions": "1070",
         "totalUsers": "672"
       },
       {
@@ -3325,7 +3325,7 @@
     "channels": [
       {
         "sessionDefaultChannelGroup": "Organic Search",
-        "sessions": "450",
+        "sessions": "451",
         "totalUsers": "245",
         "conversions": "24"
       },
@@ -3361,8 +3361,8 @@
       },
       {
         "sessionDefaultChannelGroup": "Unassigned",
-        "sessions": "18",
-        "totalUsers": "16",
+        "sessions": "19",
+        "totalUsers": "17",
         "conversions": "2"
       }
     ]
@@ -3370,33 +3370,33 @@
   "humane-society-nw-montana": {
     "ga4_id": "509609252",
     "client": "humane-society-nw-montana",
-    "fetched_at": "2026-04-21T23:18:03.484802",
+    "fetched_at": "2026-04-21T23:28:34.279094",
     "overview_30d": {
-      "sessions": "9605",
-      "totalUsers": "4824",
-      "newUsers": "3980",
-      "screenPageViews": "22397",
-      "averageSessionDuration": "141.28467676689226",
-      "bounceRate": "0.33368037480478918",
-      "engagementRate": "0.66631962519521082",
+      "sessions": "9613",
+      "totalUsers": "4828",
+      "newUsers": "3984",
+      "screenPageViews": "22420",
+      "averageSessionDuration": "141.27944798959743",
+      "bounceRate": "0.33423489025278269",
+      "engagementRate": "0.66576510974721737",
       "conversions": "6",
-      "sessions_delta": -6.4,
+      "sessions_delta": -6.3,
       "users_delta": -3.6,
-      "new_users_delta": -15.6,
-      "pageviews_delta": -6.8,
-      "engagement_delta": -6.4,
-      "bounce_delta": 15.9,
+      "new_users_delta": -15.5,
+      "pageviews_delta": -6.7,
+      "engagement_delta": -6.5,
+      "bounce_delta": 16.1,
       "duration_delta": -25.8,
       "conv_delta": -33.3
     },
     "overview_7d": {
-      "sessions": "2432",
-      "totalUsers": "1611",
-      "newUsers": "1084",
-      "screenPageViews": "5493",
-      "averageSessionDuration": "133.47853730345395",
-      "bounceRate": "0.39021381578947367",
-      "engagementRate": "0.60978618421052633",
+      "sessions": "2443",
+      "totalUsers": "1617",
+      "newUsers": "1088",
+      "screenPageViews": "5516",
+      "averageSessionDuration": "133.31961354891527",
+      "bounceRate": "0.39295947605403192",
+      "engagementRate": "0.60704052394596808",
       "conversions": "1"
     },
     "sessions_trend": [
@@ -3522,20 +3522,20 @@
       },
       {
         "date": "Apr 21",
-        "sessions": 194
+        "sessions": 205
       }
     ],
     "utm_sources": [
       {
         "name": "google / organic",
-        "sessions": 6295,
+        "sessions": 6306,
         "pct": 85.0,
         "utm": "utm_source=google&utm_medium=organic"
       },
       {
         "name": "bing / organic",
-        "sessions": 411,
-        "pct": 5.5,
+        "sessions": 412,
+        "pct": 5.6,
         "utm": "utm_source=bing&utm_medium=organic"
       },
       {
@@ -3583,21 +3583,21 @@
     ],
     "devices": {
       "mobile": {
-        "sessions": 6689,
-        "users": 3402,
+        "sessions": 6697,
+        "users": 3404,
         "conversions": 1,
-        "engagement_rate": 65.8,
+        "engagement_rate": 65.7,
         "avg_time": "1m 56s",
-        "bounce_rate": 34.2,
+        "bounce_rate": 34.3,
         "share": 69.3
       },
       "desktop": {
-        "sessions": 2821,
-        "users": 1326,
+        "sessions": 2828,
+        "users": 1328,
         "conversions": 5,
-        "engagement_rate": 66.7,
+        "engagement_rate": 66.5,
         "avg_time": "3m 17s",
-        "bounce_rate": 33.3,
+        "bounce_rate": 33.5,
         "share": 29.2
       },
       "tablet": {
@@ -3613,7 +3613,7 @@
     "browsers": [
       {
         "name": "Safari",
-        "pct": 46.5
+        "pct": 46.4
       },
       {
         "name": "Chrome",
@@ -3640,34 +3640,34 @@
     "landing_pages": [
       {
         "landingPage": "/",
-        "sessions": "5812",
-        "averageSessionDuration": "152.34911720595318",
-        "bounceRate": "0.17446662078458361",
-        "engagementRate": "0.82553337921541636",
+        "sessions": "5813",
+        "averageSessionDuration": "152.35374416669532",
+        "bounceRate": "0.17460863581627387",
+        "engagementRate": "0.82539136418372616",
         "conversions": "0"
       },
       {
         "landingPage": "/adoptable-dogs",
-        "sessions": "1811",
-        "averageSessionDuration": "137.94163422032025",
-        "bounceRate": "0.5626725565985643",
-        "engagementRate": "0.43732744340143564",
+        "sessions": "1813",
+        "averageSessionDuration": "138.13620011858796",
+        "bounceRate": "0.56315499172642025",
+        "engagementRate": "0.43684500827357969",
         "conversions": "0"
       },
       {
         "landingPage": "/adoptable-cats",
-        "sessions": "874",
-        "averageSessionDuration": "109.7502900549199",
-        "bounceRate": "0.62585812356979409",
-        "engagementRate": "0.37414187643020597",
+        "sessions": "876",
+        "averageSessionDuration": "109.49971861643834",
+        "bounceRate": "0.62671232876712324",
+        "engagementRate": "0.37328767123287671",
         "conversions": "0"
       },
       {
         "landingPage": "/adopt",
-        "sessions": "336",
-        "averageSessionDuration": "148.32227256845238",
-        "bounceRate": "0.29166666666666669",
-        "engagementRate": "0.70833333333333337",
+        "sessions": "339",
+        "averageSessionDuration": "147.81244802064896",
+        "bounceRate": "0.29793510324483774",
+        "engagementRate": "0.70206489675516226",
         "conversions": "0"
       },
       {
@@ -3688,8 +3688,8 @@
       },
       {
         "landingPage": "",
-        "sessions": "93",
-        "averageSessionDuration": "7.1479750215053759",
+        "sessions": "97",
+        "averageSessionDuration": "6.8532131649484533",
         "bounceRate": "1",
         "engagementRate": "0",
         "conversions": "0"
@@ -3722,18 +3722,18 @@
     "states": [
       {
         "region": "Montana",
-        "sessions": "4172",
-        "totalUsers": "2146"
+        "sessions": "4179",
+        "totalUsers": "2148"
       },
       {
         "region": "Colorado",
-        "sessions": "1789",
+        "sessions": "1790",
         "totalUsers": "1097"
       },
       {
         "region": "Arizona",
-        "sessions": "1296",
-        "totalUsers": "706"
+        "sessions": "1297",
+        "totalUsers": "707"
       },
       {
         "region": "Washington",
@@ -3775,19 +3775,19 @@
       {
         "city": "Kalispell",
         "region": "Montana",
-        "sessions": "1700",
+        "sessions": "1703",
         "totalUsers": "803"
       },
       {
         "city": "Phoenix",
         "region": "Arizona",
-        "sessions": "1207",
-        "totalUsers": "661"
+        "sessions": "1208",
+        "totalUsers": "662"
       },
       {
         "city": "Denver",
         "region": "Colorado",
-        "sessions": "1069",
+        "sessions": "1070",
         "totalUsers": "713"
       },
       {
@@ -3811,13 +3811,13 @@
       {
         "city": "Whitefish",
         "region": "Montana",
-        "sessions": "361",
-        "totalUsers": "208"
+        "sessions": "363",
+        "totalUsers": "209"
       },
       {
         "city": "Columbia Falls",
         "region": "Montana",
-        "sessions": "284",
+        "sessions": "285",
         "totalUsers": "187"
       },
       {
@@ -3829,15 +3829,15 @@
       {
         "city": "Missoula",
         "region": "Montana",
-        "sessions": "221",
+        "sessions": "222",
         "totalUsers": "133"
       }
     ],
     "channels": [
       {
         "sessionDefaultChannelGroup": "Organic Search",
-        "sessions": "6985",
-        "totalUsers": "3419",
+        "sessions": "6990",
+        "totalUsers": "3423",
         "conversions": "0"
       },
       {
@@ -3860,8 +3860,8 @@
       },
       {
         "sessionDefaultChannelGroup": "Unassigned",
-        "sessions": "169",
-        "totalUsers": "149",
+        "sessions": "173",
+        "totalUsers": "152",
         "conversions": "0"
       },
       {
@@ -3875,13 +3875,13 @@
   "paws-and-claws": {
     "ga4_id": "513862587",
     "client": "paws-and-claws",
-    "fetched_at": "2026-04-21T23:18:09.134992",
+    "fetched_at": "2026-04-21T23:28:39.055323",
     "overview_30d": {
       "sessions": "764",
       "totalUsers": "730",
       "newUsers": "715",
       "screenPageViews": "1123",
-      "averageSessionDuration": "57.614242623036652",
+      "averageSessionDuration": "57.614242623036645",
       "bounceRate": "0.3586387434554974",
       "engagementRate": "0.6413612565445026",
       "conversions": "0",
@@ -4146,7 +4146,7 @@
       {
         "landingPage": "/",
         "sessions": "281",
-        "averageSessionDuration": "55.617967085409255",
+        "averageSessionDuration": "55.617967085409248",
         "bounceRate": "0.45551601423487542",
         "engagementRate": "0.54448398576512458",
         "conversions": "0"
@@ -4386,7 +4386,7 @@
   "silver-linings": {
     "ga4_id": "513124215",
     "client": "silver-linings",
-    "fetched_at": "2026-04-21T23:18:15.039599",
+    "fetched_at": "2026-04-21T23:28:43.725493",
     "overview_30d": {
       "sessions": "1465",
       "totalUsers": "1326",
@@ -4877,7 +4877,7 @@
   "straydog": {
     "ga4_id": "510703446",
     "client": "straydog",
-    "fetched_at": "2026-04-21T23:18:21.571798",
+    "fetched_at": "2026-04-21T23:28:48.907384",
     "overview_30d": {
       "sessions": "2867",
       "totalUsers": "2406",
@@ -5400,34 +5400,34 @@
   "red-clay-ranch": {
     "ga4_id": "521180891",
     "client": "red-clay-ranch",
-    "fetched_at": "2026-04-21T23:18:28.682189",
+    "fetched_at": "2026-04-21T23:28:55.100913",
     "overview_30d": {
-      "sessions": "933",
-      "totalUsers": "784",
-      "newUsers": "760",
-      "screenPageViews": "1990",
-      "averageSessionDuration": "116.97934794962487",
-      "bounceRate": "0.007502679528403001",
-      "engagementRate": "0.992497320471597",
-      "conversions": "6502",
-      "sessions_delta": 10.5,
-      "users_delta": 7.4,
-      "new_users_delta": 6.1,
+      "sessions": "935",
+      "totalUsers": "786",
+      "newUsers": "761",
+      "screenPageViews": "1991",
+      "averageSessionDuration": "116.72912474545456",
+      "bounceRate": "0.0085561497326203211",
+      "engagementRate": "0.99144385026737969",
+      "conversions": "6506",
+      "sessions_delta": 10.8,
+      "users_delta": 7.7,
+      "new_users_delta": 6.3,
       "pageviews_delta": 7.9,
-      "engagement_delta": 5.0,
-      "bounce_delta": -86.2,
-      "duration_delta": 4.1,
-      "conv_delta": 23.5
+      "engagement_delta": 4.9,
+      "bounce_delta": -84.3,
+      "duration_delta": 3.9,
+      "conv_delta": 23.6
     },
     "overview_7d": {
-      "sessions": "231",
-      "totalUsers": "200",
-      "newUsers": "186",
-      "screenPageViews": "413",
-      "averageSessionDuration": "116.785957004329",
-      "bounceRate": "0.017316017316017316",
-      "engagementRate": "0.98268398268398272",
-      "conversions": "1474"
+      "sessions": "233",
+      "totalUsers": "202",
+      "newUsers": "187",
+      "screenPageViews": "414",
+      "averageSessionDuration": "115.78350243776825",
+      "bounceRate": "0.021459227467811159",
+      "engagementRate": "0.97854077253218885",
+      "conversions": "1478"
     },
     "sessions_trend": [
       {
@@ -5552,20 +5552,20 @@
       },
       {
         "date": "Apr 21",
-        "sessions": 22
+        "sessions": 24
       }
     ],
     "utm_sources": [
       {
         "name": "google / cpc",
         "sessions": 507,
-        "pct": 67.6,
+        "pct": 67.5,
         "utm": "utm_source=google&utm_medium=cpc"
       },
       {
         "name": "google / organic",
         "sessions": 170,
-        "pct": 22.7,
+        "pct": 22.6,
         "utm": "utm_source=google&utm_medium=organic"
       },
       {
@@ -5581,16 +5581,16 @@
         "utm": "utm_source=bing&utm_medium=organic"
       },
       {
+        "name": "(data not available) / (data not available)",
+        "sessions": 8,
+        "pct": 1.1,
+        "utm": "utm_source=(data not available)&utm_medium=(data not available)"
+      },
+      {
         "name": "tagassistant.google.com / referral",
         "sessions": 8,
         "pct": 1.1,
         "utm": "utm_source=tagassistant.google.com&utm_medium=referral"
-      },
-      {
-        "name": "(data not available) / (data not available)",
-        "sessions": 7,
-        "pct": 0.9,
-        "utm": "utm_source=(data not available)&utm_medium=(data not available)"
       },
       {
         "name": "duckduckgo / organic",
@@ -5619,16 +5619,16 @@
         "engagement_rate": 99.4,
         "avg_time": "2m 01s",
         "bounce_rate": 0.6,
-        "share": 57.8
+        "share": 57.7
       },
       "mobile": {
-        "sessions": 368,
-        "users": 307,
-        "conversions": 2408,
-        "engagement_rate": 98.9,
-        "avg_time": "1m 49s",
-        "bounce_rate": 1.1,
-        "share": 39.4
+        "sessions": 370,
+        "users": 309,
+        "conversions": 2412,
+        "engagement_rate": 98.6,
+        "avg_time": "1m 48s",
+        "bounce_rate": 1.4,
+        "share": 39.5
       },
       "tablet": {
         "sessions": 26,
@@ -5643,11 +5643,11 @@
     "browsers": [
       {
         "name": "Chrome",
-        "pct": 56.4
+        "pct": 56.3
       },
       {
         "name": "Safari",
-        "pct": 32.1
+        "pct": 32.2
       },
       {
         "name": "Edge",
@@ -5670,11 +5670,11 @@
     "landing_pages": [
       {
         "landingPage": "/volunteer",
-        "sessions": "351",
-        "averageSessionDuration": "77.437955829059831",
+        "sessions": "352",
+        "averageSessionDuration": "77.21796163636364",
         "bounceRate": "0",
         "engagementRate": "1",
-        "conversions": "2448"
+        "conversions": "2451"
       },
       {
         "landingPage": "/",
@@ -5725,20 +5725,20 @@
         "conversions": "96"
       },
       {
+        "landingPage": "",
+        "sessions": "16",
+        "averageSessionDuration": "71.4610698125",
+        "bounceRate": "0.9375",
+        "engagementRate": "0.0625",
+        "conversions": "29"
+      },
+      {
         "landingPage": "/about",
         "sessions": "16",
         "averageSessionDuration": "37.323065",
         "bounceRate": "0.0625",
         "engagementRate": "0.9375",
         "conversions": "108"
-      },
-      {
-        "landingPage": "",
-        "sessions": "15",
-        "averageSessionDuration": "76.225141133333338",
-        "bounceRate": "0.93333333333333335",
-        "engagementRate": "0.066666666666666666",
-        "conversions": "28"
       },
       {
         "landingPage": "/get-involved",
@@ -5792,13 +5792,13 @@
       },
       {
         "region": "North Carolina",
-        "sessions": "32",
-        "totalUsers": "22"
+        "sessions": "33",
+        "totalUsers": "23"
       },
       {
         "region": "Colorado",
-        "sessions": "21",
-        "totalUsers": "20"
+        "sessions": "22",
+        "totalUsers": "21"
       }
     ],
     "cities": [
@@ -5866,9 +5866,9 @@
     "channels": [
       {
         "sessionDefaultChannelGroup": "Cross-network",
-        "sessions": "500",
-        "totalUsers": "465",
-        "conversions": "3644"
+        "sessions": "501",
+        "totalUsers": "466",
+        "conversions": "3647"
       },
       {
         "sessionDefaultChannelGroup": "Organic Search",
@@ -5890,9 +5890,9 @@
       },
       {
         "sessionDefaultChannelGroup": "Unassigned",
-        "sessions": "19",
-        "totalUsers": "17",
-        "conversions": "57"
+        "sessions": "20",
+        "totalUsers": "18",
+        "conversions": "58"
       },
       {
         "sessionDefaultChannelGroup": "Referral",
@@ -5911,34 +5911,34 @@
   "pup-profile": {
     "ga4_id": "477106491",
     "client": "pup-profile",
-    "fetched_at": "2026-04-21T23:18:34.117920",
+    "fetched_at": "2026-04-21T23:29:03.373529",
     "overview_30d": {
-      "sessions": "1733",
-      "totalUsers": "1501",
-      "newUsers": "1459",
-      "screenPageViews": "3710",
-      "averageSessionDuration": "118.75584941892673",
-      "bounceRate": "0.0023081361800346219",
-      "engagementRate": "0.99769186381996533",
-      "conversions": "10181",
-      "sessions_delta": 0.0,
-      "users_delta": -3.0,
-      "new_users_delta": -3.4,
-      "pageviews_delta": 1.7,
-      "engagement_delta": -0.1,
-      "bounce_delta": 100.0,
-      "duration_delta": 2.4,
-      "conv_delta": -1.6
+      "sessions": "1742",
+      "totalUsers": "1507",
+      "newUsers": "1464",
+      "screenPageViews": "3722",
+      "averageSessionDuration": "119.05155781458095",
+      "bounceRate": "0.0028702640642939152",
+      "engagementRate": "0.99712973593570609",
+      "conversions": "10226",
+      "sessions_delta": 0.5,
+      "users_delta": -2.6,
+      "new_users_delta": -3.1,
+      "pageviews_delta": 2.0,
+      "engagement_delta": -0.2,
+      "bounce_delta": 148.7,
+      "duration_delta": 2.6,
+      "conv_delta": -1.2
     },
     "overview_7d": {
-      "sessions": "497",
-      "totalUsers": "435",
-      "newUsers": "414",
-      "screenPageViews": "995",
-      "averageSessionDuration": "116.2642104527163",
-      "bounceRate": "0.0040241448692152921",
-      "engagementRate": "0.99597585513078468",
-      "conversions": "2829"
+      "sessions": "505",
+      "totalUsers": "442",
+      "newUsers": "419",
+      "screenPageViews": "1007",
+      "averageSessionDuration": "117.55888963366336",
+      "bounceRate": "0.0039603960396039604",
+      "engagementRate": "0.996039603960396",
+      "conversions": "2874"
     },
     "sessions_trend": [
       {
@@ -6063,14 +6063,14 @@
       },
       {
         "date": "Apr 21",
-        "sessions": 37
+        "sessions": 45
       }
     ],
     "utm_sources": [
       {
         "name": "google / cpc",
-        "sessions": 1348,
-        "pct": 89.3,
+        "sessions": 1356,
+        "pct": 89.4,
         "utm": "utm_source=google&utm_medium=cpc"
       },
       {
@@ -6124,22 +6124,22 @@
     ],
     "devices": {
       "mobile": {
-        "sessions": 852,
-        "users": 718,
-        "conversions": 4867,
+        "sessions": 854,
+        "users": 719,
+        "conversions": 4882,
         "engagement_rate": 99.8,
-        "avg_time": "1m 46s",
+        "avg_time": "1m 47s",
         "bounce_rate": 0.2,
-        "share": 49.2
+        "share": 49.1
       },
       "desktop": {
-        "sessions": 825,
-        "users": 736,
-        "conversions": 5030,
+        "sessions": 831,
+        "users": 741,
+        "conversions": 5060,
         "engagement_rate": 99.8,
         "avg_time": "2m 16s",
         "bounce_rate": 0.2,
-        "share": 47.6
+        "share": 47.7
       },
       "tablet": {
         "sessions": 55,
@@ -6167,7 +6167,7 @@
       },
       {
         "name": "Safari",
-        "pct": 35.8
+        "pct": 35.7
       },
       {
         "name": "Edge",
@@ -6190,11 +6190,11 @@
       "gender": [
         {
           "name": "Female",
-          "value": 59.5
+          "value": 59.8
         },
         {
           "name": "Male",
-          "value": 40.5
+          "value": 40.2
         }
       ],
       "gender_engagement": [
@@ -6205,8 +6205,8 @@
         },
         {
           "metric": "Conv. Rate",
-          "female": 643.9,
-          "male": 615.4
+          "female": 641.6,
+          "male": 615.3
         }
       ],
       "age_groups": [
@@ -6230,38 +6230,38 @@
         },
         {
           "age": "45-54",
-          "sessions": 76,
-          "conversions": 478,
-          "share": 4.4
+          "sessions": 78,
+          "conversions": 489,
+          "share": 4.5
         },
         {
           "age": "55-64",
-          "sessions": 94,
-          "conversions": 632,
-          "share": 5.4
+          "sessions": 95,
+          "conversions": 637,
+          "share": 5.5
         },
         {
           "age": "65+",
-          "sessions": 87,
-          "conversions": 608,
+          "sessions": 88,
+          "conversions": 613,
           "share": 5.0
         },
         {
           "age": "unknown",
-          "sessions": 1289,
-          "conversions": 7381,
-          "share": 74.3
+          "sessions": 1293,
+          "conversions": 7405,
+          "share": 74.2
         }
       ]
     },
     "landing_pages": [
       {
         "landingPage": "/browse",
-        "sessions": "523",
-        "averageSessionDuration": "150.94061821988527",
-        "bounceRate": "0.0019120458891013384",
-        "engagementRate": "0.99808795411089868",
-        "conversions": "2966"
+        "sessions": "528",
+        "averageSessionDuration": "152.28470139772728",
+        "bounceRate": "0.001893939393939394",
+        "engagementRate": "0.99810606060606055",
+        "conversions": "2993"
       },
       {
         "landingPage": "/",
@@ -6273,11 +6273,11 @@
       },
       {
         "landingPage": "/donate",
-        "sessions": "122",
-        "averageSessionDuration": "79.173013532786882",
+        "sessions": "123",
+        "averageSessionDuration": "79.113754097560985",
         "bounceRate": "0",
         "engagementRate": "1",
-        "conversions": "785"
+        "conversions": "792"
       },
       {
         "landingPage": "/browse/R9ESGL",
@@ -6297,11 +6297,11 @@
       },
       {
         "landingPage": "/browse/ZZH2ZB",
-        "sessions": "74",
-        "averageSessionDuration": "111.8822691891892",
+        "sessions": "75",
+        "averageSessionDuration": "110.9378588",
         "bounceRate": "0",
         "engagementRate": "1",
-        "conversions": "501"
+        "conversions": "507"
       },
       {
         "landingPage": "/pups-fund/donate",
@@ -6339,8 +6339,8 @@
     "states": [
       {
         "region": "California",
-        "sessions": "633",
-        "totalUsers": "497"
+        "sessions": "636",
+        "totalUsers": "499"
       },
       {
         "region": "Florida",
@@ -6349,18 +6349,18 @@
       },
       {
         "region": "Arizona",
-        "sessions": "76",
+        "sessions": "77",
         "totalUsers": "71"
       },
       {
         "region": "New York",
-        "sessions": "69",
-        "totalUsers": "67"
+        "sessions": "70",
+        "totalUsers": "68"
       },
       {
         "region": "Oregon",
-        "sessions": "50",
-        "totalUsers": "49"
+        "sessions": "51",
+        "totalUsers": "50"
       },
       {
         "region": "Ohio",
@@ -6392,8 +6392,8 @@
       {
         "city": "Los Angeles",
         "region": "California",
-        "sessions": "128",
-        "totalUsers": "117"
+        "sessions": "129",
+        "totalUsers": "118"
       },
       {
         "city": "San Diego",
@@ -6453,15 +6453,15 @@
     "channels": [
       {
         "sessionDefaultChannelGroup": "Paid Search",
-        "sessions": "724",
-        "totalUsers": "678",
-        "conversions": "4349"
+        "sessions": "729",
+        "totalUsers": "682",
+        "conversions": "4375"
       },
       {
         "sessionDefaultChannelGroup": "Cross-network",
-        "sessions": "638",
-        "totalUsers": "594",
-        "conversions": "3835"
+        "sessions": "641",
+        "totalUsers": "596",
+        "conversions": "3854"
       },
       {
         "sessionDefaultChannelGroup": "Direct",
@@ -6498,15 +6498,15 @@
   "joshua-tree-no-kill": {
     "ga4_id": "530911485",
     "client": "joshua-tree-no-kill",
-    "fetched_at": "2026-04-21T23:18:40.786555",
+    "fetched_at": "2026-04-21T23:29:09.783009",
     "overview_30d": {
-      "sessions": "1335",
-      "totalUsers": "875",
-      "newUsers": "858",
-      "screenPageViews": "2574",
-      "averageSessionDuration": "208.6419942808989",
-      "bounceRate": "0.38726591760299628",
-      "engagementRate": "0.61273408239700378",
+      "sessions": "1337",
+      "totalUsers": "876",
+      "newUsers": "859",
+      "screenPageViews": "2580",
+      "averageSessionDuration": "208.38551599925208",
+      "bounceRate": "0.38818249813014211",
+      "engagementRate": "0.61181750186985784",
       "conversions": "0",
       "sessions_delta": null,
       "users_delta": null,
@@ -6518,13 +6518,13 @@
       "conv_delta": null
     },
     "overview_7d": {
-      "sessions": "771",
-      "totalUsers": "533",
-      "newUsers": "466",
-      "screenPageViews": "1455",
-      "averageSessionDuration": "218.93477203501945",
-      "bounceRate": "0.3981841763942931",
-      "engagementRate": "0.60181582360570685",
+      "sessions": "773",
+      "totalUsers": "534",
+      "newUsers": "467",
+      "screenPageViews": "1461",
+      "averageSessionDuration": "218.46453009702455",
+      "bounceRate": "0.39974126778783958",
+      "engagementRate": "0.60025873221216042",
       "conversions": "0"
     },
     "sessions_trend": [
@@ -6586,13 +6586,13 @@
       },
       {
         "date": "Apr 21",
-        "sessions": 44
+        "sessions": 46
       }
     ],
     "utm_sources": [
       {
         "name": "google / organic",
-        "sessions": 627,
+        "sessions": 629,
         "pct": 76.4,
         "utm": "utm_source=google&utm_medium=organic"
       },
@@ -6647,21 +6647,21 @@
     ],
     "devices": {
       "mobile": {
-        "sessions": 958,
+        "sessions": 960,
         "users": 632,
         "conversions": 0,
-        "engagement_rate": 60.2,
-        "avg_time": "3m 15s",
-        "bounce_rate": 39.8,
+        "engagement_rate": 60.1,
+        "avg_time": "3m 14s",
+        "bounce_rate": 39.9,
         "share": 71.6
       },
       "desktop": {
-        "sessions": 352,
-        "users": 224,
+        "sessions": 353,
+        "users": 225,
         "conversions": 0,
-        "engagement_rate": 61.6,
-        "avg_time": "3m 53s",
-        "bounce_rate": 38.4,
+        "engagement_rate": 61.5,
+        "avg_time": "3m 52s",
+        "bounce_rate": 38.5,
         "share": 26.3
       },
       "tablet": {
@@ -6704,18 +6704,18 @@
     "landing_pages": [
       {
         "landingPage": "/",
-        "sessions": "809",
-        "averageSessionDuration": "224.34651770333744",
-        "bounceRate": "0.27812113720642767",
-        "engagementRate": "0.72187886279357227",
+        "sessions": "811",
+        "averageSessionDuration": "223.88496343773122",
+        "bounceRate": "0.279901356350185",
+        "engagementRate": "0.720098643649815",
         "conversions": "0"
       },
       {
         "landingPage": "/adopt",
-        "sessions": "324",
-        "averageSessionDuration": "151.19771580246913",
-        "bounceRate": "0.558641975308642",
-        "engagementRate": "0.44135802469135804",
+        "sessions": "325",
+        "averageSessionDuration": "150.73249206153847",
+        "bounceRate": "0.56",
+        "engagementRate": "0.44",
         "conversions": "0"
       },
       {
@@ -6786,8 +6786,8 @@
     "states": [
       {
         "region": "California",
-        "sessions": "1078",
-        "totalUsers": "698"
+        "sessions": "1080",
+        "totalUsers": "699"
       },
       {
         "region": "Washington",
@@ -6900,13 +6900,13 @@
     "channels": [
       {
         "sessionDefaultChannelGroup": "Organic Search",
-        "sessions": "680",
-        "totalUsers": "447",
+        "sessions": "681",
+        "totalUsers": "448",
         "conversions": "0"
       },
       {
         "sessionDefaultChannelGroup": "Direct",
-        "sessions": "488",
+        "sessions": "489",
         "totalUsers": "290",
         "conversions": "0"
       },
@@ -6924,14 +6924,14 @@
       },
       {
         "sessionDefaultChannelGroup": "Unassigned",
-        "sessions": "39",
-        "totalUsers": "37",
+        "sessions": "40",
+        "totalUsers": "38",
         "conversions": "0"
       }
     ]
   },
   "_meta": {
-    "fetched_at": "2026-04-21T23:18:40.786617",
+    "fetched_at": "2026-04-21T23:29:09.783094",
     "clients_fetched": 14
   }
 }
