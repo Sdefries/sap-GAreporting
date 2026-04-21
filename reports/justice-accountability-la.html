@@ -685,31 +685,43 @@ tr:hover td{background:#F5F9FF}
       <div id="lpCallout"></div>
     </div>
 
-    <!-- GA4 TRAFFIC OVERVIEW -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 TRAFFIC OVERVIEW
+    ════════════════════════════════════════════════════════════════ -->
     <div class="section" id="sec-ga4-traffic">
       <div class="sh">
         <div class="sh-title">Website Traffic Overview</div>
         <div class="sh-sub" id="ga4TrafficSub">GA4 · Last 30 days</div>
       </div>
-      <div id="ga4TrafficContent"></div>
+      <div id="ga4TrafficContent">
+        <!-- Populated by renderGA4Traffic() -->
+      </div>
     </div>
 
-    <!-- GA4 DEVICE PERFORMANCE -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 DEVICE PERFORMANCE
+    ════════════════════════════════════════════════════════════════ -->
     <div class="section" id="sec-ga4-devices">
       <div class="sh">
         <div class="sh-title">Device Performance</div>
         <div class="sh-sub">Sessions, conversions &amp; engagement by device</div>
       </div>
-      <div id="ga4DevicesContent"></div>
+      <div id="ga4DevicesContent">
+        <!-- Populated by renderGA4Devices() -->
+      </div>
     </div>
 
-    <!-- GA4 DEMOGRAPHICS -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 DEMOGRAPHICS
+    ════════════════════════════════════════════════════════════════ -->
     <div class="section" id="sec-ga4-demographics">
       <div class="sh">
         <div class="sh-title">Audience Demographics</div>
         <div class="sh-sub">Gender &amp; age breakdown from GA4</div>
       </div>
-      <div id="ga4DemoContent"></div>
+      <div id="ga4DemoContent">
+        <!-- Populated by renderGA4Demographics() -->
+      </div>
     </div>
 
     <!-- LOCATION -->
@@ -814,15 +826,16 @@ function renderGA4Traffic(){
   }
 
   const o = ga4.overview;
+  // 8 stat cards
   const stats=[
-    {lbl:'Sessions',       val:fmtN(o.sessions),         delta:o.sessions_delta,      cls:'c-blue'},
-    {lbl:'Users',          val:fmtN(o.users),             delta:o.users_delta,         cls:'c-purple'},
-    {lbl:'New Users',      val:fmtN(o.new_users),         delta:o.new_users_delta,     cls:'c-green'},
-    {lbl:'Pageviews',      val:fmtN(o.pageviews),         delta:o.pageviews_delta,     cls:'c-teal'},
-    {lbl:'Engagement Rate',val:fmtPct(o.engagement_rate), delta:o.engagement_delta,    cls:'c-green'},
-    {lbl:'Bounce Rate',    val:fmtPct(o.bounce_rate),     delta:o.bounce_delta,        cls:'c-red'},
-    {lbl:'Avg Duration',   val:o.avg_duration||'—',       delta:o.duration_delta,      cls:'c-blue'},
-    {lbl:'Conversions',    val:fmtN(o.conversions),       delta:o.conv_delta,          cls:'c-amber'},
+    {lbl:'Sessions',       val:fmtN(o.sessions),       delta:o.sessions_delta,      cls:'c-blue'},
+    {lbl:'Users',          val:fmtN(o.users),           delta:o.users_delta,         cls:'c-purple'},
+    {lbl:'New Users',      val:fmtN(o.new_users),       delta:o.new_users_delta,     cls:'c-green'},
+    {lbl:'Pageviews',      val:fmtN(o.pageviews),       delta:o.pageviews_delta,     cls:'c-teal'},
+    {lbl:'Engagement Rate',val:fmtPct(o.engagement_rate),delta:o.engagement_delta,  cls:'c-green'},
+    {lbl:'Bounce Rate',    val:fmtPct(o.bounce_rate),   delta:o.bounce_delta,        cls:'c-red'},
+    {lbl:'Avg Duration',   val:o.avg_duration||'—',     delta:o.duration_delta,      cls:'c-blue'},
+    {lbl:'Conversions',    val:fmtN(o.conversions),     delta:o.conv_delta,          cls:'c-amber'},
   ];
 
   container.innerHTML=`
@@ -845,6 +858,7 @@ function renderGA4Traffic(){
       </div>
     </div>`;
 
+  // Sessions over time chart
   const trend = ga4.sessions_trend || [];
   charts.ga4sessions = new Chart(document.getElementById('ga4SessionsChart'),{
     type:'line',
@@ -859,6 +873,7 @@ function renderGA4Traffic(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // UTM sources list
   const utmColors=['#0083C6','#3DAA69','#5BC8F0','#E8A020','#7C3AED','#D94F3D','#0BADA8','#9EABBE','#0F2B5B'];
   const sources = ga4.utm_sources || [];
   document.getElementById('utmList').innerHTML = sources.map((s,i)=>`
@@ -933,6 +948,7 @@ function renderGA4Devices(){
       </div>
     </div>`;
 
+  // Device grouped bar chart
   const devList = ['mobile','desktop','tablet'];
   const devLabels = devList.map(d=>d.charAt(0).toUpperCase()+d.slice(1));
   charts.ga4devices = new Chart(document.getElementById('ga4DeviceChart'),{
@@ -947,6 +963,7 @@ function renderGA4Devices(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // Browser breakdown
   const browserColors=['#0083C6','#3DAA69','#E8A020','#7C3AED','#9EABBE'];
   const browsers = ga4.browsers || [];
   document.getElementById('browserList').innerHTML = browsers.map((b,i)=>`
@@ -1004,6 +1021,7 @@ function renderGA4Demographics(){
       </div>
     </div>`;
 
+  // Gender donut
   const genders = demo.gender || [];
   charts.ga4gender = new Chart(document.getElementById('ga4GenderDonut'),{
     type:'doughnut',
@@ -1020,6 +1038,7 @@ function renderGA4Demographics(){
       ${g.name} <strong>${g.value}%</strong>
     </div>`).join('');
 
+  // Gender engagement grouped bar
   const gEngagement = demo.gender_engagement || [];
   charts.ga4genderEng = new Chart(document.getElementById('ga4GenderChart'),{
     type:'bar',
@@ -1033,6 +1052,7 @@ function renderGA4Demographics(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10,family:"'Montserrat',sans-serif"},color:'#5A6A82',boxWidth:10,padding:10}}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // Age grouped bar
   const ages = demo.age_groups || [];
   charts.ga4age = new Chart(document.getElementById('ga4AgeChart'),{
     type:'bar',
@@ -1046,6 +1066,7 @@ function renderGA4Demographics(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // Age share bars
   document.getElementById('ageShareList').innerHTML = ages.map((a,i)=>`
     <div class="age-share-item">
       <span class="age-lbl">${a.age}</span>
@@ -1062,10 +1083,11 @@ function render(){
   if(!d)return;
   const t=d.totals;
 
+
   document.getElementById('rangeLabel').textContent=range==='30d'?'Last 30 days':'Last 7 days';
   document.getElementById('trendsLabel').textContent=range==='30d'?'Daily · Last 30 days':'Daily · Last 7 days';
   document.getElementById('funnelSub').textContent='Campaign performance · '+(range==='30d'?'30':'7')+' days';
-  document.getElementById('pfDate').textContent='Data via Google Ads API & GA4 · '+(window.CLIENT_DATA?.report_date||'');
+  document.getElementById('pfDate').textContent='Data via Google Ads API &amp; GA4 · '+(window.CLIENT_DATA?.report_date||'');
   document.getElementById('ga4TrafficSub').textContent='GA4 · '+(range==='30d'?'Last 30 days':'Last 7 days');
 
   destroyCharts();
@@ -1189,7 +1211,7 @@ function render(){
       <td style="text-align:right" class="${lp.convs>0?'':'flag'}">${lp.convs===0?'0 ⚠':fmtN(lp.convs)}</td>
     </tr>`).join('');
 
-  // GA4 sections
+  // ── GA4 sections ──
   renderGA4Traffic();
   renderGA4Devices();
   renderGA4Demographics();
@@ -1317,20 +1339,31 @@ function render(){
     const ctrCls=ctr=>ctr>=5?'good':ctr>=3?'warn':'bad';
     document.getElementById('dowGrid').innerHTML=dowData.map(d=>`<div class="dow-item"><div class="dow-day">${(d.day||'').slice(0,3)}</div><div class="dow-clicks">${fmtN(d.clicks)}</div><div class="dow-ctr ${ctrCls(d.ctr||0)}">${(d.ctr||0).toFixed(1)}%</div></div>`).join('');
     if(hourData&&hourData.length>0){
-      function fmtHour(h){if(h===0)return'12am';if(h<12)return h+'am';if(h===12)return'12pm';return(h-12)+'pm';}
-      const acctTz=window.CLIENT_DATA?.timezone||null;
-      const displayTz=acctTz||Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const tzEl=document.getElementById('hourTzLabel');
-      if(tzEl)tzEl.textContent=displayTz+(acctTz?' (account)':' (your browser)');
+      // Convert 0-23 to 12-hour display (12am, 1am … 12pm, 1pm …)
+      function fmtHour(h){
+        if(h===0) return'12am';
+        if(h<12)  return h+'am';
+        if(h===12)return'12pm';
+        return (h-12)+'pm';
+      }
+      // Timezone label — use account timezone from CLIENT_DATA, fallback to browser tz
+      const acctTz = window.CLIENT_DATA?.timezone || null;
+      const displayTz = acctTz || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const tzEl = document.getElementById('hourTzLabel');
+      if(tzEl) tzEl.textContent = displayTz + (acctTz ? ' (account)' : ' (your browser)');
+
       const maxClicks=Math.max(...hourData.map(h=>h.clicks||0))||1;
       document.getElementById('hourHeatmap').innerHTML=hourData.map(h=>{
         const intensity=(h.clicks||0)/maxClicks;
         const bg=intensity>0.7?'var(--blue)':intensity>0.4?'rgba(0,131,198,0.5)':intensity>0.1?'rgba(0,131,198,0.2)':'var(--gray-100)';
         const label=fmtHour(h.hour);
-        return`<div class="hour-cell" style="background:${bg};color:${intensity>0.5?'#fff':'var(--navy)'}" data-tooltip="${label} — ${fmtN(h.clicks)} clicks">${label}</div>`;
+        const tooltip=label+' — '+fmtN(h.clicks)+' clicks';
+        return`<div class="hour-cell" style="background:${bg};color:${intensity>0.5?'#fff':'var(--navy)'}" data-tooltip="${tooltip}">${label}</div>`;
       }).join('');
+
+      // Axis labels: 12am, 6am, 12pm, 6pm, 11pm — evenly spaced across 24 cells
       const axisEl=document.getElementById('hourAxisLabels');
-      if(axisEl)axisEl.innerHTML=['12am','6am','12pm','6pm','11pm'].map(t=>`<span>${t}</span>`).join('');
+      if(axisEl) axisEl.innerHTML=['12am','6am','12pm','6pm','11pm'].map(t=>`<span>${t}</span>`).join('');
     }
   } else {
     document.getElementById('timingContent').innerHTML=`<div class="no-data-card"><div class="no-data-icon">🕐</div><div class="no-data-title">Timing data not yet available</div><div class="no-data-desc">Will appear once campaigns have sufficient activity.</div></div>`;
@@ -1468,7 +1501,7 @@ window.addEventListener('load',()=>{initClient();render();overlay.classList.remo
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
      DATA INJECTED BY generate_reports_v2.py
-
+     
      window.CLIENT_DATA  — Ad Grants + client metadata
      window.REPORT_DATA  — { '30d': {...}, '7d': {...} }
      window.LP_DATA      — Landing page rows
@@ -1497,5 +1530,17 @@ window.addEventListener('load',()=>{initClient();render();overlay.classList.remo
        }
      }
 ════════════════════════════════════════════════════════════════════════════ -->
+
+
+<script>
+// Injected by generate_reports_v2.py — Justice & Accountability Center of LA (315-976-8484) — 2026-04-21
+window.CLIENT_DATA = {"slug": "justice-accountability-la", "name": "Justice & Accountability Center of LA", "account_id": "315-976-8484", "timezone": "America/New_York", "website": "https://jacla.org", "org_model": "location_based", "animal_type": null, "report_date": "April 21, 2026", "gps": 50, "gps_components": {"ctr": 100, "utilization": 0, "conv_tracking": 0, "budget": 100}, "compliance": "low_activity", "totals_30d": {"cl": 12.0, "im": 40.0, "cost": 15.23, "cv": 0, "ctr": 30.0, "cpc": 1.27, "costPerConv": null, "convRate": 0.0, "impressionShare": 10.0, "lostIsBudget": 0.0, "lostIsRank": 90.0}, "totals_7d": {"cl": 9.0, "im": 33.0, "cost": 12.8, "cv": 0, "ctr": 27.27, "cpc": 1.42, "costPerConv": null, "convRate": 0.0, "impressionShare": 10.0, "lostIsBudget": 0.0, "lostIsRank": 90.0}, "insights": [{"color": "green", "tag": "win", "title": "Exceptional CTR \u2014 30.0%", "body": "Your campaigns are achieving 30.0% CTR \u2014 well above the industry average."}, {"color": "red", "tag": "action", "title": "Grant severely under-utilized \u2014 0%", "body": "Only $15 of the $10,000 monthly grant is being used."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 50/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/expungements", "sessions": "1769", "averageSessionDuration": "270.7988262758621", "bounceRate": "0.27529677784058793", "engagementRate": "0.72470322215941207", "conversions": "0"}, {"landingPage": "/", "sessions": "1039", "averageSessionDuration": "155.99342940327239", "bounceRate": "0.34263715110683352", "engagementRate": "0.65736284889316654", "conversions": "0"}, {"landingPage": "(not set)", "sessions": "227", "averageSessionDuration": "108.5814207136564", "bounceRate": "0.87665198237885467", "engagementRate": "0.12334801762114538", "conversions": "0"}, {"landingPage": "/expungement-app", "sessions": "192", "averageSessionDuration": "226.95875995833333", "bounceRate": "0.40625", "engagementRate": "0.59375", "conversions": "0"}, {"landingPage": "/events", "sessions": "182", "averageSessionDuration": "96.903802346153853", "bounceRate": "0.50549450549450547", "engagementRate": "0.49450549450549453", "conversions": "0"}, {"landingPage": "/contact", "sessions": "165", "averageSessionDuration": "182.07091580606061", "bounceRate": "0.32727272727272727", "engagementRate": "0.67272727272727273", "conversions": "0"}, {"landingPage": "", "sessions": "68", "averageSessionDuration": "156.1766873382353", "bounceRate": "1", "engagementRate": "0", "conversions": "0"}, {"landingPage": "/re-entry", "sessions": "63", "averageSessionDuration": "233.06392674603177", "bounceRate": "0.41269841269841268", "engagementRate": "0.58730158730158732", "conversions": "0"}, {"landingPage": "/clean-slate", "sessions": "37", "averageSessionDuration": "160.74420916216215", "bounceRate": "0.24324324324324326", "engagementRate": "0.7567567567567568", "conversions": "0"}, {"landingPage": "/donate", "sessions": "22", "averageSessionDuration": "12.182874409090909", "bounceRate": "0.72727272727272729", "engagementRate": "0.27272727272727271", "conversions": "0"}], "ga4_states": [{"region": "Louisiana", "sessions": "1692", "totalUsers": "1217"}, {"region": "Texas", "sessions": "730", "totalUsers": "603"}, {"region": "Alabama", "sessions": "424", "totalUsers": "358"}, {"region": "Illinois", "sessions": "209", "totalUsers": "174"}, {"region": "California", "sessions": "96", "totalUsers": "83"}, {"region": "Florida", "sessions": "59", "totalUsers": "49"}, {"region": "Georgia", "sessions": "56", "totalUsers": "48"}, {"region": "Wisconsin", "sessions": "51", "totalUsers": "48"}, {"region": "Virginia", "sessions": "45", "totalUsers": "42"}, {"region": "Colorado", "sessions": "42", "totalUsers": "35"}], "ga4_cities": [{"city": "New Orleans", "sessions": "549", "totalUsers": "384"}, {"city": "Dallas", "sessions": "503", "totalUsers": "421"}, {"city": "Birmingham", "sessions": "218", "totalUsers": "184"}, {"city": "Baton Rouge", "sessions": "181", "totalUsers": "139"}, {"city": "Chicago", "sessions": "165", "totalUsers": "143"}, {"city": "Mobile", "sessions": "150", "totalUsers": "124"}, {"city": "Lafayette", "sessions": "111", "totalUsers": "82"}, {"city": "Houston", "sessions": "73", "totalUsers": "64"}, {"city": "Covington", "sessions": "65", "totalUsers": "42"}, {"city": "Monroe", "sessions": "39", "totalUsers": "31"}], "keywords": {"top_performers": [{"keyword": "JAC Louisiana", "ctr": 61.54, "clicks": 8, "impressions": 13, "quality_score": 10, "cost": 8.73, "conversions": 0, "match_type": "BROAD"}, {"keyword": "free expungement", "ctr": 25.0, "clicks": 2, "impressions": 8, "quality_score": null, "cost": 3.79, "conversions": 0, "match_type": "BROAD"}, {"keyword": "expungement services", "ctr": 20.0, "clicks": 1, "impressions": 5, "quality_score": null, "cost": 1.35, "conversions": 0, "match_type": "BROAD"}, {"keyword": "expungement lawyer", "ctr": 100.0, "clicks": 1, "impressions": 1, "quality_score": null, "cost": 1.36, "conversions": 0, "match_type": "BROAD"}], "compliance_risks": [], "quality_score_distribution": {"high": 1, "medium": 0, "low": 0}}, "ads": {"top_headlines": [{"headline": "Legal Reform in Louisiana", "ctr": 50.0, "clicks": 9}, {"headline": "Change Lives with {Keyword:JAC}", "ctr": 50.0, "clicks": 9}, {"headline": "Expungement Help", "ctr": 50.0, "clicks": 9}, {"headline": "Clear Your Louisiana Record", "ctr": 17.65, "clicks": 3}, {"headline": "Free Expungement App for LA", "ctr": 17.65, "clicks": 3}, {"headline": "Expunge Your Criminal Record", "ctr": 17.65, "clicks": 3}], "top_ads": [{"headlines": ["Legal Reform in Louisiana", "Change Lives with {Keyword:JAC}", "Expungement Help"], "descriptions": ["Free expungement help in Louisiana. No registration required. Walk in & get started today.", "JAC Louisiana offers free legal aid, expungement clinics, and reentry services.", "Get free help clearing your record. Income-based fee waivers available.", "We help people after incarceration. Free legal services across Louisiana."], "ctr": 50.0, "clicks": 9, "conversions": 0}, {"headlines": ["Clear Your Louisiana Record", "Free Expungement App for LA", "Expunge Your Criminal Record"], "descriptions": ["Use our free app to check if you're eligible for expungement in Louisiana. Start today", "Clear your criminal record with JAC's expungement app. Simple, fast, confidential.", "Get a second chance. Our tool helps you navigate Louisiana's expungement process.", "Check your eligibility for record expungement in minutes for free. Use JAC Louisiana app."], "ctr": 17.65, "clicks": 3, "conversions": 0}]}, "day_of_week": [{"day": "Monday", "clicks": 2, "impressions": 9, "cost": 4.02, "conversions": 0.0, "ctr": 22.22}, {"day": "Tuesday", "clicks": 4, "impressions": 9, "cost": 4.32, "conversions": 0.0, "ctr": 44.44}, {"day": "Wednesday", "clicks": 2, "impressions": 5, "cost": 2.2, "conversions": 0.0, "ctr": 40.0}, {"day": "Thursday", "clicks": 0, "impressions": 5, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"day": "Friday", "clicks": 2, "impressions": 5, "cost": 3.79, "conversions": 0.0, "ctr": 40.0}, {"day": "Saturday", "clicks": 1, "impressions": 5, "cost": 0.07, "conversions": 0.0, "ctr": 20.0}, {"day": "Sunday", "clicks": 1, "impressions": 2, "cost": 0.83, "conversions": 0.0, "ctr": 50.0}], "hour_of_day": [{"hour": 0, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 1, "clicks": 1, "impressions": 1, "cost": 1.89, "conversions": 0.0, "ctr": 100.0}, {"hour": 2, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 3, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 4, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 5, "clicks": 0, "impressions": 2, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 6, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 7, "clicks": 1, "impressions": 1, "cost": 2.5, "conversions": 0.0, "ctr": 100.0}, {"hour": 8, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 9, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 10, "clicks": 0, "impressions": 1, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 11, "clicks": 1, "impressions": 5, "cost": 1.52, "conversions": 0.0, "ctr": 20.0}, {"hour": 12, "clicks": 0, "impressions": 1, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 13, "clicks": 1, "impressions": 2, "cost": 1.9, "conversions": 0.0, "ctr": 50.0}, {"hour": 14, "clicks": 1, "impressions": 6, "cost": 0.84, "conversions": 0.0, "ctr": 16.67}, {"hour": 15, "clicks": 1, "impressions": 3, "cost": 1.35, "conversions": 0.0, "ctr": 33.33}, {"hour": 16, "clicks": 0, "impressions": 2, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 17, "clicks": 3, "impressions": 7, "cost": 1.93, "conversions": 0.0, "ctr": 42.86}, {"hour": 18, "clicks": 0, "impressions": 2, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 19, "clicks": 0, "impressions": 3, "cost": 0.0, "conversions": 0.0, "ctr": 0.0}, {"hour": 20, "clicks": 2, "impressions": 3, "cost": 1.94, "conversions": 0.0, "ctr": 66.67}, {"hour": 21, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 22, "clicks": 0, "impressions": 0, "cost": 0, "conversions": 0, "ctr": 0}, {"hour": 23, "clicks": 1, "impressions": 1, "cost": 1.36, "conversions": 0.0, "ctr": 100.0}], "search_terms": {"top_terms": [{"term": "jac louisiana", "ctr": 61.54, "clicks": 8, "impressions": 13, "conversions": 0}], "potential_negatives": []}, "seo_enrolled": false, "seo": null};
+window.REPORT_DATA = {'30d':{totals:{cl:12.0,im:40.0,ctr:30.0,cost:15.23,cv:0,cpc:1.27,costPerConv:0,convRate:0.0,impressionShare:10.0,lostIsRank:90.0,lostIsBudget:null},campaigns:[{n:"Search- General Awareness",s:"ENABLED",ctr:50.0,cl:9.0,im:18.0,cost:10.08,cv:0,cpc:1.12,cpa:null},{n:"Search-EXPUNGEMENT APP",s:"ENABLED",ctr:17.65,cl:3.0,im:17.0,cost:5.15,cv:0,cpc:1.72,cpa:null},{n:"Search - Job Listing",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search - General Donation",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax - Job Listing",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-attorney volunteer",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax- Donation",s:"ENABLED",ctr:0,cl:0,im:5.0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-March",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07", "Apr 08", "Apr 09", "Apr 10", "Apr 11", "Apr 12", "Apr 13", "Apr 14", "Apr 15", "Apr 16", "Apr 17", "Apr 18", "Apr 19", "Apr 20", "Apr 21"],clicks:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],convs:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],spend:[0.3, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46, 0.46, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46, 0.46, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46],cpc:[0.3, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46, 0.46, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46, 0.46, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46, 0.46, 0.61, 0.46]},devices:[{n:'Desktop',cl:8,im:26,cost:9.9,cv:0,cvRate:0},{n:'Mobile',cl:4,im:13,cost:4.87,cv:0,cvRate:0},{n:'Tablet',cl:0,im:1,cost:0.46,cv:0,cvRate:0}]},'7d':{totals:{cl:9.0,im:33.0,ctr:27.27,cost:12.8,cv:0,cpc:1.42,costPerConv:0,convRate:0.0,impressionShare:10.0,lostIsRank:90.0,lostIsBudget:null},campaigns:[{n:"Search- General Awareness",s:"ENABLED",ctr:54.55,cl:6.0,im:11.0,cost:7.65,cv:0,cpc:1.28,cpa:null},{n:"Search-EXPUNGEMENT APP",s:"ENABLED",ctr:17.65,cl:3.0,im:17.0,cost:5.15,cv:0,cpc:1.72,cpa:null},{n:"Search - Job Listing",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search - General Donation",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax - Job Listing",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search-attorney volunteer",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax- Donation",s:"ENABLED",ctr:0,cl:0,im:5.0,cost:0,cv:0,cpc:0,cpa:null},{n:"PMax-March",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Apr 15", "Apr 16", "Apr 17", "Apr 18", "Apr 19", "Apr 20", "Apr 21"],clicks:[1, 1, 1, 1, 1, 1, 2],convs:[0, 0, 0, 0, 0, 0, 0],spend:[1.54, 2.05, 1.66, 1.79, 1.92, 1.66, 2.18],cpc:[1.54, 2.05, 1.66, 1.79, 1.92, 1.66, 1.09]},devices:[{n:'Desktop',cl:6,im:21,cost:8.32,cv:0,cvRate:0},{n:'Mobile',cl:3,im:11,cost:4.1,cv:0,cvRate:0},{n:'Tablet',cl:0,im:1,cost:0.38,cv:0,cvRate:0}]}};
+window.LP_DATA     = [{"page": "/expungements", "sessions": 1769, "pct": 52, "avgTime": "4m 30s", "engaged": true, "convs": 0}, {"page": "/", "sessions": 1039, "pct": 30, "avgTime": "2m 35s", "engaged": true, "convs": 0}, {"page": "(not set)", "sessions": 227, "pct": 7, "avgTime": "1m 48s", "engaged": false, "convs": 0}, {"page": "/expungement-app", "sessions": 192, "pct": 6, "avgTime": "3m 46s", "engaged": true, "convs": 0}, {"page": "/events", "sessions": 182, "pct": 5, "avgTime": "1m 36s", "engaged": false, "convs": 0}];
+window.STATE_DATA  = [{"state": "Louisiana", "sessions": 1692, "pct": 50}, {"state": "Texas", "sessions": 730, "pct": 21}, {"state": "Alabama", "sessions": 424, "pct": 12}, {"state": "Illinois", "sessions": 209, "pct": 6}, {"state": "California", "sessions": 96, "pct": 3}, {"state": "Florida", "sessions": 59, "pct": 2}, {"state": "Georgia", "sessions": 56, "pct": 2}, {"state": "Wisconsin", "sessions": 51, "pct": 1}, {"state": "Virginia", "sessions": 45, "pct": 1}, {"state": "Colorado", "sessions": 42, "pct": 1}];
+window.CITY_DATA   = [{"city": "New Orleans", "state": "", "sessions": 549}, {"city": "Dallas", "state": "", "sessions": 503}, {"city": "Birmingham", "state": "", "sessions": 218}, {"city": "Baton Rouge", "state": "", "sessions": 181}, {"city": "Chicago", "state": "", "sessions": 165}, {"city": "Mobile", "state": "", "sessions": 150}, {"city": "Lafayette", "state": "", "sessions": 111}, {"city": "Houston", "state": "", "sessions": 73}, {"city": "Covington", "state": "", "sessions": 65}, {"city": "Monroe", "state": "", "sessions": 39}];
+window.GA4_DATA    = {"overview": {"sessions": 3932, "users": 2971, "new_users": 2085, "pageviews": 4766, "engagement_rate": 62.8, "bounce_rate": 37.2, "avg_duration": "3m 25s", "conversions": 0, "sessions_delta": null, "users_delta": null, "new_users_delta": null, "pageviews_delta": null, "engagement_delta": null, "bounce_delta": null, "duration_delta": null, "conv_delta": null}, "sessions_trend": [], "utm_sources": [], "devices": {"mobile": {"sessions": 0, "users": 0, "conversions": 0, "engagement_rate": 0.0, "avg_time": "\u2014", "bounce_rate": 0.0, "share": 0.0}, "desktop": {"sessions": 0, "users": 0, "conversions": 0, "engagement_rate": 0.0, "avg_time": "\u2014", "bounce_rate": 0.0, "share": 0.0}, "tablet": {"sessions": 0, "users": 0, "conversions": 0, "engagement_rate": 0.0, "avg_time": "\u2014", "bounce_rate": 0.0, "share": 0.0}}, "browsers": [], "demographics": null};
+</script>
+
 </body>
 </html>

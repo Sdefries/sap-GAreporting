@@ -685,31 +685,43 @@ tr:hover td{background:#F5F9FF}
       <div id="lpCallout"></div>
     </div>
 
-    <!-- GA4 TRAFFIC OVERVIEW -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 TRAFFIC OVERVIEW
+    ════════════════════════════════════════════════════════════════ -->
     <div class="section" id="sec-ga4-traffic">
       <div class="sh">
         <div class="sh-title">Website Traffic Overview</div>
         <div class="sh-sub" id="ga4TrafficSub">GA4 · Last 30 days</div>
       </div>
-      <div id="ga4TrafficContent"></div>
+      <div id="ga4TrafficContent">
+        <!-- Populated by renderGA4Traffic() -->
+      </div>
     </div>
 
-    <!-- GA4 DEVICE PERFORMANCE -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 DEVICE PERFORMANCE
+    ════════════════════════════════════════════════════════════════ -->
     <div class="section" id="sec-ga4-devices">
       <div class="sh">
         <div class="sh-title">Device Performance</div>
         <div class="sh-sub">Sessions, conversions &amp; engagement by device</div>
       </div>
-      <div id="ga4DevicesContent"></div>
+      <div id="ga4DevicesContent">
+        <!-- Populated by renderGA4Devices() -->
+      </div>
     </div>
 
-    <!-- GA4 DEMOGRAPHICS -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 DEMOGRAPHICS
+    ════════════════════════════════════════════════════════════════ -->
     <div class="section" id="sec-ga4-demographics">
       <div class="sh">
         <div class="sh-title">Audience Demographics</div>
         <div class="sh-sub">Gender &amp; age breakdown from GA4</div>
       </div>
-      <div id="ga4DemoContent"></div>
+      <div id="ga4DemoContent">
+        <!-- Populated by renderGA4Demographics() -->
+      </div>
     </div>
 
     <!-- LOCATION -->
@@ -814,15 +826,16 @@ function renderGA4Traffic(){
   }
 
   const o = ga4.overview;
+  // 8 stat cards
   const stats=[
-    {lbl:'Sessions',       val:fmtN(o.sessions),         delta:o.sessions_delta,      cls:'c-blue'},
-    {lbl:'Users',          val:fmtN(o.users),             delta:o.users_delta,         cls:'c-purple'},
-    {lbl:'New Users',      val:fmtN(o.new_users),         delta:o.new_users_delta,     cls:'c-green'},
-    {lbl:'Pageviews',      val:fmtN(o.pageviews),         delta:o.pageviews_delta,     cls:'c-teal'},
-    {lbl:'Engagement Rate',val:fmtPct(o.engagement_rate), delta:o.engagement_delta,    cls:'c-green'},
-    {lbl:'Bounce Rate',    val:fmtPct(o.bounce_rate),     delta:o.bounce_delta,        cls:'c-red'},
-    {lbl:'Avg Duration',   val:o.avg_duration||'—',       delta:o.duration_delta,      cls:'c-blue'},
-    {lbl:'Conversions',    val:fmtN(o.conversions),       delta:o.conv_delta,          cls:'c-amber'},
+    {lbl:'Sessions',       val:fmtN(o.sessions),       delta:o.sessions_delta,      cls:'c-blue'},
+    {lbl:'Users',          val:fmtN(o.users),           delta:o.users_delta,         cls:'c-purple'},
+    {lbl:'New Users',      val:fmtN(o.new_users),       delta:o.new_users_delta,     cls:'c-green'},
+    {lbl:'Pageviews',      val:fmtN(o.pageviews),       delta:o.pageviews_delta,     cls:'c-teal'},
+    {lbl:'Engagement Rate',val:fmtPct(o.engagement_rate),delta:o.engagement_delta,  cls:'c-green'},
+    {lbl:'Bounce Rate',    val:fmtPct(o.bounce_rate),   delta:o.bounce_delta,        cls:'c-red'},
+    {lbl:'Avg Duration',   val:o.avg_duration||'—',     delta:o.duration_delta,      cls:'c-blue'},
+    {lbl:'Conversions',    val:fmtN(o.conversions),     delta:o.conv_delta,          cls:'c-amber'},
   ];
 
   container.innerHTML=`
@@ -845,6 +858,7 @@ function renderGA4Traffic(){
       </div>
     </div>`;
 
+  // Sessions over time chart
   const trend = ga4.sessions_trend || [];
   charts.ga4sessions = new Chart(document.getElementById('ga4SessionsChart'),{
     type:'line',
@@ -859,6 +873,7 @@ function renderGA4Traffic(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // UTM sources list
   const utmColors=['#0083C6','#3DAA69','#5BC8F0','#E8A020','#7C3AED','#D94F3D','#0BADA8','#9EABBE','#0F2B5B'];
   const sources = ga4.utm_sources || [];
   document.getElementById('utmList').innerHTML = sources.map((s,i)=>`
@@ -933,6 +948,7 @@ function renderGA4Devices(){
       </div>
     </div>`;
 
+  // Device grouped bar chart
   const devList = ['mobile','desktop','tablet'];
   const devLabels = devList.map(d=>d.charAt(0).toUpperCase()+d.slice(1));
   charts.ga4devices = new Chart(document.getElementById('ga4DeviceChart'),{
@@ -947,6 +963,7 @@ function renderGA4Devices(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // Browser breakdown
   const browserColors=['#0083C6','#3DAA69','#E8A020','#7C3AED','#9EABBE'];
   const browsers = ga4.browsers || [];
   document.getElementById('browserList').innerHTML = browsers.map((b,i)=>`
@@ -1004,6 +1021,7 @@ function renderGA4Demographics(){
       </div>
     </div>`;
 
+  // Gender donut
   const genders = demo.gender || [];
   charts.ga4gender = new Chart(document.getElementById('ga4GenderDonut'),{
     type:'doughnut',
@@ -1020,6 +1038,7 @@ function renderGA4Demographics(){
       ${g.name} <strong>${g.value}%</strong>
     </div>`).join('');
 
+  // Gender engagement grouped bar
   const gEngagement = demo.gender_engagement || [];
   charts.ga4genderEng = new Chart(document.getElementById('ga4GenderChart'),{
     type:'bar',
@@ -1033,6 +1052,7 @@ function renderGA4Demographics(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10,family:"'Montserrat',sans-serif"},color:'#5A6A82',boxWidth:10,padding:10}}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // Age grouped bar
   const ages = demo.age_groups || [];
   charts.ga4age = new Chart(document.getElementById('ga4AgeChart'),{
     type:'bar',
@@ -1046,6 +1066,7 @@ function renderGA4Demographics(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // Age share bars
   document.getElementById('ageShareList').innerHTML = ages.map((a,i)=>`
     <div class="age-share-item">
       <span class="age-lbl">${a.age}</span>
@@ -1062,10 +1083,11 @@ function render(){
   if(!d)return;
   const t=d.totals;
 
+
   document.getElementById('rangeLabel').textContent=range==='30d'?'Last 30 days':'Last 7 days';
   document.getElementById('trendsLabel').textContent=range==='30d'?'Daily · Last 30 days':'Daily · Last 7 days';
   document.getElementById('funnelSub').textContent='Campaign performance · '+(range==='30d'?'30':'7')+' days';
-  document.getElementById('pfDate').textContent='Data via Google Ads API & GA4 · '+(window.CLIENT_DATA?.report_date||'');
+  document.getElementById('pfDate').textContent='Data via Google Ads API &amp; GA4 · '+(window.CLIENT_DATA?.report_date||'');
   document.getElementById('ga4TrafficSub').textContent='GA4 · '+(range==='30d'?'Last 30 days':'Last 7 days');
 
   destroyCharts();
@@ -1189,7 +1211,7 @@ function render(){
       <td style="text-align:right" class="${lp.convs>0?'':'flag'}">${lp.convs===0?'0 ⚠':fmtN(lp.convs)}</td>
     </tr>`).join('');
 
-  // GA4 sections
+  // ── GA4 sections ──
   renderGA4Traffic();
   renderGA4Devices();
   renderGA4Demographics();
@@ -1317,20 +1339,31 @@ function render(){
     const ctrCls=ctr=>ctr>=5?'good':ctr>=3?'warn':'bad';
     document.getElementById('dowGrid').innerHTML=dowData.map(d=>`<div class="dow-item"><div class="dow-day">${(d.day||'').slice(0,3)}</div><div class="dow-clicks">${fmtN(d.clicks)}</div><div class="dow-ctr ${ctrCls(d.ctr||0)}">${(d.ctr||0).toFixed(1)}%</div></div>`).join('');
     if(hourData&&hourData.length>0){
-      function fmtHour(h){if(h===0)return'12am';if(h<12)return h+'am';if(h===12)return'12pm';return(h-12)+'pm';}
-      const acctTz=window.CLIENT_DATA?.timezone||null;
-      const displayTz=acctTz||Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const tzEl=document.getElementById('hourTzLabel');
-      if(tzEl)tzEl.textContent=displayTz+(acctTz?' (account)':' (your browser)');
+      // Convert 0-23 to 12-hour display (12am, 1am … 12pm, 1pm …)
+      function fmtHour(h){
+        if(h===0) return'12am';
+        if(h<12)  return h+'am';
+        if(h===12)return'12pm';
+        return (h-12)+'pm';
+      }
+      // Timezone label — use account timezone from CLIENT_DATA, fallback to browser tz
+      const acctTz = window.CLIENT_DATA?.timezone || null;
+      const displayTz = acctTz || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const tzEl = document.getElementById('hourTzLabel');
+      if(tzEl) tzEl.textContent = displayTz + (acctTz ? ' (account)' : ' (your browser)');
+
       const maxClicks=Math.max(...hourData.map(h=>h.clicks||0))||1;
       document.getElementById('hourHeatmap').innerHTML=hourData.map(h=>{
         const intensity=(h.clicks||0)/maxClicks;
         const bg=intensity>0.7?'var(--blue)':intensity>0.4?'rgba(0,131,198,0.5)':intensity>0.1?'rgba(0,131,198,0.2)':'var(--gray-100)';
         const label=fmtHour(h.hour);
-        return`<div class="hour-cell" style="background:${bg};color:${intensity>0.5?'#fff':'var(--navy)'}" data-tooltip="${label} — ${fmtN(h.clicks)} clicks">${label}</div>`;
+        const tooltip=label+' — '+fmtN(h.clicks)+' clicks';
+        return`<div class="hour-cell" style="background:${bg};color:${intensity>0.5?'#fff':'var(--navy)'}" data-tooltip="${tooltip}">${label}</div>`;
       }).join('');
+
+      // Axis labels: 12am, 6am, 12pm, 6pm, 11pm — evenly spaced across 24 cells
       const axisEl=document.getElementById('hourAxisLabels');
-      if(axisEl)axisEl.innerHTML=['12am','6am','12pm','6pm','11pm'].map(t=>`<span>${t}</span>`).join('');
+      if(axisEl) axisEl.innerHTML=['12am','6am','12pm','6pm','11pm'].map(t=>`<span>${t}</span>`).join('');
     }
   } else {
     document.getElementById('timingContent').innerHTML=`<div class="no-data-card"><div class="no-data-icon">🕐</div><div class="no-data-title">Timing data not yet available</div><div class="no-data-desc">Will appear once campaigns have sufficient activity.</div></div>`;
@@ -1468,7 +1501,7 @@ window.addEventListener('load',()=>{initClient();render();overlay.classList.remo
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
      DATA INJECTED BY generate_reports_v2.py
-
+     
      window.CLIENT_DATA  — Ad Grants + client metadata
      window.REPORT_DATA  — { '30d': {...}, '7d': {...} }
      window.LP_DATA      — Landing page rows
@@ -1497,5 +1530,17 @@ window.addEventListener('load',()=>{initClient();render();overlay.classList.remo
        }
      }
 ════════════════════════════════════════════════════════════════════════════ -->
+
+
+<script>
+// Injected by generate_reports_v2.py — Red Clay Ranch Equine Rescue & Sanctuary (378-461-6494) — 2026-04-21
+window.CLIENT_DATA = {"slug": "red-clay-ranch", "name": "Red Clay Ranch Equine Rescue & Sanctuary", "account_id": "378-461-6494", "timezone": "America/New_York", "website": "", "org_model": "location_based", "animal_type": null, "report_date": "April 21, 2026", "gps": 91, "gps_components": {"ctr": 73, "utilization": 97, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 571.0, "im": 4484.0, "cost": 9748.88, "cv": 801.0, "ctr": 12.73, "cpc": 17.07, "costPerConv": 12.17, "convRate": 140.28, "impressionShare": 10.0, "lostIsBudget": 11.8, "lostIsRank": 85.9}, "totals_7d": {"cl": 136.0, "im": 986.0, "cost": 2346.61, "cv": 44.0, "ctr": 13.79, "cpc": 17.25, "costPerConv": 53.33, "convRate": 32.35, "impressionShare": 10.0, "lostIsBudget": 6.1, "lostIsRank": 90.0}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 12.7%", "body": "Account CTR is 12.7% \u2014 above the 5% minimum. We monitor this closely."}, {"color": "green", "tag": "win", "title": "Grant utilization strong \u2014 97% used", "body": "Spending $9,749 of the $10,000 monthly grant."}, {"color": "green", "tag": "win", "title": "801 conversions tracked at $12.17 CPA", "body": "Campaigns recorded 801 conversions this month at $12.17 per conversion."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 91/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": true, "ga4_pages": [{"landingPage": "/", "sessions": "309", "averageSessionDuration": "152.55915437216828", "bounceRate": "0", "engagementRate": "1", "conversions": "2294"}, {"landingPage": "/meet-the-horses", "sessions": "291", "averageSessionDuration": "79.772833917525773", "bounceRate": "0", "engagementRate": "1", "conversions": "2476"}, {"landingPage": "/volunteer", "sessions": "224", "averageSessionDuration": "71.371697", "bounceRate": "0", "engagementRate": "1", "conversions": "1636"}, {"landingPage": "(not set)", "sessions": "31", "averageSessionDuration": "0.85396696774193548", "bounceRate": "0", "engagementRate": "1", "conversions": "65"}, {"landingPage": "/about", "sessions": "24", "averageSessionDuration": "238.42865608333332", "bounceRate": "0", "engagementRate": "1", "conversions": "133"}, {"landingPage": "/events", "sessions": "15", "averageSessionDuration": "192.39062113333335", "bounceRate": "0.066666666666666666", "engagementRate": "0.93333333333333335", "conversions": "108"}, {"landingPage": "/get-involved", "sessions": "11", "averageSessionDuration": "15.809024181818181", "bounceRate": "0.090909090909090912", "engagementRate": "0.90909090909090906", "conversions": "47"}, {"landingPage": "/ways-to-give", "sessions": "11", "averageSessionDuration": "51.55830118181818", "bounceRate": "0", "engagementRate": "1", "conversions": "69"}, {"landingPage": "", "sessions": "9", "averageSessionDuration": "1.883841888888889", "bounceRate": "1", "engagementRate": "0", "conversions": "14"}, {"landingPage": "/2023/03/16/sample-event", "sessions": "9", "averageSessionDuration": "108.505763", "bounceRate": "0.1111111111111111", "engagementRate": "0.88888888888888884", "conversions": "58"}], "ga4_states": [{"region": "Georgia", "sessions": "137", "totalUsers": "114"}, {"region": "California", "sessions": "94", "totalUsers": "71"}, {"region": "Texas", "sessions": "75", "totalUsers": "69"}, {"region": "Florida", "sessions": "60", "totalUsers": "57"}, {"region": "North Carolina", "sessions": "50", "totalUsers": "34"}, {"region": "New York", "sessions": "48", "totalUsers": "40"}, {"region": "Virginia", "sessions": "39", "totalUsers": "35"}, {"region": "Alabama", "sessions": "27", "totalUsers": "25"}, {"region": "Illinois", "sessions": "27", "totalUsers": "24"}, {"region": "Pennsylvania", "sessions": "23", "totalUsers": "21"}], "ga4_cities": [{"city": "Atlanta", "sessions": "52", "totalUsers": "45"}, {"city": "New York", "sessions": "25", "totalUsers": "22"}, {"city": "Dallas", "sessions": "21", "totalUsers": "21"}, {"city": "Chicago", "sessions": "20", "totalUsers": "18"}, {"city": "Los Angeles", "sessions": "17", "totalUsers": "16"}, {"city": "Houston", "sessions": "14", "totalUsers": "11"}, {"city": "San Jose", "sessions": "13", "totalUsers": "6"}, {"city": "Ashburn", "sessions": "11", "totalUsers": "11"}, {"city": "Beulaville", "sessions": "11", "totalUsers": "3"}, {"city": "Birmingham", "sessions": "10", "totalUsers": "10"}], "keywords": {"top_performers": [{"keyword": "horses near me", "ctr": 23.33, "clicks": 14, "impressions": 60, "quality_score": null, "cost": 164.37, "conversions": 63.0, "match_type": "BROAD"}], "compliance_risks": [], "quality_score_distribution": {"high": 0, "medium": 0, "low": 0}}, "ads": {"top_headlines": [{"headline": "Horse Rescue in Georgia", "ctr": 22.67, "clicks": 17}, {"headline": "Best Horse Rescue", "ctr": 22.67, "clicks": 17}, {"headline": "Best Horse Santcuary", "ctr": 22.67, "clicks": 17}, {"headline": "Volunteer With Horse Rescue", "ctr": 0, "clicks": 0}, {"headline": "Animal volunteer organization", "ctr": 0, "clicks": 0}, {"headline": "Volunteer horse rescue near Me", "ctr": 0, "clicks": 0}], "top_ads": [{"headlines": ["Horse Rescue in Georgia", "Best Horse Rescue", "Best Horse Santcuary"], "descriptions": ["Top rated horse rescue in Georgia", "Best Horse Rescue near Atlanta"], "ctr": 22.67, "clicks": 17, "conversions": 80.0}]}, "day_of_week": [{"day": "Monday", "clicks": 71, "impressions": 568, "cost": 1233.32, "conversions": 31.0, "ctr": 12.5}, {"day": "Tuesday", "clicks": 57, "impressions": 437, "cost": 990.41, "conversions": 16.0, "ctr": 13.04}, {"day": "Wednesday", "clicks": 58, "impressions": 460, "cost": 976.34, "conversions": 27.0, "ctr": 12.61}, {"day": "Thursday", "clicks": 52, "impressions": 384, "cost": 1005.11, "conversions": 8.0, "ctr": 13.54}, {"day": "Friday", "clicks": 57, "impressions": 451, "cost": 1025.16, "conversions": 11.0, "ctr": 12.64}, {"day": "Saturday", "clicks": 65, "impressions": 402, "cost": 1158.51, "conversions": 9.0, "ctr": 16.17}, {"day": "Sunday", "clicks": 60, "impressions": 492, "cost": 1077.2, "conversions": 7.0, "ctr": 12.2}], "hour_of_day": [{"hour": 0, "clicks": 20, "impressions": 121, "cost": 362.02, "conversions": 0.0, "ctr": 16.53}, {"hour": 1, "clicks": 13, "impressions": 82, "cost": 250.97, "conversions": 0.0, "ctr": 15.85}, {"hour": 2, "clicks": 2, "impressions": 44, "cost": 37.74, "conversions": 0.0, "ctr": 4.55}, {"hour": 3, "clicks": 5, "impressions": 19, "cost": 114.97, "conversions": 1.0, "ctr": 26.32}, {"hour": 4, "clicks": 2, "impressions": 23, "cost": 39.17, "conversions": 0.0, "ctr": 8.7}, {"hour": 5, "clicks": 1, "impressions": 18, "cost": 19.86, "conversions": 0.0, "ctr": 5.56}, {"hour": 6, "clicks": 5, "impressions": 18, "cost": 97.33, "conversions": 1.0, "ctr": 27.78}, {"hour": 7, "clicks": 6, "impressions": 39, "cost": 111.16, "conversions": 1.0, "ctr": 15.38}, {"hour": 8, "clicks": 5, "impressions": 76, "cost": 83.23, "conversions": 0.0, "ctr": 6.58}, {"hour": 9, "clicks": 10, "impressions": 119, "cost": 166.51, "conversions": 4.0, "ctr": 8.4}, {"hour": 10, "clicks": 16, "impressions": 167, "cost": 294.54, "conversions": 0.0, "ctr": 9.58}, {"hour": 11, "clicks": 30, "impressions": 246, "cost": 546.58, "conversions": 20.0, "ctr": 12.2}, {"hour": 12, "clicks": 26, "impressions": 268, "cost": 440.56, "conversions": 3.0, "ctr": 9.7}, {"hour": 13, "clicks": 38, "impressions": 245, "cost": 658.51, "conversions": 12.0, "ctr": 15.51}, {"hour": 14, "clicks": 31, "impressions": 246, "cost": 548.7, "conversions": 8.0, "ctr": 12.6}, {"hour": 15, "clicks": 26, "impressions": 247, "cost": 473.93, "conversions": 9.0, "ctr": 10.53}, {"hour": 16, "clicks": 33, "impressions": 238, "cost": 595.07, "conversions": 9.0, "ctr": 13.87}, {"hour": 17, "clicks": 29, "impressions": 258, "cost": 512.54, "conversions": 4.0, "ctr": 11.24}, {"hour": 18, "clicks": 32, "impressions": 216, "cost": 529.72, "conversions": 11.0, "ctr": 14.81}, {"hour": 19, "clicks": 32, "impressions": 183, "cost": 578.21, "conversions": 1.0, "ctr": 17.49}, {"hour": 20, "clicks": 30, "impressions": 156, "cost": 552.68, "conversions": 20.0, "ctr": 19.23}, {"hour": 21, "clicks": 17, "impressions": 97, "cost": 246.92, "conversions": 5.0, "ctr": 17.53}, {"hour": 22, "clicks": 9, "impressions": 46, "cost": 172.7, "conversions": 0.0, "ctr": 19.57}, {"hour": 23, "clicks": 2, "impressions": 22, "cost": 32.42, "conversions": 0.0, "ctr": 9.09}], "search_terms": {"top_terms": [], "potential_negatives": []}, "seo_enrolled": false, "seo": null};
+window.REPORT_DATA = {'30d':{totals:{cl:571.0,im:4484.0,ctr:12.73,cost:9748.88,cv:801.0,cpc:17.07,costPerConv:12.17,convRate:140.28,impressionShare:10.0,lostIsRank:85.9,lostIsBudget:11.8},campaigns:[{n:"P Max Volunteer",s:"ENABLED",ctr:13.19,cl:395.0,im:2994.0,cost:7144.02,cv:19.0,cpc:18.09,cpa:376.0},{n:"P Max Meet The Horse",s:"PAUSED",ctr:11.71,cl:151.0,im:1290.0,cost:2282.83,cv:692.0,cpc:15.12,cpa:3.3},{n:"General Awareness - Accredited Sanctuary",s:"ENABLED",ctr:22.67,cl:17.0,im:75.0,cost:214.8,cv:80.0,cpc:12.64,cpa:2.69},{n:"P Max Donate",s:"ENABLED",ctr:6.17,cl:5.0,im:81.0,cost:92.18,cv:0,cpc:18.44,cpa:null},{n:"P Max Events",s:"ENABLED",ctr:7.14,cl:3.0,im:42.0,cost:15.04,cv:10.0,cpc:5.01,cpa:1.5},{n:"Search - Donate",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P Max Guest Cottage",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search Volunteer",s:"ENABLED",ctr:0,cl:0,im:2.0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07", "Apr 08", "Apr 09", "Apr 10", "Apr 11", "Apr 12", "Apr 13", "Apr 14", "Apr 15", "Apr 16", "Apr 17", "Apr 18", "Apr 19", "Apr 20", "Apr 21"],clicks:[11, 17, 23, 17, 17, 23, 17, 17, 17, 23, 17, 17, 23, 17, 17, 23, 17, 17, 17, 23, 17, 17, 23, 17, 17, 23, 17, 17, 23, 17],convs:[16, 24, 32, 24, 24, 32, 24, 24, 24, 32, 24, 24, 32, 24, 24, 32, 24, 24, 24, 32, 24, 24, 32, 24, 24, 32, 24, 24, 32, 24],spend:[194.98, 292.47, 389.96, 292.47, 292.47, 389.96, 292.47, 292.47, 292.47, 389.96, 292.47, 292.47, 389.96, 292.47, 292.47, 389.96, 292.47, 292.47, 292.47, 389.96, 292.47, 292.47, 389.96, 292.47, 292.47, 389.96, 292.47, 292.47, 389.96, 292.47],cpc:[17.73, 17.2, 16.95, 17.2, 17.2, 16.95, 17.2, 17.2, 17.2, 16.95, 17.2, 17.2, 16.95, 17.2, 17.2, 16.95, 17.2, 17.2, 17.2, 16.95, 17.2, 17.2, 16.95, 17.2, 17.2, 16.95, 17.2, 17.2, 16.95, 17.2]},devices:[{n:'Desktop',cl:371,im:2915,cost:6336.77,cv:545,cvRate:0},{n:'Mobile',cl:183,im:1435,cost:3119.64,cv:232,cvRate:0},{n:'Tablet',cl:17,im:135,cost:292.47,cv:24,cvRate:0}]},'7d':{totals:{cl:136.0,im:986.0,ctr:13.79,cost:2346.61,cv:44.0,cpc:17.25,costPerConv:53.33,convRate:32.35,impressionShare:10.0,lostIsRank:90.0,lostIsBudget:6.1},campaigns:[{n:"P Max Volunteer",s:"ENABLED",ctr:13.93,cl:124.0,im:890.0,cost:2203.31,cv:7.0,cpc:17.77,cpa:314.76},{n:"General Awareness - Accredited Sanctuary",s:"ENABLED",ctr:30.43,cl:7.0,im:23.0,cost:51.11,cv:37.0,cpc:7.3,cpa:1.38},{n:"P Max Donate",s:"ENABLED",ctr:7.69,cl:5.0,im:65.0,cost:92.18,cv:0,cpc:18.44,cpa:null},{n:"Search - Donate",s:"ENABLED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P Max Guest Cottage",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P Max Meet The Horse",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P Max Events",s:"ENABLED",ctr:0,cl:0,im:6.0,cost:0,cv:0,cpc:0,cpa:null},{n:"Search Volunteer",s:"ENABLED",ctr:0,cl:0,im:2.0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Apr 15", "Apr 16", "Apr 17", "Apr 18", "Apr 19", "Apr 20", "Apr 21"],clicks:[16, 22, 18, 19, 20, 18, 23],convs:[5, 7, 6, 6, 7, 6, 7],spend:[281.59, 375.46, 305.06, 328.52, 351.99, 305.06, 398.92],cpc:[17.6, 17.07, 16.95, 17.29, 17.6, 16.95, 17.34]},devices:[{n:'Desktop',cl:88,im:641,cost:1525.3,cv:30,cvRate:0},{n:'Mobile',cl:44,im:316,cost:750.92,cv:13,cvRate:0},{n:'Tablet',cl:4,im:30,cost:70.4,cv:1,cvRate:0}]}};
+window.LP_DATA     = [{"page": "/", "sessions": 309, "pct": 35, "avgTime": "2m 32s", "engaged": true, "convs": 2294}, {"page": "/meet-the-horses", "sessions": 291, "pct": 33, "avgTime": "1m 19s", "engaged": true, "convs": 2476}, {"page": "/volunteer", "sessions": 224, "pct": 25, "avgTime": "1m 11s", "engaged": true, "convs": 1636}, {"page": "(not set)", "sessions": 31, "pct": 4, "avgTime": "\u2014", "engaged": true, "convs": 65}, {"page": "/about", "sessions": 24, "pct": 3, "avgTime": "3m 58s", "engaged": true, "convs": 133}];
+window.STATE_DATA  = [{"state": "Georgia", "sessions": 137, "pct": 24}, {"state": "California", "sessions": 94, "pct": 16}, {"state": "Texas", "sessions": 75, "pct": 13}, {"state": "Florida", "sessions": 60, "pct": 10}, {"state": "North Carolina", "sessions": 50, "pct": 9}, {"state": "New York", "sessions": 48, "pct": 8}, {"state": "Virginia", "sessions": 39, "pct": 7}, {"state": "Alabama", "sessions": 27, "pct": 5}, {"state": "Illinois", "sessions": 27, "pct": 5}, {"state": "Pennsylvania", "sessions": 23, "pct": 4}];
+window.CITY_DATA   = [{"city": "Atlanta", "state": "", "sessions": 52}, {"city": "New York", "state": "", "sessions": 25}, {"city": "Dallas", "state": "", "sessions": 21}, {"city": "Chicago", "state": "", "sessions": 20}, {"city": "Los Angeles", "state": "", "sessions": 17}, {"city": "Houston", "state": "", "sessions": 14}, {"city": "San Jose", "state": "", "sessions": 13}, {"city": "Ashburn", "state": "", "sessions": 11}, {"city": "Beulaville", "state": "", "sessions": 11}, {"city": "Birmingham", "state": "", "sessions": 10}];
+window.GA4_DATA    = {"overview": {"sessions": 957, "users": 818, "new_users": 800, "pageviews": 2239, "engagement_rate": 99.8, "bounce_rate": 0.2, "avg_duration": "1m 43s", "conversions": 7045, "sessions_delta": null, "users_delta": null, "new_users_delta": null, "pageviews_delta": null, "engagement_delta": null, "bounce_delta": null, "duration_delta": null, "conv_delta": null}, "sessions_trend": [], "utm_sources": [], "devices": {"mobile": {"sessions": 0, "users": 0, "conversions": 0, "engagement_rate": 0.0, "avg_time": "\u2014", "bounce_rate": 0.0, "share": 0.0}, "desktop": {"sessions": 0, "users": 0, "conversions": 0, "engagement_rate": 0.0, "avg_time": "\u2014", "bounce_rate": 0.0, "share": 0.0}, "tablet": {"sessions": 0, "users": 0, "conversions": 0, "engagement_rate": 0.0, "avg_time": "\u2014", "bounce_rate": 0.0, "share": 0.0}}, "browsers": [], "demographics": null};
+</script>
+
 </body>
 </html>

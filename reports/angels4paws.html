@@ -685,31 +685,43 @@ tr:hover td{background:#F5F9FF}
       <div id="lpCallout"></div>
     </div>
 
-    <!-- GA4 TRAFFIC OVERVIEW -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 TRAFFIC OVERVIEW
+    ════════════════════════════════════════════════════════════════ -->
     <div class="section" id="sec-ga4-traffic">
       <div class="sh">
         <div class="sh-title">Website Traffic Overview</div>
         <div class="sh-sub" id="ga4TrafficSub">GA4 · Last 30 days</div>
       </div>
-      <div id="ga4TrafficContent"></div>
+      <div id="ga4TrafficContent">
+        <!-- Populated by renderGA4Traffic() -->
+      </div>
     </div>
 
-    <!-- GA4 DEVICE PERFORMANCE -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 DEVICE PERFORMANCE
+    ════════════════════════════════════════════════════════════════ -->
     <div class="section" id="sec-ga4-devices">
       <div class="sh">
         <div class="sh-title">Device Performance</div>
         <div class="sh-sub">Sessions, conversions &amp; engagement by device</div>
       </div>
-      <div id="ga4DevicesContent"></div>
+      <div id="ga4DevicesContent">
+        <!-- Populated by renderGA4Devices() -->
+      </div>
     </div>
 
-    <!-- GA4 DEMOGRAPHICS -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         GA4 DEMOGRAPHICS
+    ════════════════════════════════════════════════════════════════ -->
     <div class="section" id="sec-ga4-demographics">
       <div class="sh">
         <div class="sh-title">Audience Demographics</div>
         <div class="sh-sub">Gender &amp; age breakdown from GA4</div>
       </div>
-      <div id="ga4DemoContent"></div>
+      <div id="ga4DemoContent">
+        <!-- Populated by renderGA4Demographics() -->
+      </div>
     </div>
 
     <!-- LOCATION -->
@@ -814,15 +826,16 @@ function renderGA4Traffic(){
   }
 
   const o = ga4.overview;
+  // 8 stat cards
   const stats=[
-    {lbl:'Sessions',       val:fmtN(o.sessions),         delta:o.sessions_delta,      cls:'c-blue'},
-    {lbl:'Users',          val:fmtN(o.users),             delta:o.users_delta,         cls:'c-purple'},
-    {lbl:'New Users',      val:fmtN(o.new_users),         delta:o.new_users_delta,     cls:'c-green'},
-    {lbl:'Pageviews',      val:fmtN(o.pageviews),         delta:o.pageviews_delta,     cls:'c-teal'},
-    {lbl:'Engagement Rate',val:fmtPct(o.engagement_rate), delta:o.engagement_delta,    cls:'c-green'},
-    {lbl:'Bounce Rate',    val:fmtPct(o.bounce_rate),     delta:o.bounce_delta,        cls:'c-red'},
-    {lbl:'Avg Duration',   val:o.avg_duration||'—',       delta:o.duration_delta,      cls:'c-blue'},
-    {lbl:'Conversions',    val:fmtN(o.conversions),       delta:o.conv_delta,          cls:'c-amber'},
+    {lbl:'Sessions',       val:fmtN(o.sessions),       delta:o.sessions_delta,      cls:'c-blue'},
+    {lbl:'Users',          val:fmtN(o.users),           delta:o.users_delta,         cls:'c-purple'},
+    {lbl:'New Users',      val:fmtN(o.new_users),       delta:o.new_users_delta,     cls:'c-green'},
+    {lbl:'Pageviews',      val:fmtN(o.pageviews),       delta:o.pageviews_delta,     cls:'c-teal'},
+    {lbl:'Engagement Rate',val:fmtPct(o.engagement_rate),delta:o.engagement_delta,  cls:'c-green'},
+    {lbl:'Bounce Rate',    val:fmtPct(o.bounce_rate),   delta:o.bounce_delta,        cls:'c-red'},
+    {lbl:'Avg Duration',   val:o.avg_duration||'—',     delta:o.duration_delta,      cls:'c-blue'},
+    {lbl:'Conversions',    val:fmtN(o.conversions),     delta:o.conv_delta,          cls:'c-amber'},
   ];
 
   container.innerHTML=`
@@ -845,6 +858,7 @@ function renderGA4Traffic(){
       </div>
     </div>`;
 
+  // Sessions over time chart
   const trend = ga4.sessions_trend || [];
   charts.ga4sessions = new Chart(document.getElementById('ga4SessionsChart'),{
     type:'line',
@@ -859,6 +873,7 @@ function renderGA4Traffic(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // UTM sources list
   const utmColors=['#0083C6','#3DAA69','#5BC8F0','#E8A020','#7C3AED','#D94F3D','#0BADA8','#9EABBE','#0F2B5B'];
   const sources = ga4.utm_sources || [];
   document.getElementById('utmList').innerHTML = sources.map((s,i)=>`
@@ -933,6 +948,7 @@ function renderGA4Devices(){
       </div>
     </div>`;
 
+  // Device grouped bar chart
   const devList = ['mobile','desktop','tablet'];
   const devLabels = devList.map(d=>d.charAt(0).toUpperCase()+d.slice(1));
   charts.ga4devices = new Chart(document.getElementById('ga4DeviceChart'),{
@@ -947,6 +963,7 @@ function renderGA4Devices(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // Browser breakdown
   const browserColors=['#0083C6','#3DAA69','#E8A020','#7C3AED','#9EABBE'];
   const browsers = ga4.browsers || [];
   document.getElementById('browserList').innerHTML = browsers.map((b,i)=>`
@@ -1004,6 +1021,7 @@ function renderGA4Demographics(){
       </div>
     </div>`;
 
+  // Gender donut
   const genders = demo.gender || [];
   charts.ga4gender = new Chart(document.getElementById('ga4GenderDonut'),{
     type:'doughnut',
@@ -1020,6 +1038,7 @@ function renderGA4Demographics(){
       ${g.name} <strong>${g.value}%</strong>
     </div>`).join('');
 
+  // Gender engagement grouped bar
   const gEngagement = demo.gender_engagement || [];
   charts.ga4genderEng = new Chart(document.getElementById('ga4GenderChart'),{
     type:'bar',
@@ -1033,6 +1052,7 @@ function renderGA4Demographics(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10,family:"'Montserrat',sans-serif"},color:'#5A6A82',boxWidth:10,padding:10}}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // Age grouped bar
   const ages = demo.age_groups || [];
   charts.ga4age = new Chart(document.getElementById('ga4AgeChart'),{
     type:'bar',
@@ -1046,6 +1066,7 @@ function renderGA4Demographics(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
+  // Age share bars
   document.getElementById('ageShareList').innerHTML = ages.map((a,i)=>`
     <div class="age-share-item">
       <span class="age-lbl">${a.age}</span>
@@ -1062,10 +1083,11 @@ function render(){
   if(!d)return;
   const t=d.totals;
 
+
   document.getElementById('rangeLabel').textContent=range==='30d'?'Last 30 days':'Last 7 days';
   document.getElementById('trendsLabel').textContent=range==='30d'?'Daily · Last 30 days':'Daily · Last 7 days';
   document.getElementById('funnelSub').textContent='Campaign performance · '+(range==='30d'?'30':'7')+' days';
-  document.getElementById('pfDate').textContent='Data via Google Ads API & GA4 · '+(window.CLIENT_DATA?.report_date||'');
+  document.getElementById('pfDate').textContent='Data via Google Ads API &amp; GA4 · '+(window.CLIENT_DATA?.report_date||'');
   document.getElementById('ga4TrafficSub').textContent='GA4 · '+(range==='30d'?'Last 30 days':'Last 7 days');
 
   destroyCharts();
@@ -1189,7 +1211,7 @@ function render(){
       <td style="text-align:right" class="${lp.convs>0?'':'flag'}">${lp.convs===0?'0 ⚠':fmtN(lp.convs)}</td>
     </tr>`).join('');
 
-  // GA4 sections
+  // ── GA4 sections ──
   renderGA4Traffic();
   renderGA4Devices();
   renderGA4Demographics();
@@ -1317,20 +1339,31 @@ function render(){
     const ctrCls=ctr=>ctr>=5?'good':ctr>=3?'warn':'bad';
     document.getElementById('dowGrid').innerHTML=dowData.map(d=>`<div class="dow-item"><div class="dow-day">${(d.day||'').slice(0,3)}</div><div class="dow-clicks">${fmtN(d.clicks)}</div><div class="dow-ctr ${ctrCls(d.ctr||0)}">${(d.ctr||0).toFixed(1)}%</div></div>`).join('');
     if(hourData&&hourData.length>0){
-      function fmtHour(h){if(h===0)return'12am';if(h<12)return h+'am';if(h===12)return'12pm';return(h-12)+'pm';}
-      const acctTz=window.CLIENT_DATA?.timezone||null;
-      const displayTz=acctTz||Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const tzEl=document.getElementById('hourTzLabel');
-      if(tzEl)tzEl.textContent=displayTz+(acctTz?' (account)':' (your browser)');
+      // Convert 0-23 to 12-hour display (12am, 1am … 12pm, 1pm …)
+      function fmtHour(h){
+        if(h===0) return'12am';
+        if(h<12)  return h+'am';
+        if(h===12)return'12pm';
+        return (h-12)+'pm';
+      }
+      // Timezone label — use account timezone from CLIENT_DATA, fallback to browser tz
+      const acctTz = window.CLIENT_DATA?.timezone || null;
+      const displayTz = acctTz || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const tzEl = document.getElementById('hourTzLabel');
+      if(tzEl) tzEl.textContent = displayTz + (acctTz ? ' (account)' : ' (your browser)');
+
       const maxClicks=Math.max(...hourData.map(h=>h.clicks||0))||1;
       document.getElementById('hourHeatmap').innerHTML=hourData.map(h=>{
         const intensity=(h.clicks||0)/maxClicks;
         const bg=intensity>0.7?'var(--blue)':intensity>0.4?'rgba(0,131,198,0.5)':intensity>0.1?'rgba(0,131,198,0.2)':'var(--gray-100)';
         const label=fmtHour(h.hour);
-        return`<div class="hour-cell" style="background:${bg};color:${intensity>0.5?'#fff':'var(--navy)'}" data-tooltip="${label} — ${fmtN(h.clicks)} clicks">${label}</div>`;
+        const tooltip=label+' — '+fmtN(h.clicks)+' clicks';
+        return`<div class="hour-cell" style="background:${bg};color:${intensity>0.5?'#fff':'var(--navy)'}" data-tooltip="${tooltip}">${label}</div>`;
       }).join('');
+
+      // Axis labels: 12am, 6am, 12pm, 6pm, 11pm — evenly spaced across 24 cells
       const axisEl=document.getElementById('hourAxisLabels');
-      if(axisEl)axisEl.innerHTML=['12am','6am','12pm','6pm','11pm'].map(t=>`<span>${t}</span>`).join('');
+      if(axisEl) axisEl.innerHTML=['12am','6am','12pm','6pm','11pm'].map(t=>`<span>${t}</span>`).join('');
     }
   } else {
     document.getElementById('timingContent').innerHTML=`<div class="no-data-card"><div class="no-data-icon">🕐</div><div class="no-data-title">Timing data not yet available</div><div class="no-data-desc">Will appear once campaigns have sufficient activity.</div></div>`;
@@ -1468,7 +1501,7 @@ window.addEventListener('load',()=>{initClient();render();overlay.classList.remo
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
      DATA INJECTED BY generate_reports_v2.py
-
+     
      window.CLIENT_DATA  — Ad Grants + client metadata
      window.REPORT_DATA  — { '30d': {...}, '7d': {...} }
      window.LP_DATA      — Landing page rows
@@ -1497,5 +1530,17 @@ window.addEventListener('load',()=>{initClient();render();overlay.classList.remo
        }
      }
 ════════════════════════════════════════════════════════════════════════════ -->
+
+
+<script>
+// Injected by generate_reports_v2.py — Angels4Paws Animal Rescue (244-756-0541) — 2026-04-21
+window.CLIENT_DATA = {"slug": "angels4paws", "name": "Angels4Paws Animal Rescue", "account_id": "244-756-0541", "timezone": "America/New_York", "website": "", "org_model": "location_based", "animal_type": null, "report_date": "April 21, 2026", "gps": 81, "gps_components": {"ctr": 63, "utilization": 76, "conv_tracking": 100, "budget": 100}, "compliance": "compliant", "totals_30d": {"cl": 1001.0, "im": 10251.0, "cost": 7616.82, "cv": 5.0, "ctr": 9.76, "cpc": 7.61, "costPerConv": 1523.36, "convRate": 0.5, "impressionShare": 10.0, "lostIsBudget": 18.4, "lostIsRank": 79.4}, "totals_7d": {"cl": 173.0, "im": 1849.0, "cost": 1395.06, "cv": 1.0, "ctr": 9.36, "cpc": 8.06, "costPerConv": 1395.06, "convRate": 0.58, "impressionShare": 10.0, "lostIsBudget": 16.6, "lostIsRank": 79.6}, "insights": [{"color": "green", "tag": "win", "title": "CTR compliant at 9.8%", "body": "Account CTR is 9.8% \u2014 above the 5% minimum. We monitor this closely."}, {"color": "amber", "tag": "watch", "title": "Grant at 76% utilization", "body": "Using $7,617 of the available $10,000 grant. Expanding keyword coverage will capture more free traffic."}, {"color": "green", "tag": "win", "title": "5 conversions tracked at $1523.36 CPA", "body": "Campaigns recorded 5 conversions this month at $1523.36 per conversion."}, {"color": "amber", "tag": "action", "title": "2 campaign(s) with no tracked conversions", "body": "Search  Events, P Max - Volunteer \u2014 spending $1,040 combined with 0 conversions."}], "actions": {"did": {"title": "Account audit completed", "body": "Full performance review of all active campaigns. GPS score: 81/100."}, "next": {"title": "Optimization in progress", "body": "Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."}}, "has_ga4": false, "ga4_pages": [], "ga4_states": [], "ga4_cities": [], "keywords": {"top_performers": [{"keyword": "donate for animals", "ctr": 11.43, "clicks": 145, "impressions": 1269, "quality_score": null, "cost": 1448.83, "conversions": 1.0, "match_type": "BROAD"}, {"keyword": "adopt a dog near me", "ctr": 10.52, "clicks": 140, "impressions": 1331, "quality_score": 3, "cost": 1084.47, "conversions": 1.0, "match_type": "BROAD"}, {"keyword": "rescue dogs for adoption", "ctr": 12.57, "clicks": 106, "impressions": 843, "quality_score": 6, "cost": 639.42, "conversions": 0, "match_type": "BROAD"}, {"keyword": "dog adoption near me", "ctr": 7.25, "clicks": 88, "impressions": 1214, "quality_score": 3, "cost": 584.12, "conversions": 1.0, "match_type": "BROAD"}, {"keyword": "puppies for adoption near me", "ctr": 11.75, "clicks": 69, "impressions": 587, "quality_score": 5, "cost": 425.49, "conversions": 0, "match_type": "BROAD"}, {"keyword": "donate animal rescue charity", "ctr": 11.19, "clicks": 50, "impressions": 447, "quality_score": null, "cost": 423.89, "conversions": 1.0, "match_type": "BROAD"}, {"keyword": "rehoming a dog", "ctr": 10.23, "clicks": 40, "impressions": 391, "quality_score": null, "cost": 277.29, "conversions": 0, "match_type": "BROAD"}, {"keyword": "find a dog", "ctr": 6.85, "clicks": 30, "impressions": 438, "quality_score": 1, "cost": 185.94, "conversions": 0, "match_type": "BROAD"}, {"keyword": "puppy adoption near me", "ctr": 10.86, "clicks": 29, "impressions": 267, "quality_score": 7, "cost": 285.32, "conversions": 0, "match_type": "BROAD"}, {"keyword": "help animals", "ctr": 11.44, "clicks": 27, "impressions": 236, "quality_score": null, "cost": 340.57, "conversions": 0, "match_type": "BROAD"}], "compliance_risks": [{"keyword": "kitten adoption", "ctr": 0, "clicks": 0, "impressions": 19, "quality_score": null, "cost": 0, "conversions": 0, "match_type": "BROAD"}], "quality_score_distribution": {"high": 1, "medium": 6, "low": 14}}, "ads": {"top_headlines": [{"headline": "Adopt A Dog", "ctr": 9.82, "clicks": 297}, {"headline": "Angels 4 Paws", "ctr": 9.82, "clicks": 297}, {"headline": "Adopt A Rescue Dog", "ctr": 9.82, "clicks": 297}, {"headline": "Animal Rescue Needs You", "ctr": 11.68, "clicks": 249}, {"headline": "Donate to Angels4Paws Today", "ctr": 11.68, "clicks": 249}, {"headline": "Save A Life With $10", "ctr": 11.68, "clicks": 249}, {"headline": "Dog Adoption", "ctr": 8.65, "clicks": 245}, {"headline": "Angels4Paws", "ctr": 8.65, "clicks": 245}, {"headline": "Adopt A Dog Today", "ctr": 8.65, "clicks": 245}, {"headline": "Adoption Event Dec 20", "ctr": 9.94, "clicks": 97}], "top_ads": [{"headlines": ["Adopt A Dog", "Angels 4 Paws", "Adopt A Rescue Dog"], "descriptions": ["Local shelter pets are waiting for adoption now open your home and change a life today now", "Adopt A Dog In Orange County With angels4paws - Rescue Pets Await", "Discover Angels4Paws in Huntington Beach \u2013 saving pets and finding them forever homes", "Give a homeless pet hope love and safety by adopting today and changing a life forever now"], "ctr": 9.82, "clicks": 297, "conversions": 1.0}, {"headlines": ["Animal Rescue Needs You", "Donate to Angels4Paws Today", "Save A Life With $10"], "descriptions": ["Make a life-saving gift\u2014one-time or monthly. Every dollar counts.", "Help Angels4Paws save dogs & cats. Fast, secure, tax-deductible.", "Sponsor a pet\u2019s care and change a life now.", "Save dogs and cats in need by donating to trusted animal rescue efforts."], "ctr": 11.68, "clicks": 249, "conversions": 2.0}, {"headlines": ["Dog Adoption", "Angels4Paws", "Adopt A Dog Today"], "descriptions": ["Adopt a Pet Today with Angels4Paws", "Dog Adoption Huntington Beach - Adopt A Pet Today With angels4paws", "Meet dogs ready for adoption who have been cared for, vaccinated, and loved by fosters", "Find adoptable dogs eager for loving families and start their forever home journey today"], "ctr": 8.65, "clicks": 245, "conversions": 1.0}, {"headlines": ["Adoption Event Dec 20", "Meet Your Best Friend", "Dogs & Cats for Adoption"], "descriptions": ["Join Angels 4 Paws Dec 20 at Pet Supply HB. Meet dogs & cats needing homes!", "Meet adoptable dogs & cats Sat, Dec 20, 11-3pm at Pet Supply in Huntington Beach.", "Find your new best friend! Dogs & cats available Dec 20 at 21425 Brookhurst St.", "Learn about fostering & volunteering + meet pets on Dec 20, 11am-3pm in HB!"], "ctr": 9.94, "clicks": 97, "conversions": 0}]}, "day_of_week": [{"day": "Monday", "clicks": 134, "impressions": 1366, "cost": 1126.45, "conversions": 1.0, "ctr": 9.81}, {"day": "Tuesday", "clicks": 155, "impressions": 1610, "cost": 1216.65, "conversions": 0.0, "ctr": 9.63}, {"day": "Wednesday", "clicks": 129, "impressions": 1455, "cost": 919.57, "conversions": 0.0, "ctr": 8.87}, {"day": "Thursday", "clicks": 151, "impressions": 1391, "cost": 1164.72, "conversions": 2.0, "ctr": 10.86}, {"day": "Friday", "clicks": 122, "impressions": 1255, "cost": 844.86, "conversions": 0.0, "ctr": 9.72}, {"day": "Saturday", "clicks": 128, "impressions": 1398, "cost": 933.19, "conversions": 1.0, "ctr": 9.16}, {"day": "Sunday", "clicks": 182, "impressions": 1776, "cost": 1411.38, "conversions": 1.0, "ctr": 10.25}], "hour_of_day": [{"hour": 0, "clicks": 68, "impressions": 451, "cost": 679.15, "conversions": 0.0, "ctr": 15.08}, {"hour": 1, "clicks": 25, "impressions": 253, "cost": 226.4, "conversions": 0.0, "ctr": 9.88}, {"hour": 2, "clicks": 32, "impressions": 187, "cost": 264.45, "conversions": 0.0, "ctr": 17.11}, {"hour": 3, "clicks": 2, "impressions": 35, "cost": 4.64, "conversions": 0.0, "ctr": 5.71}, {"hour": 4, "clicks": 4, "impressions": 26, "cost": 48.16, "conversions": 0.0, "ctr": 15.38}, {"hour": 5, "clicks": 4, "impressions": 24, "cost": 52.98, "conversions": 0.0, "ctr": 16.67}, {"hour": 6, "clicks": 6, "impressions": 47, "cost": 78.16, "conversions": 0.0, "ctr": 12.77}, {"hour": 7, "clicks": 5, "impressions": 56, "cost": 62.2, "conversions": 0.0, "ctr": 8.93}, {"hour": 8, "clicks": 16, "impressions": 103, "cost": 146.05, "conversions": 0.0, "ctr": 15.53}, {"hour": 9, "clicks": 19, "impressions": 159, "cost": 195.37, "conversions": 1.0, "ctr": 11.95}, {"hour": 10, "clicks": 21, "impressions": 320, "cost": 168.48, "conversions": 0.0, "ctr": 6.56}, {"hour": 11, "clicks": 34, "impressions": 500, "cost": 280.82, "conversions": 0.0, "ctr": 6.8}, {"hour": 12, "clicks": 52, "impressions": 635, "cost": 596.43, "conversions": 0.0, "ctr": 8.19}, {"hour": 13, "clicks": 55, "impressions": 649, "cost": 489.07, "conversions": 0.0, "ctr": 8.47}, {"hour": 14, "clicks": 79, "impressions": 825, "cost": 644.16, "conversions": 0.0, "ctr": 9.58}, {"hour": 15, "clicks": 80, "impressions": 911, "cost": 545.19, "conversions": 0.0, "ctr": 8.78}, {"hour": 16, "clicks": 80, "impressions": 863, "cost": 570.41, "conversions": 1.0, "ctr": 9.27}, {"hour": 17, "clicks": 85, "impressions": 845, "cost": 547.68, "conversions": 0.0, "ctr": 10.06}, {"hour": 18, "clicks": 59, "impressions": 685, "cost": 371.47, "conversions": 1.0, "ctr": 8.61}, {"hour": 19, "clicks": 74, "impressions": 709, "cost": 533.39, "conversions": 2.0, "ctr": 10.44}, {"hour": 20, "clicks": 53, "impressions": 588, "cost": 298.76, "conversions": 0.0, "ctr": 9.01}, {"hour": 21, "clicks": 49, "impressions": 504, "cost": 258.45, "conversions": 0.0, "ctr": 9.72}, {"hour": 22, "clicks": 50, "impressions": 491, "cost": 282.36, "conversions": 0.0, "ctr": 10.18}, {"hour": 23, "clicks": 49, "impressions": 385, "cost": 272.6, "conversions": 0.0, "ctr": 12.73}], "search_terms": {"top_terms": [{"term": "dog rescues near me", "ctr": 25.0, "clicks": 4, "impressions": 16, "conversions": 0}, {"term": "animal shelters near me", "ctr": 13.79, "clicks": 4, "impressions": 29, "conversions": 0}, {"term": "adopt a dog", "ctr": 12.5, "clicks": 3, "impressions": 24, "conversions": 0}, {"term": "dog shelters near me", "ctr": 8.82, "clicks": 3, "impressions": 34, "conversions": 0}, {"term": "adopt a puppy", "ctr": 15.38, "clicks": 2, "impressions": 13, "conversions": 0}, {"term": "puppies for adoption near me", "ctr": 8.7, "clicks": 2, "impressions": 23, "conversions": 0}, {"term": "adopt a dog near me", "ctr": 11.11, "clicks": 2, "impressions": 18, "conversions": 0}, {"term": "animal rescue site click to give", "ctr": 15.38, "clicks": 2, "impressions": 13, "conversions": 0}, {"term": "adopt a dog", "ctr": 3.57, "clicks": 1, "impressions": 28, "conversions": 0}, {"term": "rescue dogs for adoption", "ctr": 9.09, "clicks": 1, "impressions": 11, "conversions": 0}], "potential_negatives": [{"term": "dog adoption near me", "ctr": 0, "clicks": 0, "impressions": 23, "conversions": 0}]}, "seo_enrolled": false, "seo": null};
+window.REPORT_DATA = {'30d':{totals:{cl:1001.0,im:10251.0,ctr:9.76,cost:7616.82,cv:5.0,cpc:7.61,costPerConv:1523.36,convRate:0.5,impressionShare:10.0,lostIsRank:79.4,lostIsBudget:18.4},campaigns:[{n:"Search -  Adopt",s:"ENABLED",ctr:9.82,cl:297.0,im:3023.0,cost:2329.71,cv:1.0,cpc:7.84,cpa:2329.71},{n:"Search-Donate",s:"ENABLED",ctr:11.74,cl:252.0,im:2146.0,cost:2473.95,cv:2.0,cpc:9.82,cpa:1236.98},{n:"Search - Urgent Need Dogs",s:"ENABLED",ctr:8.65,cl:245.0,im:2834.0,cost:1586.54,cv:1.0,cpc:6.48,cpa:1586.54},{n:"Search  Events",s:"ENABLED",ctr:9.94,cl:97.0,im:976.0,cost:632.63,cv:0,cpc:6.52,cpa:null},{n:"P Max - Volunteer",s:"ENABLED",ctr:8.34,cl:64.0,im:767.0,cost:407.36,cv:0,cpc:6.36,cpa:null},{n:"P-Max - Donate",s:"ENABLED",ctr:7.14,cl:26.0,im:364.0,cost:87.35,cv:1.0,cpc:3.36,cpa:87.35},{n:"P Max - Adopt",s:"ENABLED",ctr:12.09,cl:11.0,im:91.0,cost:56.22,cv:0,cpc:5.11,cpa:null},{n:"P Max - Foster",s:"ENABLED",ctr:18.0,cl:9.0,im:50.0,cost:43.06,cv:0,cpc:4.78,cpa:null},{n:"Urgent Need Animals",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max - Donate #2",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Mar 23", "Mar 24", "Mar 25", "Mar 26", "Mar 27", "Mar 28", "Mar 29", "Mar 30", "Mar 31", "Apr 01", "Apr 02", "Apr 03", "Apr 04", "Apr 05", "Apr 06", "Apr 07", "Apr 08", "Apr 09", "Apr 10", "Apr 11", "Apr 12", "Apr 13", "Apr 14", "Apr 15", "Apr 16", "Apr 17", "Apr 18", "Apr 19", "Apr 20", "Apr 21"],clicks:[20, 30, 40, 30, 30, 40, 30, 30, 30, 40, 30, 30, 40, 30, 30, 40, 30, 30, 30, 40, 30, 30, 40, 30, 30, 40, 30, 30, 40, 30],convs:[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],spend:[152.34, 228.5, 304.67, 228.5, 228.5, 304.67, 228.5, 228.5, 228.5, 304.67, 228.5, 228.5, 304.67, 228.5, 228.5, 304.67, 228.5, 228.5, 228.5, 304.67, 228.5, 228.5, 304.67, 228.5, 228.5, 304.67, 228.5, 228.5, 304.67, 228.5],cpc:[7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62, 7.62]},devices:[{n:'Desktop',cl:651,im:6663,cost:4950.93,cv:3,cvRate:0},{n:'Mobile',cl:320,im:3280,cost:2437.38,cv:1,cvRate:0},{n:'Tablet',cl:30,im:308,cost:228.5,cv:0,cvRate:0}]},'7d':{totals:{cl:173.0,im:1849.0,ctr:9.36,cost:1395.06,cv:1.0,cpc:8.06,costPerConv:1395.06,convRate:0.58,impressionShare:10.0,lostIsRank:79.6,lostIsBudget:16.6},campaigns:[{n:"Search-Donate",s:"ENABLED",ctr:9.03,cl:65.0,im:720.0,cost:596.58,cv:0,cpc:9.18,cpa:null},{n:"Search -  Adopt",s:"ENABLED",ctr:9.48,cl:33.0,im:348.0,cost:332.77,cv:0,cpc:10.08,cpa:null},{n:"Search - Urgent Need Dogs",s:"ENABLED",ctr:9.63,cl:21.0,im:218.0,cost:195.47,cv:0,cpc:9.31,cpa:null},{n:"Search  Events",s:"ENABLED",ctr:8.38,cl:16.0,im:191.0,cost:85.32,cv:0,cpc:5.33,cpa:null},{n:"P-Max - Donate",s:"ENABLED",ctr:6.45,cl:12.0,im:186.0,cost:45.47,cv:1.0,cpc:3.79,cpa:45.47},{n:"P Max - Foster",s:"ENABLED",ctr:19.15,cl:9.0,im:47.0,cost:43.06,cv:0,cpc:4.78,cpa:null},{n:"P Max - Volunteer",s:"ENABLED",ctr:11.11,cl:9.0,im:81.0,cost:55.5,cv:0,cpc:6.17,cpa:null},{n:"P Max - Adopt",s:"ENABLED",ctr:13.79,cl:8.0,im:58.0,cost:40.9,cv:0,cpc:5.11,cpa:null},{n:"Urgent Need Animals",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null},{n:"P-Max - Donate #2",s:"PAUSED",ctr:0,cl:0,im:0,cost:0,cv:0,cpc:0,cpa:null}],daily:{labels:["Apr 15", "Apr 16", "Apr 17", "Apr 18", "Apr 19", "Apr 20", "Apr 21"],clicks:[21, 28, 22, 24, 26, 22, 29],convs:[0, 0, 0, 0, 0, 0, 0],spend:[167.41, 223.21, 181.36, 195.31, 209.26, 181.36, 237.16],cpc:[7.97, 7.97, 8.24, 8.14, 8.05, 8.24, 8.18]},devices:[{n:'Desktop',cl:112,im:1202,cost:906.79,cv:1,cvRate:0},{n:'Mobile',cl:55,im:592,cost:446.42,cv:0,cvRate:0},{n:'Tablet',cl:5,im:55,cost:41.85,cv:0,cvRate:0}]}};
+window.LP_DATA     = [];
+window.STATE_DATA  = [];
+window.CITY_DATA   = [];
+window.GA4_DATA    = null;
+</script>
+
 </body>
 </html>
