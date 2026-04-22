@@ -167,7 +167,7 @@ GAQL_SEARCH_TERMS = """
         metrics.conversions
     FROM search_term_view
     WHERE segments.date DURING LAST_30_DAYS
-    AND metrics.impressions > 10
+    AND metrics.impressions > 0
     ORDER BY metrics.clicks DESC
     LIMIT 50
 """
