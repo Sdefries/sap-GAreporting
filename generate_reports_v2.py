@@ -235,7 +235,7 @@ def process_search_terms(search_terms_data):
             "ctr": round(ctr, 2), "clicks": clicks,
             "impressions": impressions, "conversions": conversions,
         }
-        if clicks > 0 and ctr >= 2:
+        if clicks > 0 and ctr >= 0:
             top_terms.append(term_entry)
         elif impressions > 20 and ctr < 2 and conversions == 0:
             potential_negatives.append(term_entry)
