@@ -96,7 +96,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "ScienceWorks Grant Account — Ad Grants"
+    "mailerlite_group": "ScienceWorks Grant Account \u2014 Ad Grants"
   },
   {
     "slug": "justice-accountability-la",
@@ -143,7 +143,7 @@
         "category": "LEAD",
         "group": "Client Intake",
         "value": 0.0,
-        "notes": "Primary conversion — client submits services intake form"
+        "notes": "Primary conversion \u2014 client submits services intake form"
       },
       {
         "name": "Volunteer Application",
@@ -157,7 +157,7 @@
         "category": "PAGE_VIEW",
         "group": "Engagement",
         "value": 0.0,
-        "notes": "Micro-conversion — visited key service page"
+        "notes": "Micro-conversion \u2014 visited key service page"
       }
     ],
     "campaign_conversion_assignments": [
@@ -185,7 +185,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Justice & Accountability Center of LA — Ad Grants"
+    "mailerlite_group": "Justice & Accountability Center of LA \u2014 Ad Grants"
   },
   {
     "slug": "city-dogs-kitties",
@@ -232,21 +232,21 @@
         "category": "PURCHASE",
         "group": "Donations",
         "value": 50.0,
-        "notes": "Donorbox iframe — use Donorbox native Google Ads pixel OR thank-you page redirect. See IFRAME_PROCESSOR_GUIDANCE['donorbox']"
+        "notes": "Donorbox iframe \u2014 use Donorbox native Google Ads pixel OR thank-you page redirect. See IFRAME_PROCESSOR_GUIDANCE['donorbox']"
       },
       {
         "name": "Adoption Application Submit",
         "category": "LEAD",
         "group": "Adoptions",
         "value": 0.0,
-        "notes": "Own-site adoption form — standard GA4 tracking"
+        "notes": "Own-site adoption form \u2014 standard GA4 tracking"
       },
       {
         "name": "Foster Application Submit",
         "category": "LEAD",
         "group": "Adoptions",
         "value": 0.0,
-        "notes": "Own-site foster form — standard GA4 tracking"
+        "notes": "Own-site foster form \u2014 standard GA4 tracking"
       }
     ],
     "campaign_conversion_assignments": [
@@ -268,7 +268,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "City Dogs and City Kitties Rescue — Ad Grants"
+    "mailerlite_group": "City Dogs and City Kitties Rescue \u2014 Ad Grants"
   },
   {
     "slug": "guardian-pet-trust",
@@ -318,7 +318,7 @@
         "category": "PURCHASE",
         "group": "Donations",
         "value": 50.0,
-        "notes": "Donorbox — use native pixel"
+        "notes": "Donorbox \u2014 use native pixel"
       },
       {
         "name": "Program Application",
@@ -348,59 +348,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Guardian Pet Trust — Ad Grants"
-  },
-  {
-    "slug": "edwin-d-marks",
-    "name": "Edwin D Marks Animal Foundation",
-    "google_ads_id": "632-590-9900",
-    "ga4_id": null,
-    "contact_email": "",
-    "contact_name": "",
-    "org_type": "animal_rescue",
-    "website": "",
-    "donation_processor": "unknown",
-    "conversion_strategy": "ga4_import",
-    "geo": {
-      "target_type": "radius",
-      "locations": [],
-      "radius_miles": 25,
-      "exclude_locations": []
-    },
-    "keywords": {
-      "negative": [
-        "breeders",
-        "buy",
-        "purchase",
-        "pet store"
-      ],
-      "include_themes": [
-        "animal rescue",
-        "pet adoption",
-        "shelter"
-      ]
-    },
-    "conversions": [
-      {
-        "name": "Adoption Inquiry",
-        "category": "LEAD",
-        "group": "Adoptions",
-        "value": 0.0,
-        "notes": ""
-      }
-    ],
-    "campaign_conversion_assignments": [
-      {
-        "campaign_keywords": [
-          "adoption",
-          "rescue",
-          "adopt"
-        ],
-        "goal_group": "Adoptions"
-      }
-    ],
-    "contact_first_name": "",
-    "mailerlite_group": "Edwin D Marks Animal Foundation — Ad Grants"
+    "mailerlite_group": "Guardian Pet Trust \u2014 Ad Grants"
   },
   {
     "slug": "earth-organization",
@@ -467,7 +415,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "The Earth Organization — Ad Grants"
+    "mailerlite_group": "The Earth Organization \u2014 Ad Grants"
   },
   {
     "slug": "ziva",
@@ -518,7 +466,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "A Second Chance for Ziva — Ad Grants"
+    "mailerlite_group": "A Second Chance for Ziva \u2014 Ad Grants"
   },
   {
     "slug": "pink-paws",
@@ -584,58 +532,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Pink Paws For The Cause — Ad Grants"
-  },
-  {
-    "slug": "angels4paws",
-    "name": "Angels4Paws Animal Rescue",
-    "google_ads_id": "244-756-0541",
-    "ga4_id": null,
-    "contact_email": "",
-    "contact_name": "",
-    "org_type": "animal_rescue",
-    "website": "",
-    "donation_processor": "unknown",
-    "conversion_strategy": "ga4_import",
-    "geo": {
-      "target_type": "radius",
-      "locations": [],
-      "radius_miles": 25,
-      "exclude_locations": []
-    },
-    "keywords": {
-      "negative": [
-        "breeders",
-        "buy a dog",
-        "puppy mill"
-      ],
-      "include_themes": [
-        "animal rescue",
-        "adopt a pet",
-        "dog adoption"
-      ]
-    },
-    "conversions": [
-      {
-        "name": "Adoption Application",
-        "category": "LEAD",
-        "group": "Adoptions",
-        "value": 0.0,
-        "notes": ""
-      }
-    ],
-    "campaign_conversion_assignments": [
-      {
-        "campaign_keywords": [
-          "adopt",
-          "rescue",
-          "angel"
-        ],
-        "goal_group": "Adoptions"
-      }
-    ],
-    "contact_first_name": "",
-    "mailerlite_group": "Angels4Paws Animal Rescue — Ad Grants"
+    "mailerlite_group": "Pink Paws For The Cause \u2014 Ad Grants"
   },
   {
     "slug": "humane-society-nw-montana",
@@ -713,7 +610,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Humane Society of Northwest Montana — Ad Grants"
+    "mailerlite_group": "Humane Society of Northwest Montana \u2014 Ad Grants"
   },
   {
     "slug": "paws-and-claws",
@@ -765,7 +662,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Paws and Claws Animal Welfare Society — Ad Grants"
+    "mailerlite_group": "Paws and Claws Animal Welfare Society \u2014 Ad Grants"
   },
   {
     "slug": "silver-linings",
@@ -849,7 +746,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Silver Linings Rescue Ranch — Ad Grants"
+    "mailerlite_group": "Silver Linings Rescue Ranch \u2014 Ad Grants"
   },
   {
     "slug": "straydog",
@@ -915,7 +812,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Straydog Inc — Ad Grants"
+    "mailerlite_group": "Straydog Inc \u2014 Ad Grants"
   },
   {
     "slug": "red-clay-ranch",
@@ -1000,7 +897,7 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Red Clay Ranch Equine Rescue & Sanctuary — Ad Grants"
+    "mailerlite_group": "Red Clay Ranch Equine Rescue & Sanctuary \u2014 Ad Grants"
   },
   {
     "slug": "pup-profile",
@@ -1010,7 +907,7 @@
     "contact_email": "pupprofileteam@gmail.com",
     "contact_name": "Nikki Leonard",
     "contact_first_name": "Nikki",
-    "mailerlite_group": "Pup Profile — Ad Grants",
+    "mailerlite_group": "Pup Profile \u2014 Ad Grants",
     "org_type": "animal_rescue",
     "website": "https://pupprofile.org",
     "donation_processor": "unknown",
@@ -1089,59 +986,5 @@
     ],
     "mailerlite_group_id": "183135259834976217",
     "mailerlite_subscriber_id": "137396765079897422"
-  },
-  {
-    "slug": "joshua-tree-no-kill",
-    "name": "Joshua Tree No Kill Animal Shelter",
-    "google_ads_id": null,
-    "ga4_id": "530911485",
-    "contact_email": "",
-    "contact_name": "",
-    "contact_first_name": "",
-    "mailerlite_group": "Joshua Tree No Kill Animal Shelter — Ad Grants",
-    "org_type": "animal_rescue",
-    "website": "",
-    "donation_processor": "unknown",
-    "conversion_strategy": "ga4_import",
-    "geo": {
-      "target_type": "radius",
-      "locations": [
-        "Joshua Tree, CA"
-      ],
-      "radius_miles": 50,
-      "exclude_locations": []
-    },
-    "keywords": {
-      "negative": [
-        "breeders",
-        "buy",
-        "pet store"
-      ],
-      "include_themes": [
-        "no kill shelter",
-        "animal adoption",
-        "pet rescue",
-        "joshua tree"
-      ]
-    },
-    "conversions": [
-      {
-        "name": "Adoption Inquiry",
-        "category": "LEAD",
-        "group": "Adoptions",
-        "value": 0.0,
-        "notes": ""
-      }
-    ],
-    "campaign_conversion_assignments": [
-      {
-        "campaign_keywords": [
-          "adopt",
-          "rescue",
-          "shelter"
-        ],
-        "goal_group": "Adoptions"
-      }
-    ]
   }
 ]

@@ -1,7 +1,7 @@
 """
 alert_watcher.py
 ─────────────────────────────────────────────────────────────────────────────
-SAP Ad Grants alert system. Runs twice daily via GitHub Actions.
+SAP Ad Grants alert system. Runs once daily via GitHub Actions.
 
 DATA SOURCE
   Reads from google_ads_cache.json — pre-built by the automation.yml
@@ -22,8 +22,11 @@ ALERTS
     - No data returned for account → possible suspension
 
 DEDUPLICATION
-  .alert_state.json tracks which alerts fired today.
-  Same alert won't fire twice in one day even across the 8am + 4pm runs.
+  .alert_state.json tracks when each alert last fired (committed back to the
+  repo by the workflow so state survives between runs). An ongoing condition
+  does NOT re-alert daily: criticals re-fire only after 7 days if still
+  unresolved, milestones after 30 days. Slack only sees NEW critical issues;
+  milestones go to client email only.
 
 USAGE
   python alert_watcher.py
@@ -288,20 +291,27 @@ def load_state() -> dict:
     except Exception:
         return {}
 
+# How long before the same alert may fire again (if the condition persists)
+RESEND_DAYS = {"critical": 7, "milestone": 30}
+
 def save_state(state: dict) -> None:
-    today  = datetime.date.today().isoformat()
-    cutoff = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
-    state  = {k: v for k, v in state.items() if k[:10] >= cutoff}
+    cutoff = (datetime.datetime.now() - datetime.timedelta(days=30)).isoformat()
+    state  = {k: v for k, v in state.items()
+              if k == "_last_run" or (isinstance(v, str) and v >= cutoff)}
     state["_last_run"] = datetime.datetime.now().isoformat()
     with open(STATE_FILE, "w") as f:
         json.dump(state, f, indent=2)
 
 def alert_key(alert: dict) -> str:
-    today = datetime.date.today().isoformat()
-    return f"{today}:{alert['client']}:{alert['level']}:{alert.get('campaign','')}"
+    return f"{alert['client']}:{alert['level']}:{alert.get('campaign','')}"
 
 def already_sent(state: dict, alert: dict) -> bool:
-    return alert_key(alert) in state
+    last = state.get(alert_key(alert))
+    if not last:
+        return False
+    days = RESEND_DAYS.get(alert.get("type", "critical"), 7)
+    cutoff = (datetime.datetime.now() - datetime.timedelta(days=days)).isoformat()
+    return last >= cutoff
 
 def mark_sent(state: dict, alert: dict) -> None:
     state[alert_key(alert)] = datetime.datetime.now().isoformat()
@@ -356,20 +366,11 @@ def run(dry_run: bool = False):
     else:
         print("  No critical issues")
 
-    # Post milestones — batch into one message if more than 3
+    # Milestones: client email only — no Slack (keeps the channel signal-only)
     if milestones:
-        if len(milestones) <= 3:
-            for alert in milestones:
-                post_slack(alert["slack_msg"], dry_run=dry_run)
-                send_email(alert, dry_run=dry_run)
-                print(f"  MILESTONE: {alert['client']} — {alert['level']}")
-        else:
-            lines = [f":trophy: *SAP Milestones — {len(milestones)} this run*\n"]
-            for alert in milestones:
-                lines.append(alert["slack_msg"])
-                send_email(alert, dry_run=dry_run)
-                print(f"  MILESTONE: {alert['client']} — {alert['level']}")
-            post_slack("\n".join(lines), dry_run=dry_run)
+        for alert in milestones:
+            send_email(alert, dry_run=dry_run)
+            print(f"  MILESTONE: {alert['client']} — {alert['level']}")
     else:
         print("  No milestones this run")
 

@@ -5,8 +5,7 @@ env:
  
 on:
   schedule:
-    - cron: '0 13 * * *'    # Alert watcher 6am PST daily
-    - cron: '0 21 * * *'    # Alert watcher 2pm PST daily
+    - cron: '0 13 * * *'    # Alert watcher 6am PST daily (posts only NEW critical issues)
     - cron: '0 16 * * 1'    # Weekly reports Monday 9am PST
  
   workflow_dispatch:
@@ -33,8 +32,7 @@ jobs:
     if: |
       (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.job == 'alerts' || github.event.inputs.job == 'all')) ||
-      (github.event_name == 'schedule' &&
-       (github.event.schedule == '0 13 * * *' || github.event.schedule == '0 21 * * *'))
+      (github.event_name == 'schedule' && github.event.schedule == '0 13 * * *')
  
     steps:
       - uses: actions/checkout@v4
@@ -59,6 +57,13 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
         run: python alert_watcher.py
+
+      - name: Persist alert state
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "SAP Automation"
+          git add .alert_state.json || true
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update alert state" && git pull --rebase --autostash origin main && git push)
  
   # ── MONDAY DIGEST ─────────────────────────────────────────────────────
   digest:
