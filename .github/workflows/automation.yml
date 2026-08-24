@@ -6,6 +6,7 @@ env:
 on:
   schedule:
     - cron: '0 13 * * *'    # Alert watcher 6am PST daily (posts only NEW critical issues)
+    - cron: '0 14 * * 1'    # Monday digest 7am PST — the weekly all-client rollup
     - cron: '0 16 * * 1'    # Weekly reports Monday 9am PST
  
   workflow_dispatch:
@@ -70,6 +71,7 @@ jobs:
     name: Monday digest
     runs-on: ubuntu-latest
     if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 14 * * 1') ||
       (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.job == 'digest' || github.event.inputs.job == 'all'))
  

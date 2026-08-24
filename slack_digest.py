@@ -22,7 +22,8 @@ with open("google_ads_cache.json") as f:
 SLACK_WEBHOOK = os.environ.get("SLACK_WEBHOOK", "")
 
 def get_summary(account_id):
-    rows = CACHE.get(account_id, [])
+    # Weekly digest — prefer the 7-day dataset, fall back to 30-day rows
+    rows = CACHE.get(f"{account_id}_7d") or CACHE.get(account_id, [])
     if not rows:
         return None
     clicks = sum(r.get("clicks", 0) or 0 for r in rows)
@@ -83,7 +84,7 @@ def run():
     msg = f"""📊 *SAP Ad Grants — Weekly Digest*
 Week of {week_str} · {len(results)} active accounts
 
-*Portfolio totals:*
+*Portfolio totals (last 7 days):*
 Clicks: {total_clicks:,.0f} · Spend: ${total_spend:,.0f} · Conversions: {total_convs:,.0f}
 
 *Account performance:*
