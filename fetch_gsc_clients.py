@@ -9,11 +9,15 @@ Same pattern as the internal Command Deck fetcher: the service account
 Restricted user on a client's Search Console property, and the client lights
 up here automatically on the next run — nothing in this file needs editing.
 
-Matching: each accessible property is matched to a client by the domain of
-their "website" field in clients.json (sc-domain: properties match the bare
-domain and any subdomain; url-prefix properties match by host).
+Matching, in order:
+  1. a client's explicit "gsc_property" field, if set (exact property string)
+  2. the domain of their "website" field (sc-domain: properties match the bare
+     domain and any subdomain; url-prefix properties match by host)
 
-Clients WITHOUT access are listed under "missing" so we know who to ask.
+Clients WITHOUT access are listed under "missing" so we know who to ask, and
+accessible properties that matched no client are listed under "unmatched" —
+that means a client needs "website" or "gsc_property" filled in, and without
+this report the data would be silently dropped.
 
 ENV (either one)
   GSC_SERVICE_ACCOUNT_JSON   key file contents on one line (GitHub secret)
@@ -145,15 +149,21 @@ def run():
     print(f"Service account sees {len(sites)} properties; window {start} to {end}")
 
     out = {"fetched_at": date.today().isoformat(), "window": f"{start}/{end}",
-           "clients": {}, "missing": []}
+           "clients": {}, "missing": [], "unmatched": []}
+    claimed = set()
 
     for client in CLIENTS:
         slug = client["slug"]
         domain = client_domain(client)
-        prop = next((s["siteUrl"] for s in sites if property_matches(s.get("siteUrl", ""), domain)), None)
+        override = client.get("gsc_property")
+        if override:
+            prop = next((s["siteUrl"] for s in sites if s.get("siteUrl") == override), None)
+        else:
+            prop = next((s["siteUrl"] for s in sites if property_matches(s.get("siteUrl", ""), domain)), None)
         if not prop:
-            out["missing"].append({"slug": slug, "domain": domain})
+            out["missing"].append({"slug": slug, "domain": domain or "(no website in clients.json)"})
             continue
+        claimed.add(prop)
         try:
             entry = {
                 "property": prop,
@@ -170,10 +180,18 @@ def run():
         except Exception as exc:
             print(f"  {slug}: {type(exc).__name__}: {exc}")
 
+    out["unmatched"] = [s["siteUrl"] for s in sites
+                        if s.get("siteUrl") and s["siteUrl"] not in claimed]
+
     (HERE / "gsc_clients_cache.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     print(f"\n{len(out['clients'])} clients with GSC data, {len(out['missing'])} awaiting access")
     if out["missing"]:
         print("Awaiting access: " + ", ".join(m["slug"] for m in out["missing"]))
+    if out["unmatched"]:
+        print("\nAccessible but matched to no client (set 'website' or 'gsc_property' "
+              "in clients.json, otherwise this data is dropped):")
+        for p in out["unmatched"]:
+            print(f"  {p}")
 
 
 if __name__ == "__main__":
