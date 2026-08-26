@@ -104,7 +104,7 @@ GAQL_KEYWORDS = """
     AND ad_group_criterion.status != 'REMOVED'
     AND metrics.impressions > 0
     ORDER BY metrics.impressions DESC
-    LIMIT 100
+    LIMIT 300
 """
 
 # Ad copy performance (Responsive Search Ads)
@@ -169,7 +169,7 @@ GAQL_SEARCH_TERMS = """
     WHERE segments.date DURING LAST_30_DAYS
     AND metrics.impressions > 0
     ORDER BY metrics.clicks DESC
-    LIMIT 50
+    LIMIT 500
 """
 
 # ── FETCH FUNCTIONS ──────────────────────────────────────────────────────

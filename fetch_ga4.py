@@ -362,11 +362,12 @@ def fetch_landing_pages(client, property_id):
         client, property_id,
         dimensions=["landingPage"],
         metrics=["sessions", "averageSessionDuration", "bounceRate", "engagementRate", "conversions"],
+        # limit=10 was truncating every client (all showed exactly 10 pages)
         date_range=("30daysAgo", "today"),
-        limit=10
+        limit=50
     )
     rows.sort(key=lambda x: safe_int(x.get("sessions", 0)), reverse=True)
-    return rows[:10]
+    return rows
 
 
 def fetch_states(client, property_id):
