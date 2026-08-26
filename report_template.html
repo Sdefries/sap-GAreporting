@@ -654,6 +654,7 @@ tr:hover td{background:#F5F9FF}
             <table class="st-table"><thead><tr><th>Search Term</th><th>Impr.</th><th>CTR</th><th></th></tr></thead><tbody id="negativeTermsBody"></tbody></table>
           </div>
         </div>
+        <div id="gscQueriesCard"></div>
       </div>
     </div>
 
@@ -1268,9 +1269,13 @@ function render(){
   }
   if(!visCards)visCards=`<div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666"><div>Search visibility data not yet connected for this site.</div></div>`;
   document.getElementById('visibilityGrid').innerHTML=visCards;
-  if(gsc&&((gsc.queries||[]).length||(gsc.pages||[]).length)){
-    const gscTbl=(rows,label,key)=>`<div style="flex:1;min-width:280px"><div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--navy);margin:16px 0 6px">${label}</div><table style="width:100%;border-collapse:collapse;font-size:12px"><tr style="text-align:left;color:var(--gray-600)"><th style="padding:4px 6px">${key==='query'?'Query':'Page'}</th><th style="padding:4px 6px;text-align:right">Clicks</th><th style="padding:4px 6px;text-align:right">Impr.</th><th style="padding:4px 6px;text-align:right">Pos.</th></tr>${rows.slice(0,10).map(r=>`<tr style="border-top:1px solid #eee"><td style="padding:4px 6px;word-break:break-all">${key==='page'?r[key].replace(/^https?:\/\/(www\.)?/,''):r[key]}</td><td style="padding:4px 6px;text-align:right">${r.clicks}</td><td style="padding:4px 6px;text-align:right">${r.impressions}</td><td style="padding:4px 6px;text-align:right">${r.position??''}</td></tr>`).join('')}</table></div>`;
-    document.getElementById('gscTables').innerHTML=`<div style="display:flex;gap:24px;flex-wrap:wrap">${(gsc.queries||[]).length?gscTbl(gsc.queries,'Top search queries','query'):''}${(gsc.pages||[]).length?gscTbl(gsc.pages,'Top pages in Google Search','page'):''}</div>`;
+  const gscRows=(rows,key)=>rows.slice(0,10).map(r=>`<tr style="border-top:1px solid #eee"><td style="padding:4px 6px;word-break:break-all">${key==='page'?r[key].replace(/^https?:\/\/(www\.)?/,''):r[key]}</td><td style="padding:4px 6px;text-align:right">${r.clicks}</td><td style="padding:4px 6px;text-align:right">${r.impressions}</td><td style="padding:4px 6px;text-align:right">${r.position??''}</td></tr>`).join('');
+  const gscHead=(label)=>`<tr style="text-align:left;color:var(--gray-600)"><th style="padding:4px 6px">${label}</th><th style="padding:4px 6px;text-align:right">Clicks</th><th style="padding:4px 6px;text-align:right">Impr.</th><th style="padding:4px 6px;text-align:right">Pos.</th></tr>`;
+  if(gsc&&(gsc.queries||[]).length){
+    document.getElementById('gscQueriesCard').innerHTML=`<div class="st-card" style="margin-top:16px"><div class="st-card-title">🌐 Top Google Search Queries</div><div class="st-card-sub">Everything this organization appears for on Google — organic and ads — via Search Console</div><table style="width:100%;border-collapse:collapse;font-size:12px">${gscHead('Query')}${gscRows(gsc.queries,'query')}</table></div>`;
+  }
+  if(gsc&&(gsc.pages||[]).length){
+    document.getElementById('gscTables').innerHTML=`<div style="max-width:560px"><div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--navy);margin:16px 0 6px">Top pages in Google Search</div><table style="width:100%;border-collapse:collapse;font-size:12px">${gscHead('Page')}${gscRows(gsc.pages,'page')}</table></div>`;
   }
 
   // SEO
