@@ -18,6 +18,7 @@ def load_cache(path):
 GOOGLE_ADS_CACHE = load_cache("google_ads_cache.json")
 GA4_CACHE        = load_cache("ga4_cache.json")
 SEO_CACHE        = load_cache("seo_cache.json")
+GSC_CACHE        = load_cache("gsc_clients_cache.json")
 TEMPLATE         = open("report_template.html").read()
 REPORT_DATE      = datetime.date.today().strftime("%B %d, %Y")
 REPO_BASE        = "https://sdefries.github.io/sap-GAreporting/reports"
@@ -464,6 +465,7 @@ def build_client_data(client, rows30, rows7, extended_data, ga4, seo):
             "did":  {"title":"Account audit completed",     "body":f"Full performance review of all active campaigns. GPS score: {score}/100."},
             "next": {"title":"Optimization in progress",    "body":"Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."},
         },
+        "gsc":        GSC_CACHE.get("clients", {}).get(client["slug"]),
         "has_ga4":    bool(ga4 and ga4.get("overview_30d")),
         "ga4_pages":  (ga4 or {}).get("landing_pages", [])[:10],
         "ga4_states": (ga4 or {}).get("states", [])[:10],

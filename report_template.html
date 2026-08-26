@@ -743,8 +743,9 @@ tr:hover td{background:#F5F9FF}
 
     <!-- VISIBILITY -->
     <div class="section" id="sec-visibility">
-      <div class="sh"><div class="sh-title">Visibility</div><div class="sh-sub">Impression share &amp; top-of-page</div></div>
+      <div class="sh"><div class="sh-title">Visibility</div><div class="sh-sub">How this organization appears on Google</div></div>
       <div class="isg" id="visibilityGrid"></div>
+      <div id="gscTables"></div>
     </div>
 
     <!-- SEO -->
@@ -1259,8 +1260,18 @@ function render(){
     const lbColor=lostBudget<=10?'var(--green)':lostBudget<=30?'var(--amber)':'var(--red)';
     visCards+=`<div class="isc"><div class="isl">Lost IS — Budget</div><div class="isbb"><div class="isbf" style="width:${Math.min(lostBudget,100)}%;background:${lbColor}"></div></div><div class="isv">${lostBudget.toFixed(1)}%</div><div class="isn">${lostBudget<=10?'Budget not primary constraint.':lostBudget<=30?'Some budget constraints.':'Significant budget limitation.'}</div></div>`;
   }
-  if(!visCards)visCards=`<div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666"><div>Impression share data not available for this period.</div></div>`;
+  const gsc=window.CLIENT_DATA?.gsc;
+  if(gsc){
+    const gn=gsc.now||{};
+    visCards+=`<div class="isc"><div class="isl">Google Search clicks (28d)</div><div class="isv">${(gn.clicks??0).toLocaleString()}</div><div class="isn">From Google Search Console — all searches, not just ads.</div></div>`;
+    visCards+=`<div class="isc"><div class="isl">Search impressions</div><div class="isv">${(gn.impressions??0).toLocaleString()}</div><div class="isn">CTR ${gn.ctr_pct??0}%${gn.position?` · avg position ${gn.position}`:''}</div></div>`;
+  }
+  if(!visCards)visCards=`<div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666"><div>Search visibility data not yet connected for this site.</div></div>`;
   document.getElementById('visibilityGrid').innerHTML=visCards;
+  if(gsc&&((gsc.queries||[]).length||(gsc.pages||[]).length)){
+    const gscTbl=(rows,label,key)=>`<div style="flex:1;min-width:280px"><div style="font-family:var(--font-head);font-weight:700;font-size:13px;color:var(--navy);margin:16px 0 6px">${label}</div><table style="width:100%;border-collapse:collapse;font-size:12px"><tr style="text-align:left;color:var(--gray-600)"><th style="padding:4px 6px">${key==='query'?'Query':'Page'}</th><th style="padding:4px 6px;text-align:right">Clicks</th><th style="padding:4px 6px;text-align:right">Impr.</th><th style="padding:4px 6px;text-align:right">Pos.</th></tr>${rows.slice(0,10).map(r=>`<tr style="border-top:1px solid #eee"><td style="padding:4px 6px;word-break:break-all">${key==='page'?r[key].replace(/^https?:\/\/(www\.)?/,''):r[key]}</td><td style="padding:4px 6px;text-align:right">${r.clicks}</td><td style="padding:4px 6px;text-align:right">${r.impressions}</td><td style="padding:4px 6px;text-align:right">${r.position??''}</td></tr>`).join('')}</table></div>`;
+    document.getElementById('gscTables').innerHTML=`<div style="display:flex;gap:24px;flex-wrap:wrap">${(gsc.queries||[]).length?gscTbl(gsc.queries,'Top search queries','query'):''}${(gsc.pages||[]).length?gscTbl(gsc.pages,'Top pages in Google Search','page'):''}</div>`;
+  }
 
   // SEO
   const seoContainer=document.getElementById('seoContent');
