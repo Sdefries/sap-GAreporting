@@ -86,6 +86,17 @@ def query_rows(token, site, start, end, dimensions=None, limit=1):
     return api(token, f"sites/{encoded}/searchAnalytics/query", payload).get("rows", [])
 
 
+# Unverified properties are listed by the API but return no data, and a client
+# can hold both (an unverified domain property and a verified url-prefix one),
+# so rank by permission and never match an unverified one.
+PERMISSION_RANK = {"siteOwner": 0, "siteFullUser": 1, "siteRestrictedUser": 2}
+
+
+def usable_sites(sites):
+    ranked = [s for s in sites if s.get("permissionLevel") in PERMISSION_RANK]
+    return sorted(ranked, key=lambda s: PERMISSION_RANK[s["permissionLevel"]])
+
+
 def client_domain(client) -> str:
     m = re.match(r"https?://(?:www\.)?([^/]+)", client.get("website", "") or "")
     return m.group(1).lower() if m else ""
@@ -145,8 +156,11 @@ def run():
     prev_end = start - timedelta(days=1)
     prev_start = prev_end - timedelta(days=WINDOW - 1)
 
-    sites = api(token, "sites").get("siteEntry", [])
-    print(f"Service account sees {len(sites)} properties; window {start} to {end}")
+    all_sites = api(token, "sites").get("siteEntry", [])
+    sites = usable_sites(all_sites)
+    unverified = [s["siteUrl"] for s in all_sites if s.get("permissionLevel") == "siteUnverifiedUser"]
+    print(f"{len(sites)} usable properties ({len(unverified)} unverified, skipped); "
+          f"window {start} to {end}")
 
     out = {"fetched_at": date.today().isoformat(), "window": f"{start}/{end}",
            "clients": {}, "missing": [], "unmatched": []}
@@ -182,6 +196,7 @@ def run():
 
     out["unmatched"] = [s["siteUrl"] for s in sites
                         if s.get("siteUrl") and s["siteUrl"] not in claimed]
+    out["unverified"] = unverified
 
     (HERE / "gsc_clients_cache.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     print(f"\n{len(out['clients'])} clients with GSC data, {len(out['missing'])} awaiting access")
@@ -191,6 +206,10 @@ def run():
         print("\nAccessible but matched to no client (set 'website' or 'gsc_property' "
               "in clients.json, otherwise this data is dropped):")
         for p in out["unmatched"]:
+            print(f"  {p}")
+    if unverified:
+        print("\nUnverified properties, no data until ownership is verified:")
+        for p in unverified:
             print(f"  {p}")
 
 
