@@ -680,11 +680,45 @@ def build_overview(vis):
     return cards
 
 
+def build_watch(client, entry):
+    """Competitor website changes: page edits, new pages, removed pages."""
+    if not entry or not entry.get("sites"):
+        return None
+    changes = entry.get("changes") or []
+    sites = [{"domain": d, "name": v.get("name") or d, "pages": v.get("url_count", 0),
+              "watched": len(v.get("pages") or {}), "source": v.get("source"),
+              "baseline": bool(v.get("baseline")), "error": v.get("error")}
+             for d, v in entry["sites"].items()]
+    for c in changes:
+        c["when"] = short_date(c["date"])
+    last = max((c["date"] for c in changes), default=None)
+    latest = [c for c in changes if c["date"] == last]
+    summary = []
+    if all(s["baseline"] for s in sites):
+        summary.append(f"Now watching {len(sites)} competitor site{'s' if len(sites) != 1 else ''}. "
+                       "Changes show up from the next weekly check.")
+    elif latest:
+        by = Counter(c["name"] for c in latest)
+        new_n = sum(1 for c in latest if c["kind"] == "new_page")
+        edit_n = sum(1 for c in latest if c["kind"] == "changed")
+        parts = ([f"<b>{new_n} new page{'s' if new_n != 1 else ''}</b>"] if new_n else []) + \
+                ([f"<b>{edit_n} page edit{'s' if edit_n != 1 else ''}</b>"] if edit_n else [])
+        summary.append(f"Latest check ({fmt_date(last)}): " + (" and ".join(parts) or "pages removed") + " across "
+                       + ", ".join(f"<b>{escape(n)}</b>" for n, _ in by.most_common(3)) + ".")
+    else:
+        summary.append("No competitor changes found in the last 4 months.")
+    return {"checked": fmt_date(entry.get("checked_at", "")), "sites": sites, "changes": changes,
+            "latest": latest[:8], "summary": summary,
+            "new_30d": sum(1 for c in changes if c["kind"] == "new_page" and c["date"] >= (datetime.date.today() - datetime.timedelta(days=30)).isoformat()),
+            "edits_30d": sum(1 for c in changes if c["kind"] == "changed" and c["date"] >= (datetime.date.today() - datetime.timedelta(days=30)).isoformat())}
+
+
 def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None, local_entry=None, organic_entry=None,
-                          authority_entry=None):
+                          authority_entry=None, watch_entry=None):
     seo_enrolled = bool(client.get("local_seo_enrolled"))
     return {
         "authority": build_authority(client, authority_entry),
+        "watch": build_watch(client, watch_entry),
         "organic": build_organic(organic_entry),
         "local": build_local(client, local_entry),
         "referrals": build_referrals(ga4_entry),

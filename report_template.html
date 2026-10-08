@@ -489,6 +489,12 @@ b.up,.up{color:#1A6E3E}b.down,.down{color:#A02020}
 .vbtn:disabled{opacity:0.45;cursor:not-allowed}
 .vsearch{flex:1;min-width:180px;max-width:320px;padding:8px 12px;border-radius:7px;border:1px solid var(--border);font-family:var(--font-body);font-size:12px;background:#fff}
 .vchips{display:flex;gap:4px;flex-wrap:wrap}
+.wc-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}.wc-item:last-child{border-bottom:none}
+.wc-ic{font-size:18px;color:var(--blue);margin-top:2px;flex:none}.wc-note{font-size:14px;margin:4px 0}
+.wc-body{font-size:12px;overflow-wrap:anywhere}.wc-row{margin-top:4px}.wc-body s{color:var(--gray-400)}
+.yn{white-space:nowrap}
+#sec-competitors a,.wc-body a{color:var(--blue);text-decoration:none;font-weight:500}
+.wc-q{margin:4px 0 0;padding:4px 10px;border-left:3px solid var(--primary-100,#cfe4ff);color:var(--gray-600)}
 .vchip{padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;color:var(--gray-600);background:#fff;border:1px solid var(--border);cursor:pointer;font-family:var(--font-body)}
 .vchip.active{background:var(--navy-dark);color:#fff;border-color:var(--navy-dark)}
 .vt-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto}
@@ -2533,7 +2539,9 @@ function renderOverviewCards(V){
   if(!cards.length){box.innerHTML=emptyBlock('Your visibility scores are on their way','AI visibility, keyword visibility and authority appear here after the first weekly checks.');return;}
   box.innerHTML=cards.map(c=>`<a class="ov-link" href="${c.href}">${scoreBlock(c.title,c.value,c.band,c.delta,esc(c.note),
       {unit:c.unit,scale:c.scale,word:c.key==='authority'?' authority':' visibility',
-       after:c.opportunity?`<div class="vis-opp ov-opp"><strong>${c.opportunity_label||'Biggest opportunity'}:</strong> ${c.opportunity}</div>`:''})}</a>`).join('');
+       after:c.opportunity?`<div class="vis-opp ov-opp"><strong>${c.opportunity_label||'Biggest opportunity'}:</strong> ${c.opportunity}</div>`:''})}</a>`).join('')+
+    (V.watch?.latest?.length?`<div class="card" style="margin-top:14px"><div class="chart-title">Latest competitor changes <button class="vt-read" style="display:inline;margin-left:6px" onclick="compJump('changes')">See all ›</button></div>
+      ${compChangeList(V.watch.latest.slice(0,4)).replace(/^<div class="card">|<\/div>$/g,'')}</div>`:'');
 }
 
 // ── AUTHORITY (backlinks) ──
@@ -2609,18 +2617,45 @@ window.authCSV=()=>downloadCSV(`${slugName()}-authority-${authTab}.csv`,window._
 function tip(text){return `<span class="tip" tabindex="0" data-tip="${esc(text)}">?</span>`}
 
 // ── COMPETITORS ──
+let compTab='overview', compSite='', compFilter='';
+function compSites(V){
+  const m=new Map();
+  (V.ai?.competitors||[]).filter(r=>!r.you).forEach(r=>m.set(r.domain,r.name));
+  Object.entries(V.seo?.comp_names||{}).forEach(([d,n])=>m.set(d,n||d));
+  (V.watch?.sites||[]).forEach(x=>m.has(x.domain)||m.set(x.domain,x.name));
+  return [...m].map(([domain,name])=>({domain,name}));
+}
 function renderCompetitors(V){
   const box=document.getElementById('compContent');
-  const seoRows=V.seo?.competitors||[], aiRows=V.ai?.competitors||[];
-  if(seoRows.length<2&&aiRows.length<2&&(V.ai?.suggested_competitors||[]).length){
+  const seoRows=V.seo?.competitors||[], aiRows=V.ai?.competitors||[], W=V.watch;
+  if(seoRows.length<2&&aiRows.length<2&&!W&&(V.ai?.suggested_competitors||[]).length){
     box.innerHTML=suggestionsBlock().replace('class="g2" style="margin-top:14px"','class="g2"');return;
   }
-  if(seoRows.length<2&&aiRows.length<2){
+  if(seoRows.length<2&&aiRows.length<2&&!W){
     box.innerHTML=emptyBlock('Compare yourself with similar organizations',
-      `Tell us 3–5 organizations people might find instead of you. We'll show how you stack up in Google rankings and in AI answers, prompt by prompt.
+      `Tell us 3–5 organizations people might find instead of you. We'll show how you stack up in Google rankings and in AI answers, prompt by prompt, and flag new pages and changes on their websites.
        <div style="margin-top:14px"><a class="vbtn primary" href="mailto:${VIS_CONTACT}?subject=${encodeURIComponent('Competitor tracking for '+(window.CLIENT_DATA?.name||''))}">Suggest competitors →</a></div>`);
     return;
   }
+  const sites=compSites(V);
+  if(!sites.some(x=>x.domain===compSite))compSite=sites[0]?.domain||'';
+  const tabs=[['overview','Overview'],...(sites.length&&(seoRows.length>1||aiRows.length>1)?[['h2h','Head to head']]:[]),...(W?[['changes','Page changes'],['new','New pages']]:[])];
+  box.innerHTML=(W?`<div class="vis-summary"><h4>Summary</h4><ul>${W.summary.map(b=>`<li>${b}</li>`).join('')}</ul></div>`:'')+
+    `<div class="vtabs" id="compTabs">${tabs.map(([k,l])=>`<button class="vtab" data-t="${k}">${l}</button>`).join('')}</div><div id="compPane"></div>`;
+  box.querySelectorAll('#compTabs .vtab').forEach(b=>b.onclick=()=>{compTab=b.dataset.t;drawComp()});
+  drawComp();
+}
+function drawComp(){
+  const V=window.VISIBILITY_DATA, el=document.getElementById('compPane');
+  if(!document.querySelector(`#compTabs .vtab[data-t="${compTab}"]`))compTab='overview';
+  document.querySelectorAll('#compTabs .vtab').forEach(b=>b.classList.toggle('active',b.dataset.t===compTab));
+  el.innerHTML=compTab==='h2h'?compH2H(V):compTab==='changes'?compChanges(V.watch):compTab==='new'?compNewPages(V.watch):compOverview(V);
+  const sel=document.getElementById('compSel'); if(sel)sel.onchange=()=>{compSite=sel.value;drawComp()};
+  const f=document.getElementById('compFilter'); if(f)f.onchange=()=>{compFilter=f.value;drawComp()};
+}
+window.compJump=t=>{compTab=t;drawComp();document.getElementById('sec-competitors').scrollIntoView({behavior:'smooth',block:'start'})};
+function compOverview(V){
+  const seoRows=V.seo?.competitors||[], aiRows=V.ai?.competitors||[], W=V.watch;
   const lead=(rows,key,lowerIsBetter)=>{const vals=rows.map(r=>r[key]).filter(v=>v!==null&&v!==undefined&&v!==0);
     if(!vals.length)return null;return lowerIsBetter?Math.min(...vals):Math.max(...vals)};
   const cell=(v,best,suffix='')=>v===null||v===undefined?'—':(v===best?`<span class="lead">${v}${suffix}</span>`:`${v}${suffix}`);
@@ -2644,7 +2679,70 @@ function renderCompetitors(V){
         ${engs.map(e=>{const p=r.per[e.key]||{visible:0,total:0};return `<td>${p.visible===be[e.key]?`<span class="lead">${p.visible}</span>`:p.visible}<span class="vfoot"> / ${p.total}</span></td>`}).join('')}</tr>`).join('')}
       </tbody></table></div>`;
   }
-  box.innerHTML=html;
+  if(W)html+=`<div class="card" style="margin-top:14px"><div class="chart-title">Websites we watch ${tip('Each week we read these sites\' sitemaps and their homepage and top-level pages, and flag new pages and real content edits. Small edits like dates are ignored.')}</div>
+    <table class="vt"><thead><tr><th>Site</th><th>Pages found</th><th>Pages checked for edits</th><th>Status</th></tr></thead><tbody>
+    ${W.sites.map(x=>`<tr><td><b>${esc(x.name)}</b><div class="vfoot" style="margin:0">${esc(x.domain)}</div></td><td>${fmtN(x.pages)}<span class="vfoot"> from ${esc(x.source||'—')}</span></td><td>${x.watched}</td>
+      <td>${x.error?`<span class="yn">Couldn't load</span>`:x.baseline?'<span class="yn">First check</span>':'<span class="yn yes">Watching</span>'}</td></tr>`).join('')}</tbody></table></div>`;
+  return html;
+}
+function compPicker(V,id,val,all){
+  return `<select class="vsearch loc-sel" id="${id}">${all?`<option value="">All competitors</option>`:''}${compSites(V).map(x=>`<option value="${esc(x.domain)}" ${x.domain===val?'selected':''}>${esc(x.name)}</option>`).join('')}</select>`;
+}
+function compH2H(V){
+  const d=compSite, nm=(compSites(V).find(x=>x.domain===d)||{}).name||d, me=V.brand;
+  const who=(a,b)=>a&&b?'Both':a?'You':b?'Them':'Neither';
+  const pill={You:'<span class="yn yes">You</span>',Them:`<span class="yn" style="background:var(--danger-50,#FDEAEA);color:#A02020">${esc(nm)}</span>`,Both:'<span class="yn">Both</span>',Neither:'<span class="vfoot">Neither</span>'};
+  let html=`<div class="vtools">${compPicker(V,'compSel',d)}</div>`, line=[];
+  const kws=V.seo?.keywords||[];
+  if(kws.length){
+    let w=0,l=0;
+    const rows=kws.map(k=>{const a=k.pos||null,b=k.comps?.[d]||null,r=a&&(!b||a<b)?'You':b&&(!a||b<a)?'Them':a&&b?'Both':'Neither';
+      if(r==='You')w++;if(r==='Them')l++;
+      return `<tr><td>${esc(k.kw)}</td><td>${a||'<span class="vfoot">50+</span>'}</td><td>${b||'<span class="vfoot">50+</span>'}</td><td>${r==='Both'?'<span class="yn">Tied</span>':pill[r]}</td></tr>`}).join('');
+    line.push(`you rank higher on <b>${w} of ${kws.length}</b> keywords and ${esc(nm)} ranks higher on <b>${l}</b>`);
+    html+=`<div class="vt-wrap" style="margin-bottom:14px"><div class="chart-title" style="padding:14px 16px 4px">Google rankings</div>
+      <table class="vt"><thead><tr><th>Keyword</th><th>${esc(me)}</th><th>${esc(nm)}</th><th>Ranks higher ${tip('Lower position is better. 50+ means not in the top 50.')}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+  const A=V.ai;
+  if(A?.rows?.length){
+    const engs=A.engines.filter(e=>e.tracked); let w=0,l=0;
+    const rows=A.rows.map(r=>{let you=0,them=0;
+      const cells=engs.map(e=>{const c=r.cells[e.key]||{};const a=c.named||c.cited,b=!!c.comps?.[d];you+=a?1:0;them+=b?1:0;
+        const x=who(a,b);return `<td>${c.state==='no_answer'||c.state==='skipped'||c.state==='error'?'<span class="vfoot">—</span>':x==='Them'?pill.Them.replace(esc(nm),'Them'):pill[x]}</td>`}).join('');
+      if(you>them)w++;if(them>you)l++;
+      return `<tr><td>${esc(r.prompt)}</td>${cells}<td><b>${you}</b> – <b>${them}</b></td></tr>`}).join('');
+    line.push(`AI mentions you more often on <b>${w} of ${A.rows.length}</b> prompts and ${esc(nm)} more often on <b>${l}</b>`);
+    html+=`<div class="vt-wrap"><div class="chart-title" style="padding:14px 16px 4px">AI answers <span class="vfoot">who each AI names or cites · Them = ${esc(nm)}</span></div>
+      <table class="vt"><thead><tr><th>Prompt</th>${engs.map(e=>`<th>${e.label}</th>`).join('')}<th>You – them</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+  return (line.length?`<div class="vis-summary" style="margin-bottom:14px"><h4>${esc(me)} vs ${esc(nm)}</h4><ul><li>${line.join('. ').replace(/^./,c=>c.toUpperCase())}.</li></ul></div>`:'')+html;
+}
+function compChangeBody(c){
+  if(c.kind==='new_page')return `<b>New page:</b> <a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title||c.url)}</a>${c.desc?`<div class="vfoot" style="margin:2px 0 0">${esc(c.desc)}</div>`:''}`;
+  if(c.kind==='removed_pages')return `<b>Removed ${c.count} page${c.count>1?'s':''}</b> from their sitemap`;
+  const d=c.diff||{}, lab={title:'Page title',desc:'Description',h1:'Main heading'};
+  return `<b>Edited:</b> <a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title||c.url)}</a>
+    ${['title','h1','desc'].filter(k=>d[k]).map(k=>`<div class="wc-row"><span class="vfoot">${lab[k]}</span> <s>${esc(d[k].from||'(none)')}</s> → ${esc(d[k].to||'(none)')}</div>`).join('')}
+    ${d.added?.length?`<div class="wc-row"><span class="vfoot">New text${d.added_n>d.added.length?` (${d.added.length} of ${d.added_n})`:''}</span>${d.added.slice(0,3).map(t=>`<blockquote class="wc-q">${esc(t)}</blockquote>`).join('')}</div>`:''}
+    ${d.words?`<div class="vfoot" style="margin:4px 0 0">${fmtN(d.words.from)} → ${fmtN(d.words.to)} words${d.removed_n?` · ${d.removed_n} sentence${d.removed_n>1?'s':''} removed`:''}</div>`:''}`;
+}
+const compIcon={new_page:'ph-file-plus',changed:'ph-pencil-simple',removed_pages:'ph-file-minus'};
+function compChangeList(list){
+  if(!list.length)return emptyBlock('No changes yet','New pages and edits on competitor websites show up here after the weekly check.');
+  return `<div class="card">${list.map(c=>`<div class="wc-item"><i class="ph ${compIcon[c.kind]} wc-ic" aria-hidden="true"></i><div style="min-width:0">
+      <div class="vfoot" style="margin:0"><b>${esc(c.name)}</b> · ${c.when}</div>
+      ${c.note?`<div class="wc-note">${esc(c.note)}</div>`:''}<div class="wc-body">${compChangeBody(c)}</div></div></div>`).join('')}</div>`;
+}
+function compChanges(W){
+  const list=W.changes.filter(c=>c.kind!=='new_page'&&(!compFilter||c.domain===compFilter));
+  return `<div class="vtools">${compPicker(window.VISIBILITY_DATA,'compFilter',compFilter,true)}<span class="vfoot" style="margin:0">Checked ${W.checked} · last 4 months</span></div>`+compChangeList(list);
+}
+function compNewPages(W){
+  const list=W.changes.filter(c=>c.kind==='new_page'&&(!compFilter||c.domain===compFilter));
+  return `<div class="vtools">${compPicker(window.VISIBILITY_DATA,'compFilter',compFilter,true)}<span class="vfoot" style="margin:0">${list.length} new page${list.length===1?'':'s'} · last 4 months</span></div>`+
+    (list.length?`<div class="vt-wrap"><table class="vt"><thead><tr><th>Found</th><th>Competitor</th><th>Page</th><th>What it is</th></tr></thead><tbody>
+      ${list.map(c=>`<tr><td>${c.when}</td><td>${esc(c.name)}</td><td><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title||c.url.replace(/^https?:\/\//,''))}</a><div class="vfoot" style="margin:0">${esc(c.url.replace(/^https?:\/\/[^/]+/,''))}</div></td><td>${esc(c.note||c.desc||'')}</td></tr>`).join('')}</tbody></table></div>`
+    :emptyBlock('No new pages yet','Pages competitors publish show up here after the weekly check.'));
 }
 window.compExportCSV=()=>{
   const V=window.VISIBILITY_DATA, rows=[['Section','Site','Domain','Metric','Value']];

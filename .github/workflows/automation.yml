@@ -27,6 +27,7 @@ on:
           - fetch_local
           - fetch_organic
           - fetch_authority
+          - fetch_competitors
           - all
  
 jobs:
@@ -366,3 +367,36 @@ jobs:
           git config --global user.name "SAP Automation"
           git add authority_cache.json || true
           git diff --staged --quiet && echo "No changes" || (git commit -m "Update authority $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)
+
+  # ── FETCH COMPETITOR WEBSITE CHANGES (weekly) ─────────────────────────
+  # New pages and content edits on each client's tracked competitors.
+  # Free apart from optional Claude notes on each change.
+  fetch_competitors:
+    name: Fetch competitor changes
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 12 * * 1') ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.job == 'fetch_competitors' || github.event.inputs.job == 'all'))
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install anthropic
+
+      - name: Fetch competitor changes
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python fetch_competitors.py
+
+      - name: Commit competitor cache
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "SAP Automation"
+          git add competitor_cache.json || true
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update competitor changes $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)

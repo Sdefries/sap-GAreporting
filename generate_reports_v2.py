@@ -25,6 +25,7 @@ AI_CACHE         = load_cache("ai_visibility_cache.json")
 LOCAL_CACHE      = load_cache("local_cache.json")
 ORGANIC_CACHE    = load_cache("organic_cache.json")
 AUTHORITY_CACHE  = load_cache("authority_cache.json")
+WATCH_CACHE      = load_cache("competitor_cache.json")
 TEMPLATE         = open("report_template.html").read()
 REPORT_DATE      = datetime.date.today().strftime("%B %d, %Y")
 REPO_BASE        = "https://sdefries.github.io/sap-GAreporting/reports"
@@ -690,7 +691,7 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
         seo = SEO_CACHE.get(slug) if client.get("local_seo_enrolled") else None
 
         cd  = build_client_data(client, rows30, rows7, extended_data, ga4, seo)
-        cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4, LOCAL_CACHE.get(slug), ORGANIC_CACHE.get(slug), AUTHORITY_CACHE.get(slug))
+        cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4, LOCAL_CACHE.get(slug), ORGANIC_CACHE.get(slug), AUTHORITY_CACHE.get(slug), WATCH_CACHE.get(slug))
         cd["_visibility"]["overview"] = build_overview(cd["_visibility"])
         cd["_devices"] = devices
         t30 = cd["totals_30d"]

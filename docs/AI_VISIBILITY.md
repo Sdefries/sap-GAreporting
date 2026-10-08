@@ -4,20 +4,26 @@ Client reports have a **Search & AI visibility** group in the left nav, modeled 
 
 | Section | What it shows | Data |
 |---|---|---|
+| **Visibility overview** | Three headline scores (AI visibility, keyword visibility, authority), each with its band, change and biggest opportunity, plus the latest competitor website changes | all caches below |
 | **AI tracking** | AI visibility score; a card per AI; **Visits from AI** (GA4: sessions from ChatGPT, Perplexity, Gemini, Copilot, Claude, and the pages they land on); **How AI describes you** (accuracy check); trend; prompt × AI table (click a cell to read the answer); per-AI tabs; "Who AI recommends instead" and "Sites AI trusts — get listed"; prompt ideas | `ai_visibility_cache.json` ← `fetch_ai_visibility.py`, `ga4_cache.json` ← `fetch_ga4.py` |
 | **AEO action plan** | For prompts where AI recommends someone else: why, which sites to get listed on, and a page brief to publish (title, URL, outline, FAQs) | `ai_visibility_cache.json` (Claude) |
 | **AEO readiness** | Website checklist (AI crawler access, llms.txt, sitemap, HTTPS, Organization schema, FAQ, readable text, title/description, contact & location, donate path) with fixes, plus **ready-to-paste llms.txt and schema** | `ai_visibility_cache.json` (no API key needed) |
-| **Classic SEO** | Search visibility score, average position, top 3 / top 10, AI Overview citations, trends, tracked keyword table | `seo_cache.json` ← `fetch_seo.py` (SEO-package clients) |
+| **Classic SEO** (keyword tracking) | Search visibility score, average position, top 3 / top 10, AI Overview citations, trends. Keyword table tracks Google positions to 50 with monthly search volume, best-ever position, trend line, "#1 is …" when you don't rank, filters (#1, top 3, top 10, moved up/down…), sorting, a **Competition** toggle and an **AI Overviews** tab showing which sites Google cited. "On page one with you" suggests competitors from the search results | `seo_cache.json` ← `fetch_seo.py` (SEO-package clients) |
 | **Organic search** | SEMrush-style: every keyword the site ranks for, with volume, difficulty, estimated visits and change; position distribution; traffic value; top pages; competitors found from shared keywords; keyword opportunities; authority (backlinks, optional) | `organic_cache.json` ← `fetch_organic.py` (all clients with a website, monthly) |
-| **Competitors** | You vs tracked competitors in Google rankings and AI answers | caches above |
+| **Authority** | Authority score (0–100), referring domains with history, best links (authority 20+, 100+ visits a month, followed, not spam), links to win back, new vs lost, highest-authority sites, anchor text, vs competitors | `authority_cache.json` ← `fetch_authority.py` (monthly, needs `DATAFORSEO_BACKLINKS`) |
+| **Competitors** | **Overview**: you vs tracked competitors in Google rankings and AI answers. **Head to head**: you vs one competitor, keyword by keyword and prompt by prompt. **Page changes**: edits to their homepage and top-level pages (title, heading, description, new text). **New pages**: pages added to their sitemap | caches above + `competitor_cache.json` ← `fetch_competitors.py` (weekly) |
 | **Site health** | PageSpeed / Core Web Vitals, Search Console clicks and top queries | `seo_cache.json` |
-| **Local map & profile** | Google Business Profile (rating, reviews, category, hours, claimed) and a Google Maps **heat map** per keyword with share of local voice and average rank | `local_cache.json` ← `fetch_local.py` (clients with `local_tracking`) |
+| **Local map & profile** | Google Business Profile (rating, reviews, category, hours, claimed); a 7×7 Google Maps **heat map** per keyword (average rank, top 3 coverage, found in top 20, any business's grid); **Map pack** and **Google Maps** positions from each city served | `local_cache.json` ← `fetch_local.py` (clients with `local_tracking`) |
 
 **Live features** (test a prompt now, track prompts, generate ideas) run through a small Cloudflare Worker that keeps the API keys private. See [`worker/README.md`](../worker/README.md). Until it's set up, those buttons are hidden.
 
 Other report changes: the **device breakdown** is now real Google Ads data, **What we did / What's next** is written from each month's data, and there's a **↓ PDF** button. `reports/index.html` is an all-clients dashboard.
 
-Score bands everywhere: **Poor** < 20% · **Moderate** 20–50% · **Good** 50–80% · **Great** 80%+.
+Score bands for AI and keyword visibility: **Poor** < 20% · **Moderate** 20–50% · **Good** 50–80% · **Great** 80%+. Authority: **Poor** < 10 · **Moderate** 10–30 · **Good** 30–50 · **Great** 50+.
+
+## Competitor website changes
+
+`fetch_competitors.py` reads each tracked competitor's sitemap and checks its homepage and up to 14 top-level pages every week. It reports new pages, removed pages, and real content edits: a changed title, main heading or description, or at least two sentences added or removed (so dates and counters don't count). The first check of a site is a baseline; changes appear from the second week. With `ANTHROPIC_API_KEY` set, Claude adds one plain-English line per change on what it might signal. The cache stores hashes of URLs and sentences, not page copies, and keeps 4 months of changes.
 
 ## How a prompt is scored
 
@@ -36,7 +42,7 @@ Add these under **repo → Settings → Secrets and variables → Actions**. Eac
 |---|---|---|
 | `DATAFORSEO_LOGIN`, `DATAFORSEO_PASSWORD` | AI Overviews, AI Mode, Classic SEO rankings, Organic search, Local map & profile | dataforseo.com → API access |
 | `OPENAI_API_KEY` | ChatGPT | platform.openai.com |
-| `ANTHROPIC_API_KEY` | Claude, AEO action plan, accuracy check, prompt ideas, starter prompts for new clients | console.anthropic.com |
+| `ANTHROPIC_API_KEY` | Claude, AEO action plan, accuracy check, prompt ideas, starter prompts for new clients, notes on competitor changes | console.anthropic.com |
 | `GEMINI_API_KEY` | Gemini | aistudio.google.com |
 | `PERPLEXITY_API_KEY` | Perplexity | perplexity.ai → API |
 | `PAGESPEED_API_KEY` | Site speed scores (without it Google rate-limits the checks) | Google Cloud console → enable PageSpeed Insights API → API key |
@@ -54,7 +60,7 @@ Claude requests use server-side refusal fallback (`fallbacks: "default"`): if Cl
 
 ## Schedule
 
-Every **Monday 5am PST** `automation.yml` runs `fetch_ai`, `fetch_seo`, `fetch_local` and `fetch_organic`. Organic search refreshes each client about once a month. The 9am weekly report run picks up the results. Any job can also be started from **Actions → SAP Ad Grants Automation → Run workflow**.
+Every **Monday 5am PST** `automation.yml` runs `fetch_ai`, `fetch_seo`, `fetch_local`, `fetch_organic`, `fetch_competitors` and (when `DATAFORSEO_BACKLINKS` is `1`) `fetch_authority`. Organic search and authority refresh each client about once a month. The 9am weekly report run picks up the results. Any job can also be started from **Actions → SAP Ad Grants Automation → Run workflow**.
 
 ## Slack alerts
 
@@ -79,7 +85,8 @@ After each AI run, `#google-ads` (the existing `SLACK_WEBHOOK`) gets a message w
 "local_tracking": {
   "business_name": "Humane Society of Northwest Montana",
   "keywords": ["animal shelter", "adopt a dog", "humane society"],
-  "grid": 5, "radius_miles": 5
+  "grid": 7, "spacing_miles": 1,
+  "cities": ["Kalispell, MT", "Whitefish, MT"]
 },
 "report_notes": {"did": "Launched the spring adoption campaign...", "next": "..."},
 "seo_location": "Los Angeles,California,United States",
@@ -87,7 +94,7 @@ After each AI run, `#google-ads` (the existing `SLACK_WEBHOOK`) gets a message w
 ```
 
 - `ai_tracking.prompts`: up to 10. Every current client is seeded with 5. **New clients without prompts get 5 starter prompts written by Claude automatically.**
-- `competitors`: powers the Competitors section and red competitor tags. The report's "Who AI recommends instead" panel suggests who to add.
+- `competitors`: powers the Competitors section (including website change monitoring) and red competitor tags. The report's "Who AI recommends instead" panel and the keyword table's "On page one with you" card suggest who to add.
 - `local_tracking`: only for organizations people visit in person. It's seeded for the Humane Society of Northwest Montana and ScienceWorks. Coordinates are found automatically; add `lat`/`lng` or `place_id` if the wrong listing matches.
 - `report_notes`: your team's own "What we did / What's next" text. It overrides the automatic text.
 - `organic_tracking.enabled: false` skips a client in the organic report.
@@ -100,7 +107,9 @@ After each AI run, `#google-ads` (the existing `SLACK_WEBHOOK`) gets a message w
 | AI tracking (5 prompts × 6 AIs, weekly) | $20–40 |
 | AEO action plan + accuracy check (Claude, weekly) | $5–10 |
 | Organic search (monthly) | ~$1 |
-| Local map (2 clients × 3 keywords × 25 points, weekly) | ~$1.50 |
+| Local map (2 clients × 3 keywords × 49 points, weekly) | ~$3 |
+| Authority (monthly, plus the Backlinks API subscription) | $1–4 |
+| Competitor changes (Claude notes only) | < $1 |
 | Live checks (Worker) | up to the daily limit you set |
 
 ## Privacy note
@@ -114,5 +123,6 @@ python fetch_ai_visibility.py --dry-run                 # show prompts, call not
 python fetch_ai_visibility.py --slug pup-profile        # one client
 python fetch_local.py --dry-run
 python fetch_organic.py --slug pup-profile --force
+python fetch_competitors.py --slug pup-profile
 python generate_reports_v2.py --slug pup-profile
 ```
