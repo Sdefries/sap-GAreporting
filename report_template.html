@@ -14,7 +14,7 @@
   --gray-100:#f1f5f9;--gray-200:#e2e8f0;--gray-400:#64748b;--gray-600:#475569;
   --border:#e2e8f0;--card:#fff;
   --primary-50:#e8f2ff;--primary-100:#cfe4ff;--primary-600:#006193;--primary-900:#001d31;
-  --cream:#fdf8ee;--page:#f8fafc;
+  --cream:#fdf8ee;--page:#fdf8ee;
   --font-head:'Karla',sans-serif;--font-body:'Montserrat',sans-serif;
   --radius:12px;--radius-sm:8px;
 }
@@ -572,6 +572,9 @@ button.st{cursor:pointer}
    White sidebar with rounded light-blue active pills, white cards with slate
    borders, Montserrat body / Karla medium headings, outlined status badges. */
 body{background:var(--page);color:var(--navy-dark)}
+/* CRM main area: bg-linear-to-b from-secondary-50 to-secondary-100 (cream) */
+.main{background:linear-gradient(to bottom,#fffefc,#fdf8ee)}
+.topbar{background:#fff}
 h1,h2,h3,.sh-title,.chart-title,.topbar-title{font-family:var(--font-head);font-weight:500;letter-spacing:-0.025em}
 .sidebar{width:256px;background:#fff;border-right:1px solid var(--border);box-shadow:0 1px 2px rgba(0,0,0,0.05)}
 .main{margin-left:256px}
@@ -609,7 +612,7 @@ h1,h2,h3,.sh-title,.chart-title,.topbar-title{font-family:var(--font-head);font-
 .kpi-label,.isl{color:var(--gray-400)}
 .gps-card{background:linear-gradient(135deg,var(--primary-900) 0%,#01486f 100%);border-radius:12px}
 .vis-summary{border-left:4px solid var(--blue)}
-th{background:var(--page);color:var(--gray-400);border-bottom:1px solid var(--border)}
+th{background:#f8fafc;color:var(--gray-400);border-bottom:1px solid var(--border)}
 td{border-bottom:1px solid var(--border)}
 /* Badges — outlined pills, CRM badge variants */
 .band,.st,.yn,.prio,.vis-in,.compliance-pill,.insight-tag{border:1px solid transparent;border-radius:999px}

@@ -722,7 +722,7 @@ def _build_index(slugs, summaries=None):
 <title>SAP Client Reports</title>
 <link href="https://fonts.googleapis.com/css2?family=Karla:wght@500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{{--ink:#020617;--navy:#001d31;--blue:#077cbf;--muted:#64748b;--muted2:#475569;--page:#f8fafc;--border:#e2e8f0;--accent:#e8f2ff}}
+:root{{--ink:#020617;--navy:#001d31;--blue:#077cbf;--muted:#64748b;--muted2:#475569;--page:#f8fafc;--border:#e2e8f0;--accent:#e8f2ff;--cream:#fdf8ee}}
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{font-family:Montserrat,sans-serif;background:var(--page);color:var(--ink);font-size:13px;display:flex;min-height:100vh}}
 nav{{width:256px;background:#fff;border-right:1px solid var(--border);box-shadow:0 1px 2px rgba(0,0,0,.05);position:fixed;top:0;bottom:0;overflow-y:auto}}
@@ -731,11 +731,11 @@ nav .brand img{{height:20px;max-width:172px}}
 nav .lbl{{padding:14px 16px 6px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}}
 nav a{{display:block;margin:1px 8px;padding:8px 12px;border-radius:16px;color:var(--muted);text-decoration:none;font-size:13px;font-weight:500}}
 nav a:hover,nav a.on{{color:var(--navy);background:var(--accent)}}
-main{{margin-left:256px;flex:1;padding:24px 32px}}
+main{{margin-left:256px;flex:1;padding:24px 32px;background:linear-gradient(to bottom,#fffefc,#fdf8ee);min-height:100vh}}
 h1{{font-family:Karla,sans-serif;font-weight:600;letter-spacing:-.025em;color:var(--ink);font-size:20px}}
 .sub{{color:var(--muted);font-size:12px;margin:4px 0 20px}}
 table{{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 1px 2px rgba(0,0,0,.05)}}
-th{{background:var(--page);font-size:11px;font-weight:600;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border)}}
+th{{background:#f8fafc;font-size:11px;font-weight:600;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border)}}
 td{{padding:12px 14px;border-top:1px solid var(--border);vertical-align:middle;font-size:14px}}
 td a{{color:var(--ink);font-weight:600;text-decoration:none}} td a:hover{{color:var(--blue)}}
 td a.go{{color:var(--blue);font-weight:500;font-size:13px}}
