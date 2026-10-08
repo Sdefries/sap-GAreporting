@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Report Admin · Sponsor a Purpose</title>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+/* Agency-only page: set each client's plan and add-ons, rebuild reports.
+   Holds no client data itself; everything loads from the Worker after the
+   admin key is entered. Same tokens as the client report. */
+:root{--primary:#077cbf;--primary-50:#e8f2ff;--primary-100:#cfe4ff;--primary-900:#001d31;--ink:#020617;--muted:#475569;--faint:#64748b;
+  --border:#e2e8f0;--card:#fff;--bg:#fffefc;--ok:#16a34a;--ok-bg:#dcfce7;--bad:#dc2626;--bad-bg:#fee2e2;
+  --font-head:'Karla',system-ui,sans-serif;--font-body:'Montserrat',system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#fffefc,#fdf8ee) fixed;color:var(--ink);font-family:var(--font-body);font-size:14px}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 16px 64px}
+h1{font-family:var(--font-head);font-size:20px;font-weight:600;margin:0 0 4px;color:var(--primary-900)}
+.sub{color:var(--muted);font-size:14px;margin:0 0 24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:20px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+input,select{font-family:var(--font-body);font-size:14px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--ink)}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+button{font-family:var(--font-body);font-size:14px;font-weight:500;padding:8px 16px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--primary-900);cursor:pointer}
+button.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+button:disabled{opacity:.5;cursor:default}
+.msg{font-size:12px;color:var(--muted);min-height:16px}
+.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+.tbl{width:100%;border-collapse:collapse;margin-top:16px}
+.tbl th{text-align:left;font-size:12px;font-weight:600;color:var(--faint);padding:8px 10px;border-bottom:1px solid var(--border)}
+.tbl td{padding:12px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.name b{display:block;color:var(--primary-900)}.name a{font-size:12px;color:var(--primary);text-decoration:none}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--primary-50);color:var(--primary);margin-left:6px}
+.addons{display:flex;flex-wrap:wrap;gap:6px 14px}
+.addons label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.addons label.inc{color:var(--faint)}
+.scroll{overflow-x:auto}
+.legend{margin-top:20px;font-size:12px;color:var(--muted);line-height:1.6}
+.legend b{color:var(--primary-900)}
+[hidden]{display:none!important}
+@media(max-width:700px){.tbl thead{display:none}.tbl tr{display:block;border-bottom:1px solid var(--border);padding:8px 0}.tbl td{display:block;border:none;padding:6px 0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Report admin</h1>
+  <p class="sub">Choose what each client's report includes. Changes show after the next report build: press <b>Rebuild reports now</b>, or wait for Monday.</p>
+
+  <form class="card row" id="keyForm">
+    <label for="key" style="font-weight:600">Admin key</label>
+    <input id="key" type="password" autocomplete="current-password" required style="flex:1;min-width:220px">
+    <button class="primary" type="submit">Open</button>
+    <span class="msg" id="keyMsg" role="status"></span>
+  </form>
+
+  <div id="admin" hidden>
+    <div class="card" style="margin-top:16px">
+      <div class="row" style="justify-content:space-between">
+        <div><b style="color:var(--primary-900)">Clients</b> <span class="msg" id="count"></span></div>
+        <div class="row"><button type="button" id="rebuild">Rebuild reports now</button><span class="msg" id="rebuildMsg" role="status"></span></div>
+      </div>
+      <div class="scroll"><table class="tbl"><thead><tr><th>Client</th><th>Plan</th><th>Add-ons</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+</div>
+<script>
+const API=__API__;  // Worker URL, set by generate_reports_v2.py
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let KEY='', PLANS=null;
+try{KEY=sessionStorage.getItem('sapAdminKey')||''}catch(e){}
+
+async function call(path,payload={}){
+  const r=await fetch(API.replace(/\/$/,'')+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({admin_key:KEY,...payload})});
+  const d=await r.json().catch(()=>({error:'Unexpected response'}));
+  if(!r.ok)throw new Error(d.error||('Error '+r.status));
+  return d;
+}
+
+function planIncludes(plan){return new Set(plan?PLANS.plans[plan]:Object.keys(PLANS.packages))}
+
+function rowHTML(c){
+  const opts=[['','Everything (no plan)'],...Object.keys(PLANS.plans).map(p=>[p,p[0].toUpperCase()+p.slice(1)])];
+  return `<tr data-slug="${esc(c.slug)}">
+    <td class="name"><b>${esc(c.name)}${c.demo?'<span class="pill">Demo</span>':''}</b><a href="${esc(c.slug)}.html" target="_blank" rel="noopener">Open report ↗</a></td>
+    <td><select aria-label="Plan for ${esc(c.name)}">${opts.map(([v,l])=>`<option value="${v}" ${(c.plan||'')===v?'selected':''}>${l}</option>`).join('')}</select></td>
+    <td><div class="addons"></div></td>
+    <td><button type="button" class="save">Save</button><div class="msg" role="status"></div></td></tr>`;
+}
+function drawAddons(tr,addons){
+  const plan=tr.querySelector('select').value||null, inc=planIncludes(plan);
+  tr.querySelector('.addons').innerHTML=Object.entries(PLANS.packages).filter(([k])=>k!=='ads').map(([k,p])=>{
+    const on=inc.has(k)||addons.includes(k);
+    return `<label class="${inc.has(k)?'inc':''}"><input type="checkbox" value="${k}" ${on?'checked':''} ${inc.has(k)?'disabled':''}>${esc(p.label)}${inc.has(k)?' (in plan)':''}</label>`}).join('');
+}
+async function load(){
+  const d=await call('/admin/clients');
+  PLANS=d.plans;
+  $('rows').innerHTML=d.clients.map(rowHTML).join('');
+  $('count').textContent=`${d.clients.length} clients`;
+  d.clients.forEach(c=>{const tr=document.querySelector(`tr[data-slug="${CSS.escape(c.slug)}"]`);drawAddons(tr,c.addons);
+    tr.querySelector('select').onchange=()=>drawAddons(tr,[...tr.querySelectorAll('.addons input:checked:not(:disabled)')].map(i=>i.value));
+    tr.querySelector('.save').onclick=()=>save(tr)});
+  $('legend').innerHTML='<b>What each plan includes.</b> '+Object.entries(PLANS.plans).map(([p,pk])=>`<b>${esc(p[0].toUpperCase()+p.slice(1))}</b>: ${pk.map(k=>esc(PLANS.packages[k]?.label||k)).join(', ')}`).join(' · ')
+    +'. Google Ads &amp; GA4 is always included. Edit <code>plans.json</code> to change the plans.';
+  $('admin').hidden=false;
+}
+async function save(tr){
+  const msg=tr.querySelector('.msg'), btn=tr.querySelector('.save');
+  btn.disabled=true; msg.className='msg'; msg.textContent='Saving…';
+  try{
+    await call('/admin/plan',{slug:tr.dataset.slug,plan:tr.querySelector('select').value||null,
+      addons:[...tr.querySelectorAll('.addons input:checked:not(:disabled)')].map(i=>i.value)});
+    msg.className='msg ok'; msg.textContent='Saved. Shows after the next rebuild.';
+  }catch(e){msg.className='msg bad'; msg.textContent=e.message}
+  btn.disabled=false;
+}
+$('keyForm').onsubmit=async e=>{
+  e.preventDefault(); KEY=$('key').value.trim(); $('keyMsg').className='msg'; $('keyMsg').textContent='Checking…';
+  try{await load(); try{sessionStorage.setItem('sapAdminKey',KEY)}catch(e){} $('keyForm').hidden=true}
+  catch(err){$('keyMsg').className='msg bad'; $('keyMsg').textContent=err.message}
+};
+$('rebuild').onclick=async()=>{
+  const m=$('rebuildMsg'); $('rebuild').disabled=true; m.className='msg'; m.textContent='Starting…';
+  try{await call('/admin/rebuild'); m.className='msg ok'; m.textContent='Started. Reports update in about 5–10 minutes.'}
+  catch(e){m.className='msg bad'; m.textContent=e.message}
+  $('rebuild').disabled=false;
+};
+if(!API){$('keyForm').innerHTML='<span class="msg bad">The live Worker isn\'t set up yet (LIVE_API_URL). See worker/README.md.</span>'}
+else if(KEY){load().then(()=>{$('keyForm').hidden=true}).catch(()=>{KEY=''})}
+</script>
+</body>
+</html>

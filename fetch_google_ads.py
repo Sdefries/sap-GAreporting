@@ -34,7 +34,7 @@ except ImportError:
 # ── LOAD CLIENTS ──────────────────────────────────────────────────────────
 
 with open("clients.json") as f:
-    CLIENTS = json.load(f)
+    CLIENTS = [c for c in json.load(f) if not c.get("demo")]  # demo clients use demo_data.py
 
 def clean_id(ads_id: str) -> str:
     """Convert '334-205-8352' to '3342058352'."""

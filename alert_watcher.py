@@ -38,7 +38,7 @@ import json, os, datetime, argparse, urllib.request
 # ── CONFIG ────────────────────────────────────────────────────────────────
 
 with open("clients.json") as f:
-    CLIENTS = json.load(f)
+    CLIENTS = [c for c in json.load(f) if not c.get("demo")]  # demo clients use demo_data.py
 
 SLACK_WEBHOOK = os.environ.get("SLACK_WEBHOOK", "")
 ML_API_KEY    = os.environ.get("MAILERLITE_API_KEY", "")

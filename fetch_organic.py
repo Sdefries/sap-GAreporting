@@ -208,7 +208,7 @@ def fetch_client(client, cache, force=False, dry_run=False):
 
 def run(slug_filter=None, force=False, dry_run=False):
     with open("clients.json") as f:
-        clients = json.load(f)
+        clients = [c for c in json.load(f) if not c.get("demo")]  # demo clients use demo_data.py
     print(f"\nFetch organic search (DataForSEO Labs) · backlinks {'ON' if BACKLINKS_ON else 'off'}")
     if not (DATAFORSEO_LOGIN and DATAFORSEO_PASSWORD) and not dry_run:
         print("No DataForSEO credentials — nothing to do")

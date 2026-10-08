@@ -14,7 +14,7 @@ import datetime
 import urllib.request
 
 with open("clients.json") as f:
-    CLIENTS = json.load(f)
+    CLIENTS = [c for c in json.load(f) if not c.get("demo")]  # demo clients use demo_data.py
 
 with open("google_ads_cache.json") as f:
     CACHE = json.load(f)

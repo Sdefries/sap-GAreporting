@@ -74,8 +74,8 @@ async function takeQuota(env, slug, cost = 1) {
 
 // ── Client config (clients.json on GitHub) ───────────────────────────────────
 
-async function githubFile(env) {
-  const r = await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/contents/clients.json?ref=${env.GITHUB_BRANCH || "main"}`, {
+async function githubFile(env, path = "clients.json") {
+  const r = await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/contents/${path}?ref=${env.GITHUB_BRANCH || "main"}`, {
     headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, "User-Agent": "sap-aeo-worker", Accept: "application/vnd.github+json" },
   });
   if (!r.ok) throw new Error(`GitHub read failed: ${r.status}`);
@@ -347,8 +347,8 @@ function clientsJSON(clients) {
 // Read clients.json, apply change(client) and commit it, retrying when someone
 // else wrote first. change returns {error,status} to stop, {noop} to skip the
 // write, or {message} to commit. Quota is only taken when there's a real write.
-async function updateClient(env, slug, change) {
-  let charged = false;
+async function updateClient(env, slug, change, { charge = true } = {}) {
+  let charged = !charge;
   for (let attempt = 0; attempt < 4; attempt++) {
     const { sha, clients } = await githubFile(env);
     const c = clients.find((x) => x.slug === slug);
@@ -435,6 +435,59 @@ async function routeCompetitors(env, body) {
   });
 }
 
+// ── Admin (agency only): set plans, rebuild reports ──────────────────────────
+// Separate key (ADMIN_KEY, 16+ characters). Wrong keys are counted so the key
+// can't be guessed by brute force.
+
+async function adminAuthorized(env, key) {
+  const want = env.ADMIN_KEY || "";
+  if (want.length < 16 || typeof key !== "string" || key.length !== want.length) return false;
+  let diff = 0;
+  for (let i = 0; i < want.length; i++) diff |= want.charCodeAt(i) ^ key.charCodeAt(i);
+  return diff === 0;
+}
+
+async function adminFailed(env, req) {
+  const ip = req.headers.get("CF-Connecting-IP") || "unknown";
+  const k = `admin-fail:${ip}:${new Date().toISOString().slice(0, 10)}`;
+  const n = parseInt((await env.LIMITS.get(k)) || "0", 10) + 1;
+  await env.LIMITS.put(k, String(n), { expirationTtl: 60 * 60 * 48 });
+  return n;
+}
+
+async function routeAdmin(env, path, body) {
+  const plans = (await githubFile(env, "plans.json")).clients;  // githubFile parses any JSON file
+  if (path === "/admin/clients") {
+    const { clients } = await githubFile(env);
+    return [200, { plans, clients: clients.map((c) => ({ slug: c.slug, name: c.name, plan: c.plan || null,
+      addons: c.addons || [], demo: !!c.demo, competitors: (c.competitors || []).length })) }];
+  }
+  if (path === "/admin/plan") {
+    const plan = body.plan || null;
+    if (plan && !plans.plans[plan]) return [400, { error: `Unknown plan "${plan}".` }];
+    const addons = [...new Set((Array.isArray(body.addons) ? body.addons : []).map(String))];
+    const bad = addons.filter((a) => !plans.packages[a]);
+    if (bad.length) return [400, { error: `Unknown add-on: ${bad.join(", ")}.` }];
+    return updateClient(env, body.slug, (c) => {
+      if ((c.plan || null) === plan && JSON.stringify(c.addons || []) === JSON.stringify(addons)) return { noop: { saved: true, message: "No change." } };
+      if (plan) c.plan = plan; else delete c.plan;
+      if (addons.length) c.addons = addons; else delete c.addons;
+      return { message: `Set ${c.slug} plan to ${plan || "everything"}${addons.length ? " + " + addons.join(", ") : ""} (admin)`,
+               result: () => ({ saved: true }) };
+    }, { charge: false });
+  }
+  if (path === "/admin/rebuild") {
+    const r = await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/actions/workflows/automation.yml/dispatches`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, "User-Agent": "sap-aeo-worker", Accept: "application/vnd.github+json" },
+      body: JSON.stringify({ ref: env.GITHUB_BRANCH || "main", inputs: { job: "reports" } }),
+    });
+    if (!r.ok) throw new Error(`Workflow dispatch failed: ${r.status}`);
+    return [200, { started: true }];
+  }
+  return [404, { error: "Not found" }];
+}
+
 export default {
   async fetch(req, env) {
     const headers = cors(env, req);
@@ -442,8 +495,16 @@ export default {
     if (req.method !== "POST") return json({ error: "Not found" }, 404, headers);
     try {
       const body = await req.json().catch(() => ({}));
-      if (!(await authorized(env, body.slug, body.token))) return json({ error: "This report link isn't authorized for live checks." }, 401, headers);
       const path = new URL(req.url).pathname;
+      if (path.startsWith("/admin/")) {
+        if (!(await adminAuthorized(env, body.admin_key))) {
+          const n = await adminFailed(env, req);
+          return json({ error: n > 20 ? "Too many wrong keys today. Try again tomorrow." : "Wrong admin key." }, n > 20 ? 429 : 401, headers);
+        }
+        const [status, out] = await routeAdmin(env, path, body);
+        return json(out, status, headers);
+      }
+      if (!(await authorized(env, body.slug, body.token))) return json({ error: "This report link isn't authorized for live checks." }, 401, headers);
       if (path === "/track" || path === "/competitors") {
         const [status, out] = await (path === "/track" ? routeTrack : routeCompetitors)(env, body);
         return json(out, status, headers);

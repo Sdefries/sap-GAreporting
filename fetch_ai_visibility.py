@@ -806,7 +806,7 @@ def fetch_client(client, cache, engines_filter=None, dry_run=False, ideas_only=F
 
 def run(slug_filter=None, engines_filter=None, dry_run=False, ideas_only=False):
     with open("clients.json") as f:
-        clients = json.load(f)
+        clients = [c for c in json.load(f) if not c.get("demo")]  # demo clients use demo_data.py
     now = datetime.datetime.now().isoformat(timespec="seconds")
     print(f"\nFetch AI visibility — {now}")
     for e in ENGINES:

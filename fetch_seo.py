@@ -51,7 +51,7 @@ from fetch_ai_visibility import seo_location
 # ── LOAD CLIENTS ──────────────────────────────────────────────────────────────
 
 with open("clients.json") as f:
-    ALL_CLIENTS = json.load(f)
+    ALL_CLIENTS = [c for c in json.load(f) if not c.get("demo")]  # demo clients use demo_data.py
 
 # Only process enrolled clients
 CLIENTS = [c for c in ALL_CLIENTS if c.get("local_seo_enrolled")]

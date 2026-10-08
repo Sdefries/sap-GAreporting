@@ -11,18 +11,22 @@ const clients = [{ slug: "pup-profile", name: "Pup Profile", website: "https://p
 function kv() { const m = new Map(); return { get: async (k) => m.get(k) ?? null, put: async (k, v) => void m.set(k, v) }; }
 const b64 = (s) => Buffer.from(s).toString("base64");
 let committed = null;
+let dispatched = null;
+const plans = JSON.parse(await (await import("node:fs/promises")).readFile(new URL("../../plans.json", import.meta.url), "utf8"));
 
 globalThis.fetch = async (url, opts = {}) => {
   const u = String(url);
   const ok = (body) => new Response(JSON.stringify(body), { status: 200 });
+  if (u.includes("api.github.com") && u.includes("plans.json")) return ok({ sha: "p", content: b64(JSON.stringify(plans)) });
   if (u.includes("api.github.com") && (!opts.method || opts.method === "GET")) return ok({ sha: "abc", content: b64(JSON.stringify(clients)) });
+  if (u.includes("/dispatches")) { dispatched = JSON.parse(opts.body); return new Response(null, { status: 204 }); }
   if (u.includes("api.github.com") && opts.method === "PUT") { committed = JSON.parse(opts.body); return ok({}); }
   if (u.includes("openai.com")) return ok({ output: [{ type: "message", content: [{ type: "output_text", text: "Try Pup Profile.", annotations: [{ type: "url_citation", url: "https://www.pupprofile.org/adopt" }] }] }] });
   if (u.includes("perplexity.ai")) return ok({ choices: [{ message: { content: "Best Friends has dogs." } }], search_results: [{ url: "https://bestfriends.org/x" }] });
   throw new Error("unexpected fetch " + u);
 };
 
-const env = { REPORT_SIGNING_KEY: "secret", GITHUB_TOKEN: "t", GITHUB_REPO: "o/r", ALLOWED_ORIGINS: "https://sdefries.github.io",
+const env = { ADMIN_KEY: "admin-key-0123456789", REPORT_SIGNING_KEY: "secret", GITHUB_TOKEN: "t", GITHUB_REPO: "o/r", ALLOWED_ORIGINS: "https://sdefries.github.io",
   OPENAI_API_KEY: "k", PERPLEXITY_API_KEY: "k", DAILY_LIMIT: "2", LIMITS: kv() };
 const call = (path, body) => worker.fetch(new Request("https://w.dev" + path, { method: "POST", headers: { Origin: "https://sdefries.github.io" }, body: JSON.stringify(body) }), env);
 
@@ -143,4 +147,35 @@ test("upstream errors aren't sent to the browser", async () => {
   const d = await r.json();
   for (const c of Object.values(d.cells)) assert.ok(!/HTTP \d/.test(c.error || ""));
   env.OPENAI_API_KEY = saved;
+});
+
+test("admin: wrong key is refused", async () => {
+  env.LIMITS = kv();
+  const r = await call("/admin/clients", { admin_key: "nope" });
+  assert.equal(r.status, 401);
+});
+
+test("admin: lists clients with their plans", async () => {
+  const r = await call("/admin/clients", { admin_key: "admin-key-0123456789" });
+  const d = await r.json();
+  assert.equal(r.status, 200);
+  assert.ok(d.plans.plans.growth);
+  assert.deepEqual(d.clients[0], { slug: "pup-profile", name: "Pup Profile", plan: null, addons: [], demo: false, competitors: 1 });
+});
+
+test("admin: sets a plan and add-ons without using the client's daily limit", async () => {
+  env.LIMITS = kv();
+  const r = await call("/admin/plan", { admin_key: "admin-key-0123456789", slug: "pup-profile", plan: "growth", addons: ["local"] });
+  assert.equal(r.status, 200);
+  const written = JSON.parse(Buffer.from(committed.content, "base64").toString());
+  assert.equal(written[0].plan, "growth");
+  assert.deepEqual(written[0].addons, ["local"]);
+  const bad = await call("/admin/plan", { admin_key: "admin-key-0123456789", slug: "pup-profile", plan: "platinum" });
+  assert.equal(bad.status, 400);
+});
+
+test("admin: rebuild starts the reports job", async () => {
+  const r = await call("/admin/rebuild", { admin_key: "admin-key-0123456789" });
+  assert.equal(r.status, 200);
+  assert.deepEqual(dispatched.inputs, { job: "reports" });
 });

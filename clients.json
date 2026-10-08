@@ -1201,5 +1201,79 @@
       ]
     },
     "competitors": []
+  },
+  {
+    "slug": "demo",
+    "name": "Maplewood Paws Rescue (Demo)",
+    "demo": true,
+    "plan": "pro",
+    "org_type": "animal_rescue",
+    "website": "https://maplewoodpaws.example",
+    "timezone": "America/Denver",
+    "geo": {
+      "target_type": "metro",
+      "locations": [
+        "Denver, CO"
+      ]
+    },
+    "seo_location": "Denver,Colorado,United States",
+    "keywords": {
+      "include_themes": [
+        "dog adoption",
+        "foster a dog",
+        "dog rescue"
+      ]
+    },
+    "local_seo_enrolled": true,
+    "seo_keywords": [
+      "adopt a dog denver",
+      "dog rescue denver",
+      "maplewood paws",
+      "foster dogs denver",
+      "rescue dogs near me",
+      "senior dogs for adoption"
+    ],
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "Maplewood Paws Rescue",
+        "Maplewood Paws"
+      ],
+      "prompts": [
+        "Where can I adopt a rescue dog in Denver?",
+        "Which Denver dog rescues need foster volunteers?",
+        "Best local charity to donate to for dog rescue in Colorado",
+        "How do I adopt a senior dog near Denver?",
+        "Are there dog adoption events in Denver this month?"
+      ]
+    },
+    "competitors": [
+      {
+        "name": "Front Range Dog Rescue",
+        "domain": "frontrangedogs.example"
+      },
+      {
+        "name": "Mile High Pet Haven",
+        "domain": "milehighpets.example"
+      },
+      {
+        "name": "Rocky Mountain Rescue Network",
+        "domain": "rmrescue.example"
+      }
+    ],
+    "local_tracking": {
+      "business_name": "Maplewood Paws Rescue",
+      "keywords": [
+        "dog rescue",
+        "adopt a dog",
+        "animal shelter"
+      ],
+      "grid": 7,
+      "spacing_miles": 1,
+      "cities": [
+        "Denver, CO",
+        "Aurora, CO"
+      ]
+    }
   }
 ]

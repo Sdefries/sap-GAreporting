@@ -28,7 +28,7 @@ from google.ads.googleads.client import GoogleAdsClient
 from google.ads.googleads.errors import GoogleAdsException
 
 with open("clients.json") as f:
-    CLIENTS = {c["slug"]: c for c in json.load(f)}
+    CLIENTS = {c["slug"]: c for c in json.load(f) if not c.get("demo")}  # demo clients use demo_data.py
 
 openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 

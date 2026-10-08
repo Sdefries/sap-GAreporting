@@ -29,6 +29,22 @@ Score bands for AI and keyword visibility: **Poor** < 20% · **Moderate** 20–5
 
 `fetch_competitors.py` reads each tracked competitor's sitemap and checks its homepage and up to 14 top-level pages every week. It reports new pages, removed pages, and real content edits: a changed title, main heading or description, or at least two sentences added or removed (so dates and counters don't count). The first check of a site is a baseline; changes appear from the second week. With `ANTHROPIC_API_KEY` set, Claude adds one plain-English line per change on what it might signal. The cache stores hashes of URLs and sentences, not page copies, and keeps 4 months of changes.
 
+## Plans, admin page and demo
+
+**Plans.** `plans.json` defines the packages and plans:
+
+| Plan | Includes |
+|---|---|
+| Essentials | Google Ads & GA4 |
+| Growth | + SEO & AEO (visibility overview, AI tracking, AEO plan and readiness, keyword tracking, organic search, site health) |
+| Pro | + Authority, Competitor tracking, Local map |
+
+Set a client's plan in `clients.json` (`"plan": "growth"`, optional `"addons": ["local"]`), or on the admin page. A client with no plan sees everything. Sections outside a plan show an "isn't in your plan yet" card, their data is left out of the page, and the weekly jobs skip the paid API calls for them. Edit `plans.json` to change what each plan includes.
+
+**Admin page.** `reports/admin.html` (built with the reports). Enter the admin key to see every client, pick a plan and add-ons, save, and press **Rebuild reports now** to apply changes in a few minutes. It needs the Worker with `ADMIN_KEY` set (see `worker/README.md`); the page itself holds no client data.
+
+**Demo.** The client with `"demo": true` (Maplewood Paws Rescue, a fictional rescue in Denver) is built from `demo_data.py`: realistic sample data for every section, run through the real scoring code, dated relative to today. It's at `reports/demo.html`. Change its plan on the admin page to show prospects what each plan looks like. Every fetcher, alert and digest skips demo clients, and live checks are off for it.
+
 ## How a prompt is scored
 
 Each AI's answer to a prompt is checked for two things:

@@ -22,7 +22,7 @@ from google.ads.googleads.errors import GoogleAdsException
 
 # ── CONFIG ──────────────────────────────────────────────────────────────
 with open("clients.json") as f:
-    CLIENTS = {c["slug"]: c for c in json.load(f)}
+    CLIENTS = {c["slug"]: c for c in json.load(f) if not c.get("demo")}  # demo clients use demo_data.py
 
 # Ad Grants compliance settings
 AD_GRANTS_BUDGET_MICROS = 329_000_000  # $329/day = $10k/month max

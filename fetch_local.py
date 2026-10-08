@@ -283,7 +283,7 @@ def fetch_client(client, cache, dry_run=False):
 
 def run(slug_filter=None, dry_run=False):
     with open("clients.json") as f:
-        clients = [c for c in json.load(f) if c.get("local_tracking")]
+        clients = [c for c in json.load(f) if c.get("local_tracking") and not c.get("demo")]  # demo clients use demo_data.py
     print(f"\nFetch local map rankings — {len(clients)} client(s) with local_tracking")
     if not (DATAFORSEO_LOGIN and DATAFORSEO_PASSWORD) and not dry_run:
         print("No DataForSEO credentials (DATAFORSEO_LOGIN / DATAFORSEO_PASSWORD) — nothing to do")

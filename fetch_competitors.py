@@ -295,7 +295,7 @@ def fetch_client(client, cache, fetcher=fetch):
 
 
 def run(slug_filter=None):
-    clients = json.load(open("clients.json"))
+    clients = [c for c in json.load(open("clients.json")) if not c.get("demo")]  # demo clients use demo_data.py
     cache = json.load(open(CACHE_PATH)) if os.path.exists(CACHE_PATH) else {}
     n = sum(fetch_client(c, cache) for c in clients if not slug_filter or c["slug"] == slug_filter)
     cache["_meta"] = {"fetched_at": datetime.datetime.now().isoformat(timespec="seconds"), "clients_fetched": n}

@@ -33,7 +33,7 @@ from google.ads.googleads.errors import GoogleAdsException
 
 # ── LOAD CLIENTS ────────────────────────────────────────────────────────
 with open("clients.json") as f:
-    CLIENTS = json.load(f)
+    CLIENTS = [c for c in json.load(f) if not c.get("demo")]  # demo clients use demo_data.py
 
 CLIENT_MAP = {c["slug"]: c for c in CLIENTS}
 

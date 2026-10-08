@@ -2000,7 +2000,7 @@ function initClient(){
   if(!cd)return;
   document.title=cd.name+' — Google Ads Report';
   document.getElementById('sbClientName').textContent=cd.name;
-  document.getElementById('sbClientId').textContent='Account '+(cd.account_id||'—');
+  document.getElementById('sbClientId').textContent=/^Demo/.test(cd.account_id||'')?cd.account_id:'Account '+(cd.account_id||'—');
   document.getElementById('topbarTitle').textContent=cd.name;
   document.getElementById('sbFoot').textContent='Data via Google Ads API · '+cd.report_date;
   document.getElementById('gpsDateSub').textContent='Calculated '+cd.report_date;

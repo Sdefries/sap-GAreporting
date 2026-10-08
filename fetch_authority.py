@@ -211,7 +211,7 @@ def run(slug_filter=None, force=False):
     if not (DATAFORSEO_LOGIN and DATAFORSEO_PASSWORD):
         print("No DataForSEO credentials — nothing to do")
         return
-    clients = json.load(open("clients.json"))
+    clients = [c for c in json.load(open("clients.json")) if not c.get("demo")]  # demo clients use demo_data.py
     cache = json.load(open(CACHE_PATH)) if os.path.exists(CACHE_PATH) else {}
     n = 0
     for c in clients:

@@ -24,7 +24,7 @@ import sys
 import argparse
 
 with open("clients.json") as f:
-    CLIENTS = json.load(f)
+    CLIENTS = [c for c in json.load(f) if not c.get("demo")]  # demo clients use demo_data.py
 
 os.makedirs("portals", exist_ok=True)
 

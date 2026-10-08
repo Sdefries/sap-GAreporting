@@ -512,7 +512,7 @@ def _fmt_duration(seconds):
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
     with open("clients.json", "r") as f:
-        clients = json.load(f)
+        clients = [c for c in json.load(f) if not c.get("demo")]  # demo clients use demo_data.py
 
     print("Initializing GA4 Data API client...")
     client = get_client()

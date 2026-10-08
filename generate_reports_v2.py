@@ -455,7 +455,7 @@ def build_client_data(client, rows30, rows7, extended_data, ga4, seo):
     return {
         "slug":        client["slug"],
         "name":        client["name"],
-        "account_id":  client.get("google_ads_id",""),
+        "account_id":  client.get("google_ads_id","") or ("Demo account" if client.get("demo") else ""),
         "timezone":    client.get("timezone","America/New_York"),
         "website":     client.get("website",""),
         "org_model":   client.get("org_model","location_based"),
@@ -705,16 +705,25 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
         devices = GOOGLE_ADS_CACHE.get(f"{acct}_devices", {})
         ga4 = GA4_CACHE.get(slug)
         seo = SEO_CACHE.get(slug) if client.get("local_seo_enrolled") else None
+        caches = {"ai": AI_CACHE.get(slug), "seo": SEO_CACHE.get(slug), "local": LOCAL_CACHE.get(slug),
+                  "organic": ORGANIC_CACHE.get(slug), "authority": AUTHORITY_CACHE.get(slug), "watch": WATCH_CACHE.get(slug)}
+        if client.get("demo"):  # fictional sample data, never from or into the real caches
+            import demo_data
+            demo = demo_data.build(client)
+            rows30, rows7, devices, ga4 = demo["rows30"], demo["rows7"], demo["devices"], demo["ga4"]
+            extended_data = demo["extended"]
+            seo = demo["seo"] if client.get("local_seo_enrolled") else None
+            caches = {k: demo[k] for k in caches}
 
         try:
             cd  = build_client_data(client, rows30, rows7, extended_data, ga4, seo)
-            cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4, LOCAL_CACHE.get(slug), ORGANIC_CACHE.get(slug), AUTHORITY_CACHE.get(slug), WATCH_CACHE.get(slug))
+            cd["_visibility"] = build_visibility_data(client, caches["ai"], caches["seo"], ga4, caches["local"], caches["organic"], caches["authority"], caches["watch"])
             locked = plan_locked(client)  # plans.json + clients.json "plan" / "addons"
             apply_locks(cd["_visibility"], locked)
             cd["_visibility"]["overview"] = [] if "overview" in locked else build_overview(cd["_visibility"])
             if "site_health" in locked:
                 cd["seo"] = None  # PageSpeed / Search Console data stays out of the page
-            cd["_live"] = "ai" not in locked  # live AI checks are part of SEO & AEO
+            cd["_live"] = "ai" not in locked and not client.get("demo")  # live AI checks: SEO & AEO plans, never the demo
             cd["_devices"] = devices
             t30 = cd["totals_30d"]
             print(f"    GPS:{cd['gps']}/100 | Clicks:{t30.get('cl',0):.0f} | Spend:${t30.get('cost',0):,.0f} | Convs:{t30.get('cv',0):.0f} | GA4:{'✓' if cd['has_ga4'] else '✗'}")
@@ -742,10 +751,20 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
 
     if not dry_run and not validate_only and generated and not slug_filter:
         _build_index(generated, summaries)
+        _build_admin()
 
     print(f"\n{'='*50}\nGenerated:{len(generated)} Failed:{len(failed)}\n{'='*50}")
     if failed:
         for slug,v in failed: print(f"  {slug}: {v}")
+
+def _build_admin():
+    """reports/admin.html: agency page to set plans and rebuild (talks to the Worker)."""
+    with open("admin_template.html", encoding="utf-8") as f:
+        html = f.read().replace("__API__", json.dumps(os.environ.get("LIVE_API_URL", "")))
+    with open("reports/admin.html", "w", encoding="utf-8") as f:
+        f.write(html)
+    print("  ✓ reports/admin.html")
+
 
 def _slack_alert(slug, name, violations):
     webhook = os.environ.get("SLACK_WEBHOOK","")

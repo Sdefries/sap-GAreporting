@@ -5,6 +5,7 @@ This makes the AI tracking section of each client report interactive:
 - **Test a prompt now**: the client types any question and sees, within about a minute, whether AI Overviews, AI Mode, ChatGPT, Claude, Gemini and Perplexity mention them.
 - **Track this prompt weekly / Track selected prompts**: adds prompts to that client's `ai_tracking.prompts` in `clients.json` on GitHub. The next weekly run includes them. There's a limit of 10 prompts per client.
 - **Your competitors**: clients add (name + website), remove, or one-click track suggested competitors, up to 3, in `competitors` in `clients.json`. Listing sites (Yelp, Facebook, Petfinder…), .gov/.edu and the client's own site are refused. Counts against the daily limit.
+- **Admin page** (`reports/admin.html`): set each client's plan and add-ons and rebuild the reports. Needs the `ADMIN_KEY` secret (16+ random characters, e.g. `openssl rand -hex 16`), and the GitHub token needs **Actions: read and write** on the repo for the rebuild button. Wrong keys are limited to 20 a day per visitor.
 - **✦ Generate AI ideas**: 15 fresh prompt ideas from Claude.
 
 Reports are static pages, so the API keys live here in the Worker, never in the page. Until the Worker is set up, these buttons stay hidden and "Track selected prompts" falls back to emailing scott@sponsorapurpose.org.
@@ -30,7 +31,8 @@ Add the secrets. Each command prompts you to paste the value.
 
 ```bash
 npx wrangler secret put REPORT_SIGNING_KEY   # any long random string; the SAME value goes in GitHub (below)
-npx wrangler secret put GITHUB_TOKEN         # fine-grained token: this repo only, Contents = Read and write
+npx wrangler secret put GITHUB_TOKEN         # fine-grained token: this repo only, Contents = Read and write, Actions = Read and write (admin rebuild)
+npx wrangler secret put ADMIN_KEY            # admin page key: 16+ random characters (openssl rand -hex 16)
 npx wrangler secret put DATAFORSEO_LOGIN
 npx wrangler secret put DATAFORSEO_PASSWORD
 npx wrangler secret put OPENAI_API_KEY
