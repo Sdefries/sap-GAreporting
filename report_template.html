@@ -1241,11 +1241,11 @@ const tk={maxTicksLimit:8,maxRotation:0,font:{size:10,family:"'Montserrat',sans-
 const gl={color:'rgba(0,0,0,0.04)'};
 // Shared chart style (matches the Search & AI charts): CRM colours, thin rounded
 // bars on the baseline, smooth 2px lines, legend under the chart.
-const CC={blue:'#077cbf',navy:'#001d31',green:'#16a34a',sky:'#99cbff'};
+const CC={blue:'#077cbf',green:'#16a34a',sky:'#99cbff'};
 const legendBottom={position:'bottom',labels:{boxWidth:8,boxHeight:8,font:{size:10,family:"'Montserrat',sans-serif"},color:'#5A6A82'}};
 const barMark={borderRadius:4,borderSkipped:'start',maxBarThickness:28};
 const lineMark={borderWidth:2,pointRadius:3,cubicInterpolationMode:'monotone'};
-const dc=['#077cbf','#16a34a','#f59e0b','#7c3aed','#e0603c','#5bc8f0','#001d31','#e05c94'];
+const dc=['#077cbf','#16a34a','#f59e0b','#7c3aed','#e0603c','#5bc8f0','#e05c94','#0d9488'];
 
 function fmt$(v){if(!v&&v!==0)return'—';return'$'+(+v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
 function fmtN(v){if(!v&&v!==0)return'—';return(+v).toLocaleString()}
@@ -1321,7 +1321,7 @@ function renderGA4Traffic(){
   });
 
   // UTM sources list
-  const utmColors=['#077cbf','#3DAA69','#5BC8F0','#E8A020','#7C3AED','#D94F3D','#0BADA8','#9EABBE','#0F2B5B'];
+  const utmColors=[...dc,'#94a3b8'];
   const sources = ga4.utm_sources || [];
   document.getElementById('utmList').innerHTML = sources.map((s,i)=>`
     <div>
@@ -1689,7 +1689,7 @@ function render(){
   charts.spend=new Chart(document.getElementById('spendChart'),{
     type:'bar',
     data:{labels:dy.labels,datasets:[
-      {label:'Spend',data:dy.spend,backgroundColor:CC.navy,...barMark}
+      {label:'Spend',data:dy.spend,backgroundColor:CC.blue,...barMark}
     ]},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},
       tooltip:{callbacks:{label:c=>`Spend: ${fmt$(c.parsed.y)}`,afterLabel:c=>dy.cpc?.[c.dataIndex]!=null?`CPC: ${fmt$(dy.cpc[c.dataIndex])}`:''}}},
@@ -1715,11 +1715,11 @@ function render(){
   // Location
   const stateData=window.STATE_DATA||[];
   const cityData=window.CITY_DATA||[];
-  const stateColors=['#0F2B5B','#077cbf','#1A5F9E','#3DAA69','#2E9E60','#5B8DB8','#6DBF90','#9EABBE','#C5D4E3','#E8ECF2'];
+  const stateColors=[]; // one brand hue: these bars show size, not category
   document.getElementById('stateRows').innerHTML=stateData.map((s,i)=>`
     <div class="drow" style="margin-bottom:10px">
       <div class="dn" style="width:120px;font-size:12px">${s.state}</div>
-      <div class="dbb"><div class="dbf" style="width:${s.pct}%;background:${stateColors[i]||'#9EABBE'}"></div></div>
+      <div class="dbb"><div class="dbf" style="width:${s.pct}%;background:${CC.blue}"></div></div>
       <div class="dpct" style="width:40px">${s.pct}%</div>
       <div style="width:40px;text-align:right;font-size:12px;color:var(--gray-400)">${s.sessions}</div>
     </div>`).join('');
@@ -1729,7 +1729,7 @@ function render(){
     <div class="drow" style="margin-bottom:10px">
       <div class="dn" style="width:130px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.city}</div>
       <div style="font-size:12px;color:var(--gray-400);width:28px;flex-shrink:0">${c.state}</div>
-      <div class="dbb"><div class="dbf" style="width:${Math.round(c.sessions/maxCity*100)}%;background:${stateColors[i]||'#9EABBE'}"></div></div>
+      <div class="dbb"><div class="dbf" style="width:${Math.round(c.sessions/maxCity*100)}%;background:${CC.blue}"></div></div>
       <div style="width:30px;text-align:right;font-size:12px;color:var(--gray-400)">${c.sessions}</div>
     </div>`).join('');
 
