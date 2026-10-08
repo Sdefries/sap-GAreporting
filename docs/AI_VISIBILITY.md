@@ -15,6 +15,8 @@ Client reports have a **Search & AI visibility** group in the left nav, modeled 
 | **Site health** | PageSpeed / Core Web Vitals, Search Console clicks and top queries | `seo_cache.json` |
 | **Local map & profile** | Google Business Profile (rating, reviews, category, hours, claimed); a 7×7 Google Maps **heat map** per keyword (average rank, top 3 coverage, found in top 20, any business's grid); **Map pack** and **Google Maps** positions from each city served | `local_cache.json` ← `fetch_local.py` (clients with `local_tracking`) |
 
+When the latest weekly data has gaps (an AI's checks failed, a data source is overdue, or a competitor site couldn't be loaded), the visibility overview opens with a **Last update had problems** note so nobody mistakes missing data for a drop.
+
 **Live features** (test a prompt now, track prompts, generate ideas) run through a small Cloudflare Worker that keeps the API keys private. See [`worker/README.md`](../worker/README.md). Until it's set up, those buttons are hidden.
 
 Other report changes: the **device breakdown** is now real Google Ads data, **What we did / What's next** is written from each month's data, and there's a **↓ PDF** button. `reports/index.html` is an all-clients dashboard.

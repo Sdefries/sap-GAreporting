@@ -494,6 +494,15 @@ b.up,.up{color:#1A6E3E}b.down,.down{color:#A02020}
 .wc-body{font-size:12px;overflow-wrap:anywhere}.wc-row{margin-top:4px}.wc-body s{color:var(--gray-400)}
 .yn{white-space:nowrap}
 #sec-competitors a,.wc-body a{color:var(--blue);text-decoration:none;font-weight:500}
+.eng-card.click,.now-row.click{cursor:pointer;transition:box-shadow .15s,transform .15s}
+.eng-card.click:hover{box-shadow:0 4px 12px rgba(2,6,23,.08);transform:translateY(-1px)}
+.now-row.click{border-radius:8px;padding:4px 6px;margin-left:-6px;margin-right:-6px}.now-row.click:hover{background:var(--primary-50,#e8f2ff)}
+.eng-card.click:focus-visible,.now-row.click:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.yn.comp,.vis-in.comp{background:#FDEAEA;color:#A02020}
+.ans-flags{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0 4px;font-size:12px;color:var(--gray-600)}
+.health-banner{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;margin-bottom:14px;border-radius:12px;border:1px solid #fde68a;background:#fefce8;color:#854d0e;font-size:14px}
+.health-banner i{font-size:20px;margin-top:1px}.health-banner ul{margin:4px 0 0;padding-left:18px;font-size:12px}
+@media (prefers-reduced-motion:reduce){.eng-card.click{transition:none}.eng-card.click:hover{transform:none}}
 .wc-q{margin:4px 0 0;padding:4px 10px;border-left:3px solid var(--primary-100,#cfe4ff);color:var(--gray-600)}
 .vchip{padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;color:var(--gray-600);background:#fff;border:1px solid var(--border);cursor:pointer;font-family:var(--font-body)}
 .vchip.active{background:var(--navy-dark);color:#fff;border-color:var(--navy-dark)}
@@ -505,7 +514,7 @@ table.vt td.l,table.vt th.l{text-align:left}
 table.vt td{font-size:12px;color:var(--navy-dark)}
 table.vt tr.you td{background:#FBF6EA}
 table.vt tr.you td:first-child{box-shadow:inset 3px 0 0 var(--amber)}
-.vt-prompt{max-width:340px;line-height:1.45}
+.vt-prompt{max-width:340px;min-width:200px;line-height:1.45}
 .vt-read{display:block;margin-top:3px;font-size:12px;font-weight:600;color:var(--amber);cursor:pointer;background:none;border:none;padding:0;font-family:var(--font-body)}
 .st{display:inline-block;padding:3px 8px;border-radius:10px;font-size:12px;font-weight:600;white-space:nowrap;border:none;font-family:var(--font-body)}
 button.st{cursor:pointer}
@@ -2013,13 +2022,13 @@ function renderAI(V){
   }
   const tracked=ai.engines.filter(e=>e.tracked).map(e=>e.label);
   document.getElementById('aiSub').textContent=`${ai.prompts_n} prompts · ${tracked.join(', ')||'no engines yet'} · checked ${ai.checked}`;
-  const engCards=ai.engine_stats.map(e=>`<div class="eng-card ${e.tracked?'':'off'}" style="--c:${e.color}">
+  const engCards=ai.engine_stats.map(e=>`<div class="eng-card ${e.tracked?'click':'off'}" style="--c:${e.color}" ${e.tracked?`role="button" tabindex="0" onclick="aiJump('${e.key}')" onkeydown="if(event.key==='Enter')aiJump('${e.key}')" aria-label="Show ${e.label} answers"`:''}>
       <div class="eng-name">${e.label}</div>${e.tracked?bandPill(e.band).replace(' visibility',''):'<span class="band" style="background:var(--gray-100);color:var(--gray-400)">Not tracked</span>'}
       <div class="eng-val">${e.tracked?e.visible:'—'}<small> / ${e.tracked?e.total:ai.prompts_n}</small></div>
       <div class="eng-d">${e.tracked?dHTML(e.delta,{pctOf:e.delta?Math.max(e.visible-e.delta,1):null}):''}</div>
-      <div class="eng-note">prompts where you're cited or named</div>
+      <div class="eng-note">prompts where you're cited or named ${tip('Out of every prompt this AI answered this week. Click the card to see each answer.')}</div>
       <div class="mini-bar"><span style="width:${e.pct||0}%;background:${e.color}"></span></div></div>`).join('');
-  const nowRows=ai.engine_stats.filter(e=>e.tracked).map(e=>`<div class="now-row">
+  const nowRows=ai.engine_stats.filter(e=>e.tracked).map(e=>`<div class="now-row click" role="button" tabindex="0" onclick="aiJump('${e.key}')" onkeydown="if(event.key==='Enter')aiJump('${e.key}')">
       <div class="now-top"><span><span class="sq" style="background:${e.color}"></span>${e.label}</span><span><b>${e.visible} / ${e.total}</b> prompts · ${e.pct}%</span></div>
       <div class="now-bar"><span style="width:${e.pct}%;background:${e.color}"></span></div></div>`).join('');
   box.innerHTML=
@@ -2028,10 +2037,10 @@ function renderAI(V){
       `You show up in <b>${ai.visible_answers} of ${ai.total_answers}</b> AI answers (${ai.prompts_n} prompts × ${tracked.length} AIs) and in at least one AI for <b>${ai.prompts_any} of ${ai.prompts_n}</b> prompts.`)+
     `<div class="eng-grid">${engCards}</div>${referralsBlock()}${accuracyBlock()}
     <div class="g2" style="margin-bottom:14px">
-      <div class="chart-card"><div class="chart-title">AI visibility over time</div>
+      <div class="chart-card"><div class="chart-title">AI visibility over time ${tip('One line per AI: the share of your prompts where it cited or named you, at each weekly check.')}</div>
         <div class="vfoot" style="margin:2px 0 12px">Share of prompts where each AI cites or names ${esc(ai.brand)}</div>
         <div class="cw" style="height:200px"><canvas id="aiTrendChart"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">AI visibility right now</div>
+      <div class="chart-card"><div class="chart-title">AI visibility right now ${tip('From the latest weekly check. Click an AI to see its answers.')}</div>
         <div class="vfoot" style="margin:2px 0 14px">Prompts where you show up, out of all ${ai.prompts_n} you track</div>${nowRows||'<div class="vfoot">No engines checked yet.</div>'}</div>
     </div>
     ${liveBox()}
@@ -2058,6 +2067,8 @@ function renderAI(V){
       scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>v+'%'},grid:gl,min:0,max:100}}}});
 }
 
+window.aiJump=k=>{aiTab=k;aiFilter='all';aiQuery='';renderAITab();document.getElementById('aiTabs').scrollIntoView({behavior:'smooth',block:'start'})};
+let aiComp=false;
 function aiRowsFiltered(engine){
   const ai=window.VISIBILITY_DATA.ai, q=aiQuery.toLowerCase();
   return ai.rows.map((r,i)=>({...r,idx:i})).filter(r=>{
@@ -2068,7 +2079,8 @@ function aiRowsFiltered(engine){
 }
 function aiToolbar(engine){
   const lbl=engine?['Visible','Not visible']:['Visible somewhere','Not visible anywhere'];
-  return `<div class="vtools"><button class="vbtn" onclick="aiExportCSV()">↓ Export CSV</button></div>
+  const hasComp=(window.VISIBILITY_DATA.ai.competitors||[]).length>1;
+  return `<div class="vtools">${hasComp?`<button class="vbtn ${aiComp?'primary':''}" onclick="aiComp=!aiComp;renderAITab()">${aiComp?'<i class="ph ph-check"></i> ':''}Competition</button>`:''}<button class="vbtn" onclick="aiExportCSV()">↓ Export CSV</button></div>
     <div class="vtools"><input class="vsearch" id="aiSearch" placeholder="Filter prompts" value="${esc(aiQuery)}">
       <div class="vchips">${[['all','All'],['visible',lbl[0]],['hidden',lbl[1]]].map(([k,l])=>`<button class="vchip ${aiFilter===k?'active':''}" data-f="${k}">${l}</button>`).join('')}</div></div>`;
 }
@@ -2087,20 +2099,22 @@ function drawAITable(engine){
   const ai=window.VISIBILITY_DATA.ai, rows=aiRowsFiltered(engine), el=document.getElementById('aiTable');
   if(!rows.length){el.innerHTML='<div class="vfoot" style="padding:18px">No prompts match.</div>';return;}
   if(!engine){
-    const engs=ai.engines.filter(e=>e.tracked);
-    el.innerHTML=`<table class="vt"><thead><tr><th>Prompt</th>${engs.map(e=>`<th><span class="sq" style="background:${e.color}"></span>${e.label}</th>`).join('')}<th>Visible in</th></tr></thead><tbody>
+    const engs=ai.engines.filter(e=>e.tracked), comps=aiComp?ai.competitors.filter(c=>!c.you):[];
+    const compIn=(r,d)=>{const n=engs.filter(e=>r.cells[e.key]?.comps?.[d]).length;return `<td><span class="vis-in ${n?'comp':'zero'}">${n} / ${r.of}</span></td>`};
+    el.innerHTML=`<table class="vt"><thead><tr><th>Prompt</th>${engs.map(e=>`<th><span class="sq" style="background:${e.color}"></span>${e.label}</th>`).join('')}<th>Visible in</th>${comps.map(c=>`<th>${esc(c.name)}</th>`).join('')}</tr></thead><tbody>
       ${rows.map(r=>`<tr><td class="vt-prompt">${esc(r.prompt)}</td>${engs.map(e=>{const c=r.cells[e.key],[t,k]=VIS_STATES[c.state];
         return `<td>${c.state==='untracked'?`<span class="st st-na">${t}</span>`:`<button class="st st-${k}" onclick="openAnswer(${r.idx},'${e.key}')">${t}</button>`}</td>`}).join('')}
-        <td><span class="vis-in ${r.visible_in===0?'zero':r.visible_in===r.of?'ok':'some'}">${r.visible_in} / ${r.of}</span></td></tr>`).join('')}
+        <td><span class="vis-in ${r.visible_in===0?'zero':r.visible_in===r.of?'ok':'some'}">${r.visible_in} / ${r.of}</span></td>${comps.map(c=>compIn(r,c.domain)).join('')}</tr>`).join('')}
       </tbody></table>`;
     return;
   }
   const label=ai.engines.find(e=>e.key===engine).label;
-  const compDomains=new Set(ai.competitors.filter(c=>!c.you).map(c=>c.domain));
+  const compDomains=new Set(ai.competitors.filter(c=>!c.you).map(c=>c.domain)), comps=aiComp?ai.competitors.filter(c=>!c.you):[];
+  const compCell=c=>comps.map(x=>{const v=c.comps?.[x.domain];return `<td>${v?`<span class="yn comp">${v.named&&v.cited?'Named · cited':v.cited?'Cited':'Named'}</span>`:'<span class="vfoot">—</span>'}</td>`}).join('');
   el.innerHTML=`<div class="vfoot" style="padding:10px 14px 0">Checked ${ai.checked}. “Named” means the answer mentions ${esc(ai.brand)}; “Cited” means it cites ${esc(ai.domain||'your website')}.</div>
-    <table class="vt"><thead><tr><th>Prompt</th><th>Named</th><th>Cited</th><th class="l">Sites ${label} cited</th></tr></thead><tbody>
+    <table class="vt"><thead><tr><th>Prompt</th><th>Named</th><th>Cited</th>${comps.map(c=>`<th>${esc(c.name)}</th>`).join('')}<th class="l">Sites ${label} cited</th></tr></thead><tbody>
     ${rows.map(r=>{const c=r.cells[engine];return `<tr><td class="vt-prompt">${esc(r.prompt)}<button class="vt-read" onclick="openAnswer(${r.idx},'${engine}')">Read answer ↗</button></td>
-      <td><span class="yn ${c.named?'yes':''}">${c.named?'Yes':'No'}</span></td><td><span class="yn ${c.cited?'yes':''}">${c.cited?'Yes':'No'}</span></td>
+      <td><span class="yn ${c.named?'yes':''}">${c.named?'Yes':'No'}</span></td><td><span class="yn ${c.cited?'yes':''}">${c.cited?'Yes':'No'}</span></td>${compCell(c)}
       <td class="l">${c.state==='no_answer'?'<span class="vfoot">No AI answer for this search</span>':c.state==='error'?'<span class="vfoot">Check failed — retried next run</span>':
         (c.sites.length?c.sites.map(s=>`<span class="site ${s===ai.domain?'you':compDomains.has(s)?'comp':''}">${esc(s)}</span>`).join(''):'—')}</td></tr>`}).join('')}
     </tbody></table><div class="vfoot" style="padding:0 14px 10px">■ Green = you · red = a tracked competitor.</div>`;
@@ -2124,6 +2138,8 @@ function showAnswer(prompt,engine,c,checked){
   const compDomains=new Set((ai.competitors||[]).filter(x=>!x.you).map(x=>x.domain));
   document.getElementById('ansBody').innerHTML=`<div class="ans-eng"><span class="sq" style="background:${e.color}"></span>${e.label} · checked ${esc(checked)}</div>
     <div class="ans-q">${esc(prompt)}</div><span class="st st-${k}">${t}</span>
+    ${c.state==='no_answer'||c.state==='error'?'':`<div class="ans-flags"><span>Named <span class="yn ${c.named?'yes':''}">${c.named?'Yes':'No'}</span></span><span>Cited <span class="yn ${c.cited?'yes':''}">${c.cited?'Yes':'No'}</span></span>
+      ${Object.keys(c.comps||{}).map(d=>`<span>${esc((ai.competitors||[]).find(x=>x.domain===d)?.name||d)} <span class="yn comp">${c.comps[d].cited?'Cited':'Named'}</span></span>`).join('')}</div>`}
     ${c.state==='no_answer'?'<div class="ans-text">Google did not show an AI answer for this search.</div>':
       c.state==='error'?`<div class="ans-text">This check failed${c.error?': '+esc(c.error):''}. It will be retried.</div>`:
       `<div class="ans-text">${text||'No answer text was saved for this check.'}${(c.excerpt||'').length>=1800?'…':''}</div>`}
@@ -2239,7 +2255,7 @@ function gridStats(g){const f=g.flat(),found=f.filter(Boolean);
 function renderLocal(){
   const L=window.VISIBILITY_DATA.local, box=document.getElementById('gbpContent'), P=L.profile;
   const stars=v=>v?'★'.repeat(Math.round(v))+'☆'.repeat(5-Math.round(v)):'';
-  let html='';
+  let html=L.summary?.length?summaryBlock(L.summary,L.opportunity):'';
   if(P){
     html+=`<div class="card" style="margin-bottom:14px"><div class="loc-prof">
       <div><div class="chart-title">${esc(P.title||'')}</div>
@@ -2488,7 +2504,7 @@ function renderOrganic(V){
   const dist=[['#1',o.pos_1,'#16a34a'],['2–3',o.pos_2_3,'#4ade80'],['4–10',o.pos_4_10,'#077cbf'],['11–20',o.pos_11_20,'#99cbff'],['21–100',o.pos_21_100,'#cbd5e1']];
   const tot=dist.reduce((a,x)=>a+(x[1]||0),0)||1;
   const A=O.authority;
-  box.innerHTML=`<div class="kpi4">
+  box.innerHTML=(O.summary?.length?summaryBlock(O.summary,O.opportunity):'')+`<div class="kpi4">
       <div class="card"><div class="kpi4-lbl">Organic keywords</div><div class="kpi4-val">${fmtN(o.keywords)}</div><div class="kpi4-d">${dHTML(O.keywords_delta,{none:'First month'})}</div><div class="vfoot" style="margin:0">${o.new} new · ${o.up} up · ${o.down} down · ${o.lost} lost</div></div>
       <div class="card"><div class="kpi4-lbl">Est. monthly visits</div><div class="kpi4-val">${fmtN(o.traffic)}</div><div class="kpi4-d">${dHTML(O.traffic_delta,{none:'First month'})}</div><div class="vfoot" style="margin:0">From Google organic results</div></div>
       <div class="card"><div class="kpi4-lbl">Traffic value</div><div class="kpi4-val">${fmt$(o.traffic_value)}</div><div class="kpi4-d"></div><div class="vfoot" style="margin:0">What these visits would cost as ads each month</div></div>
@@ -2536,8 +2552,9 @@ window.orgCSV=()=>{const O=window.VISIBILITY_DATA.organic;downloadCSV(`${slugNam
 // ── VISIBILITY OVERVIEW (three headline scores) ──
 function renderOverviewCards(V){
   const box=document.getElementById('visOverview'), cards=V.overview||[];
-  if(!cards.length){box.innerHTML=emptyBlock('Your visibility scores are on their way','AI visibility, keyword visibility and authority appear here after the first weekly checks.');return;}
-  box.innerHTML=cards.map(c=>`<a class="ov-link" href="${c.href}">${scoreBlock(c.title,c.value,c.band,c.delta,esc(c.note),
+  const health=V.health?.length?`<div class="health-banner" role="status"><i class="ph ph-warning-circle" aria-hidden="true"></i><div><b>Last update had problems</b><ul>${V.health.map(h=>`<li>${h}</li>`).join('')}</ul></div></div>`:'';
+  if(!cards.length){box.innerHTML=health+emptyBlock('Your visibility scores are on their way','AI visibility, keyword visibility and authority appear here after the first weekly checks.');return;}
+  box.innerHTML=health+cards.map(c=>`<a class="ov-link" href="${c.href}">${scoreBlock(c.title,c.value,c.band,c.delta,esc(c.note),
       {unit:c.unit,scale:c.scale,word:c.key==='authority'?' authority':' visibility',
        after:c.opportunity?`<div class="vis-opp ov-opp"><strong>${c.opportunity_label||'Biggest opportunity'}:</strong> ${c.opportunity}</div>`:''})}</a>`).join('')+
     (V.watch?.latest?.length?`<div class="card" style="margin-top:14px"><div class="chart-title">Latest competitor changes <button class="vt-read" style="display:inline;margin-left:6px" onclick="compJump('changes')">See all ›</button></div>

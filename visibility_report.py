@@ -549,7 +549,23 @@ def build_local(client, local_entry):
                            "has_pack": "map_pack" in row, "has_maps": "google_maps" in row})
     prof = e.get("profile")
     cfg = client.get("local_tracking") or {}
+    summary, opportunity = [], ""
+    for k in kws:
+        summary.append(f"“{escape(k['keyword'])}”: top 3 at <b>{k.get('solv', 0)}%</b> of {k.get('points', 0)} map points"
+                       + (f", average rank <b>{k['arp']}</b> where you show up" if k.get("arp") else ", not in the top 20 anywhere")
+                       + (f" ({change_phrase(k['solv_delta'])})" if k.get("solv_delta") is not None else "") + ".")
+    if prof and prof.get("rating") is not None:
+        summary.append(f"Google rating <b>{prof['rating']}</b> from {prof.get('reviews') or 0:,} reviews.")
+    if prof and prof.get("is_claimed") is False:
+        opportunity = "Claim the Google Business Profile. Unclaimed listings rank lower and can't be updated."
+    elif kws:
+        weak = min(kws, key=lambda k: k.get("solv", 0))
+        leader = next((b.get("title") for b in weak.get("center_top3") or [] if not b.get("you")), None)
+        opportunity = (f"“{escape(weak['keyword'])}” is the weakest search on the map"
+                       + (f", where <b>{escape(leader)}</b> leads" if leader else "") + ". Add it to the profile's "
+                       "categories, services and description, and ask happy visitors for reviews that mention it.")
     return {
+        "summary": summary, "opportunity": opportunity,
         "configured": True,
         "keywords_configured": cfg.get("keywords") or [],
         "profile": {**prof, "checked": fmt_date(prof.get("checked_at", ""))} if prof else None,
@@ -569,7 +585,33 @@ def build_organic(entry):
 
     def d(k):
         return (o[k] - prev[k]) if prev and prev.get(k) is not None else None
+    kws = entry.get("keywords") or []
+    page1 = o["pos_1"] + o["pos_2_3"] + o["pos_4_10"]
+    summary = [f"The site ranks for <b>{o['keywords']:,} keywords</b> on Google, bringing an estimated "
+               f"<b>{o['traffic']:,} visits a month</b>" + (f" (worth ${o['traffic_value']:,} a month in ads)" if o.get("traffic_value") else "")
+               + (f", {change_phrase(d('traffic'), 'visits')}" if prev else "") + "."]
+    if o["keywords"]:
+        summary.append(f"<b>{page1:,}</b> of them are on page 1 and <b>{o['pos_11_20']:,}</b> on page 2.")
+    pages = entry.get("pages") or []
+    if pages and o["traffic"]:
+        top = pages[0]
+        summary.append(f"Top page: <b>{escape(top['url'].split('//')[-1])}</b>, about {round(top['traffic'] / max(o['traffic'], 1) * 100)}% "
+                       f"of visits, mostly from “{escape(top['top_keyword'] or '')}”.")
+    near = sorted((k for k in kws if k.get("position") and 11 <= k["position"] <= 20 and k.get("volume")),
+                  key=lambda k: k["volume"], reverse=True)
+    ideas = entry.get("opportunities") or []
+    if near:
+        k = near[0]
+        opportunity = (f"“{escape(k['keyword'])}” ({k['volume']:,} searches a month) is at #{k['position']}, just off page 1. "
+                       f"Strengthening {escape((k.get('url') or 'that page').split('//')[-1])} for it is the quickest win.")
+    elif ideas:
+        k = ideas[0]
+        opportunity = (f"Publish a page for “{escape(k['keyword'])}” ({k['volume']:,} searches a month). "
+                       "The site doesn't rank for it yet.")
+    else:
+        opportunity = ""
     return {
+        "summary": summary, "opportunity": opportunity,
         "domain": entry["domain"], "checked": fmt_date(entry.get("fetched_at", "")),
         "overview": o, "keywords_delta": d("keywords"), "traffic_delta": d("traffic"),
         "keywords": entry.get("keywords") or [], "pages": entry.get("pages") or [],
@@ -713,12 +755,45 @@ def build_watch(client, entry):
             "edits_30d": sum(1 for c in changes if c["kind"] == "changed" and c["date"] >= (datetime.date.today() - datetime.timedelta(days=30)).isoformat())}
 
 
+def _age(iso):
+    try:
+        return (datetime.date.today() - datetime.date.fromisoformat((iso or "")[:10])).days
+    except ValueError:
+        return None
+
+
+def build_health(client, ai_entry, seo_entry, local_entry, organic_entry, authority_entry, watch_entry):
+    """Problems with the latest data, shown as a 'last update had problems' banner."""
+    out = []
+    runs = (ai_entry or {}).get("runs") or []
+    if runs:
+        cur = runs[-1]
+        if (_age(cur.get("date")) or 0) > 14:
+            out.append(f"AI tracking last updated {fmt_date(cur['date'])}.")
+        fails = Counter(e for per in cur["results"].values() for e, c in per.items() if c.get("status") == "error")
+        for e, n in fails.most_common():
+            out.append(f"{ENGINE_LABELS.get(e, e)} checks failed for {n} of {len(cur['results'])} prompts. They're retried next week.")
+    if client.get("local_seo_enrolled") and seo_entry and (_age(seo_entry.get("fetched_at")) or 0) > 14:
+        out.append(f"Keyword rankings last updated {fmt_date(seo_entry['fetched_at'])}.")
+    lr = (local_entry or {}).get("runs") or []
+    if lr and (_age(lr[-1].get("date")) or 0) > 14:
+        out.append(f"Local map last updated {fmt_date(lr[-1]['date'])}.")
+    for label, e in (("Organic search", organic_entry), ("Authority", authority_entry)):
+        if e and (_age(e.get("fetched_at")) or 0) > 45:
+            out.append(f"{label} last updated {fmt_date(e['fetched_at'])}.")
+    for d, site in ((watch_entry or {}).get("sites") or {}).items():
+        if site.get("error"):
+            out.append(f"Couldn't load {escape(d)} to check for changes.")
+    return out[:6]
+
+
 def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None, local_entry=None, organic_entry=None,
                           authority_entry=None, watch_entry=None):
     seo_enrolled = bool(client.get("local_seo_enrolled"))
     return {
         "authority": build_authority(client, authority_entry),
         "watch": build_watch(client, watch_entry),
+        "health": build_health(client, ai_entry, seo_entry, local_entry, organic_entry, authority_entry, watch_entry),
         "organic": build_organic(organic_entry),
         "local": build_local(client, local_entry),
         "referrals": build_referrals(ga4_entry),
