@@ -1495,11 +1495,11 @@ function render(){
   // KPI cards
   const kpis=[
     {icon:'<i class="ph ph-chart-bar"></i>',bg:'#E3F2FF',lbl:'Total clicks',val:fmtN(t.cl),sub:'paid ad clicks',cls:'kpi-blue'},
-    {icon:'<i class="ph ph-eye"></i>',bg:'#F4F6F9',lbl:'Impressions',val:fmtN(t.im),sub:'ad views',cls:''},
-    {icon:'<i class="ph ph-lightning"></i>',bg:'#E4F7ED',lbl:'Avg. CTR',val:fmtPct(t.ctr),sub:t.ctr>=5?'Above 5% minimum':'Below 5% — at risk',subCls:t.ctr>=5?'ok':'danger',cls:'kpi-green'},
+    {icon:'<i class="ph ph-eye"></i>',bg:'#E3F2FF',lbl:'Impressions',val:fmtN(t.im),sub:'ad views',cls:'kpi-blue'},
+    {icon:'<i class="ph ph-lightning"></i>',bg:'#E4F7ED',lbl:'Avg. CTR',val:fmtPct(t.ctr),sub:t.ctr>=5?'Above 5% minimum':'Below 5% — at risk',subCls:t.ctr>=5?'ok':'danger',cls:t.ctr>=5?'kpi-green':'kpi-red'},
     {icon:'<i class="ph ph-currency-dollar"></i>',bg:'#FEF6E6',lbl:'Total spend',val:fmt$(t.cost),sub:'of $10,000 grant',cls:'kpi-amber'},
-    {icon:'<i class="ph ph-target"></i>',bg:'#E0F7F5',lbl:'Conversions',val:fmtN(Math.round(t.cv||0)),sub:t.costPerConv?fmt$(t.costPerConv)+' / conv.':'No conversions tracked',subCls:t.cv>0?'ok':'warn',cls:'kpi-green'},
-    {icon:'<i class="ph ph-trend-up"></i>',bg:'#F4F6F9',lbl:'Avg. CPC',val:fmt$(t.cpc),sub:'cost per click',cls:''},
+    {icon:'<i class="ph ph-target"></i>',bg:'#E0F7F5',lbl:'Conversions',val:fmtN(Math.round(t.cv||0)),sub:t.costPerConv?fmt$(t.costPerConv)+' / conv.':'No conversions tracked',subCls:t.cv>0?'ok':'warn',cls:t.cv>0?'kpi-green':'kpi-amber'},
+    {icon:'<i class="ph ph-trend-up"></i>',bg:'#E3F2FF',lbl:'Avg. CPC',val:fmt$(t.cpc),sub:'cost per click',cls:'kpi-blue'},
   ];
   document.getElementById('kpiGrid').innerHTML=kpis.map((k,i)=>`
     <div class="kpi-card ${k.cls} fade" style="animation-delay:${i*.06}s">
