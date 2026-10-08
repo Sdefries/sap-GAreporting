@@ -583,7 +583,9 @@ button.st{cursor:pointer}
 .lock-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:40px 24px;border:1px dashed var(--border);border-radius:12px;background:var(--card)}
 .lock-card>i{font-size:28px;color:var(--blue)}.lock-card h4{margin:0;font-size:18px;font-weight:600;color:var(--primary-900,#001d31)}
 .lock-card p{margin:0 0 8px;max-width:520px;font-size:14px;color:var(--gray-600)}
-.sb-nav a.locked{opacity:.65}.sb-lock{margin-left:auto;font-size:12px}
+.sb-nav a.locked{opacity:.65}
+.sb-group-head span{display:flex;align-items:center;gap:8px}.sb-group-head span i{font-size:14px;color:var(--blue)}
+.sb-group.current>.sb-group-head{color:var(--primary-900,#001d31)}.sb-lock{margin-left:auto;font-size:12px}
 @media print{#mainContent>.pg-off{display:block!important}#mainContent>.section>[hidden]{display:none!important}
 
   @page{margin:12mm}
@@ -790,8 +792,8 @@ table.vt th{text-transform:none;letter-spacing:0}
     <div class="sb-vis-item"><div class="sb-gps-lbl">Search visibility</div><div class="sb-vis-val" id="sbSeoScore">—</div></div>
   </div>
   <div class="sb-nav">
-    <div class="sb-group open">
-      <button class="sb-group-head" onclick="toggleGroup(this)"><span>Google Ad Grants</span><span class="sb-chev"><i class="ph ph-caret-down"></i></span></button>
+    <div class="sb-group" data-page="google-ads">
+      <button class="sb-group-head" onclick="showPage('google-ads',null,true)"><span><i class="ph ph-megaphone-simple" aria-hidden="true"></i>Google Ads</span><span class="sb-chev"><i class="ph ph-caret-down"></i></span></button>
       <div class="sb-group-links">
         <a href="#sec-score"><span class="dot"></span>Performance score</a>
         <a href="#sec-overview"><span class="dot"></span>Overview</a>
@@ -807,8 +809,8 @@ table.vt th{text-transform:none;letter-spacing:0}
         <a href="#sec-visibility"><span class="dot"></span>Impression share</a>
       </div>
     </div>
-    <div class="sb-group open">
-      <button class="sb-group-head" onclick="toggleGroup(this)"><span>Website</span><span class="sb-chev"><i class="ph ph-caret-down"></i></span></button>
+    <div class="sb-group" data-page="ga4">
+      <button class="sb-group-head" onclick="showPage('ga4',null,true)"><span><i class="ph ph-browser" aria-hidden="true"></i>Website (GA4)</span><span class="sb-chev"><i class="ph ph-caret-down"></i></span></button>
       <div class="sb-group-links">
         <a href="#sec-landing"><span class="dot"></span>Landing pages</a>
         <a href="#sec-ga4-traffic"><span class="dot"></span>Traffic overview</a>
@@ -817,23 +819,33 @@ table.vt th{text-transform:none;letter-spacing:0}
         <a href="#sec-location"><span class="dot"></span>Location</a>
       </div>
     </div>
-    <div class="sb-group open">
-      <button class="sb-group-head" onclick="toggleGroup(this)"><span>Search &amp; AI visibility</span><span class="sb-chev"><i class="ph ph-caret-down"></i></span></button>
+    <div class="sb-group" data-page="seo">
+      <button class="sb-group-head" onclick="showPage('seo',null,true)"><span><i class="ph ph-magnifying-glass" aria-hidden="true"></i>SEO</span><span class="sb-chev"><i class="ph ph-caret-down"></i></span></button>
       <div class="sb-group-links">
-        <a href="#sec-vis-overview"><span class="ico">▦</span>Visibility overview</a>
-        <a href="#sec-ai"><span class="ico"><i class="ph ph-sparkle"></i></span>AI tracking<span class="sb-badge" id="sbAiBadge"></span></a>
-        <a href="#sec-aeo-plan"><span class="ico"><i class="ph ph-note-pencil"></i></span>AEO action plan<span class="sb-badge" id="sbPlanBadge"></span></a>
-        <a href="#sec-aeo-audit"><span class="ico">✓</span>AEO readiness<span class="sb-badge" id="sbAuditBadge"></span></a>
-        <a href="#sec-classic-seo"><span class="ico">↗</span>Classic SEO<span class="sb-badge" id="sbSeoBadge"></span></a>
+        <a href="#sec-vis-overview"><span class="ico"><i class="ph ph-squares-four"></i></span>Visibility overview</a>
+        <a href="#sec-classic-seo"><span class="ico"><i class="ph ph-trend-up"></i></span>Keyword tracking<span class="sb-badge" id="sbSeoBadge"></span></a>
         <a href="#sec-organic"><span class="ico"><i class="ph ph-chart-line-up"></i></span>Organic search<span class="sb-badge" id="sbOrgBadge"></span></a>
         <a href="#sec-authority"><span class="ico"><i class="ph ph-shield-check"></i></span>Authority<span class="sb-badge" id="sbAuthBadge"></span></a>
-        <a href="#sec-competitors"><span class="ico"><i class="ph ph-users-three"></i></span>Competitors<span class="sb-badge" id="sbCompBadge"></span></a>
         <a href="#sec-seo"><span class="ico"><i class="ph ph-lightning"></i></span>Site health</a>
         <a href="#sec-gbp"><span class="ico"><i class="ph ph-map-pin"></i></span>Local map &amp; profile<span class="sb-badge" id="sbLocalBadge"></span></a>
       </div>
     </div>
-    <div class="sb-group open">
-      <button class="sb-group-head" onclick="toggleGroup(this)"><span>Action plan</span><span class="sb-chev"><i class="ph ph-caret-down"></i></span></button>
+    <div class="sb-group" data-page="aeo">
+      <button class="sb-group-head" onclick="showPage('aeo',null,true)"><span><i class="ph ph-sparkle" aria-hidden="true"></i>AEO (AI visibility)</span><span class="sb-chev"><i class="ph ph-caret-down"></i></span></button>
+      <div class="sb-group-links">
+        <a href="#sec-ai"><span class="ico"><i class="ph ph-sparkle"></i></span>AI tracking<span class="sb-badge" id="sbAiBadge"></span></a>
+        <a href="#sec-aeo-plan"><span class="ico"><i class="ph ph-note-pencil"></i></span>AEO action plan<span class="sb-badge" id="sbPlanBadge"></span></a>
+        <a href="#sec-aeo-audit"><span class="ico"><i class="ph ph-check-circle"></i></span>AEO readiness<span class="sb-badge" id="sbAuditBadge"></span></a>
+      </div>
+    </div>
+    <div class="sb-group" data-page="competitors">
+      <button class="sb-group-head" onclick="showPage('competitors',null,true)"><span><i class="ph ph-users-three" aria-hidden="true"></i>Competitors</span><span class="sb-chev"><i class="ph ph-caret-down"></i></span></button>
+      <div class="sb-group-links">
+        <a href="#sec-competitors"><span class="ico"><i class="ph ph-users-three"></i></span>Competitors<span class="sb-badge" id="sbCompBadge"></span></a>
+      </div>
+    </div>
+    <div class="sb-group" data-page="action-plan">
+      <button class="sb-group-head" onclick="showPage('action-plan',null,true)"><span><i class="ph ph-list-checks" aria-hidden="true"></i>Action plan</span><span class="sb-chev"><i class="ph ph-caret-down"></i></span></button>
       <div class="sb-group-links">
         <a href="#sec-actions"><span class="dot"></span>What we did</a>
         <a href="#sec-insights"><span class="dot"></span>Recommendations</a>
@@ -1892,46 +1904,64 @@ function initClient(){
   }
 }
 
-// One section per page: the sidebar (or the section menu on phones) picks it,
-// #sec-… in the URL deep-links to it, Previous / Next step through in order.
-const PG={ids:[],links:[],group:{}};
+// One page per product area (Google Ads, GA4, SEO, AEO, …): the sidebar group
+// headings or the menu on phones pick the page; section links jump within it.
+// #<page> or #sec-… deep-links; Previous / Next step through the pages.
+const PG={pages:[],secPage:{},links:[],cur:null};
 function updateSidebarActive(){
   PG.links=[...document.querySelectorAll('.sb-nav a[href^="#sec-"]')];
-  PG.ids=PG.links.map(a=>a.getAttribute('href').slice(1));
-  document.querySelectorAll('.sb-group').forEach((g,gi)=>g.querySelectorAll('a[href^="#sec-"]').forEach(a=>PG.group[a.getAttribute('href').slice(1)]=gi));
-  const content=document.getElementById('mainContent'), label=pgLabel;
+  PG.pages=[...document.querySelectorAll('.sb-group[data-page]')].map(g=>({key:g.dataset.page,el:g,
+    label:g.querySelector('.sb-group-head span').textContent.trim(),
+    ids:[...g.querySelectorAll('a[href^="#sec-"]')].map(a=>a.getAttribute('href').slice(1))}));
+  PG.pages.forEach(p=>p.ids.forEach(id=>PG.secPage[id]=p.key));
+  const content=document.getElementById('mainContent');
   const sel=document.createElement('select');
-  sel.id='pgSelect';sel.className='vsearch pg-mobile no-print';sel.setAttribute('aria-label','Report section');
-  sel.innerHTML=[...document.querySelectorAll('.sb-group')].map(g=>`<optgroup label="${esc(g.querySelector('.sb-group-head span').textContent)}">${
-    [...g.querySelectorAll('a[href^="#sec-"]')].map(a=>`<option value="${a.getAttribute('href').slice(1)}">${esc(label(a))}${a.classList.contains('locked')?' (locked)':''}</option>`).join('')}</optgroup>`).join('');
-  sel.onchange=()=>showSection(sel.value,true);
+  sel.id='pgSelect';sel.className='vsearch pg-mobile no-print';sel.setAttribute('aria-label','Report page');
+  sel.innerHTML=PG.pages.map(p=>`<option value="${p.key}">${esc(p.label)}</option>`).join('');
+  sel.onchange=()=>showPage(sel.value,null,true);
   content.prepend(sel);
   const pager=document.createElement('nav');
-  pager.id='pgNav';pager.className='pg-nav no-print';pager.setAttribute('aria-label','Sections');
+  pager.id='pgNav';pager.className='pg-nav no-print';pager.setAttribute('aria-label','Pages');
   content.append(pager);
-  document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#sec-"]');if(!a||!PG.ids.includes(a.getAttribute('href').slice(1)))return;
-    e.preventDefault();showSection(a.getAttribute('href').slice(1),true)});
-  window.addEventListener('popstate',()=>showSection(pgCurrent(),false));
-  showSection(pgCurrent(),false);
+  document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#"]');if(!a)return;
+    const h=a.getAttribute('href').slice(1);
+    if(PG.secPage[h]){e.preventDefault();showPage(PG.secPage[h],h,true)}
+    else if(PG.pages.some(p=>p.key===h)){e.preventDefault();showPage(h,null,true)}});
+  window.addEventListener('popstate',pgFromHash);
+  window.addEventListener('scroll',pgSpy,{passive:true});
+  pgFromHash();
 }
-function pgLabel(a){if(!a)return '';const c=a.cloneNode(true);c.querySelectorAll('.sb-badge,.sb-lock').forEach(x=>x.remove());return c.textContent.trim()}
-function pgCurrent(){const h=location.hash.slice(1);return PG.ids.includes(h)?h:PG.ids[0]}
-function showSection(id,push){
-  if(!PG.ids.includes(id))id=PG.ids[0];
-  document.querySelectorAll('#mainContent>.section').forEach(sec=>{const on=sec.id===id;sec.classList.toggle('pg-off',!on);sec.classList.toggle('pg-on',on)});
-  PG.links.forEach(a=>{const on=a.getAttribute('href')==='#'+id;a.classList.toggle('active',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
-    if(on){a.closest('.sb-group')?.classList.add('open');a.scrollIntoView({block:'nearest'})}});
-  document.getElementById('compBanner').classList.toggle('pg-off',PG.group[id]!==0);
-  document.getElementById('pgSelect').value=id;
-  const i=PG.ids.indexOf(id), link=k=>pgLabel(PG.links[k]);
+function pgFromHash(){
+  const h=location.hash.slice(1);
+  if(PG.secPage[h])showPage(PG.secPage[h],h,false);
+  else showPage(PG.pages.some(p=>p.key===h)?h:PG.pages[0].key,null,false);
+}
+function showPage(key,secId,push){
+  const page=PG.pages.find(p=>p.key===key)||PG.pages[0];
+  const changed=PG.cur!==page.key; PG.cur=page.key;
+  document.querySelectorAll('#mainContent>.section').forEach(sec=>{const on=PG.secPage[sec.id]===page.key;
+    sec.classList.toggle('pg-off',!on);if(changed)sec.classList.toggle('pg-on',on)});
+  document.getElementById('compBanner').classList.toggle('pg-off',page.key!=='google-ads');
+  PG.pages.forEach(p=>{p.el.classList.toggle('open',p===page);p.el.classList.toggle('current',p===page)});
+  document.getElementById('pgSelect').value=page.key;
+  const i=PG.pages.indexOf(page), P=PG.pages;
   document.getElementById('pgNav').innerHTML=
-    (i>0?`<a class="pg-btn" href="#${PG.ids[i-1]}"><i class="ph ph-arrow-left" aria-hidden="true"></i><span><small>Previous</small>${esc(link(i-1))}</span></a>`:'<span></span>')+
-    (i<PG.ids.length-1?`<a class="pg-btn next" href="#${PG.ids[i+1]}"><span><small>Next</small>${esc(link(i+1))}</span><i class="ph ph-arrow-right" aria-hidden="true"></i></a>`:'');
-  if(push&&location.hash!=='#'+id){try{history.pushState(null,'','#'+id)}catch(e){}}
-  window.scrollTo(0,0);
+    (i>0?`<a class="pg-btn" href="#${P[i-1].key}"><i class="ph ph-arrow-left" aria-hidden="true"></i><span><small>Previous</small>${esc(P[i-1].label)}</span></a>`:'<span></span>')+
+    (i<P.length-1?`<a class="pg-btn next" href="#${P[i+1].key}"><span><small>Next</small>${esc(P[i+1].label)}</span><i class="ph ph-arrow-right" aria-hidden="true"></i></a>`:'');
+  const target=secId||page.key;
+  if(push&&location.hash!=='#'+target){try{history.pushState(null,'','#'+target)}catch(e){}}
+  const behavior=changed?'instant':'smooth';
+  if(secId&&secId!==page.ids[0])document.getElementById(secId)?.scrollIntoView({block:'start',behavior});else window.scrollTo({top:0,behavior});
+  pgSpy();
   // Charts and the map were drawn while hidden; let them measure their new size
-  requestAnimationFrame(()=>{window.dispatchEvent(new Event('resize'));
-    if(id==='sec-gbp'&&localMap){localMap.invalidateSize();const L=window.VISIBILITY_DATA.local;if(L?.points)localMap.fitBounds(L.points.flat(),{padding:[24,24]})}});
+  if(changed)requestAnimationFrame(()=>{window.dispatchEvent(new Event('resize'));
+    if(page.ids.includes('sec-gbp')&&localMap){localMap.invalidateSize();const L=window.VISIBILITY_DATA.local;if(L?.points)localMap.fitBounds(L.points.flat(),{padding:[24,24]})}});
+}
+function pgSpy(){
+  const page=PG.pages.find(p=>p.key===PG.cur); if(!page)return;
+  let cur=page.ids[0];
+  page.ids.forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=90)cur=id});
+  PG.links.forEach(a=>{const on=a.getAttribute('href')==='#'+cur;a.classList.toggle('active',on);if(on)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')});
 }
 
 // Sections the client's plan doesn't include: data is left out of the report
@@ -2062,7 +2092,6 @@ function downloadCSV(name,rows){
   a.download=name;document.body.appendChild(a);a.click();a.remove();
 }
 function slugName(){return (window.CLIENT_DATA?.slug||'client')}
-window.toggleGroup=btn=>btn.parentElement.classList.toggle('open');
 
 function renderVisibility(){
   const V=window.VISIBILITY_DATA||{};
@@ -2738,7 +2767,7 @@ function drawComp(){
   const sel=document.getElementById('compSel'); if(sel)sel.onchange=()=>{compSite=sel.value;drawComp()};
   const f=document.getElementById('compFilter'); if(f)f.onchange=()=>{compFilter=f.value;drawComp()};
 }
-window.compJump=t=>{compTab=t;drawComp();showSection('sec-competitors',true)};
+window.compJump=t=>{compTab=t;drawComp();showPage('competitors','sec-competitors',true)};
 function compOverview(V){
   const seoRows=V.seo?.competitors||[], aiRows=V.ai?.competitors||[], W=V.watch;
   const lead=(rows,key,lowerIsBetter)=>{const vals=rows.map(r=>r[key]).filter(v=>v!==null&&v!==undefined&&v!==0);

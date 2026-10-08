@@ -1,6 +1,6 @@
 # Search & AI Visibility
 
-Client reports have a **Search & AI visibility** group in the left nav, modeled on Anthony's Results Driven Tracker and styled to match the Sponsor a Purpose CRM.
+Client reports have **SEO**, **AEO** and **Competitors** pages in the left nav, modeled on Anthony's Results Driven Tracker and styled to match the Sponsor a Purpose CRM.
 
 | Section | What it shows | Data |
 |---|---|---|
@@ -19,7 +19,7 @@ When the latest weekly data has gaps (an AI's checks failed, a data source is ov
 
 **Live features** (test a prompt now, track prompts, generate ideas) run through a small Cloudflare Worker that keeps the API keys private. See [`worker/README.md`](../worker/README.md). Until it's set up, those buttons are hidden.
 
-The report shows **one section at a time**: pick it in the sidebar (or the section menu on phones), use Previous / Next at the bottom, or link straight to one with `#sec-…` (for example `pup-profile.html#sec-ai`). The browser Back button works, and the PDF button still prints every section.
+The report is split into **pages by product area**: Google Ads, Website (GA4), SEO (visibility overview, keyword tracking, organic search, authority, site health, local map), AEO (AI tracking, action plan, readiness), Competitors and Action plan. Pick one in the sidebar (or the menu on phones), use Previous / Next at the bottom, or link straight to a page or section, e.g. `pup-profile.html#seo` or `pup-profile.html#sec-ai`. The browser Back button works, and the PDF button still prints every page.
 
 Other report changes: the **device breakdown** is now real Google Ads data, **What we did / What's next** is written from each month's data, and there's a **↓ PDF** button. `reports/index.html` is an all-clients dashboard.
 
