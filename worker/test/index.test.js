@@ -64,3 +64,45 @@ test("track adds new prompts to clients.json", async () => {
   assert.equal(written[0].ai_tracking.prompts.length, 2);
   assert.equal(committed.sha, "abc");
 });
+
+test("competitors: adds one from the report", async () => {
+  env.LIMITS = kv();
+  const token = await tokenFor("pup-profile", "secret");
+  const r = await call("/competitors", { slug: "pup-profile", token, action: "add", name: "Wags and Walks", domain: "https://www.WagsAndWalks.org/adopt" });
+  const d = await r.json();
+  assert.equal(r.status, 200);
+  assert.deepEqual(d.competitors.map((c) => c.domain), ["bestfriends.org", "wagsandwalks.org"]);
+  const written = JSON.parse(Buffer.from(committed.content, "base64").toString());
+  assert.deepEqual(written[0].competitors[1], { name: "Wags and Walks", domain: "wagsandwalks.org" });
+});
+
+test("competitors: rejects listing sites, the client's own site and bad input", async () => {
+  env.LIMITS = kv();
+  const token = await tokenFor("pup-profile", "secret");
+  for (const domain of ["yelp.com", "sf.yelp.com", "pupprofile.org", "not a website"]) {
+    const r = await call("/competitors", { slug: "pup-profile", token, action: "add", domain });
+    assert.equal(r.status, 400, domain);
+  }
+});
+
+test("competitors: clients can track at most 3", async () => {
+  env.LIMITS = kv();
+  const saved = clients[0].competitors;
+  clients[0].competitors = [{ name: "A", domain: "a.org" }, { name: "B", domain: "b.org" }, { name: "C", domain: "c.org" }];
+  try {
+    const token = await tokenFor("pup-profile", "secret");
+    const r = await call("/competitors", { slug: "pup-profile", token, action: "add", domain: "d.org" });
+    assert.equal(r.status, 400);
+    assert.match((await r.json()).error, /up to 3/);
+  } finally {
+    clients[0].competitors = saved;
+  }
+});
+
+test("competitors: removes one", async () => {
+  env.LIMITS = kv();
+  const token = await tokenFor("pup-profile", "secret");
+  const r = await call("/competitors", { slug: "pup-profile", token, action: "remove", domain: "bestfriends.org" });
+  assert.equal(r.status, 200);
+  assert.deepEqual((await r.json()).competitors, []);
+});

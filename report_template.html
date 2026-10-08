@@ -513,6 +513,9 @@ b.up,.up{color:#1A6E3E}b.down,.down{color:#A02020}
 .is-explain{margin-bottom:14px}.is-lead{font-size:14px;color:var(--primary-900,#001d31);margin-bottom:12px}
 .is-stack{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;background:var(--card)}.is-stack>span{display:block;height:100%}
 .is-key{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;font-size:12px;color:var(--gray-600)}.is-key i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.comp-manage{margin-bottom:14px}.comp-rows{display:flex;flex-direction:column;gap:8px}
+.comp-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--border)}.comp-row:first-child{border-top:none}
+.comp-form .vsearch{min-width:160px}.comp-sg{display:inline-flex;align-items:center;gap:8px}.comp-track{padding:3px 10px}
 .wc-q{margin:4px 0 0;padding:4px 10px;border-left:3px solid var(--primary-100,#cfe4ff);color:var(--gray-600)}
 .vchip{padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;color:var(--gray-600);background:#fff;border:1px solid var(--border);cursor:pointer;font-family:var(--font-body)}
 .vchip.active{background:var(--navy-dark);color:#fff;border-color:var(--navy-dark)}
@@ -2431,6 +2434,44 @@ function accuracyBlock(){
     ${A.issues.map(i=>`<div class="acc-row"><div><span class="prio prio-${esc(i.severity)}">${esc(i.severity)}</span> <b>${esc(i.engine)}</b> · <span class="vfoot">“${esc(i.prompt)}”</span></div>
       <div class="acc-claim">“${esc(i.claim)}”</div><div class="aeo-detail">${esc(i.problem)}</div><div class="aeo-fix"><b>Fix:</b> ${esc(i.fix)}</div></div>`).join('')}</div>`;
 }
+// ── CLIENT-MANAGED COMPETITORS (up to 3, through the live Worker) ──
+const COMP_MAX=3;
+function compList(){if(!window._comps)window._comps=[...(window.VISIBILITY_DATA?.competitors_config||[])];return window._comps}
+function compTrackBtn(domain){
+  if(!liveOn())return '';
+  if(compList().some(c=>c.domain===domain))return '<span class="vfoot" style="margin:0">Tracked</span>';
+  return compList().length<COMP_MAX?`<button class="vbtn comp-track" data-comp-add="${esc(domain)}" aria-label="Track ${esc(domain)} as a competitor">+ Track</button>`:'';
+}
+function compManage(){
+  const list=compList(), live=liveOn();
+  return `<div class="card comp-manage" id="compManage"><div class="chart-title">Your competitors <span class="vfoot">${list.length} of ${COMP_MAX}</span></div>
+    <div class="vfoot" style="margin:2px 0 10px">Organizations people might choose instead of you. We compare you with them in Google, in AI answers and on their websites.</div>
+    ${list.length?`<div class="comp-rows">${list.map(c=>`<div class="comp-row"><div><b>${esc(c.name)}</b><div class="vfoot" style="margin:0">${esc(c.domain)}</div></div>
+      ${live?`<button class="vbtn" data-comp-remove="${esc(c.domain)}" aria-label="Stop tracking ${esc(c.name)}">Remove</button>`:''}</div>`).join('')}</div>`:''}
+    ${live?(list.length<COMP_MAX?`<form class="vtools comp-form" id="compAddForm" style="margin:10px 0 0">
+        <input class="vsearch" id="compName" maxlength="80" placeholder="Name, e.g. Best Friends Animal Society" aria-label="Competitor name">
+        <input class="vsearch" id="compDomain" maxlength="200" placeholder="Website, e.g. bestfriends.org" aria-label="Competitor website" required>
+        <button class="vbtn primary" type="submit">Add competitor</button></form>`
+      :`<div class="vfoot" style="margin-top:10px">You're tracking the maximum of ${COMP_MAX}. Remove one to add another.</div>`)
+     :`<div class="vfoot" style="margin-top:10px">To add or change competitors, email <b>${VIS_CONTACT}</b>.</div>`}
+    <div class="vfoot comp-msg" id="compMsg" role="status" style="margin:8px 0 0"></div></div>`;
+}
+async function compChange(action,domain,name){
+  const msg=document.getElementById('compMsg'); if(msg)msg.textContent=action==='add'?'Adding…':'Removing…';
+  try{
+    const d=await liveCall('/competitors',{action,domain,name});
+    window._comps=d.competitors.map(c=>({name:c.name||c.domain,domain:String(c.domain).replace(/^https?:\/\/(www\.)?/,'').replace(/\/.*$/,'')}));
+    const V=window.VISIBILITY_DATA; renderCompetitors(V); document.querySelectorAll('[data-comp-add]').forEach(b=>b.outerHTML=compTrackBtn(b.dataset.compAdd));
+    const m=document.getElementById('compMsg'); if(m)m.textContent=d.message||(action==='add'?'Added. You\'ll see comparisons after the next weekly update (Mondays).':'Removed. It drops out of the comparisons from the next weekly update.');
+  }catch(e){const m=document.getElementById('compMsg'); if(m)m.textContent=e.message}
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-comp-add]'); if(a){e.preventDefault();compChange('add',a.dataset.compAdd,'');return}
+  const r=e.target.closest('[data-comp-remove]'); if(r){e.preventDefault();compChange('remove',r.dataset.compRemove,'')}
+});
+document.addEventListener('submit',e=>{if(e.target.id!=='compAddForm')return;e.preventDefault();
+  compChange('add',document.getElementById('compDomain').value,document.getElementById('compName').value)});
+
 function suggestionsBlock(){
   const ai=window.VISIBILITY_DATA?.ai; if(!ai)return '';
   const sg=ai.suggested_competitors||[], ls=ai.listings||[];
@@ -2440,8 +2481,8 @@ function suggestionsBlock(){
   return `<div class="g2" style="margin-top:14px">
     ${sg.length?`<div class="card"><div class="chart-title">Who AI recommends instead</div>
       <div class="vfoot" style="margin:2px 0 10px">Organizations AI cited in answers to your prompts. Track them to compare head to head.</div>
-      ${sg.map(x=>`<div class="now-top" style="margin:6px 0"><span class="site comp">${esc(x.domain)}</span><span>${x.count} answer${x.count>1?'s':''}</span></div>`).join('')}
-      <a class="vbtn" style="margin-top:8px" href="mailto:${VIS_CONTACT}?subject=${subj}&body=${body}">Track these competitors</a></div>`:''}
+      ${sg.map(x=>`<div class="now-top" style="margin:6px 0"><span class="site">${esc(x.domain)}</span><span class="comp-sg">${x.count} answer${x.count>1?'s':''} ${compTrackBtn(x.domain)}</span></div>`).join('')}
+      ${liveOn()?'':`<a class="vbtn" style="margin-top:8px" href="mailto:${VIS_CONTACT}?subject=${subj}&body=${body}">Ask us to track these</a>`}</div>`:''}
     ${ls.length?`<div class="card"><div class="chart-title">Sites AI trusts — get listed</div>
       <div class="vfoot" style="margin:2px 0 10px">Directories and platforms AI keeps citing. A complete, current profile on each makes it more likely AI names you.</div>
       ${ls.map(x=>`<div class="now-top" style="margin:6px 0"><span class="site">${esc(x.domain)}</span><span>${x.count} answer${x.count>1?'s':''}</span></div>`).join('')}</div>`:''}
@@ -2638,7 +2679,7 @@ function renderClassic(V){
     <div id="seoTable"></div>
     ${s.suggested?.length?`<div class="card" style="margin-top:14px"><div class="chart-title">On page one with you</div>
       <div class="vfoot" style="margin:2px 0 10px">Sites that show up most often in the top 10 for your keywords. Track them as competitors to compare head to head.</div>
-      ${s.suggested.map(x=>`<div class="now-top" style="margin:6px 0"><span class="site">${esc(x.domain)}</span><span>${x.count} keyword${x.count>1?'s':''}</span></div>`).join('')}</div>`:''}`;
+      ${s.suggested.map(x=>`<div class="now-top" style="margin:6px 0"><span class="site">${esc(x.domain)}</span><span class="comp-sg">${x.count} keyword${x.count>1?'s':''} ${compTrackBtn(x.domain)}</span></div>`).join('')}</div>`:''}`;
   box.querySelectorAll('#seoTabs .vtab').forEach(b=>b.onclick=()=>{seoTab=b.dataset.t;seoChip='all';drawSeoTable()});
   drawSeoTable();
   const T=s.trend;
@@ -2963,19 +3004,14 @@ function compSites(V){
 function renderCompetitors(V){
   const box=document.getElementById('compContent');
   const seoRows=V.seo?.competitors||[], aiRows=V.ai?.competitors||[], W=V.watch;
-  if(seoRows.length<2&&aiRows.length<2&&!W&&(V.ai?.suggested_competitors||[]).length){
-    box.innerHTML=suggestionsBlock().replace('class="g2" style="margin-top:14px"','class="g2"');return;
-  }
   if(seoRows.length<2&&aiRows.length<2&&!W){
-    box.innerHTML=emptyBlock('Compare yourself with similar organizations',
-      `Tell us 3–5 organizations people might find instead of you. We'll show how you stack up in Google rankings and in AI answers, prompt by prompt, and flag new pages and changes on their websites.
-       <div style="margin-top:14px"><a class="vbtn primary" href="mailto:${VIS_CONTACT}?subject=${encodeURIComponent('Competitor tracking for '+(window.CLIENT_DATA?.name||''))}">Suggest competitors →</a></div>`);
+    box.innerHTML=compManage()+suggestionsBlock();
     return;
   }
   const sites=compSites(V);
   if(!sites.some(x=>x.domain===compSite))compSite=sites[0]?.domain||'';
   const tabs=[['overview','Overview'],...(sites.length&&(seoRows.length>1||aiRows.length>1)?[['h2h','Head to head']]:[]),...(W?[['changes','Page changes'],['new','New pages']]:[])];
-  box.innerHTML=(W?`<div class="vis-summary"><h4>Summary</h4><ul>${W.summary.map(b=>`<li>${b}</li>`).join('')}</ul></div>`:'')+
+  box.innerHTML=(W?`<div class="vis-summary"><h4>Summary</h4><ul>${W.summary.map(b=>`<li>${b}</li>`).join('')}</ul></div>`:'')+compManage()+
     `<div class="vtabs" id="compTabs">${tabs.map(([k,l])=>`<button class="vtab" data-t="${k}">${l}</button>`).join('')}</div><div id="compPane"></div>`;
   box.querySelectorAll('#compTabs .vtab').forEach(b=>b.onclick=()=>{compTab=b.dataset.t;drawComp()});
   drawComp();

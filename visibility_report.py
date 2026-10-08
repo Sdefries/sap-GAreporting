@@ -828,5 +828,7 @@ def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None, local_ent
         "seo": build_seo(client, seo_entry) if seo_enrolled else None,
         "seo_enrolled": seo_enrolled,
         "has_competitors": bool(client.get("competitors")),
+        "competitors_config": [{"name": c.get("name") or domain_of(c.get("domain", "")), "domain": domain_of(c.get("domain", ""))}
+                               for c in client.get("competitors") or [] if domain_of(c.get("domain", ""))],
         "brand": brand_names(client)[0],
     }

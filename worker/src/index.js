@@ -362,6 +362,60 @@ async function routeTrack(env, body) {
   return [503, { error: "Busy right now, please try again." }];
 }
 
+// Sites that are platforms or listings, not peer organizations (mirrors
+// DIRECTORIES in visibility_report.py)
+const DIRECTORIES = new Set(["yelp.com", "reddit.com", "facebook.com", "instagram.com", "youtube.com", "wikipedia.org",
+  "google.com", "tripadvisor.com", "nextdoor.com", "linkedin.com", "x.com", "twitter.com", "tiktok.com", "pinterest.com",
+  "quora.com", "medium.com", "petfinder.com", "adoptapet.com", "rescueme.org", "charitynavigator.org", "guidestar.org",
+  "candid.org", "greatnonprofits.org", "idealist.org", "volunteermatch.org", "eventbrite.com", "gofundme.com",
+  "givebutter.com", "bbb.org", "yellowpages.com", "mapquest.com", "foursquare.com", "patch.com", "indeed.com",
+  "glassdoor.com", "apple.com", "bing.com", "chatgpt.com", "openai.com", "perplexity.ai"]);
+const MAX_COMPETITORS = 3; // clients can track up to 3 from their report; more can be set in clients.json
+
+function isDirectory(d) {
+  return [...DIRECTORIES].some((x) => d === x || d.endsWith("." + x)) || d.endsWith(".gov") || d.endsWith(".edu");
+}
+
+// Add or remove a tracked competitor from the client's report.
+// body: {action: "add" | "remove", domain, name}
+async function routeCompetitors(env, body) {
+  const action = body.action === "remove" ? "remove" : "add";
+  const domain = domainOf(String(body.domain || "").trim().slice(0, 200));
+  const name = String(body.name || "").replace(/\s+/g, " ").trim().slice(0, 80);
+  if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(domain)) return [400, { error: "Enter the organization's website, like bestfriends.org." }];
+  if (action === "add" && isDirectory(domain)) return [400, { error: `${domain} is a listing or social site, not an organization. Add the organization's own website.` }];
+  const quota = await takeQuota(env, body.slug);
+  if (!quota.ok) return [429, { error: `You've used today's ${quota.limit} live actions. Try again tomorrow.` }];
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { sha, clients } = await githubFile(env);
+    const c = clients.find((x) => x.slug === body.slug);
+    if (!c) return [404, { error: "Client not found." }];
+    const list = Array.isArray(c.competitors) ? c.competitors : [];
+    const has = list.some((x) => domainOf(x.domain) === domain);
+    let message;
+    if (action === "add") {
+      if (domain === domainOf(c.website || "")) return [400, { error: "That's your own website." }];
+      if (has) return [200, { competitors: list, message: "Already tracked." }];
+      if (list.length >= MAX_COMPETITORS) return [400, { error: `You can track up to ${MAX_COMPETITORS} competitors. Remove one first.` }];
+      c.competitors = [...list, { name: name || domain, domain }];
+      message = `Track competitor ${domain} for ${c.slug} (from client report)`;
+    } else {
+      if (!has) return [200, { competitors: list, message: "Not tracked." }];
+      c.competitors = list.filter((x) => domainOf(x.domain) !== domain);
+      message = `Stop tracking competitor ${domain} for ${c.slug} (from client report)`;
+    }
+    const content = toBase64(new TextEncoder().encode(JSON.stringify(clients, null, 2) + "\n"));
+    const r = await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/contents/clients.json`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, "User-Agent": "sap-aeo-worker", Accept: "application/vnd.github+json" },
+      body: JSON.stringify({ message, content, sha, branch: env.GITHUB_BRANCH || "main" }),
+    });
+    if (r.ok) return [200, { competitors: c.competitors }];
+    if (r.status !== 409) throw new Error(`GitHub write failed: ${r.status}`);
+  }
+  return [503, { error: "Busy right now, please try again." }];
+}
+
 export default {
   async fetch(req, env) {
     const headers = cors(env, req);
@@ -371,8 +425,8 @@ export default {
       const body = await req.json().catch(() => ({}));
       if (!(await authorized(env, body.slug, body.token))) return json({ error: "This report link isn't authorized for live checks." }, 401, headers);
       const path = new URL(req.url).pathname;
-      if (path === "/track") {
-        const [status, out] = await routeTrack(env, body);
+      if (path === "/track" || path === "/competitors") {
+        const [status, out] = await (path === "/track" ? routeTrack : routeCompetitors)(env, body);
         return json(out, status, headers);
       }
       const { clients } = await githubFile(env);
@@ -389,4 +443,4 @@ export default {
 };
 
 // Exported for tests
-export { tokenFor, score, mentions, clientConfig, aiBlock, answer };
+export { tokenFor, score, mentions, clientConfig, aiBlock, answer, isDirectory, domainOf };

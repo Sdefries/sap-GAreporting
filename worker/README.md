@@ -4,6 +4,7 @@ This makes the AI tracking section of each client report interactive:
 
 - **Test a prompt now**: the client types any question and sees, within about a minute, whether AI Overviews, AI Mode, ChatGPT, Claude, Gemini and Perplexity mention them.
 - **Track this prompt weekly / Track selected prompts**: adds prompts to that client's `ai_tracking.prompts` in `clients.json` on GitHub. The next weekly run includes them. There's a limit of 10 prompts per client.
+- **Your competitors**: clients add (name + website), remove, or one-click track suggested competitors, up to 3, in `competitors` in `clients.json`. Listing sites (Yelp, Facebook, Petfinder…), .gov/.edu and the client's own site are refused. Counts against the daily limit.
 - **✦ Generate AI ideas**: 15 fresh prompt ideas from Claude.
 
 Reports are static pages, so the API keys live here in the Worker, never in the page. Until the Worker is set up, these buttons stay hidden and "Track selected prompts" falls back to emailing scott@sponsorapurpose.org.

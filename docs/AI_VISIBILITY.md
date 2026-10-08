@@ -99,7 +99,7 @@ After each AI run, `#google-ads` (the existing `SLACK_WEBHOOK`) gets a message w
 ```
 
 - `ai_tracking.prompts`: up to 10. Every current client is seeded with 5. **New clients without prompts get 5 starter prompts written by Claude automatically.**
-- `competitors`: powers the Competitors section (including website change monitoring) and red competitor tags. The report's "Who AI recommends instead" panel and the keyword table's "On page one with you" card suggest who to add.
+- `competitors`: clients can add, remove or one-click track up to **3** competitors from the Competitors page of their report (through the live Worker; without it they see your email). You can set more by editing this list. It powers the Competitors section (including website change monitoring) and red competitor tags. The report's "Who AI recommends instead" panel and the keyword table's "On page one with you" card suggest who to add.
 - `local_tracking`: only for organizations people visit in person. It's seeded for the Humane Society of Northwest Montana and ScienceWorks. Coordinates are found automatically; add `lat`/`lng` or `place_id` if the wrong listing matches.
 - `report_notes`: your team's own "What we did / What's next" text. It overrides the automatic text.
 - `organic_tracking.enabled: false` skips a client in the organic report.
