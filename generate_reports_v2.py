@@ -3,7 +3,7 @@ generate_reports_v2.py
 Builds one HTML report per client by injecting data into a clean template.
 The template has zero client data — all values come from cache files.
 """
-import json, os, sys, datetime, argparse, urllib.request
+import json, os, sys, datetime, argparse, urllib.request, hmac, hashlib
 from html import escape
 
 from visibility_report import build_visibility_data
@@ -567,6 +567,15 @@ def build_city_data(ga4_cities):
         for c in ga4_cities[:10]
     ])
 
+# ── LIVE API (worker/) ────────────────────────────────────────────────────────
+def live_api(slug):
+    """Per-client token for the live AEO Worker; null (live features hidden) until configured."""
+    url, key = os.environ.get("LIVE_API_URL", ""), os.environ.get("REPORT_SIGNING_KEY", "")
+    if not (url and key):
+        return None
+    token = hmac.new(key.encode(), slug.encode(), hashlib.sha256).hexdigest()[:32]
+    return {"url": url, "token": token}
+
 # ── RENDER ────────────────────────────────────────────────────────────────────
 def render(cd):
     """Inject all window.* objects into the clean template."""
@@ -581,6 +590,7 @@ def render(cd):
     ga4_json = json.dumps(ga4_obj, default=str) if ga4_obj else "null"
 
     vis_json = json.dumps(cd.get("_visibility"), default=str).replace("</", "<\\/")
+    live_json = json.dumps(live_api(cd["slug"]))
 
     injection = (
         f"\n<script>\n"
@@ -592,6 +602,7 @@ def render(cd):
         f"window.CITY_DATA   = {city_data};\n"
         f"window.GA4_DATA    = {ga4_json};\n"
         f"window.VISIBILITY_DATA = {vis_json};\n"
+        f"window.LIVE_API    = {live_json};\n"
         f"</script>\n"
     )
     return TEMPLATE.replace("<!-- CLIENT DATA INJECTED HERE BY generate_reports_v2.py -->", injection)

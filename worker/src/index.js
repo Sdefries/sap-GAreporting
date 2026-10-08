@@ -1,0 +1,392 @@
+/**
+ * SAP live AEO API — Cloudflare Worker
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Lets clients use the AI tracking section of their report interactively,
+ * without exposing API keys in the (static, GitHub Pages) report:
+ *
+ *   POST /check  {slug, token, prompt}     ask one prompt in every AI right now
+ *   POST /ideas  {slug, token}             generate 15 prompt ideas with Claude
+ *   POST /track  {slug, token, prompts[]}  add prompts to the client's weekly tracking
+ *                                          (commits to clients.json on GitHub)
+ *
+ * AUTH   token = first 32 hex chars of HMAC-SHA256(REPORT_SIGNING_KEY, slug).
+ *        generate_reports_v2.py computes the same token and puts it in each
+ *        client's report, so a report can only act for its own client.
+ * LIMITS DAILY_LIMIT live checks per client per day (KV namespace LIMITS).
+ *
+ * Scoring mirrors fetch_ai_visibility.py so live results match the weekly run.
+ * Setup: see worker/README.md.
+ */
+import Anthropic from "@anthropic-ai/sdk";
+
+const ENGINES = ["ai_overviews", "ai_mode", "chatgpt", "claude", "gemini", "perplexity"];
+const MAX_PROMPTS = 10;
+const EXCERPT_LEN = 1800;
+
+// ── HTTP helpers ─────────────────────────────────────────────────────────────
+
+function cors(env, req) {
+  const origin = req.headers.get("Origin") || "";
+  const allowed = (env.ALLOWED_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean);
+  return {
+    "Access-Control-Allow-Origin": allowed.includes(origin) ? origin : allowed[0] || "",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    Vary: "Origin",
+  };
+}
+
+function json(body, status, headers) {
+  return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", ...headers } });
+}
+
+async function postJSON(url, payload, headers) {
+  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", ...headers }, body: JSON.stringify(payload) });
+  if (!r.ok) throw new Error(`HTTP ${r.status}: ${(await r.text()).slice(0, 200)}`);
+  return r.json();
+}
+
+// ── Auth + limits ────────────────────────────────────────────────────────────
+
+async function tokenFor(slug, key) {
+  const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(key), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const sig = new Uint8Array(await crypto.subtle.sign("HMAC", k, new TextEncoder().encode(slug)));
+  return [...sig].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 32);
+}
+
+async function authorized(env, slug, token) {
+  if (!slug || !token || !env.REPORT_SIGNING_KEY) return false;
+  const expected = await tokenFor(slug, env.REPORT_SIGNING_KEY);
+  if (expected.length !== token.length) return false;
+  let diff = 0;
+  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ token.charCodeAt(i);
+  return diff === 0;
+}
+
+async function takeQuota(env, slug, cost = 1) {
+  const limit = parseInt(env.DAILY_LIMIT || "10", 10);
+  const key = `${slug}:${new Date().toISOString().slice(0, 10)}`;
+  const used = parseInt((await env.LIMITS.get(key)) || "0", 10);
+  if (used + cost > limit) return { ok: false, used, limit };
+  await env.LIMITS.put(key, String(used + cost), { expirationTtl: 60 * 60 * 48 });
+  return { ok: true, used: used + cost, limit };
+}
+
+// ── Client config (clients.json on GitHub) ───────────────────────────────────
+
+async function githubFile(env) {
+  const r = await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/contents/clients.json?ref=${env.GITHUB_BRANCH || "main"}`, {
+    headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, "User-Agent": "sap-aeo-worker", Accept: "application/vnd.github+json" },
+  });
+  if (!r.ok) throw new Error(`GitHub read failed: ${r.status}`);
+  const f = await r.json();
+  const bytes = Uint8Array.from(atob(f.content.replace(/\n/g, "")), (c) => c.charCodeAt(0));
+  return { sha: f.sha, clients: JSON.parse(new TextDecoder().decode(bytes)) };
+}
+
+function domainOf(url) {
+  if (!url) return "";
+  try {
+    const host = new URL(url.includes("//") ? url : "https://" + url).hostname.toLowerCase();
+    return host.startsWith("www.") ? host.slice(4) : host;
+  } catch {
+    return "";
+  }
+}
+
+const US_STATES = { AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California", CO: "Colorado", CT: "Connecticut", DE: "Delaware", DC: "District of Columbia", FL: "Florida", GA: "Georgia", HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa", KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland", MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming" };
+
+function clientConfig(c) {
+  const t = c.ai_tracking || {};
+  const name = c.name.replace(/\s+(Grant Account|Inc\.?|LLC)$/i, "").trim();
+  let location = c.seo_location || "United States";
+  const loc = (c.geo?.locations || [])[0] || "";
+  if (!c.seo_location && loc.includes(",")) {
+    const [city, st] = loc.split(",").map((s) => s.trim());
+    if (US_STATES[st.toUpperCase()]) location = `${city},${US_STATES[st.toUpperCase()]},United States`;
+  } else if (!c.seo_location && Object.values(US_STATES).includes(loc)) location = `${loc},United States`;
+  return {
+    brandNames: t.brand_names?.length ? t.brand_names : [name],
+    domain: domainOf(c.website),
+    engines: t.engines?.length ? t.engines : ENGINES,
+    prompts: t.prompts || [],
+    competitors: (c.competitors || []).map((x) => ({ name: x.name || x.domain, domain: domainOf(x.domain) })).filter((x) => x.domain),
+    location,
+  };
+}
+
+// ── Engines (same sources as fetch_ai_visibility.py) ─────────────────────────
+
+function answer(text = "", sources = [], status = "ok") {
+  const seen = new Set();
+  const clean = [];
+  for (const s of sources) {
+    const d = domainOf(s.url) || domainOf(s.domain) || (s.title || "").toLowerCase();
+    const k = s.url || d;
+    if (!d || seen.has(k)) continue;
+    seen.add(k);
+    clean.push(d);
+  }
+  return { status: text || status !== "ok" ? status : "no_answer", text: (text || "").trim(), sites: clean };
+}
+
+function aiBlock(items) {
+  const texts = [];
+  const refs = [];
+  const walk = (node, wantText) => {
+    if (Array.isArray(node)) return node.forEach((v) => walk(v, wantText));
+    if (!node || typeof node !== "object") return;
+    if (wantText) {
+      for (const key of ["markdown", "text"]) {
+        if (typeof node[key] === "string") {
+          texts.push(node[key]);
+          wantText = key !== "markdown";
+          break;
+        }
+      }
+    }
+    for (const r of node.references || []) refs.push({ url: r.url, title: r.title || r.source, domain: r.domain });
+    for (const [k, v] of Object.entries(node)) if (k !== "references" && typeof v === "object") walk(v, wantText);
+  };
+  const blocks = items.filter((i) => i.type === "ai_overview");
+  walk(blocks, true);
+  return { present: blocks.length > 0, text: [...new Set(texts)].join("\n"), refs };
+}
+
+async function dfs(env, endpoint, prompt, location, extra = {}) {
+  const auth = "Basic " + btoa(`${env.DATAFORSEO_LOGIN}:${env.DATAFORSEO_PASSWORD}`);
+  const run = async (loc) => {
+    const d = await postJSON(`https://api.dataforseo.com/v3/${endpoint}`, [{ keyword: prompt, location_name: loc, language_code: "en", ...extra }], { Authorization: auth });
+    const task = (d.tasks || [{}])[0];
+    if (task.status_code !== 20000) throw new Error(`DataForSEO ${task.status_code}: ${task.status_message}`);
+    return ((task.result || [{}])[0] || {}).items || [];
+  };
+  try {
+    return await run(location);
+  } catch (e) {
+    if (location !== "United States" && /location/i.test(e.message)) return run("United States");
+    throw e;
+  }
+}
+
+const ENGINE_FUNCS = {
+  async ai_overviews(env, prompt, cfg) {
+    const b = aiBlock(await dfs(env, "serp/google/organic/live/advanced", prompt, cfg.location, { device: "desktop", load_async_ai_overview: true }));
+    return answer(b.text, b.refs, b.present ? "ok" : "no_answer");
+  },
+  async ai_mode(env, prompt, cfg) {
+    const b = aiBlock(await dfs(env, "serp/google/ai_mode/live/advanced", prompt, cfg.location));
+    return answer(b.text, b.refs, b.present ? "ok" : "no_answer");
+  },
+  async chatgpt(env, prompt) {
+    const d = await postJSON("https://api.openai.com/v1/responses", { model: env.OPENAI_MODEL || "gpt-4.1-mini", input: prompt, tools: [{ type: "web_search" }] }, { Authorization: `Bearer ${env.OPENAI_API_KEY}` });
+    const texts = [];
+    const sources = [];
+    for (const item of d.output || []) {
+      if (item.type !== "message") continue;
+      for (const part of item.content || []) {
+        if (part.type !== "output_text") continue;
+        texts.push(part.text || "");
+        for (const a of part.annotations || []) if (a.type === "url_citation") sources.push({ url: a.url, title: a.title });
+      }
+    }
+    return answer(texts.join("\n"), sources);
+  },
+  async claude(env, prompt) {
+    const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+    const messages = [{ role: "user", content: prompt }];
+    const texts = [];
+    const sources = [];
+    for (let i = 0; i < 4; i++) {
+      const resp = await client.beta.messages.create({
+        model: env.CLAUDE_MODEL || "claude-opus-5-5",
+        max_tokens: 16000,
+        betas: ["server-side-fallback-2026-07-01"],
+        fallbacks: "default",
+        output_config: { effort: "low" },
+        tools: [{ type: "web_search_20260209", name: "web_search", max_uses: 5 }],
+        messages,
+      });
+      if (resp.stop_reason === "refusal") return { status: "error", error: "Claude declined to answer", text: "", sites: [] };
+      for (const block of resp.content) {
+        if (block.type !== "text") continue;
+        texts.push(block.text);
+        for (const c of block.citations || []) if (c.url) sources.push({ url: c.url, title: c.title });
+      }
+      if (resp.stop_reason !== "pause_turn") break;
+      messages.push({ role: "assistant", content: resp.content });
+    }
+    return answer(texts.join(""), sources);
+  },
+  async gemini(env, prompt) {
+    const model = env.GEMINI_MODEL || "gemini-2.5-flash";
+    const d = await postJSON(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, { contents: [{ parts: [{ text: prompt }] }], tools: [{ google_search: {} }] }, { "x-goog-api-key": env.GEMINI_API_KEY });
+    const cand = (d.candidates || [{}])[0];
+    const text = (cand.content?.parts || []).map((p) => p.text || "").join("");
+    const sources = (cand.groundingMetadata?.groundingChunks || []).map((c) => ({ url: "", domain: c.web?.title || "", title: c.web?.title || "" }));
+    return answer(text, sources);
+  },
+  async perplexity(env, prompt) {
+    const d = await postJSON("https://api.perplexity.ai/chat/completions", { model: env.PERPLEXITY_MODEL || "sonar", messages: [{ role: "user", content: prompt }] }, { Authorization: `Bearer ${env.PERPLEXITY_API_KEY}` });
+    const text = d.choices?.[0]?.message?.content || "";
+    let sources = (d.search_results || []).map((r) => ({ url: r.url, title: r.title }));
+    if (!sources.length) sources = (d.citations || []).map((u) => ({ url: u }));
+    return answer(text, sources);
+  },
+};
+
+function engineAvailable(env, e) {
+  return {
+    ai_overviews: !!(env.DATAFORSEO_LOGIN && env.DATAFORSEO_PASSWORD),
+    ai_mode: !!(env.DATAFORSEO_LOGIN && env.DATAFORSEO_PASSWORD),
+    chatgpt: !!env.OPENAI_API_KEY,
+    claude: !!env.ANTHROPIC_API_KEY,
+    gemini: !!env.GEMINI_API_KEY,
+    perplexity: !!env.PERPLEXITY_API_KEY,
+  }[e];
+}
+
+// ── Scoring (mirrors fetch_ai_visibility.py) ─────────────────────────────────
+
+function mentions(text, names) {
+  const low = (text || "").toLowerCase();
+  return names.some((n) => {
+    n = (n || "").trim().toLowerCase();
+    return n.length >= 3 && new RegExp(`(?<![a-z0-9])${n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![a-z0-9])`).test(low);
+  });
+}
+
+function domainHit(domain, res) {
+  if (!domain) return false;
+  return res.sites.some((s) => s === domain || s.endsWith("." + domain)) || (res.text || "").toLowerCase().includes(domain);
+}
+
+function score(res, cfg) {
+  const named = mentions(res.text, cfg.brandNames) || mentions(res.text, [cfg.domain]);
+  const cited = domainHit(cfg.domain, res);
+  const comps = {};
+  for (const c of cfg.competitors) {
+    const v = { named: mentions(res.text, [c.name, c.domain]), cited: domainHit(c.domain, res) };
+    if (v.named || v.cited) comps[c.domain] = v;
+  }
+  const state = cited && named ? "cited_named" : cited ? "cited" : named ? "named" : res.status === "no_answer" ? "no_answer" : "not_visible";
+  return { state, named, cited, sites: res.sites.slice(0, 12), excerpt: res.text.slice(0, EXCERPT_LEN), comps, error: "" };
+}
+
+// ── Routes ───────────────────────────────────────────────────────────────────
+
+async function routeCheck(env, client, body) {
+  const prompt = String(body.prompt || "").trim().slice(0, 300);
+  if (prompt.length < 5) return [400, { error: "Type a question to check." }];
+  const cfg = clientConfig(client);
+  const engines = cfg.engines.filter((e) => ENGINES.includes(e));
+  const quota = await takeQuota(env, client.slug);
+  if (!quota.ok) return [429, { error: `You've used today's ${quota.limit} live checks. They reset tomorrow, and tracked prompts still update every week.` }];
+  const cells = {};
+  await Promise.all(engines.map(async (e) => {
+    if (!engineAvailable(env, e)) return (cells[e] = { state: "untracked", named: false, cited: false, sites: [], excerpt: "", comps: {}, error: "" });
+    try {
+      const res = await ENGINE_FUNCS[e](env, prompt, cfg);
+      cells[e] = res.status === "error" ? { state: "error", named: false, cited: false, sites: [], excerpt: "", comps: {}, error: res.error } : score(res, cfg);
+    } catch (err) {
+      cells[e] = { state: "error", named: false, cited: false, sites: [], excerpt: "", comps: {}, error: String(err.message).slice(0, 200) };
+    }
+  }));
+  const answered = engines.filter((e) => !["untracked", "error"].includes(cells[e].state));
+  const visible = answered.filter((e) => ["cited_named", "cited", "named"].includes(cells[e].state));
+  return [200, { prompt, cells, visible_in: visible.length, of: answered.length, checked: new Date().toISOString(), quota }];
+}
+
+async function routeIdeas(env, client) {
+  if (!env.ANTHROPIC_API_KEY) return [503, { error: "Prompt ideas aren't switched on yet." }];
+  const quota = await takeQuota(env, client.slug);
+  if (!quota.ok) return [429, { error: `You've used today's ${quota.limit} live actions. Try again tomorrow.` }];
+  const cfg = clientConfig(client);
+  const brief = [
+    `Organization: ${cfg.brandNames[0]} (${client.org_type || "nonprofit"})`,
+    `Website: ${client.website || "n/a"}`,
+    `Service area: ${(client.geo?.locations || []).join(", ") || "national"}`,
+    `Programs / themes: ${(client.keywords?.include_themes || []).join(", ")}`,
+    `Prompts already tracked: ${JSON.stringify(cfg.prompts)}`,
+  ].join("\n");
+  const resp = await new Anthropic({ apiKey: env.ANTHROPIC_API_KEY }).beta.messages.create({
+    model: env.CLAUDE_MODEL || "claude-opus-5-5",
+    max_tokens: 4000,
+    betas: ["server-side-fallback-2026-07-01"],
+    fallbacks: "default",
+    output_config: {
+      effort: "low",
+      format: { type: "json_schema", schema: { type: "object", properties: { prompts: { type: "array", items: { type: "string" } } }, required: ["prompts"], additionalProperties: false } },
+    },
+    system: "You help a nonprofit marketing agency choose prompts to monitor in AI assistants. Write questions exactly as a real person would type them into ChatGPT or Google when looking to donate, adopt, volunteer, get help, or attend — not questions about the organization by name. Mix local and general intent. No duplicates of tracked prompts.",
+    messages: [{ role: "user", content: brief + "\n\nSuggest 15 prompts." }],
+  });
+  if (resp.stop_reason === "refusal") return [502, { error: "Couldn't generate ideas this time." }];
+  const text = resp.content.find((b) => b.type === "text")?.text || "{}";
+  return [200, { prompts: (JSON.parse(text).prompts || []).map((p) => p.trim()).filter(Boolean).slice(0, 15) }];
+}
+
+function toBase64(bytes) {
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+
+async function routeTrack(env, body) {
+  const quota = await takeQuota(env, body.slug);
+  if (!quota.ok) return [429, { error: `You've used today's ${quota.limit} live actions. Try again tomorrow.` }];
+  const wanted = [...new Set((body.prompts || []).map((p) => String(p).trim().slice(0, 300)).filter((p) => p.length >= 5))];
+  if (!wanted.length) return [400, { error: "Pick at least one prompt." }];
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { sha, clients } = await githubFile(env);
+    const c = clients.find((x) => x.slug === body.slug);
+    if (!c) return [404, { error: "Client not found." }];
+    c.ai_tracking = c.ai_tracking || { enabled: true };
+    const current = c.ai_tracking.prompts?.length ? c.ai_tracking.prompts : [];
+    const lower = new Set(current.map((p) => p.toLowerCase()));
+    const add = wanted.filter((p) => !lower.has(p.toLowerCase()));
+    if (!add.length) return [200, { added: [], prompts: current, message: "Those prompts are already tracked." }];
+    if (current.length + add.length > MAX_PROMPTS) {
+      return [400, { error: `You can track up to ${MAX_PROMPTS} prompts (${current.length} tracked now). Pick ${Math.max(0, MAX_PROMPTS - current.length)} or fewer, or ask us to swap some out.` }];
+    }
+    c.ai_tracking.prompts = [...current, ...add];
+    const content = toBase64(new TextEncoder().encode(JSON.stringify(clients, null, 2) + "\n"));
+    const r = await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/contents/clients.json`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, "User-Agent": "sap-aeo-worker", Accept: "application/vnd.github+json" },
+      body: JSON.stringify({ message: `Track ${add.length} new AI prompt${add.length > 1 ? "s" : ""} for ${c.slug} (from client report)`, content, sha, branch: env.GITHUB_BRANCH || "main" }),
+    });
+    if (r.ok) return [200, { added: add, prompts: c.ai_tracking.prompts }];
+    if (r.status !== 409) throw new Error(`GitHub write failed: ${r.status}`);
+  }
+  return [503, { error: "Busy right now, please try again." }];
+}
+
+export default {
+  async fetch(req, env) {
+    const headers = cors(env, req);
+    if (req.method === "OPTIONS") return new Response(null, { headers });
+    if (req.method !== "POST") return json({ error: "Not found" }, 404, headers);
+    try {
+      const body = await req.json().catch(() => ({}));
+      if (!(await authorized(env, body.slug, body.token))) return json({ error: "This report link isn't authorized for live checks." }, 401, headers);
+      const path = new URL(req.url).pathname;
+      if (path === "/track") {
+        const [status, out] = await routeTrack(env, body);
+        return json(out, status, headers);
+      }
+      const { clients } = await githubFile(env);
+      const client = clients.find((x) => x.slug === body.slug);
+      if (!client) return json({ error: "Client not found." }, 404, headers);
+      const route = { "/check": routeCheck, "/ideas": routeIdeas }[path];
+      if (!route) return json({ error: "Not found" }, 404, headers);
+      const [status, out] = await route(env, client, body);
+      return json(out, status, headers);
+    } catch (e) {
+      return json({ error: "Something went wrong. Please try again in a minute." , detail: String(e.message).slice(0, 200) }, 500, headers);
+    }
+  },
+};
+
+// Exported for tests
+export { tokenFor, score, mentions, clientConfig, aiBlock, answer };

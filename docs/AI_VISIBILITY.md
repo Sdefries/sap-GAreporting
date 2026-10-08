@@ -8,6 +8,10 @@ Client reports now have a **Search & AI visibility** group in the left nav, buil
 | **Classic SEO** | Search visibility score (% of keywords on page 1), average position, top 3 / top 10, AI Overview citations, trend charts, keyword table | `seo_cache.json` ← `fetch_seo.py` (SEO-enrolled clients) |
 | **Competitors** | You vs tracked competitors in Google rankings and in AI answers | both caches |
 | **Site health** | PageSpeed / Core Web Vitals (the old "SEO" section) | `seo_cache.json` |
+| **AEO action plan** | For prompts where AI recommends someone else: why, which sites to get listed on, and a page brief to publish (title, URL, outline, FAQs) with "Copy page brief" | `ai_visibility_cache.json` (Claude, weekly) |
+| **AEO readiness** | Website checklist: AI crawler access (robots.txt), llms.txt, sitemap, HTTPS, Organization schema, FAQ content, readable text, title/description, contact & location, donate path, with fixes | `ai_visibility_cache.json` (free, no API key) |
+
+**Live features** (test a prompt now, track prompts, generate ideas) run through a small Cloudflare Worker that keeps the API keys private. See [`worker/README.md`](../worker/README.md). Until it's set up, those buttons are hidden.
 
 `reports/index.html` is now an all-clients dashboard with grant score, compliance, AI visibility and search visibility per client.
 

@@ -533,6 +533,36 @@ button.st{cursor:pointer}
   .ideas-grid{grid-template-columns:1fr}
   .eng-grid{grid-template-columns:repeat(2,1fr)}
 }
+.live-box{margin-bottom:14px;border-left:4px solid var(--blue)}
+.live-res{border-top:1px solid var(--border);margin-top:12px;padding-top:12px}
+.live-q{font-weight:700;font-size:13px;color:var(--navy);margin-bottom:8px}
+.live-cells{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px}
+@media(max-width:960px){.live-cells{grid-template-columns:repeat(2,1fr)}}
+/* ── AEO readiness + action plan ── */
+.aeo-list{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.aeo-row{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:14px 18px;border-top:1px solid var(--border)}
+.aeo-row:first-child{border-top:none}
+.aeo-ico{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+.aeo-ico.pass{background:#E4F7ED;color:#1A6E3E}.aeo-ico.warn{background:#FEF6E6;color:#9A6010}.aeo-ico.fail{background:#FDEAEA;color:#A02020}
+.aeo-lbl{font-weight:700;font-size:13px;color:var(--navy)}
+.aeo-detail{font-size:12px;color:var(--gray-600);margin-top:2px;line-height:1.5}
+.aeo-fix{font-size:12px;color:var(--navy-dark);margin-top:6px;line-height:1.5;background:var(--gray-100);border-radius:6px;padding:7px 10px}
+.aeo-fix b{color:var(--navy)}
+.aeo-why{font-size:10.5px;color:var(--gray-400);margin-top:4px}
+.plan-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:12px}
+.plan-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.plan-q{font-family:var(--font-head);font-weight:800;font-size:15px;color:var(--navy);line-height:1.35}
+.plan-why{font-size:12px;color:var(--gray-600);line-height:1.6;margin:6px 0 12px}
+.plan-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+.plan-box{background:var(--gray-100);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--navy-dark);line-height:1.55}
+.plan-box h5{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400);margin:0 0 6px}
+.plan-box h5:not(:first-child){margin-top:12px}
+.plan-box ul,.plan-box ol{padding-left:18px}
+.plan-page{font-weight:700;color:var(--navy)}
+.plan-slug{font-family:monospace;font-size:11px;color:var(--blue)}
+.prio{font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;white-space:nowrap}
+.prio-high{background:#FDEAEA;color:#A02020}.prio-medium{background:#FEF6E6;color:#9A6010}.prio-low{background:var(--gray-100);color:var(--gray-600)}
+@media(max-width:960px){.plan-grid{grid-template-columns:1fr}}
 @media(max-width:960px){.kw-grid,.timing-grid{grid-template-columns:1fr}.seo-grid{grid-template-columns:repeat(2,1fr)}.seo-grid>*{min-width:0}}
 </style>
 </head>
@@ -608,6 +638,8 @@ button.st{cursor:pointer}
       <button class="sb-group-head" onclick="toggleGroup(this)"><span>Search &amp; AI visibility</span><span class="sb-chev">⌄</span></button>
       <div class="sb-group-links">
         <a href="#sec-ai"><span class="ico">✦</span>AI tracking<span class="sb-badge" id="sbAiBadge"></span></a>
+        <a href="#sec-aeo-plan"><span class="ico">✎</span>AEO action plan<span class="sb-badge" id="sbPlanBadge"></span></a>
+        <a href="#sec-aeo-audit"><span class="ico">✓</span>AEO readiness<span class="sb-badge" id="sbAuditBadge"></span></a>
         <a href="#sec-classic-seo"><span class="ico">↗</span>Classic SEO<span class="sb-badge" id="sbSeoBadge"></span></a>
         <a href="#sec-competitors"><span class="ico">⚑</span>Competitors<span class="sb-badge" id="sbCompBadge"></span></a>
         <a href="#sec-seo"><span class="ico">⚡</span>Site health</a>
@@ -906,6 +938,16 @@ button.st{cursor:pointer}
     <div class="section" id="sec-ai">
       <div class="sh"><div class="sh-title">AI tracking</div><div class="sh-sub" id="aiSub">AI Overviews, AI Mode, ChatGPT, Claude, Gemini, Perplexity</div></div>
       <div id="aiContent"></div>
+    </div>
+
+    <div class="section" id="sec-aeo-plan">
+      <div class="sh"><div class="sh-title">AEO action plan</div><div class="sh-sub" id="planSub">What to publish and where to get mentioned so AI recommends you</div></div>
+      <div id="planContent"></div>
+    </div>
+
+    <div class="section" id="sec-aeo-audit">
+      <div class="sh"><div class="sh-title">AEO readiness</div><div class="sh-sub" id="auditSub">Can AI find, read and trust your website?</div></div>
+      <div id="auditContent"></div>
     </div>
 
     <div class="section" id="sec-classic-seo">
@@ -1674,6 +1716,59 @@ const VIS_STATES={
 };
 const VIS_CSV_STATE={cited_named:'Cited + named',cited:'Cited',named:'Named',not_visible:'Not visible',no_answer:'No AI answer',untracked:'Not tracked',error:'Check failed'};
 let visCharts={}, aiTab='all', aiFilter='all', aiQuery='';
+const VIS_ENGINE_DEFAULTS=[['ai_overviews','AI Overviews','#2a78d6'],['ai_mode','AI Mode','#e0603c'],['chatgpt','ChatGPT','#1fa67a'],
+  ['claude','Claude','#d9a01c'],['gemini','Gemini','#e05c94'],['perplexity','Perplexity','#7b55d6']].map(([key,label,color])=>({key,label,color,tracked:true}));
+function visEngines(){return window.VISIBILITY_DATA?.ai?.engines||VIS_ENGINE_DEFAULTS}
+// Live API (Cloudflare Worker) — injected by generate_reports_v2.py when configured
+function liveOn(){return !!(window.LIVE_API&&window.LIVE_API.url&&window.LIVE_API.token)}
+async function liveCall(path,payload){
+  const r=await fetch(window.LIVE_API.url.replace(/\/$/,'')+path,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({slug:window.CLIENT_DATA?.slug,token:window.LIVE_API.token,...payload})});
+  const d=await r.json().catch(()=>({error:'Unexpected response'}));
+  if(!r.ok)throw new Error(d.error||('Error '+r.status));
+  return d;
+}
+let liveResults=[];
+function liveBox(){
+  if(!liveOn())return '';
+  return `<div class="card live-box"><div class="chart-title">Test a prompt now</div>
+    <div class="vfoot" style="margin:2px 0 10px">Type any question someone might ask an AI. We'll ask every AI right now and show whether they mention you. Takes up to a minute.</div>
+    <form class="vtools" id="liveForm" style="margin:0"><input class="vsearch" id="liveInput" maxlength="300" placeholder="e.g. Where can I adopt a rescue dog near me?" style="max-width:none">
+      <button class="vbtn primary" id="liveBtn" type="submit">Check now</button></form>
+    <div id="liveStatus" class="vfoot"></div><div id="liveOut"></div></div>`;
+}
+function wireLiveBox(){
+  const f=document.getElementById('liveForm'); if(!f)return;
+  f.onsubmit=async ev=>{ev.preventDefault();
+    const q=document.getElementById('liveInput').value.trim(), btn=document.getElementById('liveBtn'), st=document.getElementById('liveStatus');
+    if(q.length<5){st.textContent='Type a full question first.';return;}
+    btn.disabled=true;btn.textContent='Checking…';st.textContent='Asking AI Overviews, AI Mode, ChatGPT, Claude, Gemini and Perplexity…';
+    try{const d=await liveCall('/check',{prompt:q});liveResults.unshift(d);st.textContent=`${d.quota.limit-d.quota.used} live checks left today.`;drawLive();}
+    catch(e){st.textContent=e.message;}
+    finally{btn.disabled=false;btn.textContent='Check now';}
+  };
+  drawLive();
+}
+function drawLive(){
+  const out=document.getElementById('liveOut'); if(!out)return;
+  const engs=visEngines().filter(e=>e.tracked);
+  out.innerHTML=liveResults.map((d,i)=>`<div class="live-res"><div class="live-q">${esc(d.prompt)} <span class="vis-in ${d.visible_in===0?'zero':d.visible_in===d.of?'ok':'some'}">${d.visible_in} / ${d.of}</span></div>
+    <div class="live-cells">${engs.map(e=>{const c=d.cells[e.key]||{state:'untracked',sites:[]},[t,k]=VIS_STATES[c.state];
+      return `<div class="live-cell"><div class="vfoot" style="margin:0 0 4px"><span class="sq" style="background:${e.color}"></span>${e.label}</div>${c.state==='untracked'?`<span class="st st-na">${t}</span>`:`<button class="st st-${k}" onclick="openLive(${i},'${e.key}')">${t}</button>`}</div>`}).join('')}</div>
+    <button class="vbtn" onclick="trackPrompts([liveResults[${i}].prompt],this)">+ Track this prompt weekly</button></div>`).join('');
+}
+window.openLive=(i,eng)=>{const d=liveResults[i];showAnswer(d.prompt,eng,d.cells[eng],'just now')};
+window.trackPrompts=async(prompts,btn)=>{
+  if(!liveOn()){
+    const subj=`AI tracking: add prompts for ${window.CLIENT_DATA?.name||''}`;
+    location.href=`mailto:${VIS_CONTACT}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent('Please start tracking these prompts:\n\n'+prompts.map(p=>'• '+p).join('\n'))}`;
+    return;
+  }
+  const label=btn.textContent;btn.disabled=true;btn.textContent='Adding…';
+  try{const d=await liveCall('/track',{prompts});
+    btn.textContent=d.added.length?`✓ Added ${d.added.length} — included from next week's update`:(d.message||'Already tracked');}
+  catch(e){btn.textContent=label;btn.disabled=false;alert(e.message);}
+};
 
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function bandPill(b){return b?`<span class="band band-${b.toLowerCase()}">${b}${b==='Poor'||b==='Moderate'||b==='Good'||b==='Great'?' visibility':''}</span>`:''}
@@ -1724,7 +1819,7 @@ function renderVisibility(){
   if(seo)document.getElementById('sbSeoBadge').textContent=seo.tracked;
   const nComp=Math.max((ai?.competitors||[]).length,(seo?.competitors||[]).length)-1;
   if(nComp>0)document.getElementById('sbCompBadge').textContent=nComp;
-  renderAI(V);renderClassic(V);renderCompetitors(V);
+  renderAI(V);renderAEO(V);renderClassic(V);renderCompetitors(V);
 }
 
 // ── AI TRACKING ──
@@ -1733,7 +1828,8 @@ function renderAI(V){
   if(!ai){
     box.innerHTML=emptyBlock('AI tracking is being set up',
       `We're adding the questions people ask ChatGPT, Gemini, Claude, Perplexity and Google's AI answers when they're looking for an organization like yours.
-       Your first AI visibility check appears here after the next weekly run.`);
+       Your first AI visibility check appears here after the next weekly run.`)+liveBox();
+    wireLiveBox();
     return;
   }
   const tracked=ai.engines.filter(e=>e.tracked).map(e=>e.label);
@@ -1759,6 +1855,7 @@ function renderAI(V){
       <div class="chart-card"><div class="chart-title">AI visibility right now</div>
         <div class="vfoot" style="margin:2px 0 14px">Prompts where you show up, out of all ${ai.prompts_n} you track</div>${nowRows||'<div class="vfoot">No engines checked yet.</div>'}</div>
     </div>
+    ${liveBox()}
     <div class="vtabs" id="aiTabs">
       <button class="vtab" data-tab="all">All AIs</button>
       ${ai.engines.filter(e=>e.tracked).map(e=>`<button class="vtab" data-tab="${e.key}">${e.label}</button>`).join('')}
@@ -1769,6 +1866,7 @@ function renderAI(V){
       AI answers vary from one check to the next, so read them as a trend. Google results via DataForSEO.</div>`;
   document.querySelectorAll('#aiTabs .vtab').forEach(b=>b.onclick=()=>{aiTab=b.dataset.tab;aiFilter='all';aiQuery='';renderAITab()});
   renderAITab();
+  wireLiveBox();
   // Trend chart
   if(visCharts.aiTrend)visCharts.aiTrend.destroy();
   const T=ai.trend;
@@ -1833,31 +1931,33 @@ window.aiExportCSV=()=>{
   ai.rows.forEach(r=>rows.push([r.prompt,...engs.map(e=>VIS_CSV_STATE[r.cells[e.key].state]),`${r.visible_in}/${r.of}`]));
   downloadCSV(`${slugName()}-ai-visibility.csv`,rows);
 };
-window.openAnswer=(idx,engine)=>{
-  const ai=window.VISIBILITY_DATA.ai, r=ai.rows[idx], c=r.cells[engine], e=ai.engines.find(x=>x.key===engine);
+window.openAnswer=(idx,engine)=>{const r=window.VISIBILITY_DATA.ai.rows[idx];showAnswer(r.prompt,engine,r.cells[engine],window.VISIBILITY_DATA.ai.checked)};
+function showAnswer(prompt,engine,c,checked){
+  const V=window.VISIBILITY_DATA||{}, ai=V.ai||{}, e=visEngines().find(x=>x.key===engine);
+  const brand=ai.brand||V.brand, domain=ai.domain||'';
   const [t,k]=VIS_STATES[c.state];
   let text=esc(c.excerpt||'')
     .replace(/\[([^\]]+)\]\((?:[^)]+)\)/g,'$1')        // [label](url) → label
     .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>')           // **bold**
     .replace(/^#{1,6}\s*/gm,'');                         // markdown headings
-  [ai.brand,ai.domain].filter(Boolean).forEach(n=>{text=text.replace(new RegExp(esc(n).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),m=>`<mark>${m}</mark>`)});
-  const compDomains=new Set(ai.competitors.filter(x=>!x.you).map(x=>x.domain));
-  document.getElementById('ansBody').innerHTML=`<div class="ans-eng"><span class="sq" style="background:${e.color}"></span>${e.label} · checked ${ai.checked}</div>
-    <div class="ans-q">${esc(r.prompt)}</div><span class="st st-${k}">${t}</span>
+  [brand,domain].filter(Boolean).forEach(n=>{text=text.replace(new RegExp(esc(n).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),m=>`<mark>${m}</mark>`)});
+  const compDomains=new Set((ai.competitors||[]).filter(x=>!x.you).map(x=>x.domain));
+  document.getElementById('ansBody').innerHTML=`<div class="ans-eng"><span class="sq" style="background:${e.color}"></span>${e.label} · checked ${esc(checked)}</div>
+    <div class="ans-q">${esc(prompt)}</div><span class="st st-${k}">${t}</span>
     ${c.state==='no_answer'?'<div class="ans-text">Google did not show an AI answer for this search.</div>':
-      c.state==='error'?`<div class="ans-text">This check failed and will be retried on the next run.</div>`:
+      c.state==='error'?`<div class="ans-text">This check failed${c.error?': '+esc(c.error):''}. It will be retried.</div>`:
       `<div class="ans-text">${text||'No answer text was saved for this check.'}${(c.excerpt||'').length>=1800?'…':''}</div>`}
-    ${c.sites.length?`<div class="vis-score-lbl">Sites cited</div>${c.sites.map(s=>`<span class="site ${s===ai.domain?'you':compDomains.has(s)?'comp':''}">${esc(s)}</span>`).join('')}`:''}`;
+    ${c.sites.length?`<div class="vis-score-lbl">Sites cited</div>${c.sites.map(s=>`<span class="site ${s===domain?'you':compDomains.has(s)?'comp':''}">${esc(s)}</span>`).join('')}`:''}`;
   document.getElementById('ansModal').classList.add('show');
-};
+}
 window.closeAnswer=()=>document.getElementById('ansModal').classList.remove('show');
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAnswer()});
 
 function renderIdeas(body){
   const ai=window.VISIBILITY_DATA.ai, I=ai.ideas||{paa:[],ai:[]};
   const item=(q,from)=>`<label class="idea"><input type="checkbox" value="${esc(q)}"><div>${esc(q)}${from?`<small>From: ${esc(from)}</small>`:''}</div></label>`;
-  body.innerHTML=`<div class="vtools"><button class="vbtn primary" id="ideaTrack" disabled>Track selected prompts</button>
-      <span class="vfoot" style="margin:0">Pick questions you'd like us to start monitoring. We'll add them at the next weekly check.</span></div>
+  body.innerHTML=`<div class="vtools">${liveOn()?'<button class="vbtn" id="ideaGen">✦ Generate AI ideas</button>':''}<button class="vbtn primary" id="ideaTrack" disabled>Track selected prompts</button>
+      <span class="vfoot" style="margin:0">Pick questions you'd like to monitor. They're checked from the next weekly update.</span></div>
     <div class="ideas-grid">
       <div class="card"><div class="chart-title">People also ask on Google</div>
         <div class="vfoot" style="margin:2px 0 12px">Questions Google shows for your keywords and prompts. Good signals of what people ask.</div>
@@ -1869,13 +1969,63 @@ function renderIdeas(body){
   const btn=document.getElementById('ideaTrack');
   const boxes=[...body.querySelectorAll('input[type=checkbox]')];
   boxes.forEach(b=>b.onchange=()=>{const n=boxes.filter(x=>x.checked).length;btn.disabled=!n;btn.textContent=n?`Track ${n} selected prompt${n>1?'s':''}`:'Track selected prompts'});
-  btn.onclick=()=>{
-    const picked=boxes.filter(x=>x.checked).map(x=>x.value);
-    const subj=`AI tracking: add prompts for ${window.CLIENT_DATA?.name||''}`;
-    const msg=`Please start tracking these prompts:\n\n${picked.map(p=>'• '+p).join('\n')}\n`;
-    location.href=`mailto:${VIS_CONTACT}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(msg)}`;
-  };
+  btn.onclick=()=>trackPrompts(boxes.filter(x=>x.checked).map(x=>x.value),btn);
+  const gen=document.getElementById('ideaGen');
+  if(gen)gen.onclick=async()=>{gen.disabled=true;gen.textContent='Generating…';
+    try{const d=await liveCall('/ideas',{});const have=new Set(I.ai.map(p=>p.toLowerCase()));
+      I.ai=[...d.prompts.filter(p=>!have.has(p.toLowerCase())),...I.ai];ai.ideas=I;renderIdeas(body);}
+    catch(e){alert(e.message);gen.disabled=false;gen.textContent='✦ Generate AI ideas';}};
 }
+
+// ── AEO ACTION PLAN + READINESS ──
+function renderAEO(V){
+  const A=V.aeo||{}, audit=A.audit, plan=A.plan, ai=V.ai;
+  // Action plan
+  const pbox=document.getElementById('planContent');
+  if(plan){
+    document.getElementById('sbPlanBadge').textContent=plan.actions.length;
+    document.getElementById('planSub').textContent=`${plan.actions.length} prompt${plan.actions.length>1?'s':''} to win · updated ${plan.generated}`;
+    const li=a=>(a||[]).map(x=>`<li>${esc(x)}</li>`).join('');
+    pbox.innerHTML=(plan.overall?`<div class="vis-summary"><h4>Strategy</h4><div style="font-size:12.5px;line-height:1.7;color:var(--gray-600)">${esc(plan.overall)}</div></div>`:'')+
+      plan.actions.map((a,i)=>`<div class="plan-card">
+        <div class="plan-top"><div class="plan-q">“${esc(a.prompt)}”</div><span class="prio prio-${esc(a.priority)}">${esc(a.priority)} priority</span></div>
+        <div class="plan-why">${esc(a.why)}</div>
+        <div class="plan-grid">
+          <div class="plan-box"><h5>Publish this page</h5>
+            <div class="plan-page">${esc(a.page_title)}</div><div class="plan-slug">/${esc(String(a.url_slug||'').replace(/^\/+/,''))}</div>
+            ${a.outline?.length?`<h5>Outline</h5><ol>${li(a.outline)}</ol>`:''}
+            ${a.faq?.length?`<h5>Answer these questions on the page</h5><ul>${li(a.faq)}</ul>`:''}
+            <div style="margin-top:10px"><button class="vbtn" onclick="copyBrief(${i},this)">Copy page brief</button></div></div>
+          <div class="plan-box">${a.sources_to_target?.length?`<h5>Get listed or mentioned on</h5>${a.sources_to_target.map(s=>`<span class="site">${esc(s)}</span>`).join('')}`:''}
+            ${a.quick_wins?.length?`<h5>Quick wins</h5><ul>${li(a.quick_wins)}</ul>`:''}</div>
+        </div></div>`).join('');
+  } else {
+    pbox.innerHTML=emptyBlock(ai?'No gaps to close right now':'Your action plan is on its way',
+      ai?'You show up in most AI answers for the prompts we track. Add more prompts in AI tracking → Prompt ideas to find new opportunities.'
+        :'After the first AI visibility check, this lists the prompts where AI recommends someone else, and exactly what to publish and where to get mentioned to change that.');
+  }
+  // Readiness audit
+  const abox=document.getElementById('auditContent');
+  if(!audit){abox.innerHTML=emptyBlock('Website check pending','Your first AEO readiness check runs with the next weekly update.');return;}
+  if(audit.status==='no_website'){abox.innerHTML=emptyBlock('Add your website',`We don't have a website on file for you yet. Send us your URL and we'll check whether AI can find, read and cite it.`);return;}
+  if(audit.status==='unreachable'){abox.innerHTML=emptyBlock('We couldn’t reach your website',`${esc(audit.error)}. We'll try again next week; if your site is up, a firewall may be blocking automated visitors, and AI crawlers too.`);return;}
+  document.getElementById('sbAuditBadge').textContent=audit.score+'%';
+  document.getElementById('auditSub').textContent=`${audit.url.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'')} · checked ${audit.checked}`;
+  const icon={pass:'✓',warn:'!',fail:'✕'};
+  const c=audit.counts, n=c.pass+c.warn+c.fail;
+  abox.innerHTML=scoreBlock('AEO readiness score',audit.score,audit.band,null,
+      `<b>${c.pass} of ${n}</b> checks pass${c.fail?`, <b>${c.fail}</b> need fixing`:''}${c.warn?`, <b>${c.warn}</b> could be better`:''}. Fixes are listed most important first.`).replace('First update','').replace(/ visibility<\/span>/,'</span>')+
+    `<div class="aeo-list">${audit.checks.map(k=>`<div class="aeo-row"><div class="aeo-ico ${k.status}">${icon[k.status]}</div><div>
+      <div class="aeo-lbl">${esc(k.label)}</div><div class="aeo-detail">${esc(k.detail)}</div>
+      ${k.fix?`<div class="aeo-fix"><b>Fix:</b> ${esc(k.fix)}</div>`:''}<div class="aeo-why">${esc(k.why)}</div></div></div>`).join('')}</div>`;
+}
+window.copyBrief=(i,btn)=>{
+  const a=window.VISIBILITY_DATA.aeo.plan.actions[i];
+  const t=[`Page: ${a.page_title}`,`URL: /${String(a.url_slug||'').replace(/^\/+/,'')}`,`Goal: be the answer AI gives for "${a.prompt}"`,'',
+    'Outline:',...(a.outline||[]).map((x,j)=>`${j+1}. ${x}`),'','FAQ to answer:',...(a.faq||[]).map(x=>`- ${x}`)].join('\n');
+  const done=()=>{btn.textContent='Copied ✓';setTimeout(()=>btn.textContent='Copy page brief',1800)};
+  try{navigator.clipboard.writeText(t).then(done,()=>prompt('Copy this brief:',t))}catch(e){prompt('Copy this brief:',t)}
+};
 
 // ── CLASSIC SEO ──
 function renderClassic(V){

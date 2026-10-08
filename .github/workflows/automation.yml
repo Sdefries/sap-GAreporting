@@ -147,6 +147,8 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
+          LIVE_API_URL: ${{ vars.LIVE_API_URL }}
+          REPORT_SIGNING_KEY: ${{ secrets.REPORT_SIGNING_KEY }}
         run: python generate_reports_v2.py
  
       - name: Validate reports

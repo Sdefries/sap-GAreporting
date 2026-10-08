@@ -359,9 +359,31 @@ def _rank_summary(positions, n):
 
 # ── ENTRY POINT ───────────────────────────────────────────────────────────────
 
+def build_aeo(client, ai_entry):
+    """AEO readiness audit + action plan (both produced by fetch_ai_visibility.py)."""
+    audit = (ai_entry or {}).get("audit")
+    plan = (ai_entry or {}).get("action_plan")
+    out = {"audit": None, "plan": None}
+    if audit:
+        checks = audit.get("checks") or []
+        out["audit"] = {
+            "status": audit.get("status"), "score": audit.get("score"), "band": band(audit.get("score")),
+            "url": audit.get("url") or client.get("website", ""), "error": audit.get("error", ""),
+            "checked": fmt_date(audit.get("checked_at", "")),
+            "checks": sorted(checks, key=lambda c: {"fail": 0, "warn": 1, "pass": 2}[c["status"]]),
+            "counts": {s: sum(1 for c in checks if c["status"] == s) for s in ("pass", "warn", "fail")},
+        }
+    if plan and plan.get("actions"):
+        order = {"high": 0, "medium": 1, "low": 2}
+        out["plan"] = {**plan, "generated": fmt_date(plan.get("generated_at", "")),
+                       "actions": sorted(plan["actions"], key=lambda a: order.get(a.get("priority"), 3))}
+    return out
+
+
 def build_visibility_data(client, ai_entry, seo_entry):
     seo_enrolled = bool(client.get("local_seo_enrolled"))
     return {
+        "aeo": build_aeo(client, ai_entry),
         "ai":  build_ai(ai_entry, seo_entry if seo_enrolled else None),
         "seo": build_seo(client, seo_entry) if seo_enrolled else None,
         "seo_enrolled": seo_enrolled,
