@@ -742,6 +742,20 @@ td{border-bottom:1px solid var(--border)}
 th,table th,.kw-table th,.lp-table th,.st-table th{text-transform:none!important;letter-spacing:0!important}
 .ga4-charts-row>*,.device-charts-row>*{min-width:0}
 .chart-card{overflow:hidden}
+.age-tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+@media(max-width:900px){.age-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.age-tile{position:relative;padding:14px 12px 16px;border-radius:10px;background:rgba(7,124,191,calc(0.05 + var(--s) * 0.18));text-align:center;overflow:hidden}
+.age-tile.top{outline:2px solid var(--blue);outline-offset:-2px}
+.age-tile-lbl{font-size:12px;font-weight:600;color:var(--gray-600)}
+.age-tile-val{font-size:18px;font-weight:600;color:var(--primary-900,#001d31);margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.age-tile-sub{font-size:12px;color:var(--gray-600)}.age-tile-conv{font-size:12px;font-weight:600;color:#16a34a;margin-top:2px}
+.age-tile-bar{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(7,124,191,.12)}.age-tile-bar>span{display:block;height:100%;width:calc(var(--s) * 100%);background:var(--blue)}
+.gender-row.four-up{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1280px){.gender-row.four-up{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.gender-row.four-up{grid-template-columns:1fr}}
+.four-up>*{min-width:0}.four-up .chart-card{padding:18px 18px}.four-up .donut-wrap{flex-wrap:wrap;gap:12px}
+/* A chart that grows to the height of the card next to it (min 220px) */
+.chart-fill{display:flex;flex-direction:column}.chart-fill>.cw{flex:1 1 0;min-height:220px;position:relative;overflow:hidden}.chart-fill>.cw>canvas{position:absolute;inset:0}
 @media(max-width:960px){.ov-link .vis-score{grid-template-columns:1fr}.topbar{height:auto;min-height:56px;flex-wrap:wrap;gap:8px;padding:10px 14px}.topbar-left{flex-wrap:wrap}}
 .kw-match{text-transform:lowercase}.kw-match::first-letter{text-transform:uppercase}
 .ph,.ph-bold{font-size:inherit;vertical-align:-0.125em}
@@ -1282,12 +1296,12 @@ function renderGA4Traffic(){
         </div>`).join('')}
     </div>
     <div class="ga4-charts-row">
-      <div class="chart-card">
-        <div class="chart-header"><div class="chart-title">Sessions Over Time</div></div>
-        <div class="cw" style="height:220px"><canvas id="ga4SessionsChart"></canvas></div>
+      <div class="chart-card chart-fill">
+        <div class="chart-header"><div class="chart-title">Sessions over time</div></div>
+        <div class="cw"><canvas id="ga4SessionsChart"></canvas></div>
       </div>
       <div class="chart-card">
-        <div class="chart-header"><div class="chart-title">Traffic by Source (UTM)</div></div>
+        <div class="chart-header"><div class="chart-title">Traffic by source (UTM)</div></div>
         <div class="utm-list" id="utmList"></div>
       </div>
     </div>`;
@@ -1367,12 +1381,12 @@ function renderGA4Devices(){
     <div class="device-charts-row">
       <div class="chart-card">
         <div class="chart-header">
-          <div class="chart-title">Sessions by Device</div>
+          <div class="chart-title">Sessions by device</div>
         </div>
-        <div class="cw" style="height:200px"><canvas id="ga4DeviceChart"></canvas></div>
+        <div class="cw" style="height:170px"><canvas id="ga4DeviceChart"></canvas></div>
       </div>
       <div class="chart-card">
-        <div class="chart-header"><div class="chart-title">Browser Breakdown</div></div>
+        <div class="chart-header"><div class="chart-title">Browser breakdown</div></div>
         <div class="browser-list" id="browserList"></div>
       </div>
     </div>`;
@@ -1425,31 +1439,27 @@ function renderGA4Demographics(){
     <div class="demo-section-lbl">Gender</div>
     <div class="gender-row">
       <div class="chart-card">
-        <div class="chart-header"><div class="chart-title">Gender Split</div></div>
+        <div class="chart-header"><div class="chart-title">Gender split</div></div>
         <div class="donut-wrap" style="margin-top:8px">
           <div class="cw" style="height:130px;width:130px;flex-shrink:0"><canvas id="ga4GenderDonut"></canvas></div>
           <div class="donut-legend" id="genderLegend"></div>
         </div>
       </div>
       <div class="chart-card">
-        <div class="chart-header"><div class="chart-title">Gender Engagement Comparison</div></div>
-        <div class="cw" style="height:160px"><canvas id="ga4GenderChart"></canvas></div>
+        <div class="chart-header"><div class="chart-title">Gender engagement</div></div>
+        <div class="cw" style="height:170px"><canvas id="ga4GenderChart"></canvas></div>
       </div>
     </div>
-    <div class="demo-section-lbl" style="margin-top:6px">Age Demographics</div>
-    <div class="age-row">
-      <div class="chart-card">
-        <div class="chart-header">
-          <div class="chart-title">Sessions by Age</div>
-        </div>
-        <div class="cw" style="height:180px"><canvas id="ga4AgeChart"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-header"><div class="chart-title">Age Group Share</div></div>
-        <div class="age-share-list" id="ageShareList"></div>
-      </div>
-    </div>
-    ${unknown?.share?`<div class="vfoot" style="margin-top:8px">Age is known for ${Math.round(100-unknown.share)}% of visitors. Google only knows age and gender for visitors signed in to Google with Google signals turned on, so shares above are of those visitors.</div>`:''}`;
+    <div class="chart-card" style="margin-top:14px">
+      <div class="chart-header"><div class="chart-title">Age</div></div>
+      <div class="age-tiles">${ages.map(a=>`<div class="age-tile${a.known_share===maxShare?' top':''}" style="--s:${(a.known_share/maxShare).toFixed(2)}">
+        <div class="age-tile-lbl">${a.age}</div>
+        <div class="age-tile-val">${a.known_share}%</div>
+        <div class="age-tile-sub">${fmtN(a.sessions||0)} visits</div>
+        ${a.conv_rate!=null?`<div class="age-tile-conv">${a.conv_rate}% convert</div>`:''}
+        <div class="age-tile-bar"><span></span></div></div>`).join('')}</div>
+    ${unknown?.share?`<div class="vfoot" style="margin-top:8px">Age is known for ${Math.round(100-unknown.share)}% of visitors. Google only knows age and gender for visitors signed in to Google with Google signals on, so shares are of those visitors.</div>`:''}
+    </div>`;
 
   // Gender donut
   const genders = demo.gender || [];
@@ -1482,23 +1492,12 @@ function renderGA4Demographics(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:legendBottom},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>v+"%"},grid:gl,beginAtZero:true,max:100}}}
   });
 
-  // Sessions by age (known ages only); conversion rate in the tooltip
-  charts.ga4age = new Chart(document.getElementById('ga4AgeChart'),{
-    type:'bar',
-    data:{labels:ages.map(a=>a.age),datasets:[{label:'Sessions',data:ages.map(a=>a.sessions||0),backgroundColor:CC.blue,...barMark}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
-      tooltip:{callbacks:{afterLabel:c=>{const r=ages[c.dataIndex].conv_rate;return r!=null?`${r}% of sessions converted`:''}}}},
-      scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,precision:0},grid:gl,beginAtZero:true}}}
-  });
-
-  // Age share bars (of visitors whose age is known)
-  document.getElementById('ageShareList').innerHTML = ages.map(a=>`
-    <div class="age-share-item">
-      <span class="age-lbl">${a.age}</span>
-      <div class="age-bar-wrap"><div class="age-bar-fill" style="width:${a.known_share/maxShare*100}%;background:${CC.blue}"></div></div>
-      <span class="age-pct">${a.known_share}%</span>
-      <span class="age-conv">${a.conv_rate!=null?a.conv_rate+'% convert':''}</span>
-    </div>`).join('');
+  // Devices and gender side by side: one row of four compact cards
+  const devRow=document.querySelector('#ga4DevicesContent .device-charts-row'), gRow=container.querySelector('.gender-row');
+  if(devRow&&gRow){
+    gRow.prepend(...devRow.children); devRow.remove(); gRow.classList.add('four-up');
+    const lbl=container.querySelector('.demo-section-lbl'); if(lbl)lbl.textContent='Devices & gender';
+  }
 }
 
 // ── IMPRESSION SHARE EXPLAINER ──
@@ -2843,15 +2842,15 @@ const HELP={
   'Missed: budget':'Searches where your ad didn\'t show because the daily budget had run out. For an Ad Grant this usually means the grant is being fully used.',
   'Landing pages':'The website pages people land on first, with how engaged they are and whether they convert. From Google Analytics.',
   'Website traffic overview':'All website visits from Google Analytics, from every source, not only ads.',
-  'Sessions Over Time':'Website visits per day.',
-  'Traffic by Source (UTM)':'Where website visits come from, such as Google, email or social.',
+  'Sessions over time':'Website visits per day.',
+  'Traffic by source (UTM)':'Where website visits come from, such as Google, email or social.',
   'Device performance':'How website visitors on mobile, desktop and tablet behave.',
-  'Sessions by Device':'Visits and conversions from each type of device.',
-  'Browser Breakdown':'Which web browsers visitors use.',
+  'Sessions by device':'Visits and conversions from each type of device.',
+  'Browser breakdown':'Which web browsers visitors use.',
   'Audience demographics':'Age and gender of website visitors, as estimated by Google Analytics.',
-  'Gender Split':'Share of visitors by gender, as estimated by Google.',
-  'Gender Engagement Comparison':'How engaged visitors of each gender are.',
-  'Sessions by Age':'Visits and conversions by age group.',
+  'Gender split':'Share of visitors by gender, as estimated by Google.',
+  'Gender engagement':'How engaged visitors of each gender are.',
+  'Age':'Visits and conversions by age group.',
   'Age Group Share':'Share of visitors in each age group.',
   'Audience location':'Where website visitors are, by state and city.',
   'Top states':'States sending the most visits.',

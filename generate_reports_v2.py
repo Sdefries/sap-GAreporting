@@ -320,9 +320,10 @@ def build_ga4_data(ga4):
             "sessions":        safe_int(d.get("sessions")),
             "users":           safe_int(d.get("users") or d.get("totalUsers")),
             "conversions":     safe_int(d.get("conversions")),
-            "engagement_rate": round(safe_float(d.get("engagement_rate") or d.get("engagementRate")) * 100, 1),
+            # fetch_ga4 stores these as percentages already; raw GA4 rows are 0–1
+            "engagement_rate": round(safe_float(d["engagement_rate"]) if "engagement_rate" in d else safe_float(d.get("engagementRate")) * 100, 1),
             "avg_time":        _fmt_duration(d.get("avg_time") or d.get("averageSessionDuration")),
-            "bounce_rate":     round(safe_float(d.get("bounce_rate") or d.get("bounceRate")) * 100, 1),
+            "bounce_rate":     round(safe_float(d["bounce_rate"]) if "bounce_rate" in d else safe_float(d.get("bounceRate")) * 100, 1),
             "share":           round(safe_float(d.get("share") or d.get("pct", 0)), 1),
         }
 
@@ -359,8 +360,9 @@ def build_ga4_data(ga4):
                 {
                     "age":         a.get("age") or a.get("ageGroup", "Unknown"),
                     "sessions":    safe_int(a.get("sessions")),
-                    "conversions": safe_int(a.get("conversions")),
                     "share":       round(safe_float(a.get("share") or a.get("pct", 0)), 1),
+                    # share of sessions that converted (%); absent in older caches
+                    **({"conv_rate": round(safe_float(a["conv_rate"]), 1)} if a.get("conv_rate") is not None else {}),
                 }
                 for a in age_raw
             ],
