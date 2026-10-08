@@ -54,7 +54,7 @@ def dfs(endpoint, task):
 
 def score(rank):
     """DataForSEO rank is 0–1000; show it on the familiar 0–100 scale."""
-    return round((rank or 0) / 10)
+    return round(rank / 10) if rank is not None else None  # None = no data, not 0
 
 
 def summary(domain):
@@ -68,7 +68,7 @@ def summary(domain):
 def history(domain):
     start = (datetime.date.today().replace(day=1) - datetime.timedelta(days=365)).isoformat()
     items = dfs("backlinks/history/live", {"target": domain, "date_from": start}).get("items") or []
-    return [{"date": (it.get("date") or "")[:10], "authority": score(it.get("rank")),
+    return [{"date": (it.get("date") or "")[:10], "authority": score(it.get("rank")) or 0,
              "referring_domains": it.get("referring_domains", 0), "backlinks": it.get("backlinks", 0)}
             for it in items]
 
@@ -87,7 +87,7 @@ def referring_domains(domain):
         links = it.get("backlinks", 0)
         dofollow = it.get("dofollow") if it.get("dofollow") is not None else max(0, links - nofollow)
         out.append({
-            "domain": d, "authority": score(it.get("rank")), "links": links, "followed": dofollow,
+            "domain": d, "authority": score(it.get("rank")) or 0, "links": links, "followed": dofollow,
             "spam": (it.get("backlinks_spam_score") or 0) >= MAX_SPAM,
             "spam_score": it.get("backlinks_spam_score"),
             "first_seen": (it.get("first_seen") or "")[:10], "lost": (it.get("lost_date") or "")[:10] or None,

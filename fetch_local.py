@@ -155,13 +155,15 @@ def map_pack(keyword, location_name, biz, cfg, want_domain):
 
 
 def keyword_stats(grid):
-    flat = [r for row in grid for r in row]
+    """-1 marks a point whose check failed; it's left out of every stat."""
+    failed = sum(1 for row in grid for r in row if r == -1)
+    flat = [r for row in grid for r in row if r != -1]
     found = [r for r in flat if r]
     return {
         "solv": round(sum(1 for r in found if r <= 3) / len(flat) * 100) if flat else 0,
         "arp": round(sum(found) / len(found), 1) if found else None,
         "atrp": round(sum(r or NOT_FOUND for r in flat) / len(flat), 1) if flat else None,
-        "found": len(found), "points": len(flat),
+        "found": len(found), "points": len(flat), "failed": failed,
     }
 
 
@@ -184,7 +186,7 @@ def fetch_client(client, cache, dry_run=False):
     slug = client["slug"]
     cfg.setdefault("business_name", client["name"])
     keywords = (cfg.get("keywords") or [])[:5]
-    n = max(3, min(9, int(cfg.get("grid", 7)) | 1))
+    n = max(3, min(7, int(cfg.get("grid", 7)) | 1))  # same limits as grid_points
     spacing = float(cfg.get("spacing_miles") or (2 * float(cfg["radius_miles"]) / (n - 1) if cfg.get("radius_miles") else 1))
     radius = spacing * (n - 1) / 2
     modes = cfg.get("modes") or ["heat_map", "map_pack", "google_maps"]
@@ -246,8 +248,12 @@ def fetch_client(client, cache, dry_run=False):
                         res = maps_results(kw, {"location_coordinate": f"{plat},{plng},{zoom}z"}, biz, cfg, want_domain)
                     except Exception as e:
                         print(f"     {kw} @ {plat},{plng}: {str(e)[:80]}")
-                        res = []
+                        res = None  # check failed: not the same as "not in the top 20"
                     ids = []
+                    if res is None:
+                        g_row.append(-1)
+                        p_row.append([])
+                        continue
                     for r in res:
                         key = r["place_id"] or norm(r["title"])
                         if key not in index:

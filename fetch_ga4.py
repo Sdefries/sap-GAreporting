@@ -35,6 +35,9 @@ def get_client():
 
 
 # ── HELPERS ───────────────────────────────────────────────────────────────────
+API_ERRORS = [0]  # errors during the current client's fetch
+
+
 def run_report(client, property_id, dimensions, metrics, date_range, limit=50):
     """Run a GA4 report and return rows as list of dicts."""
     request = RunReportRequest(
@@ -48,6 +51,7 @@ def run_report(client, property_id, dimensions, metrics, date_range, limit=50):
         response = client.run_report(request)
     except Exception as e:
         print(f"    ⚠ Report error ({dimensions}): {e}")
+        API_ERRORS[0] += 1
         return []
     rows = []
     for row in response.rows:
@@ -96,6 +100,7 @@ def fetch_overview(client, property_id, start_date, end_date):
         response = client.run_report(request)
     except Exception as e:
         print(f"    ⚠ Overview error: {e}")
+        API_ERRORS[0] += 1
         return {}
     if not response.rows:
         return {}
@@ -108,7 +113,7 @@ def fetch_overview_with_deltas(client, property_id):
     Fetch 30-day overview + prior 30-day overview and compute % deltas.
     Returns a merged dict with both values and delta keys.
     """
-    current = fetch_overview(client, property_id, "30daysAgo", "today")
+    current = fetch_overview(client, property_id, "30daysAgo", "yesterday")
     prior   = fetch_overview(client, property_id, "60daysAgo", "31daysAgo")
     if not current:
         return {}
@@ -138,7 +143,7 @@ def fetch_sessions_trend(client, property_id, days=30):
         client, property_id,
         dimensions=["date"],
         metrics=["sessions"],
-        date_range=(f"{days}daysAgo", "today"),
+        date_range=(f"{days}daysAgo", "yesterday"),
         limit=days + 5
     )
     trend = []
@@ -162,7 +167,7 @@ def fetch_utm_sources(client, property_id):
         client, property_id,
         dimensions=["sessionSource", "sessionMedium"],
         metrics=["sessions"],
-        date_range=("30daysAgo", "today"),
+        date_range=("30daysAgo", "yesterday"),
         limit=20
     )
     # Filter junk
@@ -228,12 +233,12 @@ def fetch_ai_referrals(client, property_id):
             o["conversions"] += safe_int(safe_float(r.get("conversions")))
         return out
 
-    cur = by_source("30daysAgo", "today")
+    cur = by_source("30daysAgo", "yesterday")
     prior = by_source("60daysAgo", "31daysAgo")
 
     weekly = {}
     for r in run_report(client, property_id, ["isoYearIsoWeek", "sessionSource"], ["sessions"],
-                        ("83daysAgo", "today"), limit=10000):
+                        ("83daysAgo", "yesterday"), limit=10000):
         label = ai_source(r.get("sessionSource"))
         if label:
             w = weekly.setdefault(r["isoYearIsoWeek"], {})
@@ -241,7 +246,7 @@ def fetch_ai_referrals(client, property_id):
 
     pages = {}
     for r in run_report(client, property_id, ["sessionSource", "landingPage"], ["sessions"],
-                        ("30daysAgo", "today"), limit=2000):
+                        ("30daysAgo", "yesterday"), limit=2000):
         label = ai_source(r.get("sessionSource"))
         if label:
             p = pages.setdefault(r.get("landingPage") or "/", {"page": r.get("landingPage") or "/", "sessions": 0, "sources": {}})
@@ -265,7 +270,7 @@ def fetch_devices(client, property_id):
         dimensions=["deviceCategory"],
         metrics=["sessions", "totalUsers", "conversions",
                  "engagementRate", "averageSessionDuration", "bounceRate"],
-        date_range=("30daysAgo", "today"),
+        date_range=("30daysAgo", "yesterday"),
         limit=10
     )
     total_sessions = sum(safe_int(r.get("sessions", 0)) for r in rows) or 1
@@ -301,7 +306,7 @@ def fetch_browsers(client, property_id):
         client, property_id,
         dimensions=["browser"],
         metrics=["sessions"],
-        date_range=("30daysAgo", "today"),
+        date_range=("30daysAgo", "yesterday"),
         limit=10
     )
     rows = [r for r in rows if r.get("browser", "") not in ("(not set)", "")]
@@ -322,7 +327,7 @@ def run_report_rate(client, property_id, dimensions, extra_metrics, limit=10):
     Returns rows with a "conv_rate" key (0–1)."""
     for rate in ("sessionKeyEventRate", "sessionConversionRate"):
         rows = run_report(client, property_id, dimensions=dimensions, metrics=extra_metrics + [rate],
-                          date_range=("30daysAgo", "today"), limit=limit)
+                          date_range=("30daysAgo", "yesterday"), limit=limit)
         if rows:
             for r in rows:
                 r["conv_rate"] = safe_float(r.pop(rate, 0))
@@ -340,7 +345,7 @@ def fetch_gender(client, property_id):
             client, property_id,
             dimensions=["userGender"],
             metrics=["sessions"],
-            date_range=("30daysAgo", "today"),
+            date_range=("30daysAgo", "yesterday"),
             limit=10
         )
     except Exception as e:
@@ -436,7 +441,7 @@ def fetch_landing_pages(client, property_id):
     if not rows:  # property without the rate metrics
         rows = run_report(client, property_id, dimensions=["landingPage"],
                           metrics=["sessions", "averageSessionDuration", "bounceRate", "engagementRate", "conversions"],
-                          date_range=("30daysAgo", "today"), limit=50)
+                          date_range=("30daysAgo", "yesterday"), limit=50)
     rows.sort(key=lambda x: safe_int(x.get("sessions", 0)), reverse=True)
     rows = rows[:25]
     prev = {r.get("landingPage"): safe_int(r.get("sessions", 0)) for r in run_report(
@@ -444,12 +449,13 @@ def fetch_landing_pages(client, property_id):
         date_range=("60daysAgo", "31daysAgo"), limit=200)}
     channels = {}
     for r in run_report(client, property_id, dimensions=["landingPage", "sessionDefaultChannelGroup"],
-                        metrics=["sessions"], date_range=("30daysAgo", "today"), limit=500):
+                        metrics=["sessions"], date_range=("30daysAgo", "yesterday"), limit=500):
         page, n = r.get("landingPage"), safe_int(r.get("sessions", 0))
         if n > channels.get(page, ("", 0))[1]:
             channels[page] = (r.get("sessionDefaultChannelGroup") or "", n)
     for r in rows:
-        r["prev_sessions"] = prev.get(r.get("landingPage"))
+        # No row last period means 0 visits then (only when that report worked)
+        r["prev_sessions"] = prev.get(r.get("landingPage"), 0) if prev else None
         r["top_channel"] = channels.get(r.get("landingPage"), ("", 0))[0]
     return rows
 
@@ -459,7 +465,7 @@ def fetch_states(client, property_id):
         client, property_id,
         dimensions=["region"],
         metrics=["sessions", "totalUsers"],
-        date_range=("30daysAgo", "today"),
+        date_range=("30daysAgo", "yesterday"),
         limit=15
     )
     rows = [r for r in rows if r.get("region") not in ("(not set)", "")]
@@ -472,7 +478,7 @@ def fetch_cities(client, property_id):
         client, property_id,
         dimensions=["city", "region"],
         metrics=["sessions", "totalUsers"],
-        date_range=("30daysAgo", "today"),
+        date_range=("30daysAgo", "yesterday"),
         limit=15
     )
     rows = [r for r in rows if r.get("city") not in ("(not set)", "")]
@@ -485,7 +491,7 @@ def fetch_channels(client, property_id):
         client, property_id,
         dimensions=["sessionDefaultChannelGroup"],
         metrics=["sessions", "totalUsers", "conversions"],
-        date_range=("30daysAgo", "today"),
+        date_range=("30daysAgo", "yesterday"),
         limit=15
     )
     rows.sort(key=lambda x: safe_int(x.get("sessions", 0)), reverse=True)
@@ -511,7 +517,14 @@ def main():
     print("Initializing GA4 Data API client...")
     client = get_client()
 
-    cache = {}
+    # Start from last run's data: if a client's fetch hits API errors, sections
+    # that came back empty keep their previous values (marked stale) instead
+    # of turning a good report blank.
+    try:
+        previous = json.load(open("ga4_cache.json"))
+    except Exception:
+        previous = {}
+    cache = {k: v for k, v in previous.items() if k != "_meta"}
     clients_fetched = 0
 
     for info in clients:
@@ -525,12 +538,13 @@ def main():
             continue
 
         print(f"\nFetching {slug} (GA4: {ga4_id})...")
+        API_ERRORS[0] = 0
 
         try:
             # ── Core metrics ─────────────────────────────────────────────────
             print("  overview...")
             overview_30d = fetch_overview_with_deltas(client, ga4_id)
-            overview_7d  = fetch_overview(client, ga4_id, "7daysAgo", "today")
+            overview_7d  = fetch_overview(client, ga4_id, "7daysAgo", "yesterday")
 
             # ── Traffic over time ────────────────────────────────────────────
             print("  sessions trend...")
@@ -617,6 +631,18 @@ def main():
                 "cities":         [],
                 "channels":       [],
             }
+
+        # Errors this run: keep last good values for anything that came back empty
+        old = previous.get(slug) or {}
+        new = cache[slug]
+        if (API_ERRORS[0] or new.get("error")) and old and not old.get("error"):
+            stale = [k for k, v in old.items()
+                     if k not in ("fetched_at", "error", "stale", "ga4_id", "client") and v and not new.get(k)]
+            for k in stale:
+                new[k] = old[k]
+            new["stale"] = stale
+            new.pop("error", None)
+            print(f"  ↺ API errors — kept last good data for: {', '.join(stale) or 'nothing'}")
 
     cache["_meta"] = {
         "fetched_at":      datetime.utcnow().isoformat(),

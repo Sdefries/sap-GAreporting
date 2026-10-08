@@ -282,7 +282,9 @@ def fetch_client(client, cache, fetcher=fetch):
     except Exception as e:
         print(f"     notes skipped: {str(e)[:100]}")
     cutoff = (datetime.date.today() - datetime.timedelta(days=KEEP_DAYS)).isoformat()
-    old = [e for e in entry.get("changes") or [] if e["date"] >= cutoff and e["date"] != today]
+    seen = {(e["domain"], e["kind"], e["url"]) for e in events}
+    old = [e for e in entry.get("changes") or [] if e["date"] >= cutoff
+           and not (e["date"] == today and (e["domain"], e["kind"], e["url"]) in seen)]
     cache[slug] = {"checked_at": datetime.datetime.now().isoformat(timespec="seconds"),
                    "sites": sites, "changes": (events + old)[:400]}
     return True

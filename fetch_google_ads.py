@@ -139,7 +139,7 @@ GAQL_DAY_OF_WEEK = """
         metrics.conversions
     FROM campaign
     WHERE segments.date DURING LAST_30_DAYS
-    AND campaign.status = 'ENABLED'
+    AND campaign.status != 'REMOVED'
 """
 
 # Hour of day performance
@@ -153,7 +153,7 @@ GAQL_HOUR_OF_DAY = """
         metrics.conversions
     FROM campaign
     WHERE segments.date DURING LAST_30_DAYS
-    AND campaign.status = 'ENABLED'
+    AND campaign.status != 'REMOVED'
 """
 
 # Device performance (real split; replaces the old fixed 65/32/3 estimate)
@@ -177,7 +177,7 @@ GAQL_DEVICES = """
         metrics.conversions
     FROM campaign
     WHERE segments.date DURING {range}
-    AND campaign.status = 'ENABLED'
+    AND campaign.status != 'REMOVED'
 """
 
 # Search terms (actual queries)
@@ -198,9 +198,12 @@ GAQL_SEARCH_TERMS = """
 
 # ── FETCH FUNCTIONS ──────────────────────────────────────────────────────
 
+ADS_ERRORS = [0]  # API errors during the current account's fetch
+
+
 def safe_pct(val):
     """Convert fraction to percentage, handle None/missing."""
-    if val is None or val == 0:
+    if val is None:
         return None
     return round(float(val) * 100, 1)
 
@@ -229,10 +232,12 @@ def fetch_campaigns(client, customer_id_clean: str, original_id: str, query: str
             })
         return rows
     except GoogleAdsException as ex:
+        ADS_ERRORS[0] += 1
         for error in ex.failure.errors:
             print(f"    campaigns ({date_range}) error: {error.message}")
         return []
     except Exception as e:
+        ADS_ERRORS[0] += 1
         print(f"    campaigns ({date_range}) unexpected: {e}")
         return []
 
@@ -270,10 +275,12 @@ def fetch_keywords(client, customer_id_clean: str, original_id: str) -> list:
             })
         return rows
     except GoogleAdsException as ex:
+        ADS_ERRORS[0] += 1
         for error in ex.failure.errors:
             print(f"    keywords error: {error.message}")
         return []
     except Exception as e:
+        ADS_ERRORS[0] += 1
         print(f"    keywords unexpected: {e}")
         return []
 
@@ -320,10 +327,12 @@ def fetch_ads(client, customer_id_clean: str, original_id: str) -> list:
             })
         return rows
     except GoogleAdsException as ex:
+        ADS_ERRORS[0] += 1
         for error in ex.failure.errors:
             print(f"    ads error: {error.message}")
         return []
     except Exception as e:
+        ADS_ERRORS[0] += 1
         print(f"    ads unexpected: {e}")
         return []
 
@@ -363,10 +372,12 @@ def fetch_day_of_week(client, customer_id_clean: str, original_id: str) -> list:
             result.append(d)
         return result
     except GoogleAdsException as ex:
+        ADS_ERRORS[0] += 1
         for error in ex.failure.errors:
             print(f"    day_of_week error: {error.message}")
         return []
     except Exception as e:
+        ADS_ERRORS[0] += 1
         print(f"    day_of_week unexpected: {e}")
         return []
 
@@ -385,9 +396,11 @@ def fetch_daily(client, customer_id_clean: str, original_id: str) -> list:
                          "cost": round(float(row.metrics.cost_micros) / 1_000_000, 2),
                          "cv": round(float(row.metrics.conversions), 2)})
     except GoogleAdsException as ex:
+        ADS_ERRORS[0] += 1
         for error in ex.failure.errors:
             print(f"    daily error: {error.message}")
     except Exception as e:
+        ADS_ERRORS[0] += 1
         print(f"    daily unexpected: {e}")
     return sorted(days, key=lambda d: d["date"])
 
@@ -409,10 +422,12 @@ def fetch_devices(client, customer_id_clean: str, original_id: str) -> dict:
                 d["cost"] += float(row.metrics.cost_micros) / 1_000_000
                 d["cv"] += float(row.metrics.conversions)
         except GoogleAdsException as ex:
+            ADS_ERRORS[0] += 1
             for error in ex.failure.errors:
                 print(f"    devices error: {error.message}")
             continue
         except Exception as e:
+            ADS_ERRORS[0] += 1
             print(f"    devices unexpected: {e}")
             continue
         rows = sorted(devices.values(), key=lambda d: d["cl"], reverse=True)
@@ -451,10 +466,12 @@ def fetch_hour_of_day(client, customer_id_clean: str, original_id: str) -> list:
             result.append(d)
         return result
     except GoogleAdsException as ex:
+        ADS_ERRORS[0] += 1
         for error in ex.failure.errors:
             print(f"    hour_of_day error: {error.message}")
         return []
     except Exception as e:
+        ADS_ERRORS[0] += 1
         print(f"    hour_of_day unexpected: {e}")
         return []
 
@@ -486,10 +503,12 @@ def fetch_search_terms(client, customer_id_clean: str, original_id: str) -> list
             })
         return rows
     except GoogleAdsException as ex:
+        ADS_ERRORS[0] += 1
         for error in ex.failure.errors:
             print(f"    search_terms error: {error.message}")
         return []
     except Exception as e:
+        ADS_ERRORS[0] += 1
         print(f"    search_terms unexpected: {e}")
         return []
 
@@ -507,9 +526,16 @@ def run():
     try:
         client = GoogleAdsClient.load_from_storage("google-ads.yaml")
     except Exception as e:
+        ADS_ERRORS[0] += 1
         print(f"ERROR loading credentials: {e}")
         sys.exit(1)
 
+    # Last run's data: if an account's fetch hits API errors, anything that came
+    # back empty keeps its previous value instead of blanking the report.
+    try:
+        previous = json.load(open("google_ads_cache.json"))
+    except Exception:
+        previous = {}
     cache = {
         "_meta": {
             "fetched_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -520,6 +546,7 @@ def run():
 
     for clean_id, original_id in ACCOUNT_MAP.items():
         print(f"  {original_id}:")
+        ADS_ERRORS[0] = 0
         
         # Campaign data (30d + 7d)
         campaigns_30d = fetch_campaigns(client, clean_id, original_id, GAQL_CAMPAIGNS_30D, "30d")
@@ -564,6 +591,15 @@ def run():
         cache[f"{original_id}_search_terms"] = search_terms
         cache[f"{original_id}_devices"] = devices
         cache[f"{original_id}_daily"] = daily
+
+        if ADS_ERRORS[0]:
+            stale = []
+            for key in [k for k in list(cache) if k == original_id or k.startswith(f"{original_id}_")]:
+                if not cache[key] and previous.get(key):
+                    cache[key] = previous[key]
+                    stale.append(key.replace(f"{original_id}_", "") or "campaigns")
+            cache[f"{original_id}_stale"] = stale
+            print(f"    ↺ {ADS_ERRORS[0]} API errors — kept last good data for: {', '.join(stale) or 'nothing'}")
 
     with open("google_ads_cache.json", "w") as f:
         json.dump(cache, f, indent=2)

@@ -70,6 +70,11 @@ else:
 
 # ── PAGESPEED INSIGHTS ────────────────────────────────────────────────────────
 
+def _score(cats, key):
+    v = (cats.get(key) or {}).get("score")
+    return round(v * 100) if v is not None else None
+
+
 def fetch_pagespeed(url, strategy="mobile"):
     """
     Returns Core Web Vitals and performance score.
@@ -110,10 +115,11 @@ def fetch_pagespeed(url, strategy="mobile"):
 
         result = {
             "strategy":           strategy,
-            "performance_score":  round((cats.get("performance", {}).get("score") or 0) * 100),
-            "seo_score":          round((cats.get("seo", {}).get("score") or 0) * 100),
-            "best_practices":     round((cats.get("best-practices", {}).get("score") or 0) * 100),
-            "accessibility":      round((cats.get("accessibility", {}).get("score") or 0) * 100),
+            # None when Lighthouse couldn't score it (shown as "—", not 0)
+            "performance_score":  _score(cats, "performance"),
+            "seo_score":          _score(cats, "seo"),
+            "best_practices":     _score(cats, "best-practices"),
+            "accessibility":      _score(cats, "accessibility"),
         }
 
         # Core Web Vitals
@@ -180,8 +186,9 @@ def fetch_search_console(property_url, days=30):
         creds = search_console_credentials()
         if creds is None:
             return {}
-        end_date   = datetime.date.today()
-        start_date = end_date - datetime.timedelta(days=days)
+        # Search Console lags 2–3 days: use the latest complete days
+        end_date   = datetime.date.today() - datetime.timedelta(days=3)
+        start_date = end_date - datetime.timedelta(days=days - 1)
 
         headers = {
             "Authorization": f"Bearer {creds.token}",
@@ -462,7 +469,7 @@ def fetch_keyword_rankings(keywords, domain, location="United States", competito
                             ai_sources.append(d)
                     refs = json.dumps(item)
                     ai_overview_cited = bool(re.search(
-                        r'"(?:url|domain)": "(?:https?://)?(?:www\.)?' + re.escape(domain), refs))
+                        r'"(?:url|domain)": "(?:https?://)?(?:www\.)?' + re.escape(domain) + r'(?:[/"?#:]|$)', refs))
 
                 if item_type == "people_also_ask":
                     paa += [el.get("title") for el in item.get("items") or [] if el.get("title")]

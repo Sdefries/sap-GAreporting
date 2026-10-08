@@ -630,8 +630,8 @@ def auth_band(v):
 
 def build_authority(client, entry):
     """Backlink authority (fetch_authority.py) with a plain-English summary."""
-    if not entry or not entry.get("summary"):
-        return None
+    if not entry or not entry.get("summary") or entry["summary"].get("authority") is None:
+        return None  # no score from DataForSEO yet: show the empty state, not 0
     brand = brand_names(client)[0]
     sm, hist, prev = entry["summary"], entry.get("history") or [], entry.get("previous") or {}
     a, rd = sm["authority"], sm["referring_domains"]
@@ -662,10 +662,6 @@ def build_authority(client, entry):
         bullets.append(f'<b>{entry["spam_count"]} linking sites are flagged as spam.</b> Spam links are left out of these counts; '
                        f'a lot of them usually means bought link packages, which can hold rankings back.')
     extra = ""
-    if raw.get("new") or raw.get("lost"):
-        sn, sl = max(0, raw.get("new", 0) - nl["new"]), max(0, raw.get("lost", 0) - nl["lost"])
-        if sn or sl:
-            extra = f", plus {sn} spam sites gained and {sl} lost that don't count"
     bullets.append(f'In the last 30 days {escape(brand)} gained {nl["new"]} real linking site{"s" if nl["new"] != 1 else ""} '
                    f'and lost {nl["lost"]}{extra}.')
     target = 10 if a < 10 else 30 if a < 30 else 50 if a < 50 else a + 5

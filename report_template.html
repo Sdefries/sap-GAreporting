@@ -1349,8 +1349,8 @@ function renderGA4Traffic(){
     <div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
         <div>
-          <div class="utm-row-name">${s.name}</div>
-          <div class="utm-row-tag">${s.utm||''}</div>
+          <div class="utm-row-name">${esc(s.name)}</div>
+          <div class="utm-row-tag">${esc(s.utm||'')}</div>
         </div>
         <div class="utm-row-right">
           <span class="utm-pct" style="color:${utmColors[i]||'#9EABBE'}">${s.pct}%</span>
@@ -1701,7 +1701,7 @@ function render(){
   d.campaigns.forEach(c=>{
     const ctrCls=c.ctr>=5?'ct-g':c.ctr>=2?'ct-a':'ct-b';
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td class="tn" title="${c.n}">${c.n}</td>
+    tr.innerHTML=`<td class="tn" title="${esc(c.n)}">${esc(c.n)}</td>
       <td><span class="stag ${c.s==='ENABLED'?'st-e':'st-p'}">${c.s.toLowerCase()}</span></td>
       <td><span class="ctag ${ctrCls}">${fmtPct(c.ctr)}</span></td>
       <td>${fmtN(c.cl)}</td><td>${fmtN(c.im)}</td><td>${fmt$(c.cost)}</td>
@@ -1865,9 +1865,9 @@ function render(){
     const ctrClass=ctr=>ctr>=5?'good':ctr>=3?'warn':'bad';
     const qsClass=qs=>qs===null?'na':qs>=7?'high':qs>=4?'med':'low';
     const matchShort=m=>({EXACT:'Exact',PHRASE:'Phrase',BROAD:'Broad'}[m]||m||'—');
-    document.getElementById('topKeywordsBody').innerHTML=kwData.top_performers.slice(0,8).map(k=>`<tr><td class="kw-keyword" title="${k.keyword}">${k.keyword}</td><td><span class="kw-match">${matchShort(k.match_type)}</span></td><td>${fmtN(k.clicks)}</td><td class="kw-ctr ${ctrClass(k.ctr)}">${(k.ctr||0).toFixed(1)}%</td><td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score||'—'}</span></td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--gray-400)">No data</td></tr>';
+    document.getElementById('topKeywordsBody').innerHTML=kwData.top_performers.slice(0,8).map(k=>`<tr><td class="kw-keyword" title="${esc(k.keyword)}">${esc(k.keyword)}</td><td><span class="kw-match">${matchShort(k.match_type)}</span></td><td>${fmtN(k.clicks)}</td><td class="kw-ctr ${ctrClass(k.ctr)}">${(k.ctr||0).toFixed(1)}%</td><td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score||'—'}</span></td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--gray-400)">No data</td></tr>';
     const lowKW=kwData.compliance_risks.slice(0,8);
-    document.getElementById('lowCtrKeywordsBody').innerHTML=lowKW.length>0?lowKW.map(k=>`<tr><td class="kw-keyword" title="${k.keyword}">${k.keyword}</td><td><span class="kw-match">${matchShort(k.match_type)}</span></td><td>${fmtN(k.impressions)}</td><td class="kw-ctr bad">${(k.ctr||0).toFixed(1)}%</td><td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score||'—'}</span></td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--green)">✓ No compliance risks</td></tr>';
+    document.getElementById('lowCtrKeywordsBody').innerHTML=lowKW.length>0?lowKW.map(k=>`<tr><td class="kw-keyword" title="${esc(k.keyword)}">${esc(k.keyword)}</td><td><span class="kw-match">${matchShort(k.match_type)}</span></td><td>${fmtN(k.impressions)}</td><td class="kw-ctr bad">${(k.ctr||0).toFixed(1)}%</td><td><span class="kw-qs ${qsClass(k.quality_score)}">${k.quality_score||'—'}</span></td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--green)">✓ No compliance risks</td></tr>';
     const qsDist=kwData.quality_score_distribution||{};
     document.getElementById('qsDistribution').innerHTML=`<div class="qs-item"><span class="qs-dot high"></span> High (7-10): <strong>${qsDist.high||0}</strong></div><div class="qs-item"><span class="qs-dot med"></span> Medium (4-6): <strong>${qsDist.medium||0}</strong></div><div class="qs-item"><span class="qs-dot low"></span> Low (1-3): <strong>${qsDist.low||0}</strong></div><div class="qs-item" style="color:var(--gray-400)">Unknown: ${qsDist.unknown||0}</div>`;
   } else {
@@ -1877,8 +1877,8 @@ function render(){
   // Ads
   const adsData=window.CLIENT_DATA?.ads;
   if(adsData&&adsData.top_headlines&&adsData.top_headlines.length>0){
-    document.getElementById('topHeadlines').innerHTML=adsData.top_headlines.map(h=>`<div class="headline-item"><span class="headline-text" title="${h.headline||h.text||''}">${h.headline||h.text||''}</span><div class="headline-stats"><span><strong>${(h.ctr||0).toFixed(1)}%</strong> CTR</span><span>${fmtN(h.clicks)} clicks</span></div></div>`).join('');
-    document.getElementById('topAds').innerHTML=(adsData.top_ads||[]).slice(0,4).map(a=>`<div class="ad-item"><div class="ad-headlines">${(a.headlines||[a.headline]).slice(0,3).join(' | ')}</div><div class="ad-desc">${(a.descriptions||[a.description]).slice(0,1).join(' ')}</div><div class="ad-stats"><span><i class="ph ph-chart-bar"></i> ${(a.ctr||0).toFixed(1)}% CTR</span><span><i class="ph ph-hand-pointing"></i> ${fmtN(a.clicks)} clicks</span><span><i class="ph ph-target"></i> ${fmtN(Math.round(a.conversions||0))} conv.</span></div></div>`).join('');
+    document.getElementById('topHeadlines').innerHTML=adsData.top_headlines.map(h=>`<div class="headline-item"><span class="headline-text" title="${esc(h.headline||h.text||'')}">${esc(h.headline||h.text||'')}</span><div class="headline-stats"><span><strong>${(h.ctr||0).toFixed(1)}%</strong> CTR</span><span>${fmtN(h.clicks)} clicks</span></div></div>`).join('');
+    document.getElementById('topAds').innerHTML=(adsData.top_ads||[]).slice(0,4).map(a=>`<div class="ad-item"><div class="ad-headlines">${esc((a.headlines||[a.headline]).slice(0,3).join(' | '))}</div><div class="ad-desc">${esc((a.descriptions||[a.description]).slice(0,1).join(' '))}</div><div class="ad-stats"><span><i class="ph ph-chart-bar"></i> ${(a.ctr||0).toFixed(1)}% CTR</span><span><i class="ph ph-hand-pointing"></i> ${fmtN(a.clicks)} clicks</span><span><i class="ph ph-target"></i> ${fmtN(Math.round(a.conversions||0))} conv.</span></div></div>`).join('');
   } else {
     document.getElementById('adsContent').innerHTML=`<div class="no-data-card"><div class="no-data-icon"><i class="ph ph-sparkle"></i></div><div class="no-data-title">Ad copy data not yet available</div><div class="no-data-desc">Will appear once campaigns have sufficient activity.</div></div>`;
   }
@@ -1923,9 +1923,9 @@ function render(){
   // Search terms
   const stData=window.CLIENT_DATA?.search_terms;
   if(stData&&stData.top_terms&&stData.top_terms.length>0){
-    document.getElementById('topSearchTermsBody').innerHTML=stData.top_terms.slice(0,10).map(t=>`<tr><td class="st-term" title="${t.term||t.search_term||''}">${t.term||t.search_term||''}</td><td>${fmtN(t.clicks)}</td><td>${(t.ctr||0).toFixed(1)}%</td><td>${fmtN(Math.round(t.conversions||0))}</td></tr>`).join('');
+    document.getElementById('topSearchTermsBody').innerHTML=stData.top_terms.slice(0,10).map(t=>`<tr><td class="st-term" title="${esc(t.term||t.search_term||'')}">${esc(t.term||t.search_term||'')}</td><td>${fmtN(t.clicks)}</td><td>${(t.ctr||0).toFixed(1)}%</td><td>${fmtN(Math.round(t.conversions||0))}</td></tr>`).join('');
     const negTerms=(stData.potential_negatives||[]).slice(0,8);
-    document.getElementById('negativeTermsBody').innerHTML=negTerms.length>0?negTerms.map(t=>`<tr><td class="st-term">${t.term||t.search_term||''}</td><td>${fmtN(t.impressions)}</td><td style="color:var(--red)">${(t.ctr||0).toFixed(1)}%</td><td><span class="st-negative">Review</span></td></tr>`).join(''):'<tr><td colspan="4" style="text-align:center;color:var(--green)">✓ No low-CTR terms found</td></tr>';
+    document.getElementById('negativeTermsBody').innerHTML=negTerms.length>0?negTerms.map(t=>`<tr><td class="st-term">${esc(t.term||t.search_term||'')}</td><td>${fmtN(t.impressions)}</td><td style="color:var(--red)">${(t.ctr||0).toFixed(1)}%</td><td><span class="st-negative">Review</span></td></tr>`).join(''):'<tr><td colspan="4" style="text-align:center;color:var(--green)">✓ No low-CTR terms found</td></tr>';
   } else {
     document.getElementById('searchTermsContent').innerHTML=`<div class="no-data-card"><div class="no-data-icon"><i class="ph ph-magnifying-glass"></i></div><div class="no-data-title">Search terms data not yet available</div><div class="no-data-desc">Will appear once campaigns have sufficient activity.</div></div>`;
   }
@@ -2506,9 +2506,11 @@ window.kitSave=(k,name)=>{const a=document.createElement('a');a.href=URL.createO
 // ── LOCAL MAP + BUSINESS PROFILE ──
 let localKw=0, localBiz=null, localMode='heat', localMap=null;
 // Same bands as the RDT heat map: 1–3 green · 4–10 orange · 11–20 red · not in top 20 dark red
-function rankColor(r){return !r?'#7f1d1d':r<=3?'#16a34a':r<=10?'#ea8a0c':'#dc2626'}
+// -1 = that point's check failed this week (grey, not counted)
+function rankColor(r){return r===-1?'#94a3b8':!r?'#7f1d1d':r<=3?'#16a34a':r<=10?'#ea8a0c':'#dc2626'}
+function rankLbl(r){return r===-1?'—':r||'20+'}
 function bizGrid(k,bi){ // rank of business index bi at every point
-  return k.pts.map(row=>row.map(ids=>{const i=ids.indexOf(bi);return i<0?null:i+1}));
+  return k.pts.map((row,y)=>row.map((ids,x)=>{if(k.grid?.[y]?.[x]===-1)return -1;const i=ids.indexOf(bi);return i<0?null:i+1}));
 }
 function gridStats(g){const f=g.flat(),found=f.filter(Boolean);
   return {avg:f.length?(f.reduce((a,r)=>a+(r||21),0)/f.length).toFixed(1):'—',top3:found.filter(r=>r<=3).length,found:found.length,points:f.length};}
@@ -2574,22 +2576,22 @@ function renderLocal(){
         <td>${chg(rank,prev)}</td><td class="l">${top.map(t=>`<span class="site">${esc(t)}</span>`).join('')||'—'}</td></tr>`}).join('')}</tbody></table></div>`;
 }
 window.localCSV=()=>{const {g,k,bi}=window._locGrid, L=window.VISIBILITY_DATA.local, rows=[['Keyword','Business','Row','Column','Lat','Lng','Rank']];
-  g.forEach((row,i)=>row.forEach((r,j)=>rows.push([k.keyword,k.businesses[bi]?.title||'',i+1,j+1,L.points[i][j][0],L.points[i][j][1],r||'20+'])));
+  g.forEach((row,i)=>row.forEach((r,j)=>rows.push([k.keyword,k.businesses[bi]?.title||'',i+1,j+1,L.points[i][j][0],L.points[i][j][1],r===-1?'check failed':r||'20+'])));
   downloadCSV(`${slugName()}-heat-map.csv`,rows)};
 function drawLocalMap(g){
   const L=window.VISIBILITY_DATA.local, el=document.getElementById('locMap');
   if(localMap){localMap.remove();localMap=null;}
   const pts=L.points.flat(), ranks=g.flat();
   if(!window.L){ // map library unavailable: plain grid fallback
-    el.innerHTML=`<div class="loc-fallback" style="grid-template-columns:repeat(${L.points.length},1fr)">${ranks.map(r=>`<span style="background:${rankColor(r)}">${r||'20+'}</span>`).join('')}</div>`;
+    el.innerHTML=`<div class="loc-fallback" style="grid-template-columns:repeat(${L.points.length},1fr)">${ranks.map(r=>`<span style="background:${rankColor(r)}">${rankLbl(r)}</span>`).join('')}</div>`;
     return;
   }
   localMap=window.L.map(el,{scrollWheelZoom:false,attributionControl:true});
   window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(localMap);
   pts.forEach(([la,ln],i)=>{
     const r=ranks[i];
-    window.L.marker([la,ln],{icon:window.L.divIcon({className:'',html:`<div class="loc-pin" style="background:${rankColor(r)}">${r||'20+'}</div>`,iconSize:[30,30],iconAnchor:[15,15]})})
-      .bindTooltip(r?`#${r} here`:'Not in the top 20 here').addTo(localMap);
+    window.L.marker([la,ln],{icon:window.L.divIcon({className:'',html:`<div class="loc-pin" style="background:${rankColor(r)}">${rankLbl(r)}</div>`,iconSize:[30,30],iconAnchor:[15,15]})})
+      .bindTooltip(r===-1?'Couldn\'t check this point this week':r?`#${r} here`:'Not in the top 20 here').addTo(localMap);
   });
   window.L.marker(L.center,{icon:window.L.divIcon({className:'',html:'<div class="loc-star">★</div>',iconSize:[22,22],iconAnchor:[11,11]})}).bindTooltip(L.profile?.title||'Your location').addTo(localMap);
   localMap.fitBounds(pts,{padding:[24,24]});

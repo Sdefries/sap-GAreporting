@@ -162,10 +162,6 @@ def insights(client, t30, camps30):
         names = ", ".join(c["n"] for c in zero[:3])
         total_waste = sum(c["cost"] for c in zero)
         out.append({"color":"amber","tag":"action","title":f"{len(zero)} campaign(s) with no tracked conversions","body":f"{names} — spending ${total_waste:,.0f} combined with 0 conversions."})
-    if client.get("animal_type")=="equine":
-        out.append({"color":"blue","tag":"action","title":"Individual horse profiles drive highest conversion rates","body":"Campaigns featuring specific named horses convert at 3-5x the rate of generic rescue ads."})
-    elif client.get("org_model")=="foster_network":
-        out.append({"color":"blue","tag":"action","title":"Foster recruitment should be your primary campaign goal","body":"For foster-based rescues, foster campaigns consistently outperform adoption campaigns."})
     return out[:5]
 
 def process_keywords(keywords_data):
@@ -444,9 +440,9 @@ def build_client_data(client, rows30, rows7, extended_data, ga4, seo):
             "lcp":                ps_mob.get("lcp"),
             "cls":                ps_mob.get("cls"),
             "tbt":                ps_mob.get("tbt"),
-            "organic_clicks":     sc.get("clicks", 0),
-            "organic_impressions":sc.get("impressions", 0),
-            "organic_ctr":        sc.get("ctr", 0),
+            "organic_clicks":     sc.get("clicks"),
+            "organic_impressions":sc.get("impressions"),
+            "organic_ctr":        sc.get("ctr"),
             "avg_position":       sc.get("position"),
             "top_queries":        (sc.get("top_queries") or sc.get("top_keywords") or [])[:5],
             "top_pages":          sc.get("top_pages", [])[:5],
@@ -558,16 +554,16 @@ def build_report_data(cd):
         f"{{'30d':{{totals:{{cl:{t30.get('cl',0)},im:{t30.get('im',0)},ctr:{t30.get('ctr',0)},"
         f"cost:{t30.get('cost',0)},cv:{t30.get('cv',0)},cpc:{t30.get('cpc',0)},"
         f"costPerConv:{t30.get('costPerConv') or 0},convRate:{t30.get('convRate',0)},"
-        f"impressionShare:{t30.get('impressionShare') or 'null'},"
-        f"lostIsRank:{t30.get('lostIsRank') or 'null'},"
-        f"lostIsBudget:{t30.get('lostIsBudget') or 'null'}}},"
+        f"impressionShare:{json.dumps(t30.get('impressionShare'))},"
+        f"lostIsRank:{json.dumps(t30.get('lostIsRank'))},"
+        f"lostIsBudget:{json.dumps(t30.get('lostIsBudget'))}}},"
         f"campaigns:{camp_js(cd['_camps30'])},daily:{daily_js(cd['_daily30'])},devices:{dev('30d')}}},"
         f"'7d':{{totals:{{cl:{t7.get('cl',0)},im:{t7.get('im',0)},ctr:{t7.get('ctr',0)},"
         f"cost:{t7.get('cost',0)},cv:{t7.get('cv',0)},cpc:{t7.get('cpc',0)},"
         f"costPerConv:{t7.get('costPerConv') or 0},convRate:{t7.get('convRate',0)},"
-        f"impressionShare:{t7.get('impressionShare') or 'null'},"
-        f"lostIsRank:{t7.get('lostIsRank') or 'null'},"
-        f"lostIsBudget:{t7.get('lostIsBudget') or 'null'}}},"
+        f"impressionShare:{json.dumps(t7.get('impressionShare'))},"
+        f"lostIsRank:{json.dumps(t7.get('lostIsRank'))},"
+        f"lostIsBudget:{json.dumps(t7.get('lostIsBudget'))}}},"
         f"campaigns:{camp_js(cd['_camps7'])},daily:{daily_js(cd['_daily7'])},devices:{dev('7d')}}}}}"
     )
 
@@ -641,20 +637,23 @@ def render(cd):
     ga4_obj = build_ga4_data(cd.get("_ga4_raw"))
     ga4_json = json.dumps(ga4_obj, default=str) if ga4_obj else "null"
 
-    vis_json = json.dumps(cd.get("_visibility"), default=str).replace("</", "<\\/")
+    vis_json = json.dumps(cd.get("_visibility"), default=str)
     live_json = json.dumps(live_api(cd["slug"]))
+    # Search terms, UTM values, page titles etc. come from outsiders; keep them
+    # from closing the <script> block.
+    safe = lambda js: js.replace("</", "<\\/").replace("<!--", "<\\!--")
 
     injection = (
         f"\n<script>\n"
         f"// Injected by generate_reports_v2.py — {cd['name']} ({cd['account_id']}) — {datetime.datetime.now().strftime('%Y-%m-%d')}\n"
-        f"window.CLIENT_DATA = {json.dumps(client_data, default=str)};\n"
-        f"window.REPORT_DATA = {report_data};\n"
-        f"window.LP_DATA     = {lp_data};\n"
-        f"window.STATE_DATA  = {state_data};\n"
-        f"window.CITY_DATA   = {city_data};\n"
-        f"window.GA4_DATA    = {ga4_json};\n"
-        f"window.VISIBILITY_DATA = {vis_json};\n"
-        f"window.LIVE_API    = {live_json};\n"
+        f"window.CLIENT_DATA = {safe(json.dumps(client_data, default=str))};\n"
+        f"window.REPORT_DATA = {safe(report_data)};\n"
+        f"window.LP_DATA     = {safe(lp_data)};\n"
+        f"window.STATE_DATA  = {safe(state_data)};\n"
+        f"window.CITY_DATA   = {safe(city_data)};\n"
+        f"window.GA4_DATA    = {safe(ga4_json)};\n"
+        f"window.VISIBILITY_DATA = {safe(vis_json)};\n"
+        f"window.LIVE_API    = {safe(live_json)};\n"
         f"</script>\n"
     )
     return TEMPLATE.replace("<!-- CLIENT DATA INJECTED HERE BY generate_reports_v2.py -->", injection)
@@ -706,31 +705,35 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
         ga4 = GA4_CACHE.get(slug)
         seo = SEO_CACHE.get(slug) if client.get("local_seo_enrolled") else None
 
-        cd  = build_client_data(client, rows30, rows7, extended_data, ga4, seo)
-        cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4, LOCAL_CACHE.get(slug), ORGANIC_CACHE.get(slug), AUTHORITY_CACHE.get(slug), WATCH_CACHE.get(slug))
-        apply_locks(cd["_visibility"], client.get("locked_sections"))
-        cd["_visibility"]["overview"] = build_overview(cd["_visibility"])
-        cd["_devices"] = devices
-        t30 = cd["totals_30d"]
-        print(f"    GPS:{cd['gps']}/100 | Clicks:{t30.get('cl',0):.0f} | Spend:${t30.get('cost',0):,.0f} | Convs:{t30.get('cv',0):.0f} | GA4:{'✓' if cd['has_ga4'] else '✗'}")
+        try:
+            cd  = build_client_data(client, rows30, rows7, extended_data, ga4, seo)
+            cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4, LOCAL_CACHE.get(slug), ORGANIC_CACHE.get(slug), AUTHORITY_CACHE.get(slug), WATCH_CACHE.get(slug))
+            apply_locks(cd["_visibility"], client.get("locked_sections"))
+            cd["_visibility"]["overview"] = build_overview(cd["_visibility"])
+            cd["_devices"] = devices
+            t30 = cd["totals_30d"]
+            print(f"    GPS:{cd['gps']}/100 | Clicks:{t30.get('cl',0):.0f} | Spend:${t30.get('cost',0):,.0f} | Convs:{t30.get('cv',0):.0f} | GA4:{'✓' if cd['has_ga4'] else '✗'}")
 
-        if dry_run:
-            print(f"    [DRY RUN] Would write reports/{slug}.html")
+            if dry_run:
+                print(f"    [DRY RUN] Would write reports/{slug}.html")
+                generated.append(slug)
+                continue
+
+            html = render(cd)
+            ok, v = validate(slug, html)
+            if not ok:
+                print(f"    ✗ VALIDATION FAILED: {v}")
+                failed.append((slug,v))
+                _slack_alert(slug, name, v)
+                continue
+
+            with open(f"reports/{slug}.html","w",encoding="utf-8") as f: f.write(html)
+            print(f"    ✓ Saved")
             generated.append(slug)
-            continue
-
-        html = render(cd)
-        ok, v = validate(slug, html)
-        if not ok:
-            print(f"    ✗ VALIDATION FAILED: {v}")
-            failed.append((slug,v))
-            _slack_alert(slug, name, v)
-            continue
-
-        with open(f"reports/{slug}.html","w",encoding="utf-8") as f: f.write(html)
-        print(f"    ✓ Saved")
-        generated.append(slug)
-        summaries[slug] = cd
+            summaries[slug] = cd
+        except Exception as e:  # one client's bad data shouldn't stop every other report
+            print(f"    ✗ FAILED: {type(e).__name__}: {str(e)[:200]}")
+            failed.append((slug, [f"{type(e).__name__}: {str(e)[:120]}"]))
 
     if not dry_run and not validate_only and generated and not slug_filter:
         _build_index(generated, summaries)

@@ -189,6 +189,9 @@ def fetch_client(client, cache, force=False, dry_run=False):
     else:
         out["authority"] = entry.get("authority")
 
+    if not out["overview"]:
+        print("     keeping last month's data; will retry next run")
+        return False  # fetched_at not updated, so the 25-day skip doesn't kick in
     history = entry.get("history", [])
     if out["overview"]:
         month = datetime.date.today().strftime("%Y-%m")

@@ -416,7 +416,8 @@ def domain_hit(domain, res):
     for s in res["sources"]:
         if s["domain"] == domain or s["domain"].endswith("." + domain):
             return True
-    return domain in (res["text"] or "").lower()
+    # whole domain only: pets.org must not match carepets.org
+    return bool(re.search(r"(?<![a-z0-9.-])" + re.escape(domain) + r"(?![a-z0-9-])", (res["text"] or "").lower()))
 
 
 def score_answer(res, cfg):
