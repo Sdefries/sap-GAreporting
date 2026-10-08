@@ -577,6 +577,8 @@ button.st{cursor:pointer}
 .loc-fallback{display:grid;gap:6px;padding:16px;height:100%;align-content:center}
 .loc-fallback span{aspect-ratio:1;width:100%;max-width:40px;justify-self:center;border-radius:50%;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
 @media(max-width:960px){.loc-prof,.loc-grid{grid-template-columns:1fr}.loc-map{height:320px}}
+.org-dist{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:12px 0 4px;background:var(--gray-100)}
+.org-dist span{display:block;height:100%}
 /* ── AEO readiness + action plan ── */
 .aeo-list{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .aeo-row{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:14px 18px;border-top:1px solid var(--border)}
@@ -754,6 +756,7 @@ td{border-bottom:1px solid var(--border)}
         <a href="#sec-aeo-plan"><span class="ico">✎</span>AEO action plan<span class="sb-badge" id="sbPlanBadge"></span></a>
         <a href="#sec-aeo-audit"><span class="ico">✓</span>AEO readiness<span class="sb-badge" id="sbAuditBadge"></span></a>
         <a href="#sec-classic-seo"><span class="ico">↗</span>Classic SEO<span class="sb-badge" id="sbSeoBadge"></span></a>
+        <a href="#sec-organic"><span class="ico">≋</span>Organic search<span class="sb-badge" id="sbOrgBadge"></span></a>
         <a href="#sec-competitors"><span class="ico">⚑</span>Competitors<span class="sb-badge" id="sbCompBadge"></span></a>
         <a href="#sec-seo"><span class="ico">⚡</span>Site health</a>
         <a href="#sec-gbp"><span class="ico">⌖</span>Local map &amp; profile<span class="sb-badge" id="sbLocalBadge"></span></a>
@@ -1067,6 +1070,11 @@ td{border-bottom:1px solid var(--border)}
     <div class="section" id="sec-classic-seo">
       <div class="sh"><div class="sh-title">Classic SEO</div><div class="sh-sub" id="classicSub">Google keyword rankings</div></div>
       <div id="classicContent"></div>
+    </div>
+
+    <div class="section" id="sec-organic">
+      <div class="sh"><div class="sh-title">Organic search</div><div class="sh-sub" id="orgSub">Every keyword you rank for on Google</div></div>
+      <div id="orgContent"></div>
     </div>
 
     <div class="section" id="sec-competitors">
@@ -1932,7 +1940,7 @@ function renderVisibility(){
   if(seo)document.getElementById('sbSeoBadge').textContent=seo.tracked;
   const nComp=Math.max((ai?.competitors||[]).length,(seo?.competitors||[]).length)-1;
   if(nComp>0)document.getElementById('sbCompBadge').textContent=nComp;
-  renderAI(V);renderAEO(V);renderClassic(V);renderCompetitors(V);
+  renderAI(V);renderAEO(V);renderClassic(V);renderOrganic(V);renderCompetitors(V);
 }
 
 // ── AI TRACKING ──
@@ -2329,6 +2337,65 @@ window.seoExportCSV=()=>{
   downloadCSV(`${slugName()}-keyword-rankings.csv`,[['Keyword','Position','Change','AI Overview','AI Overview cites you','Map pack','URL'],
     ...s.keywords.map(k=>[k.kw,k.pos||'',k.change||'',k.ai_overview?'Yes':'No',k.ai_cited?'Yes':'No',k.local_pack?'Yes':'No',k.url||''])]);
 };
+
+// ── ORGANIC SEARCH (SEMrush-style) ──
+let orgTab='keywords', orgQuery='';
+function renderOrganic(V){
+  const box=document.getElementById('orgContent'), O=V.organic;
+  if(!O){
+    box.innerHTML=emptyBlock('Your organic search report is on its way',`Once a month we pull every keyword your website ranks for on Google, with search volume, estimated visits, your top pages, the sites competing for the same searches, and new keyword opportunities.`);
+    return;
+  }
+  const o=O.overview;
+  document.getElementById('orgSub').textContent=`${O.domain} · Google US · ${O.checked}`;
+  document.getElementById('sbOrgBadge').textContent=fmtN(o.keywords);
+  const dist=[['#1',o.pos_1,'#16a34a'],['2–3',o.pos_2_3,'#4ade80'],['4–10',o.pos_4_10,'#077cbf'],['11–20',o.pos_11_20,'#99cbff'],['21–100',o.pos_21_100,'#cbd5e1']];
+  const tot=dist.reduce((a,x)=>a+(x[1]||0),0)||1;
+  const A=O.authority;
+  box.innerHTML=`<div class="kpi4">
+      <div class="card"><div class="kpi4-lbl">Organic keywords</div><div class="kpi4-val">${fmtN(o.keywords)}</div><div class="kpi4-d">${dHTML(O.keywords_delta,{none:'First month'})}</div><div class="vfoot" style="margin:0">${o.new} new · ${o.up} up · ${o.down} down · ${o.lost} lost</div></div>
+      <div class="card"><div class="kpi4-lbl">Est. monthly visits</div><div class="kpi4-val">${fmtN(o.traffic)}</div><div class="kpi4-d">${dHTML(O.traffic_delta,{none:'First month'})}</div><div class="vfoot" style="margin:0">From Google organic results</div></div>
+      <div class="card"><div class="kpi4-lbl">Traffic value</div><div class="kpi4-val">${fmt$(o.traffic_value)}</div><div class="kpi4-d"></div><div class="vfoot" style="margin:0">What these visits would cost as ads each month</div></div>
+      <div class="card"><div class="kpi4-lbl">Authority</div>${A?`<div class="kpi4-val">${A.rank??'—'}</div><div class="kpi4-d"></div><div class="vfoot" style="margin:0">${fmtN(A.referring_domains)} referring domains · ${fmtN(A.backlinks)} backlinks</div>`:`<div class="kpi4-val" style="color:var(--gray-400)">—</div><div class="kpi4-d"></div><div class="vfoot" style="margin:0">Backlink authority available as an add-on</div>`}</div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><div class="chart-title">Where your keywords rank</div>
+      <div class="org-dist">${dist.map(([l,n,c])=>n?`<span style="flex:${n};background:${c}" title="${l}: ${n}"></span>`:'').join('')}</div>
+      <div class="loc-legend">${dist.map(([l,n,c])=>`<span><span class="sq" style="background:${c}"></span>${l}: <b>${fmtN(n)}</b> (${Math.round((n||0)/tot*100)}%)</span>`).join('')}</div></div>
+    <div class="vtabs" id="orgTabs">${[['keywords','Keywords'],['pages','Top pages'],['competitors','Competitors'],['opportunities','Keyword opportunities']].map(([k,l])=>`<button class="vtab" data-t="${k}">${l}</button>`).join('')}</div>
+    <div id="orgBody"></div>`;
+  box.querySelectorAll('#orgTabs .vtab').forEach(b=>b.onclick=()=>{orgTab=b.dataset.t;drawOrganicTab()});
+  drawOrganicTab();
+}
+function kdBadge(v){if(v==null)return '<span class="vfoot">—</span>';const c=v<30?'band-good':v<60?'band-moderate':'band-poor';return `<span class="band ${c}">${v}</span>`}
+function drawOrganicTab(){
+  const O=window.VISIBILITY_DATA.organic, el=document.getElementById('orgBody');
+  document.querySelectorAll('#orgTabs .vtab').forEach(b=>b.classList.toggle('active',b.dataset.t===orgTab));
+  const short=u=>esc((u||'').replace(/^https?:\/\/(www\.)?[^/]+/,'')||'/');
+  if(orgTab==='keywords'){
+    el.innerHTML=`<div class="vtools"><input class="vsearch" id="orgSearch" placeholder="Filter keywords" value="${esc(orgQuery)}"><button class="vbtn" onclick="orgCSV()">↓ Export CSV</button></div><div class="vt-wrap" id="orgTable"></div>`;
+    const inp=document.getElementById('orgSearch');inp.oninput=()=>{orgQuery=inp.value;drawRows()};
+    const drawRows=()=>{const q=orgQuery.toLowerCase(), rows=O.keywords.filter(k=>!q||(k.keyword||'').toLowerCase().includes(q));
+      document.getElementById('orgTable').innerHTML=rows.length?`<table class="vt"><thead><tr><th>Keyword</th><th>Position</th><th>Change</th><th>Volume</th><th>Difficulty</th><th>Visits/mo</th><th class="l">Ranking page</th></tr></thead><tbody>
+        ${rows.map(k=>`<tr><td>${esc(k.keyword)}</td><td><b>#${k.position??'—'}</b></td>
+          <td>${k.new?'<span class="up">New</span>':k.change?`<span class="${k.change>0?'up':'down'}">${k.change>0?'↑':'↓'} ${Math.abs(k.change)}</span>`:'<span class="vfoot">—</span>'}</td>
+          <td>${fmtN(k.volume)}</td><td>${kdBadge(k.difficulty)}</td><td>${fmtN(Math.round(k.traffic))}</td>
+          <td class="l">${k.url?`<a href="${esc(k.url)}" target="_blank" rel="noopener" style="color:var(--blue);font-size:11px">${short(k.url)}</a>`:'—'}</td></tr>`).join('')}</tbody></table>`:'<div class="vfoot" style="padding:18px">No keywords match.</div>'};
+    drawRows();
+  } else if(orgTab==='pages'){
+    el.innerHTML=O.pages.length?`<div class="vt-wrap"><table class="vt"><thead><tr><th>Page</th><th>Keywords</th><th>Visits/mo</th><th class="l">Top keyword</th></tr></thead><tbody>
+      ${O.pages.map(p=>`<tr><td><a href="${esc(p.url)}" target="_blank" rel="noopener" style="color:var(--blue)">${short(p.url)}</a></td><td>${p.keywords}</td><td>${fmtN(p.traffic)}</td><td class="l">${esc(p.top_keyword||'')}</td></tr>`).join('')}</tbody></table></div>`:emptyBlock('No ranking pages yet','');
+  } else if(orgTab==='competitors'){
+    el.innerHTML=O.competitors.length?`<div class="vfoot" style="margin-bottom:8px">Sites that rank for the same Google searches as you (directories and big platforms filtered out).</div>
+      <div class="vt-wrap"><table class="vt"><thead><tr><th>Site</th><th>Shared keywords</th><th>Their avg position</th><th>Their keywords</th><th>Their visits/mo</th></tr></thead><tbody>
+      ${O.competitors.map(c=>`<tr><td><b>${esc(c.domain)}</b></td><td>${fmtN(c.common_keywords)}</td><td>${c.avg_position}</td><td>${fmtN(c.keywords)}</td><td>${fmtN(c.traffic)}</td></tr>`).join('')}</tbody></table></div>`:emptyBlock('No overlapping competitors found','');
+  } else {
+    el.innerHTML=O.opportunities.length?`<div class="vfoot" style="margin-bottom:8px">Searches related to your programs that you don't rank for yet, biggest first. Low difficulty + good volume = quickest wins.</div>
+      <div class="vt-wrap"><table class="vt"><thead><tr><th>Keyword</th><th>Monthly searches</th><th>Difficulty</th><th>Intent</th><th>Ad CPC</th></tr></thead><tbody>
+      ${O.opportunities.map(k=>`<tr><td>${esc(k.keyword)}</td><td>${fmtN(k.volume)}</td><td>${kdBadge(k.difficulty)}</td><td>${esc(k.intent||'—')}</td><td>${k.cpc?'$'+(+k.cpc).toFixed(2):'—'}</td></tr>`).join('')}</tbody></table></div>`:emptyBlock('No keyword opportunities yet','');
+  }
+}
+window.orgCSV=()=>{const O=window.VISIBILITY_DATA.organic;downloadCSV(`${slugName()}-organic-keywords.csv`,[['Keyword','Position','Change','Volume','Difficulty','Visits/mo','URL'],
+  ...O.keywords.map(k=>[k.keyword,k.position,k.new?'new':(k.change??''),k.volume??'',k.difficulty??'',k.traffic,k.url||''])])};
 
 // ── COMPETITORS ──
 function renderCompetitors(V){

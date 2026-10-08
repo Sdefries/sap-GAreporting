@@ -25,6 +25,7 @@ on:
           - fetch_seo
           - fetch_ai
           - fetch_local
+          - fetch_organic
           - all
  
 jobs:
@@ -299,3 +300,35 @@ jobs:
           git config --global user.name "SAP Automation"
           git add local_cache.json || true
           git diff --staged --quiet && echo "No changes" || (git commit -m "Update local map rankings $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)
+
+  # ── FETCH ORGANIC SEARCH (SEMrush-style, monthly) ─────────────────────
+  # Runs with the Monday fetches; fetch_organic.py skips clients fetched in
+  # the last 25 days, so each client refreshes about once a month.
+  fetch_organic:
+    name: Fetch organic search
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 12 * * 1') ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.job == 'fetch_organic' || github.event.inputs.job == 'all'))
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch organic search
+        env:
+          DATAFORSEO_LOGIN:     ${{ secrets.DATAFORSEO_LOGIN }}
+          DATAFORSEO_PASSWORD:  ${{ secrets.DATAFORSEO_PASSWORD }}
+          DATAFORSEO_BACKLINKS: ${{ vars.DATAFORSEO_BACKLINKS }}
+        run: python fetch_organic.py
+
+      - name: Commit organic cache
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "SAP Automation"
+          git add organic_cache.json || true
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update organic search $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)

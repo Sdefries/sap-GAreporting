@@ -525,9 +525,31 @@ def build_local(client, local_entry):
     }
 
 
-def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None, local_entry=None):
+def build_organic(entry):
+    """SEMrush-style organic data (fetch_organic.py)."""
+    if not entry or not entry.get("overview"):
+        return None
+    hist = entry.get("history") or []
+    prev = hist[-2] if len(hist) > 1 else None
+    o = entry["overview"]
+
+    def d(k):
+        return (o[k] - prev[k]) if prev and prev.get(k) is not None else None
+    return {
+        "domain": entry["domain"], "checked": fmt_date(entry.get("fetched_at", "")),
+        "overview": o, "keywords_delta": d("keywords"), "traffic_delta": d("traffic"),
+        "keywords": entry.get("keywords") or [], "pages": entry.get("pages") or [],
+        "competitors": entry.get("competitors") or [], "opportunities": entry.get("opportunities") or [],
+        "authority": entry.get("authority"),
+        "history": [{"month": datetime.date.fromisoformat(h["month"] + "-01").strftime("%b %Y"),
+                     "keywords": h["keywords"], "traffic": h["traffic"]} for h in hist],
+    }
+
+
+def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None, local_entry=None, organic_entry=None):
     seo_enrolled = bool(client.get("local_seo_enrolled"))
     return {
+        "organic": build_organic(organic_entry),
         "local": build_local(client, local_entry),
         "referrals": build_referrals(ga4_entry),
         "aeo": build_aeo(client, ai_entry, ga4_entry),
