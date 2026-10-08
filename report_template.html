@@ -545,6 +545,23 @@ button.st{cursor:pointer}
 .vempty+.ref-card{margin-top:14px}
 .ref-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
 .ref-kpis{display:flex;gap:28px}
+.acc-card{margin-bottom:14px;border-left:4px solid var(--red)}
+.acc-card.ok{border-left-color:var(--green)}
+.acc-row{border-top:1px solid var(--border);padding:12px 0 4px}
+.acc-claim{font-size:12.5px;color:var(--navy-dark);margin:6px 0 2px;font-style:italic}
+.kit-pre{background:var(--gray-100);border-radius:8px;padding:10px 12px;font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;margin-top:8px;color:var(--navy-dark)}
+@media print{
+  @page{margin:12mm}
+  body{background:#fff}
+  .sidebar,.no-print,.date-toggle,.live-box,.vtools,.vtabs,.ans-modal,.loading-overlay,.vt-read,.vbtn{display:none!important}
+  .main{margin-left:0!important;background:#fff!important}
+  .topbar{position:static;border:none}
+  .content{padding:0 4mm}
+  .section,.card,.chart-card,.kpi-card,.plan-card,.vis-summary,.vis-score,.eng-card,.aeo-row,.acc-row{break-inside:avoid}
+  .vt-wrap,.kit-pre{max-height:none;overflow:visible}
+  table{min-width:0!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 /* ── AEO readiness + action plan ── */
 .aeo-list{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .aeo-row{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:14px 18px;border-top:1px solid var(--border)}
@@ -748,6 +765,7 @@ td{border-bottom:1px solid var(--border)}
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
+      <button class="vbtn no-print" onclick="window.print()" title="Save this report as a PDF">↓ PDF</button>
       <div class="date-toggle">
         <button class="dt-btn" onclick="setRange('7d',this)">7 days</button>
         <button class="dt-btn active" onclick="setRange('30d',this)">30 days</button>
@@ -1929,7 +1947,7 @@ function renderAI(V){
     summaryBlock(ai.summary,ai.opportunity)+
     scoreBlock('AI visibility score',ai.score,ai.band,ai.score_delta,
       `You show up in <b>${ai.visible_answers} of ${ai.total_answers}</b> AI answers (${ai.prompts_n} prompts × ${tracked.length} AIs) and in at least one AI for <b>${ai.prompts_any} of ${ai.prompts_n}</b> prompts.`)+
-    `<div class="eng-grid">${engCards}</div>${referralsBlock()}
+    `<div class="eng-grid">${engCards}</div>${referralsBlock()}${accuracyBlock()}
     <div class="g2" style="margin-bottom:14px">
       <div class="chart-card"><div class="chart-title">AI visibility over time</div>
         <div class="vfoot" style="margin:2px 0 12px">Share of prompts where each AI cites or names ${esc(ai.brand)}</div>
@@ -1945,7 +1963,7 @@ function renderAI(V){
     </div>
     <div id="aiTabBody"></div>
     <div class="vfoot">Visible = the AI cites ${esc(ai.domain||'your website')} or names ${esc(ai.brand)}. Click any cell to read that answer.<br>
-      AI answers vary from one check to the next, so read them as a trend. Google results via DataForSEO.</div>`;
+      AI answers vary from one check to the next, so read them as a trend. Google results via DataForSEO.</div>${suggestionsBlock()}`;
   document.querySelectorAll('#aiTabs .vtab').forEach(b=>b.onclick=()=>{aiTab=b.dataset.tab;aiFilter='all';aiQuery='';renderAITab()});
   renderAITab();
   wireLiveBox();
@@ -2088,6 +2106,48 @@ function drawReferralChart(){
       scales:{x:{stacked:true,ticks:tk,grid:{display:false}},y:{stacked:true,beginAtZero:true,ticks:{...tk,precision:0},grid:gl}}}});
 }
 
+// ── ACCURACY + SUGGESTIONS + KIT ──
+function accuracyBlock(){
+  const A=window.VISIBILITY_DATA?.ai?.accuracy;
+  if(!A||!A.checked)return '';
+  if(!A.issues.length)return `<div class="card acc-card ok"><div class="chart-title">How AI describes you</div>
+    <div class="vfoot" style="margin-top:4px">✓ We checked ${A.checked} AI answers that mention you and found nothing inaccurate. ${esc(A.summary||'')}</div></div>`;
+  return `<div class="card acc-card"><div class="chart-title">How AI describes you <span class="prio prio-high">${A.issues.length} to correct</span></div>
+    <div class="vfoot" style="margin:2px 0 10px">${esc(A.summary||'')} Checked ${A.checked} answers that mention you · ${A.generated}</div>
+    ${A.issues.map(i=>`<div class="acc-row"><div><span class="prio prio-${esc(i.severity)}">${esc(i.severity)}</span> <b>${esc(i.engine)}</b> · <span class="vfoot">“${esc(i.prompt)}”</span></div>
+      <div class="acc-claim">“${esc(i.claim)}”</div><div class="aeo-detail">${esc(i.problem)}</div><div class="aeo-fix"><b>Fix:</b> ${esc(i.fix)}</div></div>`).join('')}</div>`;
+}
+function suggestionsBlock(){
+  const ai=window.VISIBILITY_DATA?.ai; if(!ai)return '';
+  const sg=ai.suggested_competitors||[], ls=ai.listings||[];
+  if(!sg.length&&!ls.length)return '';
+  const subj=encodeURIComponent('Competitor tracking for '+(window.CLIENT_DATA?.name||''));
+  const body=encodeURIComponent('Please track these competitors:\n\n'+sg.map(x=>'• '+x.domain).join('\n'));
+  return `<div class="g2" style="margin-top:14px">
+    ${sg.length?`<div class="card"><div class="chart-title">Who AI recommends instead</div>
+      <div class="vfoot" style="margin:2px 0 10px">Organizations AI cited in answers to your prompts. Track them to compare head to head.</div>
+      ${sg.map(x=>`<div class="now-top" style="margin:6px 0"><span class="site comp">${esc(x.domain)}</span><span>${x.count} answer${x.count>1?'s':''}</span></div>`).join('')}
+      <a class="vbtn" style="margin-top:8px" href="mailto:${VIS_CONTACT}?subject=${subj}&body=${body}">Track these competitors</a></div>`:''}
+    ${ls.length?`<div class="card"><div class="chart-title">Sites AI trusts — get listed</div>
+      <div class="vfoot" style="margin:2px 0 10px">Directories and platforms AI keeps citing. A complete, current profile on each makes it more likely AI names you.</div>
+      ${ls.map(x=>`<div class="now-top" style="margin:6px 0"><span class="site">${esc(x.domain)}</span><span>${x.count} answer${x.count>1?'s':''}</span></div>`).join('')}</div>`:''}
+  </div>`;
+}
+function kitBlock(){
+  const K=window.VISIBILITY_DATA?.aeo?.kit; if(!K)return '';
+  return `<div class="card" style="margin-top:14px"><div class="chart-title">Ready-to-use files</div>
+    <div class="vfoot" style="margin:2px 0 12px">Built from what we know about you. Fill in anything in [brackets], then add them to your website (or send them to us and we'll do it).</div>
+    <div class="g2">
+      <div><div class="now-top"><b>llms.txt</b><span><button class="vbtn" onclick="kitCopy('llms_txt',this)">Copy</button> <button class="vbtn" onclick="kitSave('llms_txt','llms.txt')">Download</button></span></div>
+        <div class="vfoot">Upload to your site root so it lives at /llms.txt</div><pre class="kit-pre">${esc(K.llms_txt)}</pre></div>
+      <div><div class="now-top"><b>Organization schema</b><span><button class="vbtn" onclick="kitCopy('schema',this)">Copy</button></span></div>
+        <div class="vfoot">Paste into your homepage &lt;head&gt; (or your site builder's header code box)</div><pre class="kit-pre">${esc(K.schema)}</pre></div>
+    </div></div>`;
+}
+window.kitCopy=(k,btn)=>{const t=window.VISIBILITY_DATA.aeo.kit[k];const done=()=>{btn.textContent='Copied ✓';setTimeout(()=>btn.textContent='Copy',1600)};
+  try{navigator.clipboard.writeText(t).then(done,()=>prompt('Copy:',t))}catch(e){prompt('Copy:',t)}};
+window.kitSave=(k,name)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([window.VISIBILITY_DATA.aeo.kit[k]],{type:'text/plain'}));a.download=name;document.body.appendChild(a);a.click();a.remove()};
+
 // ── AEO ACTION PLAN + READINESS ──
 function renderAEO(V){
   const A=V.aeo||{}, audit=A.audit, plan=A.plan, ai=V.ai;
@@ -2117,7 +2177,7 @@ function renderAEO(V){
   }
   // Readiness audit
   const abox=document.getElementById('auditContent');
-  if(!audit){abox.innerHTML=emptyBlock('Website check pending','Your first AEO readiness check runs with the next weekly update.');return;}
+  if(!audit){abox.innerHTML=emptyBlock('Website check pending','Your first AEO readiness check runs with the next weekly update.')+kitBlock();return;}
   if(audit.status==='no_website'){abox.innerHTML=emptyBlock('Add your website',`We don't have a website on file for you yet. Send us your URL and we'll check whether AI can find, read and cite it.`);return;}
   if(audit.status==='unreachable'){abox.innerHTML=emptyBlock('We couldn’t reach your website',`${esc(audit.error)}. We'll try again next week; if your site is up, a firewall may be blocking automated visitors, and AI crawlers too.`);return;}
   document.getElementById('sbAuditBadge').textContent=audit.score+'%';
@@ -2128,7 +2188,7 @@ function renderAEO(V){
       `<b>${c.pass} of ${n}</b> checks pass${c.fail?`, <b>${c.fail}</b> need fixing`:''}${c.warn?`, <b>${c.warn}</b> could be better`:''}. Fixes are listed most important first.`).replace('First update','').replace(/ visibility<\/span>/,'</span>')+
     `<div class="aeo-list">${audit.checks.map(k=>`<div class="aeo-row"><div class="aeo-ico ${k.status}">${icon[k.status]}</div><div>
       <div class="aeo-lbl">${esc(k.label)}</div><div class="aeo-detail">${esc(k.detail)}</div>
-      ${k.fix?`<div class="aeo-fix"><b>Fix:</b> ${esc(k.fix)}</div>`:''}<div class="aeo-why">${esc(k.why)}</div></div></div>`).join('')}</div>`;
+      ${k.fix?`<div class="aeo-fix"><b>Fix:</b> ${esc(k.fix)}</div>`:''}<div class="aeo-why">${esc(k.why)}</div></div></div>`).join('')}</div>`+kitBlock();
 }
 window.copyBrief=(i,btn)=>{
   const a=window.VISIBILITY_DATA.aeo.plan.actions[i];
@@ -2200,6 +2260,9 @@ window.seoExportCSV=()=>{
 function renderCompetitors(V){
   const box=document.getElementById('compContent');
   const seoRows=V.seo?.competitors||[], aiRows=V.ai?.competitors||[];
+  if(seoRows.length<2&&aiRows.length<2&&(V.ai?.suggested_competitors||[]).length){
+    box.innerHTML=suggestionsBlock().replace('class="g2" style="margin-top:14px"','class="g2"');return;
+  }
   if(seoRows.length<2&&aiRows.length<2){
     box.innerHTML=emptyBlock('Compare yourself with similar organizations',
       `Tell us 3–5 organizations people might find instead of you. We'll show how you stack up in Google rankings and in AI answers, prompt by prompt.

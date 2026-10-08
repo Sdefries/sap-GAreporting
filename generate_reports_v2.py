@@ -464,10 +464,7 @@ def build_client_data(client, rows30, rows7, extended_data, ga4, seo):
         "totals_30d":  t30,
         "totals_7d":   t7,
         "insights":    ins,
-        "actions": {
-            "did":  {"title":"Account audit completed",     "body":f"Full performance review of all active campaigns. GPS score: {score}/100."},
-            "next": {"title":"Optimization in progress",    "body":"Ongoing keyword refinement, bid optimization, and ad copy testing based on this month's data."},
-        },
+        "actions":     build_actions(client, score, t30, ins, len([c for c in camps30 if c.get("cl") or c.get("im")])),
         "has_ga4":    bool(ga4 and ga4.get("overview_30d")),
         "ga4_pages":  (ga4 or {}).get("landing_pages", [])[:10],
         "ga4_states": (ga4 or {}).get("states", [])[:10],
@@ -496,6 +493,44 @@ def build_client_data(client, rows30, rows7, extended_data, ga4, seo):
         "_daily7":  d7,
         "_ga4_raw": ga4,   # raw cache passed through so render() can call build_ga4_data()
     }
+
+def build_actions(client, score, t30, ins, n_campaigns):
+    """
+    "What we did / What's next". Your team's own notes win:
+      clients.json → "report_notes": {"did": "...", "next": "..."}
+    Otherwise both are written from this month's data and the AEO action plan.
+    """
+    notes = client.get("report_notes") or {}
+    ai = AI_CACHE.get(client["slug"]) or {}
+    run = (ai.get("runs") or [None])[-1]
+    did_parts = []
+    if t30.get("cl"):
+        did_parts.append(f"Managed {n_campaigns} active Ad Grants campaign{'s' if n_campaigns != 1 else ''}: "
+                         f"{t30.get('cl',0):,.0f} clicks at {t30.get('ctr',0):.1f}% CTR (grant score {score}/100)")
+    if run:
+        did_parts.append(f"checked {len(run.get('prompts', []))} AI prompts across {len(run.get('live_engines') or [])} AI assistants")
+    if (ai.get("audit") or {}).get("status") == "ok":
+        did_parts.append(f"audited the website for AI readiness ({ai['audit']['score']}%)")
+    joined = "; ".join(did_parts)
+    did_body = notes.get("did") or (joined[:1].upper() + joined[1:] + "." if did_parts
+                                    else f"Full performance review of all active campaigns. Grant score: {score}/100.")
+    plan = (ai.get("action_plan") or {}).get("actions") or []
+    top_ins = next((i for i in ins if i.get("tag") == "action"), None) or (ins[0] if ins else None)
+    if notes.get("next"):
+        next_title, next_body = "Up next", notes["next"]
+    elif plan:
+        a = plan[0]
+        next_title = f"Win “{a['prompt'][:60]}”"
+        next_body = f"Publish “{a['page_title']}” and get listed on {', '.join(a['sources_to_target'][:3]) or 'the sites AI trusts'}."
+    elif top_ins:
+        next_title, next_body = top_ins.get("title", "Optimization"), top_ins.get("body", "")
+    else:
+        next_title, next_body = "Optimization in progress", "Ongoing keyword, bid and ad copy improvements based on this month's data."
+    return {
+        "did":  {"title": "This month", "body": did_body},
+        "next": {"title": next_title, "body": next_body},
+    }
+
 
 # ── JS OBJECT BUILDERS ────────────────────────────────────────────────────────
 def build_report_data(cd):

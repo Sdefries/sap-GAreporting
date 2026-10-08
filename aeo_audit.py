@@ -311,6 +311,7 @@ def audit_site(website, fetcher=fetch):
     return {
         "status": "ok", "url": final, "score": score, "checks": checks,
         "schema_types": sorted(types), "word_count": words,
+        "title": title, "description": desc, "about_text": text[:2000],
         "checked_at": datetime.datetime.now().isoformat(timespec="seconds"),
     }
 

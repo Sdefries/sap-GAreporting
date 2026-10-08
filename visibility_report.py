@@ -27,6 +27,24 @@ ENGINE_COLORS = {
 }
 ANSWERED = ("ok", "no_answer")
 
+# Sites AI cites that are directories / platforms rather than peer organizations.
+# They aren't competitors — they're places worth being listed on.
+DIRECTORIES = {
+    "yelp.com", "reddit.com", "facebook.com", "instagram.com", "youtube.com", "wikipedia.org",
+    "en.wikipedia.org", "google.com", "maps.google.com", "tripadvisor.com", "nextdoor.com",
+    "linkedin.com", "x.com", "twitter.com", "tiktok.com", "pinterest.com", "quora.com", "medium.com",
+    "petfinder.com", "adoptapet.com", "rescueme.org", "charitynavigator.org", "guidestar.org",
+    "candid.org", "greatnonprofits.org", "idealist.org", "volunteermatch.org", "eventbrite.com",
+    "gofundme.com", "givebutter.com", "bbb.org", "yellowpages.com", "mapquest.com", "foursquare.com",
+    "patch.com", "theknot.com", "weddingwire.com", "angi.com", "thumbtack.com", "indeed.com",
+    "glassdoor.com", "apple.com", "bing.com", "chatgpt.com", "openai.com", "perplexity.ai",
+}
+
+
+def is_directory(domain):
+    return domain in DIRECTORIES or any(domain.endswith("." + d) for d in DIRECTORIES) \
+        or domain.endswith(".gov") or domain.endswith(".edu")
+
 
 def band(pct):
     if pct is None:
@@ -216,6 +234,20 @@ def build_ai(entry, seo_entry=None):
     you = {"name": brand, "domain": domain, "you": True, "score": score, "band": band(score),
            "per": {e: st["per"].get(e, {"visible": 0, "total": 0}) for e in engines}}
 
+    # Who AI recommends instead: peer organizations (suggested competitors) vs
+    # directories / platforms (places to get listed)
+    tracked_comp = {c.get("domain") for c in entry.get("competitors") or []}
+    cited = Counter()
+    for r in rows:
+        for c in r["cells"].values():
+            cited.update(set(c["sites"]))
+    suggested = [{"domain": d, "count": n} for d, n in cited.most_common()
+                 if d != domain and d not in tracked_comp and not is_directory(d)][:6]
+    listings = [{"domain": d, "count": n} for d, n in cited.most_common() if is_directory(d)][:8]
+
+    # Accuracy of what AI says about the org
+    acc = entry.get("accuracy")
+
     # Prompt ideas
     ideas = entry.get("prompt_ideas") or {}
     tracked_lower = {p.lower() for p in cur.get("prompts", [])}
@@ -241,6 +273,9 @@ def build_ai(entry, seo_entry=None):
         "summary": summary, "opportunity": opportunity,
         "engine_stats": engine_stats, "trend": trend, "rows": rows,
         "competitors": [you] + comps,
+        "suggested_competitors": suggested,
+        "listings": listings,
+        "accuracy": ({**acc, "generated": fmt_date(acc.get("generated_at", ""))} if acc else None),
         "ideas": {"paa": paa_clean[:25], "ai": [p for p in ideas.get("ai") or [] if p.lower() not in tracked_lower]},
     }
 
@@ -359,11 +394,63 @@ def _rank_summary(positions, n):
 
 # ── ENTRY POINT ───────────────────────────────────────────────────────────────
 
-def build_aeo(client, ai_entry):
+def build_kit(client, audit, ga4_entry):
+    """
+    Ready-to-paste llms.txt and Organization JSON-LD built from what we know about
+    the client. Anything we don't have is left as a clearly marked [placeholder].
+    """
+    website = (client.get("website") or "").rstrip("/")
+    if not website:
+        return None
+    name = brand_names(client)[0]
+    themes = (client.get("keywords") or {}).get("include_themes", [])
+    locs = [l for l in (client.get("geo") or {}).get("locations", []) if l]
+    desc = (audit or {}).get("description") or ""
+    if not desc:
+        desc = f"{name} is a nonprofit focused on {', '.join(themes[:3]) or 'its community'}" + \
+               (f", serving {', '.join(locs)}." if locs else ".")
+    pages = []
+    for p in (ga4_entry or {}).get("landing_pages", [])[:8]:
+        path = p.get("landingPage") or ""
+        if path.startswith("/") and "(not set)" not in path and "?" not in path:
+            label = "Home" if path == "/" else path.strip("/").replace("-", " ").replace("/", " › ").title()
+            pages.append((label, website + path))
+    if not pages:
+        pages = [("Home", website + "/")]
+    llms = "\n".join(
+        [f"# {name}", "", f"> {desc}", "", "## What we do"] +
+        [f"- {t[:1].upper() + t[1:]}" for t in themes] +
+        (["", "## Where we serve"] + [f"- {l}" for l in locs] if locs else []) +
+        ["", "## Key pages"] + [f"- [{l}]({u})" for l, u in dict(pages).items()] +
+        ["", "## Contact", "- Phone: [add phone]", "- Email: [add email]", "- Address: [add street address or service area]"]
+    ) + "\n"
+    schema = {
+        "@context": "https://schema.org",
+        "@type": "NGO",
+        "name": name,
+        "url": website + "/",
+        "description": desc,
+        "logo": "[add logo URL]",
+        "telephone": "[add phone]",
+        "email": "[add email]",
+        "address": {"@type": "PostalAddress", "streetAddress": "[add street]",
+                    "addressLocality": locs[0].split(",")[0].strip() if locs and "," in locs[0] else "[add city]",
+                    "addressRegion": locs[0].split(",")[1].strip() if locs and "," in locs[0] else "[add state]",
+                    "addressCountry": "US"},
+        "areaServed": locs or ["[add service area]"],
+        "knowsAbout": themes,
+        "sameAs": ["[add Facebook URL]", "[add Instagram URL]", "[add Candid/GuideStar profile URL]"],
+    }
+    import json as _json
+    return {"llms_txt": llms,
+            "schema": '<script type="application/ld+json">\n' + _json.dumps(schema, indent=2) + "\n</script>"}
+
+
+def build_aeo(client, ai_entry, ga4_entry=None):
     """AEO readiness audit + action plan (both produced by fetch_ai_visibility.py)."""
     audit = (ai_entry or {}).get("audit")
     plan = (ai_entry or {}).get("action_plan")
-    out = {"audit": None, "plan": None}
+    out = {"audit": None, "plan": None, "kit": build_kit(client, audit, ga4_entry)}
     if audit:
         checks = audit.get("checks") or []
         out["audit"] = {
@@ -416,7 +503,7 @@ def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None):
     seo_enrolled = bool(client.get("local_seo_enrolled"))
     return {
         "referrals": build_referrals(ga4_entry),
-        "aeo": build_aeo(client, ai_entry),
+        "aeo": build_aeo(client, ai_entry, ga4_entry),
         "ai":  build_ai(ai_entry, seo_entry if seo_enrolled else None),
         "seo": build_seo(client, seo_entry) if seo_enrolled else None,
         "seo_enrolled": seo_enrolled,
