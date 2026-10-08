@@ -119,13 +119,19 @@ jobs:
   reports:
     name: Weekly client reports
     runs-on: ubuntu-latest
+    # On "Run workflow → all", wait for the fetch jobs so reports use this
+    # run's data. always() keeps the scheduled 16:00 run going when they're skipped.
+    needs: [fetch_ga4, fetch_seo, fetch_ai, fetch_local, fetch_organic, fetch_authority, fetch_competitors]
     if: |
+      always() && (
       (github.event_name == 'schedule' && github.event.schedule == '0 16 * * 1') ||
       (github.event_name == 'workflow_dispatch' &&
-       (github.event.inputs.job == 'reports' || github.event.inputs.job == 'all'))
+       (github.event.inputs.job == 'reports' || github.event.inputs.job == 'all')))
  
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main  # pick up caches the fetch jobs just pushed
  
       - uses: actions/setup-python@v5
         with:
@@ -163,7 +169,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
           git add reports/ ga4_cache.json || true
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Weekly reports $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Weekly reports $(date +'%B %d, %Y')" && for i in 1 2 3 4 5; do git pull --rebase -X theirs --autostash origin main && git push && exit 0; sleep $((RANDOM % 20 + 5)); done; exit 1)
  
   # ── FETCH GA4 DATA ────────────────────────────────────────────────────
   fetch_ga4:
@@ -193,7 +199,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
           git add ga4_cache.json || true
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Update GA4 cache $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update GA4 cache $(date +'%B %d, %Y')" && for i in 1 2 3 4 5; do git pull --rebase -X theirs --autostash origin main && git push && exit 0; sleep $((RANDOM % 20 + 5)); done; exit 1)
  
   # ── FETCH SEO DATA ────────────────────────────────────────────────────
   fetch_seo:
@@ -232,7 +238,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
           git add seo_cache.json || true
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Update SEO cache" && git pull --rebase --autostash origin main && git push)
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update SEO cache" && for i in 1 2 3 4 5; do git pull --rebase -X theirs --autostash origin main && git push && exit 0; sleep $((RANDOM % 20 + 5)); done; exit 1)
 
   # ── FETCH AI VISIBILITY (Monday 5am PST) ──────────────────────────────
   # Asks each client's tracked prompts in AI Overviews, AI Mode, ChatGPT,
@@ -240,6 +246,7 @@ jobs:
   fetch_ai:
     name: Fetch AI visibility
     runs-on: ubuntu-latest
+    timeout-minutes: 340
     if: |
       (github.event_name == 'schedule' && github.event.schedule == '0 12 * * 1') ||
       (github.event_name == 'workflow_dispatch' &&
@@ -271,7 +278,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
           git add ai_visibility_cache.json || true
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Update AI visibility $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update AI visibility $(date +'%B %d, %Y')" && for i in 1 2 3 4 5; do git pull --rebase -X theirs --autostash origin main && git push && exit 0; sleep $((RANDOM % 20 + 5)); done; exit 1)
 
   # ── FETCH LOCAL MAP RANKINGS (Monday 5am PST) ─────────────────────────
   # Google Maps grid + Business Profile for clients with "local_tracking".
@@ -301,7 +308,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
           git add local_cache.json || true
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Update local map rankings $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update local map rankings $(date +'%B %d, %Y')" && for i in 1 2 3 4 5; do git pull --rebase -X theirs --autostash origin main && git push && exit 0; sleep $((RANDOM % 20 + 5)); done; exit 1)
 
   # ── FETCH ORGANIC SEARCH (SEMrush-style, monthly) ─────────────────────
   # Runs with the Monday fetches; fetch_organic.py skips clients fetched in
@@ -333,7 +340,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
           git add organic_cache.json || true
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Update organic search $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update organic search $(date +'%B %d, %Y')" && for i in 1 2 3 4 5; do git pull --rebase -X theirs --autostash origin main && git push && exit 0; sleep $((RANDOM % 20 + 5)); done; exit 1)
 
   # ── FETCH AUTHORITY (backlinks, monthly) ──────────────────────────────
   # Only runs when the DATAFORSEO_BACKLINKS variable is 1 (needs the
@@ -366,7 +373,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
           git add authority_cache.json || true
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Update authority $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update authority $(date +'%B %d, %Y')" && for i in 1 2 3 4 5; do git pull --rebase -X theirs --autostash origin main && git push && exit 0; sleep $((RANDOM % 20 + 5)); done; exit 1)
 
   # ── FETCH COMPETITOR WEBSITE CHANGES (weekly) ─────────────────────────
   # New pages and content edits on each client's tracked competitors.
@@ -399,4 +406,4 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "SAP Automation"
           git add competitor_cache.json || true
-          git diff --staged --quiet && echo "No changes" || (git commit -m "Update competitor changes $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update competitor changes $(date +'%B %d, %Y')" && for i in 1 2 3 4 5; do git pull --rebase -X theirs --autostash origin main && git push && exit 0; sleep $((RANDOM % 20 + 5)); done; exit 1)

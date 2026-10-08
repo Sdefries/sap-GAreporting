@@ -102,7 +102,8 @@ function clientConfig(c) {
   let location = c.seo_location || "United States";
   const loc = (c.geo?.locations || [])[0] || "";
   if (!c.seo_location && loc.includes(",")) {
-    const [city, st] = loc.split(",").map((s) => s.trim());
+    const i = loc.indexOf(",");
+    const [city, st] = [loc.slice(0, i).trim(), loc.slice(i + 1).trim()];
     if (US_STATES[st.toUpperCase()]) location = `${city},${US_STATES[st.toUpperCase()]},United States`;
   } else if (!c.seo_location && Object.values(US_STATES).includes(loc)) location = `${loc},United States`;
   return {
@@ -287,9 +288,11 @@ async function routeCheck(env, client, body) {
     if (!engineAvailable(env, e)) return (cells[e] = { state: "untracked", named: false, cited: false, sites: [], excerpt: "", comps: {}, error: "" });
     try {
       const res = await ENGINE_FUNCS[e](env, prompt, cfg);
-      cells[e] = res.status === "error" ? { state: "error", named: false, cited: false, sites: [], excerpt: "", comps: {}, error: res.error } : score(res, cfg);
+      if (res.status === "error") console.error(`${e} check error:`, res.error);
+      cells[e] = res.status === "error" ? { state: "error", named: false, cited: false, sites: [], excerpt: "", comps: {}, error: "This AI didn't answer this time." } : score(res, cfg);
     } catch (err) {
-      cells[e] = { state: "error", named: false, cited: false, sites: [], excerpt: "", comps: {}, error: String(err.message).slice(0, 200) };
+      console.error(`${e} check failed:`, err.message);  // upstream detail stays in the Worker log
+      cells[e] = { state: "error", named: false, cited: false, sites: [], excerpt: "", comps: {}, error: "This AI didn't answer this time." };
     }
   }));
   const answered = engines.filter((e) => !["untracked", "error"].includes(cells[e].state));
@@ -323,7 +326,9 @@ async function routeIdeas(env, client) {
   });
   if (resp.stop_reason === "refusal") return [502, { error: "Couldn't generate ideas this time." }];
   const text = resp.content.find((b) => b.type === "text")?.text || "{}";
-  return [200, { prompts: (JSON.parse(text).prompts || []).map((p) => p.trim()).filter(Boolean).slice(0, 15) }];
+  let ideas;
+  try { ideas = JSON.parse(text).prompts || []; } catch { return [502, { error: "Couldn't generate ideas this time." }]; }
+  return [200, { prompts: ideas.map((p) => String(p).trim()).filter(Boolean).slice(0, 15) }];
 }
 
 function toBase64(bytes) {
@@ -332,34 +337,60 @@ function toBase64(bytes) {
   return btoa(bin);
 }
 
-async function routeTrack(env, body) {
-  const quota = await takeQuota(env, body.slug);
-  if (!quota.ok) return [429, { error: `You've used today's ${quota.limit} live actions. Try again tomorrow.` }];
-  const wanted = [...new Set((body.prompts || []).map((p) => String(p).trim().slice(0, 300)).filter((p) => p.length >= 5))];
-  if (!wanted.length) return [400, { error: "Pick at least one prompt." }];
-  for (let attempt = 0; attempt < 3; attempt++) {
+// Same layout as Python's json.dump(indent=2): non-ASCII written as \uXXXX,
+// so a write from the report doesn't reformat the whole of clients.json.
+function clientsJSON(clients) {
+  return JSON.stringify(clients, null, 2).replace(/[\u007f-\uffff]/g, (c) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0")) + "\n";
+}
+
+// Read clients.json, apply change(client) and commit it, retrying when someone
+// else wrote first. change returns {error,status} to stop, {noop} to skip the
+// write, or {message} to commit. Quota is only taken when there's a real write.
+async function updateClient(env, slug, change) {
+  let charged = false;
+  for (let attempt = 0; attempt < 4; attempt++) {
     const { sha, clients } = await githubFile(env);
-    const c = clients.find((x) => x.slug === body.slug);
+    const c = clients.find((x) => x.slug === slug);
     if (!c) return [404, { error: "Client not found." }];
-    c.ai_tracking = c.ai_tracking || { enabled: true };
-    const current = c.ai_tracking.prompts?.length ? c.ai_tracking.prompts : [];
-    const lower = new Set(current.map((p) => p.toLowerCase()));
-    const add = wanted.filter((p) => !lower.has(p.toLowerCase()));
-    if (!add.length) return [200, { added: [], prompts: current, message: "Those prompts are already tracked." }];
-    if (current.length + add.length > MAX_PROMPTS) {
-      return [400, { error: `You can track up to ${MAX_PROMPTS} prompts (${current.length} tracked now). Pick ${Math.max(0, MAX_PROMPTS - current.length)} or fewer, or ask us to swap some out.` }];
+    const out = change(c);
+    if (out.error) return [out.status || 400, { error: out.error }];
+    if (out.noop) return [200, out.noop];
+    if (!charged) {
+      const quota = await takeQuota(env, slug);
+      if (!quota.ok) return [429, { error: `You've used today's ${quota.limit} live actions. Try again tomorrow.` }];
+      charged = true;
     }
-    c.ai_tracking.prompts = [...current, ...add];
-    const content = toBase64(new TextEncoder().encode(JSON.stringify(clients, null, 2) + "\n"));
     const r = await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/contents/clients.json`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, "User-Agent": "sap-aeo-worker", Accept: "application/vnd.github+json" },
-      body: JSON.stringify({ message: `Track ${add.length} new AI prompt${add.length > 1 ? "s" : ""} for ${c.slug} (from client report)`, content, sha, branch: env.GITHUB_BRANCH || "main" }),
+      body: JSON.stringify({ message: out.message, content: toBase64(new TextEncoder().encode(clientsJSON(clients))), sha, branch: env.GITHUB_BRANCH || "main" }),
     });
-    if (r.ok) return [200, { added: add, prompts: c.ai_tracking.prompts }];
-    if (r.status !== 409) throw new Error(`GitHub write failed: ${r.status}`);
+    if (r.ok) return [200, out.result(c)];
+    if (r.status !== 409 && r.status !== 422) throw new Error(`GitHub write failed: ${r.status}`);
+    await new Promise((res) => setTimeout(res, 300 + Math.random() * 700));  // someone else wrote first
   }
   return [503, { error: "Busy right now, please try again." }];
+}
+
+async function routeTrack(env, body) {
+  const seen = new Set();
+  const wanted = (Array.isArray(body.prompts) ? body.prompts : []).slice(0, 20)
+    .map((p) => String(p).replace(/\s+/g, " ").trim().slice(0, 300))
+    .filter((p) => p.length >= 5 && !seen.has(p.toLowerCase()) && seen.add(p.toLowerCase()));
+  if (!wanted.length) return [400, { error: "Pick at least one prompt." }];
+  return updateClient(env, body.slug, (c) => {
+    const current = c.ai_tracking?.prompts?.length ? c.ai_tracking.prompts : [];
+    const lower = new Set(current.map((p) => p.toLowerCase()));
+    const add = wanted.filter((p) => !lower.has(p.toLowerCase()));
+    if (!add.length) return { noop: { added: [], prompts: current, message: "Those prompts are already tracked." } };
+    if (current.length + add.length > MAX_PROMPTS) {
+      return { error: `You can track up to ${MAX_PROMPTS} prompts (${current.length} tracked now). Pick ${Math.max(0, MAX_PROMPTS - current.length)} or fewer, or ask us to swap some out.` };
+    }
+    c.ai_tracking = c.ai_tracking || { enabled: true };
+    c.ai_tracking.prompts = [...current, ...add];
+    return { message: `Track ${add.length} new AI prompt${add.length > 1 ? "s" : ""} for ${c.slug} (from client report)`,
+             result: (cc) => ({ added: add, prompts: cc.ai_tracking.prompts }) };
+  });
 }
 
 // Sites that are platforms or listings, not peer organizations (mirrors
@@ -377,43 +408,30 @@ function isDirectory(d) {
 }
 
 // Add or remove a tracked competitor from the client's report.
-// body: {action: "add" | "remove", domain, name}
+// body: {action: "add" | "remove", domain, name}. Clients can only remove
+// competitors they added from the report; the agency's own picks stay.
 async function routeCompetitors(env, body) {
   const action = body.action === "remove" ? "remove" : "add";
   const domain = domainOf(String(body.domain || "").trim().slice(0, 200));
   const name = String(body.name || "").replace(/\s+/g, " ").trim().slice(0, 80);
   if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(domain)) return [400, { error: "Enter the organization's website, like bestfriends.org." }];
   if (action === "add" && isDirectory(domain)) return [400, { error: `${domain} is a listing or social site, not an organization. Add the organization's own website.` }];
-  const quota = await takeQuota(env, body.slug);
-  if (!quota.ok) return [429, { error: `You've used today's ${quota.limit} live actions. Try again tomorrow.` }];
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const { sha, clients } = await githubFile(env);
-    const c = clients.find((x) => x.slug === body.slug);
-    if (!c) return [404, { error: "Client not found." }];
+  return updateClient(env, body.slug, (c) => {
     const list = Array.isArray(c.competitors) ? c.competitors : [];
-    const has = list.some((x) => domainOf(x.domain) === domain);
-    let message;
+    const found = list.find((x) => domainOf(x.domain) === domain);
+    const result = (cc) => ({ competitors: cc.competitors });
     if (action === "add") {
-      if (domain === domainOf(c.website || "")) return [400, { error: "That's your own website." }];
-      if (has) return [200, { competitors: list, message: "Already tracked." }];
-      if (list.length >= MAX_COMPETITORS) return [400, { error: `You can track up to ${MAX_COMPETITORS} competitors. Remove one first.` }];
-      c.competitors = [...list, { name: name || domain, domain }];
-      message = `Track competitor ${domain} for ${c.slug} (from client report)`;
-    } else {
-      if (!has) return [200, { competitors: list, message: "Not tracked." }];
-      c.competitors = list.filter((x) => domainOf(x.domain) !== domain);
-      message = `Stop tracking competitor ${domain} for ${c.slug} (from client report)`;
+      if (domain === domainOf(c.website || "")) return { error: "That's your own website." };
+      if (found) return { noop: { competitors: list, message: "Already tracked." } };
+      if (list.length >= MAX_COMPETITORS) return { error: `You can track up to ${MAX_COMPETITORS} competitors. Remove one first.` };
+      c.competitors = [...list, { name: name || domain, domain, source: "report" }];
+      return { message: `Track competitor ${domain} for ${c.slug} (from client report)`, result };
     }
-    const content = toBase64(new TextEncoder().encode(JSON.stringify(clients, null, 2) + "\n"));
-    const r = await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/contents/clients.json`, {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}`, "User-Agent": "sap-aeo-worker", Accept: "application/vnd.github+json" },
-      body: JSON.stringify({ message, content, sha, branch: env.GITHUB_BRANCH || "main" }),
-    });
-    if (r.ok) return [200, { competitors: c.competitors }];
-    if (r.status !== 409) throw new Error(`GitHub write failed: ${r.status}`);
-  }
-  return [503, { error: "Busy right now, please try again." }];
+    if (!found) return { noop: { competitors: list, message: "Not tracked." } };
+    if (found.source !== "report") return { error: "Your account manager set this competitor. Ask them to change it.", status: 403 };
+    c.competitors = list.filter((x) => x !== found);
+    return { message: `Stop tracking competitor ${domain} for ${c.slug} (from client report)`, result };
+  });
 }
 
 export default {
@@ -437,7 +455,8 @@ export default {
       const [status, out] = await route(env, client, body);
       return json(out, status, headers);
     } catch (e) {
-      return json({ error: "Something went wrong. Please try again in a minute." , detail: String(e.message).slice(0, 200) }, 500, headers);
+      console.error("request failed:", e.message);
+      return json({ error: "Something went wrong. Please try again in a minute." }, 500, headers);
     }
   },
 };

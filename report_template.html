@@ -2447,7 +2447,7 @@ function compManage(){
   return `<div class="card comp-manage" id="compManage"><div class="chart-title">Your competitors <span class="vfoot">${list.length} of ${COMP_MAX}</span></div>
     <div class="vfoot" style="margin:2px 0 10px">Organizations people might choose instead of you. We compare you with them in Google, in AI answers and on their websites.</div>
     ${list.length?`<div class="comp-rows">${list.map(c=>`<div class="comp-row"><div><b>${esc(c.name)}</b><div class="vfoot" style="margin:0">${esc(c.domain)}</div></div>
-      ${live?`<button class="vbtn" data-comp-remove="${esc(c.domain)}" aria-label="Stop tracking ${esc(c.name)}">Remove</button>`:''}</div>`).join('')}</div>`:''}
+      ${live?(c.mine?`<button class="vbtn" data-comp-remove="${esc(c.domain)}" aria-label="Stop tracking ${esc(c.name)}">Remove</button>`:'<span class="vfoot" style="margin:0">Set by your account manager</span>'):''}</div>`).join('')}</div>`:''}
     ${live?(list.length<COMP_MAX?`<form class="vtools comp-form" id="compAddForm" style="margin:10px 0 0">
         <input class="vsearch" id="compName" maxlength="80" placeholder="Name, e.g. Best Friends Animal Society" aria-label="Competitor name">
         <input class="vsearch" id="compDomain" maxlength="200" placeholder="Website, e.g. bestfriends.org" aria-label="Competitor website" required>
@@ -2460,7 +2460,7 @@ async function compChange(action,domain,name){
   const msg=document.getElementById('compMsg'); if(msg)msg.textContent=action==='add'?'Adding…':'Removing…';
   try{
     const d=await liveCall('/competitors',{action,domain,name});
-    window._comps=d.competitors.map(c=>({name:c.name||c.domain,domain:String(c.domain).replace(/^https?:\/\/(www\.)?/,'').replace(/\/.*$/,'')}));
+    window._comps=d.competitors.map(c=>({name:c.name||c.domain,domain:String(c.domain).replace(/^https?:\/\/(www\.)?/,'').replace(/\/.*$/,''),mine:c.source==='report'}));
     const V=window.VISIBILITY_DATA; renderCompetitors(V); document.querySelectorAll('[data-comp-add]').forEach(b=>b.outerHTML=compTrackBtn(b.dataset.compAdd));
     const m=document.getElementById('compMsg'); if(m)m.textContent=d.message||(action==='add'?'Added. You\'ll see comparisons after the next weekly update (Mondays).':'Removed. It drops out of the comparisons from the next weekly update.');
   }catch(e){const m=document.getElementById('compMsg'); if(m)m.textContent=e.message}

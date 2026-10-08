@@ -28,7 +28,7 @@ const call = (path, body) => worker.fetch(new Request("https://w.dev" + path, { 
 
 test("token matches the Python report generator", async () => {
   // python: hmac.new(b"secret", b"pup-profile", hashlib.sha256).hexdigest()[:32]
-  assert.equal(await tokenFor("pup-profile", "secret"), process.env.PY_TOKEN || (await tokenFor("pup-profile", "secret")));
+  assert.equal(await tokenFor("pup-profile", "secret"), "4645b590179abfbb4879e35abcaed44a");
 });
 
 test("rejects a bad token", async () => {
@@ -73,7 +73,7 @@ test("competitors: adds one from the report", async () => {
   assert.equal(r.status, 200);
   assert.deepEqual(d.competitors.map((c) => c.domain), ["bestfriends.org", "wagsandwalks.org"]);
   const written = JSON.parse(Buffer.from(committed.content, "base64").toString());
-  assert.deepEqual(written[0].competitors[1], { name: "Wags and Walks", domain: "wagsandwalks.org" });
+  assert.deepEqual(written[0].competitors[1], { name: "Wags and Walks", domain: "wagsandwalks.org", source: "report" });
 });
 
 test("competitors: rejects listing sites, the client's own site and bad input", async () => {
@@ -99,10 +99,48 @@ test("competitors: clients can track at most 3", async () => {
   }
 });
 
-test("competitors: removes one", async () => {
+test("competitors: removes one the client added, not the agency's", async () => {
+  env.LIMITS = kv();
+  const saved = clients[0].competitors;
+  clients[0].competitors = [...saved, { name: "Wags", domain: "wagsandwalks.org", source: "report" }];
+  try {
+    const token = await tokenFor("pup-profile", "secret");
+    const agency = await call("/competitors", { slug: "pup-profile", token, action: "remove", domain: "bestfriends.org" });
+    assert.equal(agency.status, 403);
+    const r = await call("/competitors", { slug: "pup-profile", token, action: "remove", domain: "wagsandwalks.org" });
+    assert.equal(r.status, 200);
+    assert.deepEqual((await r.json()).competitors.map((c) => c.domain), ["bestfriends.org"]);
+  } finally {
+    clients[0].competitors = saved;
+  }
+});
+
+test("track: bad input is a 400, case duplicates collapse, no-ops don't use quota", async () => {
   env.LIMITS = kv();
   const token = await tokenFor("pup-profile", "secret");
-  const r = await call("/competitors", { slug: "pup-profile", token, action: "remove", domain: "bestfriends.org" });
-  assert.equal(r.status, 200);
-  assert.deepEqual((await r.json()).competitors, []);
+  assert.equal((await call("/track", { slug: "pup-profile", token, prompts: "not a list" })).status, 400);
+  const r = await call("/track", { slug: "pup-profile", token, prompts: ["Dog rescue near Pasadena", "dog rescue near pasadena"] });
+  assert.deepEqual((await r.json()).added, ["Dog rescue near Pasadena"]);
+  for (let i = 0; i < 5; i++) {
+    const again = await call("/track", { slug: "pup-profile", token, prompts: ["Where can I adopt a dog in LA?"] });
+    assert.equal(again.status, 200);  // already tracked: answered without spending the daily limit (2)
+  }
+});
+
+test("writes clients.json with non-ASCII escaped like Python", async () => {
+  env.LIMITS = kv();
+  const token = await tokenFor("pup-profile", "secret");
+  await call("/track", { slug: "pup-profile", token, prompts: ["Rescates de perros en español"] });
+  const raw = Buffer.from(committed.content, "base64").toString();
+  assert.match(raw, /espa\\u00f1ol/);
+});
+
+test("upstream errors aren't sent to the browser", async () => {
+  env.LIMITS = kv();
+  const token = await tokenFor("pup-profile", "secret");
+  const saved = env.OPENAI_API_KEY;
+  const r = await call("/check", { slug: "pup-profile", token, prompt: "Where can I adopt a dog?" });
+  const d = await r.json();
+  for (const c of Object.values(d.cells)) assert.ok(!/HTTP \d/.test(c.error || ""));
+  env.OPENAI_API_KEY = saved;
 });

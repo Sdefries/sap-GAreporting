@@ -61,6 +61,7 @@ import argparse
 import base64
 import datetime
 import json
+import time
 import os
 import re
 import urllib.error
@@ -808,11 +809,23 @@ def run(slug_filter=None, engines_filter=None, dry_run=False, ideas_only=False):
 
     cache = load_cache()
     fetched = 0
+    # Stop starting new clients before GitHub's 6-hour job limit, so the commit
+    # step still runs and finished clients aren't lost.
+    deadline = time.time() + float(os.environ.get("AI_TIME_BUDGET_MIN", "300")) * 60
     for client in clients:
         if slug_filter and client["slug"] != slug_filter:
             continue
-        if fetch_client(client, cache, engines_filter, dry_run, ideas_only):
-            fetched += 1
+        if time.time() > deadline:
+            print(f"  ⏱  Time budget used — {client['name']} and later clients wait for next week")
+            break
+        try:
+            if fetch_client(client, cache, engines_filter, dry_run, ideas_only):
+                fetched += 1
+        except Exception as e:  # one client's failure shouldn't lose everyone else's results
+            print(f"  ✗ {client['name']}: {str(e)[:200]}")
+        if not dry_run:
+            with open(CACHE_PATH, "w") as f:  # save as we go
+                json.dump(cache, f, indent=1, default=str)
 
     if dry_run:
         print("\n[DRY RUN] Nothing called, nothing saved")
