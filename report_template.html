@@ -364,7 +364,7 @@ tr:hover td{background:#F5F9FF}
 .timing-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .timing-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
 .timing-title{font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--navy);margin-bottom:14px}
-.dow-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.dow-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
 .dow-item{text-align:center;padding:12px 6px;background:var(--gray-100);border-radius:8px}
 .dow-day{font-size:12px;font-weight:600;color:var(--gray-400);text-transform:uppercase;margin-bottom:4px}
 .dow-clicks{font-family:var(--font-head);font-size:14px;font-weight:600;color:var(--navy)}
@@ -372,14 +372,17 @@ tr:hover td{background:#F5F9FF}
 .dow-ctr.good{color:var(--green)}
 .dow-ctr.warn{color:var(--amber)}
 .dow-ctr.bad{color:var(--red)}
-.hour-heatmap{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
-.hour-cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--navy);position:relative;cursor:default}
-.hour-cell:hover::after{content:attr(data-tooltip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;white-space:nowrap;z-index:10}
+.hour-heatmap{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px}
+@media(max-width:1280px){.hour-heatmap{grid-template-columns:repeat(8,minmax(0,1fr))}}
+@media(max-width:600px){.hour-heatmap{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.hour-cell{aspect-ratio:1;min-width:0;overflow:hidden;white-space:nowrap;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--navy);position:relative;cursor:default}
 .st-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.st-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
+.st-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px;min-width:0;overflow-x:auto}
+.st-grid>*{min-width:0}
+.st-table td:first-child{overflow-wrap:anywhere}.st-table th:not(:first-child),.st-table td:not(:first-child){text-align:right;white-space:nowrap}
 .st-card-title{font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:8px}
 .st-card-sub{font-size:12px;color:var(--gray-400);margin-bottom:14px}
-.st-table{width:100%;font-size:12px}
+.st-table{width:100%;font-size:12px;min-width:0}
 .st-table th{text-align:left;font-size:12px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.025em;padding:8px 6px;border-bottom:1px solid var(--border)}
 .st-table td{padding:10px 6px;border-bottom:1px solid var(--gray-100)}
 .st-table tr:last-child td{border-bottom:none}
@@ -503,6 +506,9 @@ b.up,.up{color:#1A6E3E}b.down,.down{color:#A02020}
 .health-banner{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;margin-bottom:14px;border-radius:12px;border:1px solid #fde68a;background:#fefce8;color:#854d0e;font-size:14px}
 .health-banner i{font-size:20px;margin-top:1px}.health-banner ul{margin:4px 0 0;padding-left:18px;font-size:12px}
 @media (prefers-reduced-motion:reduce){.eng-card.click{transition:none}.eng-card.click:hover{transform:none}}
+.lp-cell{min-width:200px}.lp-path{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--primary-900,#001d31);overflow-wrap:anywhere}
+.lp-open{color:var(--blue);text-decoration:none;font-size:12px;margin-left:4px}
+.lp-bar{display:inline-block;width:70px;height:6px;border-radius:3px;background:var(--gray-100);vertical-align:middle;overflow:hidden}.lp-bar>span{display:block;height:100%;background:var(--blue);border-radius:3px}
 .wc-q{margin:4px 0 0;padding:4px 10px;border-left:3px solid var(--primary-100,#cfe4ff);color:var(--gray-600)}
 .vchip{padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;color:var(--gray-600);background:#fff;border:1px solid var(--border);cursor:pointer;font-family:var(--font-body)}
 .vchip.active{background:var(--navy-dark);color:#fff;border-color:var(--navy-dark)}
@@ -619,7 +625,8 @@ button.st{cursor:pointer}
 .ov-link .vis-score{grid-template-columns:minmax(220px,300px) 1fr}
 .ov-opp{grid-column:1/-1;margin-top:0}
 .tip{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--gray-400);cursor:help;position:relative;vertical-align:middle;margin-left:4px;font-family:var(--font-body)}
-.tip:hover::after,.tip:focus::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);width:260px;background:#0f172a;color:#fff;font-size:12px;font-weight:500;line-height:1.5;padding:9px 11px;border-radius:8px;z-index:60;white-space:normal;text-align:left;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.tip:hover,.tip:focus-visible{border-color:var(--blue);color:var(--blue);outline:none}
+#tipFloat{position:fixed;z-index:200;max-width:280px;background:#0f172a;color:#fff;font-size:12px;font-weight:500;line-height:1.5;padding:9px 11px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.2);pointer-events:none;font-family:var(--font-body);text-transform:none;letter-spacing:normal;text-align:left}
 .loc-sel{max-width:280px;flex:0 1 auto;min-width:160px}
 .loc-dot{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;border-radius:11px;color:#fff;font-size:12px;font-weight:600;margin-right:6px;vertical-align:middle}
 .loc-star{color:#f59e0b;font-size:20px;line-height:22px;text-align:center;text-shadow:0 0 3px #fff,0 0 6px #fff}
@@ -648,7 +655,7 @@ button.st{cursor:pointer}
 .prio{font-size:12px;font-weight:600;padding:3px 9px;border-radius:10px;white-space:nowrap}
 .prio-high{background:#FDEAEA;color:#A02020}.prio-medium{background:#FEF6E6;color:#9A6010}.prio-low{background:var(--gray-100);color:var(--gray-600)}
 @media(max-width:960px){.plan-grid{grid-template-columns:1fr}}
-@media(max-width:960px){.kw-grid,.timing-grid{grid-template-columns:1fr}.seo-grid{grid-template-columns:repeat(2,1fr)}.seo-grid>*{min-width:0}}
+@media(max-width:960px){.kw-grid,.timing-grid,.st-grid{grid-template-columns:1fr}.seo-grid{grid-template-columns:repeat(2,1fr)}.seo-grid>*{min-width:0}}
 
 /* ═══ CRM theme — matches the Sponsor a Purpose dashboard (sap-payment-platform) ═══
    White sidebar with rounded light-blue active pills, white cards with slate
@@ -932,10 +939,6 @@ table.vt th{text-transform:none;letter-spacing:0}
         <div class="chart-header">
           <div class="chart-title">Clicks &amp; conversions</div>
           <div style="display:flex;align-items:center;gap:16px">
-            <div class="chart-legend">
-              <span><span class="legend-dot" style="background:#077cbf"></span>Clicks</span>
-              <span><span class="legend-dot" style="background:#3DAA69"></span>Conversions</span>
-            </div>
             <div class="ctabs">
               <div class="ctab active" onclick="swapMain('bar',this)">Bar</div>
               <div class="ctab" onclick="swapMain('line',this)">Line</div>
@@ -947,8 +950,8 @@ table.vt th{text-transform:none;letter-spacing:0}
       <div class="g2">
         <div class="chart-card">
           <div class="chart-header">
-            <div class="chart-title">Daily spend &amp; CPC</div>
-            <div class="chart-legend"><span><span class="legend-dot" style="background:#0F2B5B"></span>Spend</span><span><span class="legend-dot" style="background:#E8A020"></span>CPC</span></div>
+            <div class="chart-title">Daily spend</div>
+            <div class="vfoot" style="margin:0" id="cpcNote"></div>
           </div>
           <div class="cw" style="height:190px"><canvas id="spendChart"></canvas></div>
         </div>
@@ -1066,13 +1069,7 @@ table.vt th{text-transform:none;letter-spacing:0}
     <!-- LANDING PAGES -->
     <div class="section" id="sec-landing">
       <div class="sh"><div class="sh-title">Landing pages</div><div class="sh-sub" id="lpSub">Top pages by sessions</div></div>
-      <div class="card" style="padding:0;overflow:hidden">
-        <table class="lp-table">
-          <thead><tr><th>Page</th><th>Sessions</th><th>Traffic share</th><th>Avg. time on page</th><th>Engagement</th><th>Conversions</th></tr></thead>
-          <tbody id="lpBody"></tbody>
-        </table>
-      </div>
-      <div id="lpCallout"></div>
+      <div id="lpContent"></div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════
@@ -1107,7 +1104,7 @@ table.vt th{text-transform:none;letter-spacing:0}
     <div class="section" id="sec-ga4-demographics">
       <div class="sh">
         <div class="sh-title">Audience demographics</div>
-        <div class="sh-sub">Gender &amp; age breakdown from GA4</div>
+        <div class="sh-sub">All website visitors, every source · GA4 · last 30 days</div>
       </div>
       <div id="ga4DemoContent">
         <!-- Populated by renderGA4Demographics() -->
@@ -1224,7 +1221,13 @@ let range = '30d';
 let charts = {};
 const tk={maxTicksLimit:8,maxRotation:0,font:{size:10,family:"'Montserrat',sans-serif"},color:'#9EABBE'};
 const gl={color:'rgba(0,0,0,0.04)'};
-const dc=['#077cbf','#3DAA69','#F5A623','#E8A020','#7C3AED','#D94F3D','#5BC8F0','#0F2B5B'];
+// Shared chart style (matches the Search & AI charts): CRM colours, thin rounded
+// bars on the baseline, smooth 2px lines, legend under the chart.
+const CC={blue:'#077cbf',navy:'#001d31',green:'#16a34a',sky:'#99cbff'};
+const legendBottom={position:'bottom',labels:{boxWidth:8,boxHeight:8,font:{size:10,family:"'Montserrat',sans-serif"},color:'#5A6A82'}};
+const barMark={borderRadius:4,borderSkipped:'start',maxBarThickness:28};
+const lineMark={borderWidth:2,pointRadius:3,cubicInterpolationMode:'monotone'};
+const dc=['#077cbf','#16a34a','#f59e0b','#7c3aed','#e0603c','#5bc8f0','#001d31','#e05c94'];
 
 function fmt$(v){if(!v&&v!==0)return'—';return'$'+(+v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
 function fmtN(v){if(!v&&v!==0)return'—';return(+v).toLocaleString()}
@@ -1293,8 +1296,7 @@ function renderGA4Traffic(){
       labels: trend.map(d=>d.date),
       datasets:[{
         label:'Sessions', data:trend.map(d=>d.sessions),
-        borderColor:'#077cbf', backgroundColor:'rgba(7,124,191,0.08)',
-        borderWidth:2.5, fill:true, tension:0.35, pointRadius:2, pointBackgroundColor:'#077cbf'
+        borderColor:CC.blue, backgroundColor:'rgba(7,124,191,0.12)', fill:'start', ...lineMark
       }]
     },
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
@@ -1362,10 +1364,6 @@ function renderGA4Devices(){
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title">Sessions by Device</div>
-          <div class="chart-legend">
-            <span><span class="legend-dot" style="background:#3DAA69"></span>Conversions</span>
-            <span><span class="legend-dot" style="background:#93C5FD"></span>Sessions</span>
-          </div>
         </div>
         <div class="cw" style="height:200px"><canvas id="ga4DeviceChart"></canvas></div>
       </div>
@@ -1383,11 +1381,11 @@ function renderGA4Devices(){
     data:{
       labels:devLabels,
       datasets:[
-        {label:'Conversions', data:devList.map(d=>(devices[d]||{}).conversions||0), backgroundColor:'#3DAA69', borderRadius:4},
-        {label:'Sessions',    data:devList.map(d=>(devices[d]||{}).sessions||0),    backgroundColor:'#93C5FD', borderRadius:4},
+        {label:'Sessions',    data:devList.map(d=>(devices[d]||{}).sessions||0),    backgroundColor:CC.blue, ...barMark},
+        {label:'Conversions', data:devList.map(d=>(devices[d]||{}).conversions||0), backgroundColor:CC.green, ...barMark},
       ]
     },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:legendBottom},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
   // Browser breakdown
@@ -1412,8 +1410,12 @@ function renderGA4Demographics(){
   }
 
   const demo = ga4.demographics;
-  const genderColors={'Female':'#077cbf','Male':'#3DAA69','Other':'#9EABBE'};
-  const ageColors=['#A78BFA','#077cbf','#3DAA69','#E8A020','#D94F3D','#9EABBE'];
+  const genderColors={'Female':CC.blue,'Male':CC.sky,'Other':'#94a3b8'};
+  // "unknown" (no Google signals) is left out of the charts and shown as a note
+  const allAges=demo.age_groups||[], unknown=allAges.find(a=>a.age==='unknown'), ages=allAges.filter(a=>a.age!=='unknown');
+  const knownTotal=ages.reduce((n,a)=>n+(a.sessions||0),0)||1;
+  ages.forEach(a=>a.known_share=Math.round((a.sessions||0)/knownTotal*1000)/10);
+  const maxShare=Math.max(...ages.map(a=>a.known_share),1);
 
   container.innerHTML=`
     <div class="demo-section-lbl">Gender</div>
@@ -1435,10 +1437,6 @@ function renderGA4Demographics(){
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title">Sessions by Age</div>
-          <div class="chart-legend">
-            <span><span class="legend-dot" style="background:#3DAA69"></span>Conversions</span>
-            <span><span class="legend-dot" style="background:#93C5FD"></span>Sessions</span>
-          </div>
         </div>
         <div class="cw" style="height:180px"><canvas id="ga4AgeChart"></canvas></div>
       </div>
@@ -1446,7 +1444,8 @@ function renderGA4Demographics(){
         <div class="chart-header"><div class="chart-title">Age Group Share</div></div>
         <div class="age-share-list" id="ageShareList"></div>
       </div>
-    </div>`;
+    </div>
+    ${unknown?.share?`<div class="vfoot" style="margin-top:8px">Age is known for ${Math.round(100-unknown.share)}% of visitors. Google only knows age and gender for visitors signed in to Google with Google signals turned on, so shares above are of those visitors.</div>`:''}`;
 
   // Gender donut
   const genders = demo.gender || [];
@@ -1466,42 +1465,94 @@ function renderGA4Demographics(){
     </div>`).join('');
 
   // Gender engagement grouped bar
-  const gEngagement = demo.gender_engagement || [];
+  const gEngagement = (demo.gender_engagement || []).filter(g=>(g.female||0)<=100&&(g.male||0)<=100);
   charts.ga4genderEng = new Chart(document.getElementById('ga4GenderChart'),{
     type:'bar',
     data:{
       labels: gEngagement.map(g=>g.metric),
       datasets:[
-        {label:'Female', data:gEngagement.map(g=>g.female||0), backgroundColor:'#077cbf', borderRadius:4},
-        {label:'Male',   data:gEngagement.map(g=>g.male||0),   backgroundColor:'#3DAA69', borderRadius:4},
+        {label:'Female', data:gEngagement.map(g=>g.female||0), backgroundColor:CC.blue, ...barMark},
+        {label:'Male',   data:gEngagement.map(g=>g.male||0),   backgroundColor:CC.sky, ...barMark},
       ]
     },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10,family:"'Montserrat',sans-serif"},color:'#5A6A82',boxWidth:10,padding:10}}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:legendBottom},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>v+"%"},grid:gl,beginAtZero:true,max:100}}}
   });
 
-  // Age grouped bar
-  const ages = demo.age_groups || [];
+  // Sessions by age (known ages only); conversion rate in the tooltip
   charts.ga4age = new Chart(document.getElementById('ga4AgeChart'),{
     type:'bar',
-    data:{
-      labels: ages.map(a=>a.age),
-      datasets:[
-        {label:'Conversions', data:ages.map(a=>a.conversions||0), backgroundColor:'#3DAA69', borderRadius:3},
-        {label:'Sessions',    data:ages.map(a=>a.sessions||0),    backgroundColor:'#93C5FD', borderRadius:3},
-      ]
-    },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
+    data:{labels:ages.map(a=>a.age),datasets:[{label:'Sessions',data:ages.map(a=>a.sessions||0),backgroundColor:CC.blue,...barMark}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{afterLabel:c=>{const r=ages[c.dataIndex].conv_rate;return r!=null?`${r}% of sessions converted`:''}}}},
+      scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,precision:0},grid:gl,beginAtZero:true}}}
   });
 
-  // Age share bars
-  document.getElementById('ageShareList').innerHTML = ages.map((a,i)=>`
+  // Age share bars (of visitors whose age is known)
+  document.getElementById('ageShareList').innerHTML = ages.map(a=>`
     <div class="age-share-item">
       <span class="age-lbl">${a.age}</span>
-      <div class="age-bar-wrap"><div class="age-bar-fill" style="width:${(a.share||0)*3}%;background:${ageColors[i]||'#9EABBE'}"></div></div>
-      <span class="age-pct" style="color:${ageColors[i]||'#9EABBE'}">${a.share||0}%</span>
-      <span class="age-conv">${fmtN(a.conversions||0)} cv</span>
+      <div class="age-bar-wrap"><div class="age-bar-fill" style="width:${a.known_share/maxShare*100}%;background:${CC.blue}"></div></div>
+      <span class="age-pct">${a.known_share}%</span>
+      <span class="age-conv">${a.conv_rate!=null?a.conv_rate+'% convert':''}</span>
     </div>`).join('');
 }
+
+// ── LANDING PAGES ──
+let lpQuery='', lpChip='all', lpSort='sessions', lpAll=false;
+function renderLanding(rows){
+  const box=document.getElementById('lpContent');
+  rows=(rows||[]).filter(r=>r.page&&r.page!=='GA4 not connected');
+  if(!rows.length){box.innerHTML=emptyBlock('Landing pages appear once Google Analytics is connected','We\'ll show the pages people land on first, how engaged they are, and which ones turn visits into donations or sign-ups.');return}
+  const V=window.VISIBILITY_DATA||{}, site=V.organic?.domain||V.ai?.domain||'';
+  const hasRate=rows.some(r=>r.convRate!=null), tot=rows.reduce((n,r)=>n+r.sessions,0)||1;
+  const avgRate=hasRate?Math.round(rows.reduce((n,r)=>n+(r.convRate||0)*r.sessions,0)/tot*10)/10:null;
+  const top=rows[0], noConv=rows.filter(r=>!r.convs), bigNoConv=noConv.filter(r=>r.pct>=5);
+  const sum=[`<b>${esc(top.page)}</b> is the most visited landing page, with <b>${top.pct}%</b> of visits.`];
+  if(hasRate)sum.push(`On average <b>${avgRate}%</b> of visits convert across these ${rows.length} pages.`);
+  if(noConv.length)sum.push(`<b>${noConv.length} of ${rows.length}</b> pages had no conversions in the last 30 days.`);
+  const allConv=rows.reduce((n,r)=>n+r.convs,0);
+  const trackWarn=allConv>tot?`GA4 recorded <b>${fmtN(allConv)} conversions from ${fmtN(tot)} visits</b>. That usually means an everyday action, like a page view or scroll, is marked as a conversion in GA4. Until it's fixed, conversion numbers here are overstated.`
+    :!allConv?'GA4 recorded <b>no conversions</b> in the last 30 days. Donations, sign-ups or applications may not be set up as conversions (key events) in GA4.':'';
+  const grow=rows.filter(r=>r.change!=null).sort((a,b)=>b.change-a.change)[0];
+  if(grow&&grow.change>0)sum.push(`Fastest growing: <b>${esc(grow.page)}</b>, up ${grow.change}% on the previous 30 days.`);
+  let opp='';
+  const weak=hasRate?rows.slice(0,8).filter(r=>r.pct>=5&&r.convRate!=null&&r.convRate<avgRate/2).sort((a,b)=>b.sessions-a.sessions)[0]:bigNoConv[0];
+  if(weak)opp=`<b>${esc(weak.page)}</b> gets ${weak.pct}% of visits but ${weak.convRate!=null?`only ${weak.convRate}% convert`:'no conversions'}${avgRate!=null?` (average ${avgRate}%)`:''}. A clear donate or sign-up button near the top of that page is the quickest win.`;
+  else{const b=rows.slice(0,8).filter(r=>r.bounce>=60).sort((a,b)=>b.sessions-a.sessions)[0];
+    if(b)opp=`${b.bounce}% of visitors leave <b>${esc(b.page)}</b> without doing anything. Check that it loads fast on phones and matches the ad or search that sent them.`}
+  if(trackWarn)opp=`<span class="yn comp">Check conversion tracking</span> ${trackWarn}`;
+  box.innerHTML=summaryBlock(sum,opp)+`<div class="vtools"><input class="vsearch" id="lpSearch" placeholder="Filter pages" value="${esc(lpQuery)}" aria-label="Filter pages">
+      <select class="vsearch loc-sel" id="lpSort" aria-label="Sort pages">${[['sessions','Most visits'],['change','Biggest growth'],...(hasRate?[['rate','Best conversion rate']]:[]),['eng','Most engaged'],['bounce','Highest bounce'],['az','A–Z']].map(([k,l])=>`<option value="${k}" ${k===lpSort?'selected':''}>${l}</option>`).join('')}</select>
+      <button class="vbtn" onclick="lpExportCSV()">↓ Export CSV</button></div>
+    <div class="vtools"><div class="vchips">${[['all','All'],['conv','Converting'],['none','No conversions'],['bounce','High bounce'],['up','Growing'],['down','Shrinking']].map(([k,l])=>`<button class="vchip ${lpChip===k?'active':''}" data-c="${k}">${l}</button>`).join('')}</div></div>
+    <div class="vt-wrap" id="lpTable"></div>`;
+  window._lpRows=rows; window._lpSite=site; window._lpHasRate=hasRate;
+  const inp=document.getElementById('lpSearch'); inp.oninput=()=>{lpQuery=inp.value;drawLanding()};
+  document.getElementById('lpSort').onchange=e=>{lpSort=e.target.value;drawLanding()};
+  box.querySelectorAll('.vchip').forEach(c=>c.onclick=()=>{lpChip=c.dataset.c;box.querySelectorAll('.vchip').forEach(x=>x.classList.toggle('active',x===c));drawLanding()});
+  drawLanding();
+}
+function drawLanding(){
+  const rows=window._lpRows, site=window._lpSite, hasRate=window._lpHasRate, q=lpQuery.toLowerCase();
+  const test={all:()=>true,conv:r=>r.convs>0,none:r=>!r.convs,bounce:r=>r.bounce>=60,up:r=>r.change>0,down:r=>r.change<0};
+  const sorts={sessions:(a,b)=>b.sessions-a.sessions,change:(a,b)=>(b.change??-1e9)-(a.change??-1e9),rate:(a,b)=>(b.convRate??-1)-(a.convRate??-1),
+    eng:(a,b)=>b.engRate-a.engRate,bounce:(a,b)=>b.bounce-a.bounce,az:(a,b)=>a.page.localeCompare(b.page)};
+  const list=rows.filter(r=>(!q||r.page.toLowerCase().includes(q))&&test[lpChip](r)).sort(sorts[lpSort]);
+  const shown=lpAll?list:list.slice(0,10), maxPct=Math.max(...rows.map(r=>r.pct),1);
+  const eng=v=>`<span class="yn ${v>=60?'yes':v<40?'comp':''}">${v}%</span>`;
+  const chg=r=>r.new?'<span class="yn yes">New</span>':r.change==null?'<span class="vfoot">—</span>':r.change===0?'<span class="vfoot">0%</span>':`<span class="${r.change>0?'up':'down'}">${r.change>0?'↑':'↓'} ${Math.abs(r.change)}%</span>`;
+  const el=document.getElementById('lpTable');
+  if(!list.length){el.innerHTML='<div class="vfoot" style="padding:18px">No pages match.</div>';return}
+  el.innerHTML=`<table class="vt"><thead><tr><th>Page</th><th>Visits</th><th>Share</th><th>Change ${tip('Visits compared with the previous 30 days.')}</th>
+      <th>Engaged ${tip('Share of visits that lasted 10+ seconds, viewed 2+ pages or converted. Green is 60%+, red under 40%.')}</th><th>Avg. time</th><th>Conversions</th>${hasRate?`<th>Conv. rate ${tip('Share of visits with at least one conversion.')}</th>`:''}</tr></thead><tbody>
+    ${shown.map(r=>`<tr><td class="l lp-cell"><span class="lp-path">${esc(r.page)}</span>${site?` <a class="lp-open" href="https://${esc(site)}${esc(r.page.startsWith('/')?r.page:'/'+r.page)}" target="_blank" rel="noopener" aria-label="Open ${esc(r.page)}">↗</a>`:''}${r.channel?`<div class="vfoot" style="margin:0">Mostly ${esc(r.channel)}</div>`:''}</td>
+      <td><b>${fmtN(r.sessions)}</b></td><td><span class="lp-bar"><span style="width:${r.pct/maxPct*100}%"></span></span> ${r.pct}%</td><td>${chg(r)}</td>
+      <td>${eng(r.engRate??(r.engaged?60:30))}</td><td>${esc(r.avgTime)}</td><td>${r.convs?fmtN(r.convs):'<span class="yn comp">0</span>'}</td>${hasRate?`<td>${r.convRate!=null?r.convRate+'%':'—'}</td>`:''}</tr>`).join('')}
+    </tbody></table>${list.length>10?`<div style="padding:10px 14px"><button class="vbtn" onclick="lpAll=!lpAll;drawLanding()">${lpAll?'Show top 10':`Show all ${list.length}`}</button></div>`:''}`;
+}
+window.lpExportCSV=()=>{const rows=[['Page','Visits','Share %','Change %','Engaged %','Bounce %','Avg. time','Conversions','Conv. rate %','Main channel']];
+  (window._lpRows||[]).forEach(r=>rows.push([r.page,r.sessions,r.pct,r.change??'',r.engRate??'',r.bounce??'',r.avgTime,r.convs,r.convRate??'',r.channel]));
+  downloadCSV(`${slugName()}-landing-pages.csv`,rows)};
 
 // ── MAIN RENDER ───────────────────────────────────────────────────────────────
 function render(){
@@ -1605,8 +1656,8 @@ function render(){
   const activeCamps=d.campaigns.filter(c=>c.cost>0);
   charts.spendBar=new Chart(document.getElementById('spendBar'),{
     type:'bar',
-    data:{labels:activeCamps.map(c=>c.n.length>20?c.n.substring(0,18)+'…':c.n),datasets:[{data:activeCamps.map(c=>c.cost),backgroundColor:dc,borderRadius:4}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmt$(ctx.parsed.x)}}},scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{...tk,callback:v=>fmt$(v)}},y:{grid:{display:false},ticks:{...tk}}}}
+    data:{labels:activeCamps.map(c=>c.n.length>20?c.n.substring(0,18)+'…':c.n),datasets:[{data:activeCamps.map(c=>c.cost),backgroundColor:dc,...barMark}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmt$(ctx.parsed.x)}}},scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{...tk,callback:v=>fmt$(v)}},y:{grid:{display:false},ticks:{...tk,autoSkip:false,maxTicksLimit:undefined}}}}
   });
 
   // Trend charts
@@ -1615,29 +1666,23 @@ function render(){
   charts.spend=new Chart(document.getElementById('spendChart'),{
     type:'bar',
     data:{labels:dy.labels,datasets:[
-      {label:'Spend',data:dy.spend,backgroundColor:'#0F2B5B',borderRadius:3,yAxisID:'y'},
-      {label:'CPC',data:dy.cpc,type:'line',borderColor:'#E8A020',backgroundColor:'transparent',pointRadius:2,pointBackgroundColor:'#E8A020',yAxisID:'y2',tension:0.3}
+      {label:'Spend',data:dy.spend,backgroundColor:CC.navy,...barMark}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>fmt$(v)},grid:gl},y2:{position:'right',ticks:{...tk,callback:v=>fmt$(v),color:'#E8A020'},grid:{display:false}}}}
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:c=>`Spend: ${fmt$(c.parsed.y)}`,afterLabel:c=>dy.cpc?.[c.dataIndex]!=null?`CPC: ${fmt$(dy.cpc[c.dataIndex])}`:''}}},
+      scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>fmt$(v)},grid:gl,beginAtZero:true}}}
   });
+  document.getElementById('cpcNote').textContent=`Avg. CPC ${fmt$(t.cpc)} · hover a day for its CPC`;
   charts.conv=new Chart(document.getElementById('convChart'),{
     type:'bar',
-    data:{labels:dy.labels,datasets:[{label:'Conversions',data:dy.convs,backgroundColor:'#3DAA69',borderRadius:3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,stepSize:10},grid:gl,beginAtZero:true}}}
+    data:{labels:dy.labels,datasets:[{label:'Conversions',data:dy.convs,backgroundColor:CC.green,...barMark}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,precision:0},grid:gl,beginAtZero:true}}}
   });
 
   // Landing pages
   const lpData=window.LP_DATA||[];
   document.getElementById('lpSub').textContent=lpData[0]&&lpData[0].page!=='GA4 not connected'?'GA4 · Top pages by sessions':'GA4 data pending';
-  document.getElementById('lpBody').innerHTML=lpData.map(lp=>`
-    <tr>
-      <td class="lp-page">${lp.page}</td>
-      <td style="text-align:right;color:var(--navy);font-weight:600">${fmtN(lp.sessions)}</td>
-      <td style="text-align:right"><span class="lp-bar-wrap"><span class="lp-bar-fill" style="width:${lp.pct}%"></span></span>${lp.pct}%</td>
-      <td style="text-align:right;font-weight:600;color:var(--navy)">${lp.avgTime}</td>
-      <td style="text-align:right" class="${lp.engaged?'eng-high':'eng-low'}">${lp.engaged?'✓ Engaged':'Low'}</td>
-      <td style="text-align:right" class="${lp.convs>0?'':'flag'}">${lp.convs===0?'0 <i class="ph ph-warning"></i>':fmtN(lp.convs)}</td>
-    </tr>`).join('');
+  renderLanding(lpData);
 
   // ── GA4 sections ──
   renderGA4Traffic();
@@ -1786,12 +1831,12 @@ function render(){
         const bg=intensity>0.7?'var(--blue)':intensity>0.4?'rgba(7,124,191,0.5)':intensity>0.1?'rgba(7,124,191,0.2)':'var(--gray-100)';
         const label=fmtHour(h.hour);
         const tooltip=label+' — '+fmtN(h.clicks)+' clicks';
-        return`<div class="hour-cell" style="background:${bg};color:${intensity>0.5?'#fff':'var(--navy)'}" data-tooltip="${tooltip}">${label}</div>`;
+        return`<div class="hour-cell" style="background:${bg};color:${intensity>0.5?'#fff':'var(--navy)'}" title="${tooltip}">${label}</div>`;
       }).join('');
 
       // Axis labels: 12am, 6am, 12pm, 6pm, 11pm — evenly spaced across 24 cells
       const axisEl=document.getElementById('hourAxisLabels');
-      if(axisEl) axisEl.innerHTML=['12am','6am','12pm','6pm','11pm'].map(t=>`<span>${t}</span>`).join('');
+      if(axisEl) axisEl.innerHTML='<span>Darker = more clicks. Hover an hour for its clicks.</span>';
     }
   } else {
     document.getElementById('timingContent').innerHTML=`<div class="no-data-card"><div class="no-data-icon"><i class="ph ph-clock"></i></div><div class="no-data-title">Timing data not yet available</div><div class="no-data-desc">Will appear once campaigns have sufficient activity.</div></div>`;
@@ -1840,10 +1885,11 @@ function buildMain(type){
   charts.main=new Chart(document.getElementById('mainChart'),{
     type,
     data:{labels:dy.labels,datasets:[
-      {label:'Clicks',data:dy.clicks,backgroundColor:type==='bar'?'rgba(7,124,191,0.4)':'transparent',borderColor:'#077cbf',borderWidth:type==='line'?2.5:1,borderRadius:type==='bar'?3:0,fill:type==='line',tension:0.35,pointRadius:type==='line'?2:0,yAxisID:'y',order:2},
-      {label:'Conversions',data:dy.convs,type:'line',borderColor:'#3DAA69',backgroundColor:'rgba(61,170,105,0.08)',borderWidth:2.5,pointRadius:2,pointBackgroundColor:'#3DAA69',fill:true,tension:0.35,yAxisID:'y',order:1}
+      type==='bar'?{label:'Clicks',data:dy.clicks,backgroundColor:CC.blue,...barMark,order:2}
+        :{label:'Clicks',data:dy.clicks,borderColor:CC.blue,backgroundColor:'rgba(7,124,191,0.12)',fill:'start',...lineMark,order:2},
+      {label:'Conversions',data:dy.convs,type:'line',borderColor:CC.green,backgroundColor:CC.green,...lineMark,order:1}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{...legendBottom,labels:{...legendBottom.labels,sort:(x,y)=>x.datasetIndex-y.datasetIndex}}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 }
 window.swapMain=(t,el)=>{buildMain(t);document.querySelectorAll('.ctab').forEach(x=>x.classList.remove('active'));el.classList.add('active')};
@@ -1854,7 +1900,7 @@ function setRange(r,btn){
   btn.classList.add('active');
   const overlay=document.getElementById('loadingOverlay');
   overlay.classList.add('show');
-  setTimeout(()=>{render();overlay.classList.remove('show');},350);
+  setTimeout(()=>{render();addTips();overlay.classList.remove('show');},350);
 }
 
 function initClient(){
@@ -2729,6 +2775,95 @@ function drawAuthTab(){
 }
 window.authCSV=()=>downloadCSV(`${slugName()}-authority-${authTab}.csv`,window._authCSV);
 function tip(text){return `<span class="tip" tabindex="0" data-tip="${esc(text)}">?</span>`}
+// Plain-English help for every section and card heading, added as a "?" next to
+// the heading. Headings that already carry their own tip are left alone.
+const HELP={
+  'Grant performance score':'One score out of 100 for how well the Google Ad Grant is used: click-through rate, how much of the $10,000 is spent, conversion tracking and budget pacing.',
+  'Overview':'The headline Google Ads numbers for the selected period.',
+  'Total clicks':'People who clicked one of your ads.',
+  'Impressions':'How many times your ads were shown on Google.',
+  'Avg. CTR':'Click-through rate: clicks ÷ impressions. Google requires Ad Grants accounts to stay at 5% or above.',
+  'Total spend':'Grant money used. Ad Grants accounts get up to $10,000 a month.',
+  'Conversions':'Valuable actions people took after clicking, such as donating, signing up or applying.',
+  'Avg. CPC':'Average cost per click: spend ÷ clicks. Ad Grants bids are capped, so this stays low.',
+  'Donor funnel':'How ad clicks turn into conversions, and what each conversion costs.',
+  'Cost metrics':'How efficiently the grant turns into clicks and conversions.',
+  'Cost efficiency':'What you pay on average for each click and each conversion.',
+  'Conversion rate':'The share of clicks that became a conversion, and how much of the grant was used.',
+  'PMax vs Search':'Clicks and spend from Performance Max campaigns compared with standard Search campaigns.',
+  'Performance trends':'Day-by-day clicks, spend and conversions, so you can spot changes.',
+  'Clicks & conversions':'Daily ad clicks (bars) and conversions (line).',
+  'Daily spend':'Grant money spent each day. Hover a bar to see that day\'s cost per click.',
+  'Conversions by day':'Conversions recorded each day from ad clicks.',
+  'Campaigns':'Each Google Ads campaign with its clicks, click-through rate, spend and conversions.',
+  'Keyword performance':'The keywords your ads are bidding on and how each performs.',
+  'Top performers':'Keywords with the most clicks and conversions.',
+  'Compliance risks':'Keywords Google may flag under Ad Grants rules, such as a quality score of 1–2 or a very low click-through rate.',
+  'Quality score distribution':'Google rates each keyword 1–10 on ad relevance, expected click-through and landing page. Higher scores get better placements.',
+  'Ad copy performance':'Which ad headlines and ads get the most clicks.',
+  'Top headlines':'The ad headlines with the highest click-through rate.',
+  'Best performing ads':'Full ads ranked by clicks and click-through rate.',
+  'Performance by time':'When people click your ads, by day of the week and hour of the day.',
+  'Day of week':'Clicks and click-through rate for each day of the week.',
+  'Hour of day':'Clicks by hour. Darker squares mean more clicks.',
+  'Search terms':'The actual words people typed into Google before your ad showed.',
+  'Top search terms':'The searches that led to the most ad clicks.',
+  'Potential negative keywords':'Searches that showed your ad but rarely got clicked. Adding them as negative keywords protects your click-through rate.',
+  'Audience':'Who clicks your ads, by device and by campaign spend.',
+  'Clicks by device':'Ad clicks from mobile, desktop and tablet.',
+  'Spend by campaign':'How the grant is split across campaigns.',
+  'Impression share':'How often your ads showed out of all the times they could have. Lost share is due to ad rank (quality and bids) or budget.',
+  'Landing pages':'The website pages people land on first, with how engaged they are and whether they convert. From Google Analytics.',
+  'Website traffic overview':'All website visits from Google Analytics, from every source, not only ads.',
+  'Sessions Over Time':'Website visits per day.',
+  'Traffic by Source (UTM)':'Where website visits come from, such as Google, email or social.',
+  'Device performance':'How website visitors on mobile, desktop and tablet behave.',
+  'Sessions by Device':'Visits and conversions from each type of device.',
+  'Browser Breakdown':'Which web browsers visitors use.',
+  'Audience demographics':'Age and gender of website visitors, as estimated by Google Analytics.',
+  'Gender Split':'Share of visitors by gender, as estimated by Google.',
+  'Gender Engagement Comparison':'How engaged visitors of each gender are.',
+  'Sessions by Age':'Visits and conversions by age group.',
+  'Age Group Share':'Share of visitors in each age group.',
+  'Audience location':'Where website visitors are, by state and city.',
+  'Top states':'States sending the most visits.',
+  'Top cities':'Cities sending the most visits.',
+  'Visibility overview':'Your three headline scores: how often AI recommends you, how well you rank on Google, and how strong the sites linking to you are.',
+  'AI tracking':'Whether ChatGPT, Claude, Gemini, Perplexity and Google\'s AI answers name or cite you for the questions people ask. Checked weekly.',
+  'AEO action plan':'AEO (answer engine optimization) means getting recommended by AI. This is a plan for each question AI answers without you.',
+  'AEO readiness':'A 10-point check of whether your website is easy for AI to find, read and cite.',
+  'Classic SEO':'Where your website ranks on Google for the searches you track. Positions are checked to 50 every week.',
+  'Organic search':'Every search your website shows up for on Google (not ads), with estimated visits. Updated monthly.',
+  'Authority':'How trusted your website looks to Google and AI, based on the sites linking to it. Updated monthly.',
+  'Competitors':'You compared with similar organizations in Google, in AI answers and on their websites.',
+  'Site health':'Website speed and Google Search Console clicks. Slow sites rank lower and lose visitors.',
+  'Local map & business profile':'Your Google Business Profile and where you appear on Google Maps around your area.',
+  'Actions & focus':'What we did this month and what we\'re focusing on next.',
+  'Recommendations':'Specific changes we recommend based on this month\'s data.',
+};
+// One floating bubble for every "?", kept inside the window so cards that clip
+// their contents can't cut it off.
+(()=>{
+  let box=null;
+  const show=el=>{if(!box){box=document.createElement('div');box.id='tipFloat';box.setAttribute('role','tooltip');document.body.append(box)}
+    box.textContent=el.dataset.tip;box.hidden=false;
+    const r=el.getBoundingClientRect(), w=box.offsetWidth, h=box.offsetHeight;
+    box.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2))+'px';
+    box.style.top=(r.bottom+8+h>innerHeight?r.top-h-8:r.bottom+8)+'px'};
+  const hide=()=>{if(box)box.hidden=true};
+  document.addEventListener('mouseover',e=>{const t=e.target.closest?.('.tip');t?show(t):hide()});
+  document.addEventListener('focusin',e=>{const t=e.target.closest?.('.tip');t?show(t):hide()});
+  document.addEventListener('click',e=>{const t=e.target.closest?.('.tip');if(t){e.preventDefault();e.stopPropagation();show(t)}},true);
+  addEventListener('scroll',hide,{passive:true});
+})();
+function addTips(){
+  document.querySelectorAll('.sh-title,.chart-title,.kw-card-title,.ads-card-title,.timing-title,.st-card-title,.kpi-label,.fs-label,.isl,.kpi4-lbl').forEach(el=>{
+    if(el.querySelector('.tip'))return;
+    const key=el.textContent.replace(/\s+/g,' ').trim();
+    const t=HELP[key]||HELP[key.charAt(0).toUpperCase()+key.slice(1).toLowerCase()];
+    if(t)el.insertAdjacentHTML('beforeend',' '+tip(t));
+  });
+}
 
 // ── COMPETITORS ──
 let compTab='overview', compSite='', compFilter='';
@@ -2869,7 +3004,7 @@ window.compExportCSV=()=>{
 // Boot
 const overlay=document.getElementById('loadingOverlay');
 overlay.classList.add('show');
-window.addEventListener('load',()=>{initClient();render();renderVisibility();updateSidebarActive();overlay.classList.remove('show');});
+window.addEventListener('load',()=>{initClient();render();renderVisibility();addTips();updateSidebarActive();overlay.classList.remove('show');});
 </script>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

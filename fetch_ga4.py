@@ -316,6 +316,20 @@ def fetch_browsers(client, property_id):
     ]
 
 
+def run_report_rate(client, property_id, dimensions, extra_metrics, limit=10):
+    """Report with the share of sessions that converted (sessionKeyEventRate),
+    falling back to the older metric name on properties that don't have it yet.
+    Returns rows with a "conv_rate" key (0–1)."""
+    for rate in ("sessionKeyEventRate", "sessionConversionRate"):
+        rows = run_report(client, property_id, dimensions=dimensions, metrics=extra_metrics + [rate],
+                          date_range=("30daysAgo", "today"), limit=limit)
+        if rows:
+            for r in rows:
+                r["conv_rate"] = safe_float(r.pop(rate, 0))
+            return rows
+    return []
+
+
 def fetch_gender(client, property_id):
     """
     Fetch gender split. Requires Google Signals to be enabled in GA4.
@@ -358,13 +372,7 @@ def fetch_age_groups(client, property_id):
     Returns empty list if not available.
     """
     try:
-        rows = run_report(
-            client, property_id,
-            dimensions=["userAgeBracket"],
-            metrics=["sessions", "conversions"],
-            date_range=("30daysAgo", "today"),
-            limit=10
-        )
+        rows = run_report_rate(client, property_id, ["userAgeBracket"], ["sessions"])
     except Exception as e:
         print(f"    ⚠ Age data unavailable (Google Signals may not be enabled): {e}")
         return []
@@ -380,7 +388,7 @@ def fetch_age_groups(client, property_id):
         result.append({
             "age":         age,
             "sessions":    sess,
-            "conversions": safe_int(r.get("conversions", 0)),
+            "conv_rate":   round(r["conv_rate"] * 100, 1),
             "share":       round(sess / total * 100, 1)
         })
     # Sort by our preferred age order
@@ -394,13 +402,7 @@ def fetch_gender_engagement(client, property_id):
     Returns list of {metric, female, male} dicts.
     """
     try:
-        rows = run_report(
-            client, property_id,
-            dimensions=["userGender"],
-            metrics=["engagementRate", "conversions", "sessions"],
-            date_range=("30daysAgo", "today"),
-            limit=10
-        )
+        rows = run_report_rate(client, property_id, ["userGender"], ["engagementRate", "sessions"])
     except Exception as e:
         print(f"    ⚠ Gender engagement unavailable: {e}")
         return []
@@ -410,8 +412,6 @@ def fetch_gender_engagement(client, property_id):
     data = {r["userGender"]: r for r in rows}
     f = data.get("female", {})
     m = data.get("male", {})
-    f_sess = safe_int(f.get("sessions", 1)) or 1
-    m_sess = safe_int(m.get("sessions", 1)) or 1
     return [
         {
             "metric": "Eng. Rate",
@@ -420,23 +420,38 @@ def fetch_gender_engagement(client, property_id):
         },
         {
             "metric": "Conv. Rate",
-            "female": round(safe_int(f.get("conversions", 0)) / f_sess * 100, 1),
-            "male":   round(safe_int(m.get("conversions", 0)) / m_sess * 100, 1),
+            "female": round(f.get("conv_rate", 0) * 100, 1),
+            "male":   round(m.get("conv_rate", 0) * 100, 1),
         },
     ]
 
 
 # ── EXISTING FETCHERS (unchanged) ────────────────────────────────────────────
 def fetch_landing_pages(client, property_id):
-    rows = run_report(
-        client, property_id,
-        dimensions=["landingPage"],
-        metrics=["sessions", "averageSessionDuration", "bounceRate", "engagementRate", "conversions"],
-        date_range=("30daysAgo", "today"),
-        limit=10
-    )
+    """Top 25 landing pages (last 30 days) with engagement, conversion rate, the
+    previous 30 days' sessions for change, and each page's main traffic channel."""
+    rows = run_report_rate(client, property_id, ["landingPage"],
+                           ["sessions", "averageSessionDuration", "bounceRate", "engagementRate", "conversions"],
+                           limit=50)
+    if not rows:  # property without the rate metrics
+        rows = run_report(client, property_id, dimensions=["landingPage"],
+                          metrics=["sessions", "averageSessionDuration", "bounceRate", "engagementRate", "conversions"],
+                          date_range=("30daysAgo", "today"), limit=50)
     rows.sort(key=lambda x: safe_int(x.get("sessions", 0)), reverse=True)
-    return rows[:10]
+    rows = rows[:25]
+    prev = {r.get("landingPage"): safe_int(r.get("sessions", 0)) for r in run_report(
+        client, property_id, dimensions=["landingPage"], metrics=["sessions"],
+        date_range=("60daysAgo", "31daysAgo"), limit=200)}
+    channels = {}
+    for r in run_report(client, property_id, dimensions=["landingPage", "sessionDefaultChannelGroup"],
+                        metrics=["sessions"], date_range=("30daysAgo", "today"), limit=500):
+        page, n = r.get("landingPage"), safe_int(r.get("sessions", 0))
+        if n > channels.get(page, ("", 0))[1]:
+            channels[page] = (r.get("sessionDefaultChannelGroup") or "", n)
+    for r in rows:
+        r["prev_sessions"] = prev.get(r.get("landingPage"))
+        r["top_channel"] = channels.get(r.get("landingPage"), ("", 0))[0]
+    return rows
 
 
 def fetch_states(client, property_id):

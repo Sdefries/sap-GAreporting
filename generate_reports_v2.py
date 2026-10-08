@@ -470,7 +470,7 @@ def build_client_data(client, rows30, rows7, extended_data, ga4, seo):
         "insights":    ins,
         "actions":     build_actions(client, score, t30, ins, len([c for c in camps30 if c.get("cl") or c.get("im")])),
         "has_ga4":    bool(ga4 and ga4.get("overview_30d")),
-        "ga4_pages":  (ga4 or {}).get("landing_pages", [])[:10],
+        "ga4_pages":  (ga4 or {}).get("landing_pages", [])[:25],
         "ga4_states": (ga4 or {}).get("states", [])[:10],
         "ga4_cities": (ga4 or {}).get("cities",  [])[:10],
         "keywords": {
@@ -568,21 +568,32 @@ def build_report_data(cd):
     )
 
 def build_lp_data(ga4_pages):
+    """Landing pages for the report table: up to 25, with share, change vs the
+    previous 30 days, engagement, bounce, time and conversion rate."""
     if not ga4_pages: return "[]"
-    total = sum(safe_int(p.get("sessions",0)) for p in ga4_pages[:5]) or 1
+    pages = ga4_pages[:25]
+    total = sum(safe_int(p.get("sessions",0)) for p in pages) or 1
     out = []
-    for p in ga4_pages[:5]:
+    for p in pages:
         sess     = safe_int(p.get("sessions",0))
         page     = p.get("landingPage") or p.get("landing_page") or p.get("page") or "/"
         avg_time = safe_float(p.get("averageSessionDuration") or p.get("average_session_duration") or 0)
         eng_rate = safe_float(p.get("engagementRate") or p.get("engagement_rate") or 0)
+        bounce   = safe_float(p.get("bounceRate") or 0)
         convs    = safe_int(p.get("conversions",0))
+        prev     = p.get("prev_sessions")
+        rate     = p.get("conv_rate")
         out.append({
             "page": page, "sessions": sess,
-            "pct": round(sess/total*100),
-            "avgTime": _fmt_duration(avg_time),
+            "pct": round(sess/total*100, 1),
+            "change": round((sess - prev) / prev * 100) if prev else None,
+            "new": prev == 0,
+            "avgTime": _fmt_duration(avg_time), "avgSec": round(avg_time),
+            "engRate": round(eng_rate*100), "bounce": round(bounce*100),
             "engaged": eng_rate > 0.5,
             "convs": convs,
+            "convRate": round(safe_float(rate)*100, 1) if rate is not None else None,
+            "channel": p.get("top_channel") or "",
         })
     return json.dumps(out)
 
