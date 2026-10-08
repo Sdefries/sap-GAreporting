@@ -31,7 +31,8 @@ button:disabled{opacity:.5;cursor:default}
 .tbl{width:100%;border-collapse:collapse;margin-top:16px}
 .tbl th{text-align:left;font-size:12px;font-weight:600;color:var(--faint);padding:8px 10px;border-bottom:1px solid var(--border)}
 .tbl td{padding:12px 10px;border-bottom:1px solid var(--border);vertical-align:top}
-.tbl tr:last-child td{border-bottom:none}
+.tbl tbody{border-bottom:1px solid var(--border)}.tbl tbody:last-child{border-bottom:none}.tbl tbody td{border-bottom:none}
+.tbl tr.acc td{padding-top:0}.acc label{display:block;font-size:12px;font-weight:600;color:var(--faint);margin-bottom:4px}.acc input{width:100%}
 .name b{display:block;color:var(--primary-900)}.name a{font-size:12px;color:var(--primary);text-decoration:none}
 .pill{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--primary-50);color:var(--primary);margin-left:6px}
 .addons{display:flex;flex-wrap:wrap;gap:6px 14px}
@@ -42,7 +43,7 @@ button:disabled{opacity:.5;cursor:default}
 .legend{margin-top:20px;font-size:12px;color:var(--muted);line-height:1.6}
 .legend b{color:var(--primary-900)}
 [hidden]{display:none!important}
-@media(max-width:700px){.tbl thead{display:none}.tbl tr{display:block;border-bottom:1px solid var(--border);padding:8px 0}.tbl td{display:block;border:none;padding:6px 0}}
+@media(max-width:700px){.tbl thead{display:none}.tbl tbody{display:block;padding:8px 0}.tbl tr{display:block}.tbl td{display:block;border:none;padding:6px 0}}
 </style>
 </head>
 <body>
@@ -63,7 +64,7 @@ button:disabled{opacity:.5;cursor:default}
         <div><b style="color:var(--primary-900)">Clients</b> <span class="msg" id="count"></span> <span class="msg" id="total"></span></div>
         <div class="row"><button type="button" id="rebuild">Rebuild reports now</button><span class="msg" id="rebuildMsg" role="status"></span></div>
       </div>
-      <div class="scroll"><table class="tbl"><thead><tr><th>Client</th><th>Size</th><th>Plan</th><th>Add-ons</th><th>Monthly</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div class="scroll"><table class="tbl" id="rows"><thead><tr><th>Client</th><th>Size</th><th>Plan</th><th>Add-ons</th><th>Monthly</th><th></th></tr></thead></table></div>
     </div>
     <div class="legend" id="legend"></div>
   </div>
@@ -86,14 +87,16 @@ function planIncludes(plan){return new Set(plan?PLANS.plans[plan]:Object.keys(PL
 
 function rowHTML(c){
   const opts=[['','Everything (no plan)'],...Object.keys(PLANS.plans).map(p=>[p,p[0].toUpperCase()+p.slice(1)])];
-  return `<tr data-slug="${esc(c.slug)}"${c.demo?' data-demo="1"':''}>
-    <td class="name"><b>${esc(c.name)}${c.demo?'<span class="pill">Demo</span>':''}</b><a href="${esc(c.slug)}.html" target="_blank" rel="noopener">Open report ↗</a></td>
+  return `<tbody data-slug="${esc(c.slug)}"${c.demo?' data-demo="1"':''}><tr>
+    <td class="name"><b>${esc(c.name)}${c.demo?'<span class="pill">Demo</span>':''}</b><a href="/${esc(c.slug)}/" target="_blank" rel="noopener">Open report ↗</a></td>
     <td><select class="size" aria-label="Size for ${esc(c.name)}"><option value="">Not set</option>${Object.entries(PLANS.sizes||{}).map(([v,z])=>`<option value="${v}" ${c.size===v?'selected':''}>${esc(z.label)}</option>`).join('')}</select>
       <div class="addons" style="margin-top:8px"><label><input type="checkbox" class="proc" ${c.processing?'checked':''}>Processes donations with us</label></div></td>
     <td><select class="plan" aria-label="Plan for ${esc(c.name)}">${opts.map(([v,l])=>`<option value="${v}" ${(c.plan||'')===v?'selected':''}>${l}</option>`).join('')}</select></td>
     <td><div class="addons pk"></div></td>
     <td class="price"></td>
-    <td><button type="button" class="save">Save</button><div class="msg" role="status"></div></td></tr>`;
+    <td><button type="button" class="save">Save</button><div class="msg" role="status"></div></td></tr>
+    <tr class="acc"><td colspan="6">${c.demo?'<span class="msg">The demo is public, so anyone with the link can open it.</span>':`<label for="acc-${esc(c.slug)}">Who can open this report <span style="font-weight:400">(emails, or @theirdomain.org for their whole team; separate with commas)</span></label>
+      <input id="acc-${esc(c.slug)}" class="access" value="${esc((c.access||[]).join(', '))}" placeholder="director@theirorg.org, @theirorg.org" autocomplete="off" spellcheck="false">`}</td></tr></tbody>`;
 }
 function drawAddons(tr,addons){
   const plan=tr.querySelector('.plan').value||null, inc=planIncludes(plan);
@@ -117,19 +120,20 @@ function price(tr){
 function drawPrice(tr){
   const p=price(tr), z=(PLANS.sizes||{})[tr.querySelector('.size').value];
   tr.querySelector('.price').innerHTML=p==null?'<small>Set size and plan</small>':`${usd(p)}<small>${z.checks==='weekly'?'Weekly':'Monthly'} checks</small>`;
-  const all=[...document.querySelectorAll('#rows tr')].filter(r=>!r.dataset.demo).map(price).filter(v=>v!=null);
+  const all=[...document.querySelectorAll('#rows tbody')].filter(r=>!r.dataset.demo).map(price).filter(v=>v!=null);
   $('total').textContent=all.length?`· ${usd(all.reduce((a,b)=>a+b,0))}/month across ${all.length} priced`:'';
 }
 async function load(){
   const d=await call('/admin/clients');
   PLANS=d.plans;
-  $('rows').innerHTML=d.clients.map(rowHTML).join('');
+  $('rows').querySelectorAll('tbody').forEach(b=>b.remove());
+  $('rows').insertAdjacentHTML('beforeend',d.clients.map(rowHTML).join(''));
   $('count').textContent=`${d.clients.length} clients`;
-  d.clients.forEach(c=>{const tr=document.querySelector(`tr[data-slug="${CSS.escape(c.slug)}"]`);drawAddons(tr,c.addons||[]);
+  d.clients.forEach(c=>{const tr=document.querySelector(`tbody[data-slug="${CSS.escape(c.slug)}"]`);drawAddons(tr,c.addons||[]);
     tr.querySelector('.plan').onchange=()=>{drawAddons(tr,pick(tr));drawPrice(tr)};
     tr.querySelector('.pk').onchange=tr.querySelector('.size').onchange=tr.querySelector('.proc').onchange=()=>drawPrice(tr);
     tr.querySelector('.save').onclick=()=>save(tr)});
-  document.querySelectorAll('#rows tr').forEach(drawPrice);
+  document.querySelectorAll('#rows tbody').forEach(drawPrice);
   $('legend').innerHTML='<b>What each plan includes.</b> '+Object.entries(PLANS.plans).map(([p,pk])=>`<b>${esc(p[0].toUpperCase()+p.slice(1))}</b>: ${pk.map(k=>esc(PLANS.packages[k]?.label||k)).join(', ')}`).join(' · ')
     +'. Google Ads &amp; GA4 is always included.<br><b>Price by size.</b> '+Object.entries(PLANS.sizes||{}).map(([s,z])=>{const t=(PLANS.prices||{})[s];return t?`<b>${esc(z.label)}</b>: ${Object.entries(t.plans).map(([p,v])=>esc(p[0].toUpperCase()+p.slice(1))+' '+usd(v)).join(', ')}, add-ons ${Object.values(t.addons).map(usd).join('/')}${(t.free_with_processing||[]).includes('essentials')?', Essentials free with donation processing':''}, ${z.checks} checks`:''}).join(' · ')
     +'. Edit <code>plans.json</code> to change plans and prices.';
@@ -140,7 +144,8 @@ async function save(tr){
   btn.disabled=true; msg.className='msg'; msg.textContent='Saving…';
   try{
     await call('/admin/plan',{slug:tr.dataset.slug,plan:tr.querySelector('.plan').value||null,addons:pick(tr),
-      size:tr.querySelector('.size').value||null,processing:tr.querySelector('.proc').checked});
+      size:tr.querySelector('.size').value||null,processing:tr.querySelector('.proc').checked,
+      access:(tr.querySelector('.access')?.value||'').split(/[\s,;]+/).filter(Boolean)});
     msg.className='msg ok'; msg.textContent='Saved. Shows after the next rebuild.';
   }catch(e){msg.className='msg bad'; msg.textContent=e.message}
   btn.disabled=false;

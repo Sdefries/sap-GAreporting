@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 GITHUB_REPO     = "Sdefries/sap-GAreporting"
 GITHUB_BRANCH   = "main"
-ALLOWED_ORIGINS = "https://sdefries.github.io"
+ALLOWED_ORIGINS = "https://reports.sponsorapurpose.org,https://sdefries.github.io"
 DAILY_LIMIT     = "10"
 
 # Create once with:  npx wrangler kv namespace create LIMITS

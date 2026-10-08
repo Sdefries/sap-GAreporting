@@ -13,9 +13,9 @@ USAGE
   python generate_portals.py --slug pup-profile  # regenerate one portal
 
 DEPLOY
-  Upload portals/ folder to repo.
-  GitHub Pages serves them at:
-  https://sdefries.github.io/sap-GAreporting/portals/{slug}.html
+  Commit portals/; the weekly reports job publishes each one at
+  (behind the client's email login, see site.py):
+  https://reports.sponsorapurpose.org/{slug}/request/
 """
 
 import json
@@ -644,7 +644,7 @@ def run(slug_filter=None):
         path = f"portals/{client['slug']}.html"
         with open(path, "w", encoding="utf-8") as f:
             f.write(html)
-        url = f"https://sdefries.github.io/sap-GAreporting/portals/{client['slug']}.html"
+        url = f"https://{os.environ.get('REPORTS_DOMAIN') or 'reports.sponsorapurpose.org'}/{client['slug']}/request/"
         print(f"  ✓ {client['name']}")
         print(f"    {url}")
         generated.append((client, url))

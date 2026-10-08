@@ -160,7 +160,7 @@ test("admin: lists clients with their plans", async () => {
   const d = await r.json();
   assert.equal(r.status, 200);
   assert.ok(d.plans.plans.growth);
-  assert.deepEqual(d.clients[0], { slug: "pup-profile", name: "Pup Profile", plan: null, addons: [], size: null, processing: false, demo: false, competitors: 1 });
+  assert.deepEqual(d.clients[0], { slug: "pup-profile", name: "Pup Profile", plan: null, addons: [], size: null, processing: false, access: [], demo: false, competitors: 1 });
 });
 
 test("admin: sets a plan and add-ons without using the client's daily limit", async () => {
@@ -175,6 +175,20 @@ test("admin: sets a plan and add-ons without using the client's daily limit", as
   assert.equal((await call("/admin/plan", { admin_key: "admin-key-0123456789", slug: "pup-profile", size: "huge" })).status, 400);
   const bad = await call("/admin/plan", { admin_key: "admin-key-0123456789", slug: "pup-profile", plan: "platinum" });
   assert.equal(bad.status, 400);
+});
+
+test("admin: sets who can open the report", async () => {
+  const r = await call("/admin/plan", { admin_key: "admin-key-0123456789", slug: "pup-profile", access: [" Ed@PupProfile.org ", "@pupprofile.org"] });
+  assert.equal(r.status, 200);
+  const written = JSON.parse(Buffer.from(committed.content, "base64").toString());
+  assert.deepEqual(written[0].report_access, ["ed@pupprofile.org", "@pupprofile.org"]);
+});
+
+test("admin: refuses a free-mail domain or a non-email for report access", async () => {
+  for (const access of [["@gmail.com"], ["not an email"]]) {
+    const r = await call("/admin/plan", { admin_key: "admin-key-0123456789", slug: "pup-profile", access });
+    assert.equal(r.status, 400);
+  }
 });
 
 test("admin: rebuild starts the reports job", async () => {

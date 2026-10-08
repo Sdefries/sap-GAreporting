@@ -455,12 +455,18 @@ async function adminFailed(env, req) {
   return n;
 }
 
+const EMAIL_RE = /^[^@\s]+@[a-z0-9-]+(\.[a-z0-9-]+)+$/;
+const DOMAIN_RE = /^@[a-z0-9-]+(\.[a-z0-9-]+)+$/;
+// A domain rule for these would let anyone with a free inbox in (same list as site.py)
+const PUBLIC_MAIL = new Set(["gmail.com", "googlemail.com", "yahoo.com", "outlook.com", "hotmail.com", "live.com",
+  "icloud.com", "me.com", "aol.com", "proton.me", "protonmail.com", "gmx.com", "msn.com"]);
+
 async function routeAdmin(env, path, body) {
   const plans = (await githubFile(env, "plans.json")).clients;  // githubFile parses any JSON file
   if (path === "/admin/clients") {
     const { clients } = await githubFile(env);
     return [200, { plans, clients: clients.map((c) => ({ slug: c.slug, name: c.name, plan: c.plan || null,
-      addons: c.addons || [], size: c.size || null, processing: !!c.processing,
+      addons: c.addons || [], size: c.size || null, processing: !!c.processing, access: c.report_access || [],
       demo: !!c.demo, competitors: (c.competitors || []).length })) }];
   }
   if (path === "/admin/plan") {
@@ -472,13 +478,20 @@ async function routeAdmin(env, path, body) {
     const size = body.size || null;
     if (size && !(plans.sizes || {})[size]) return [400, { error: `Unknown size "${size}".` }];
     const processing = body.processing === true;
+    // Who can open the report (site.py turns these into the Cloudflare Access login)
+    const access = [...new Set((Array.isArray(body.access) ? body.access : []).map((e) => String(e).trim().toLowerCase()).filter(Boolean))];
+    const badAccess = access.filter((e) => !(EMAIL_RE.test(e) || (DOMAIN_RE.test(e) && !PUBLIC_MAIL.has(e.slice(1)))));
+    if (badAccess.length) return [400, { error: `Not an email or an organization @domain: ${badAccess.join(", ")}.` }];
+    if (access.length > 50) return [400, { error: "Up to 50 emails per client." }];
     return updateClient(env, body.slug, (c) => {
       if ((c.plan || null) === plan && JSON.stringify(c.addons || []) === JSON.stringify(addons)
-          && (c.size || null) === size && !!c.processing === processing) return { noop: { saved: true, message: "No change." } };
+          && (c.size || null) === size && !!c.processing === processing
+          && JSON.stringify(c.report_access || []) === JSON.stringify(access)) return { noop: { saved: true, message: "No change." } };
       if (plan) c.plan = plan; else delete c.plan;
       if (addons.length) c.addons = addons; else delete c.addons;
       if (size) c.size = size; else delete c.size;
       if (processing) c.processing = true; else delete c.processing;
+      if (access.length) c.report_access = access; else delete c.report_access;
       return { message: `Set ${c.slug} to ${plan || "everything"}${addons.length ? " + " + addons.join(", ") : ""}${size ? ", " + size : ""}${processing ? ", processing" : ""} (admin)`,
                result: () => ({ saved: true }) };
     }, { charge: false });

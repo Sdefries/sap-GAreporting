@@ -14,7 +14,7 @@ Reports are static pages, so the API keys live here in the Worker, never in the 
 
 - **Per-client link token.** Each report carries its own token, `HMAC(REPORT_SIGNING_KEY, slug)`. A report can only check and track prompts for its own client.
 - **Daily limit.** `DAILY_LIMIT` live actions per client per day (default 10) caps spend. Anyone who has a client's report link can use that client's daily quota.
-- **CORS.** Only `ALLOWED_ORIGINS` (your GitHub Pages site) can call it from a browser.
+- **CORS.** Only `ALLOWED_ORIGINS` (reports.sponsorapurpose.org, and GitHub Pages until it is switched off) can call it from a browser.
 
 ## One-time setup (about 15 minutes)
 
@@ -57,7 +57,7 @@ The next weekly report run turns the live buttons on.
 |---|---|---|
 | `GITHUB_REPO` | `Sdefries/sap-GAreporting` | Repo holding `clients.json` |
 | `GITHUB_BRANCH` | `main` | Branch the reports are built from |
-| `ALLOWED_ORIGINS` | `https://sdefries.github.io` | Comma-separated sites allowed to call the Worker |
+| `ALLOWED_ORIGINS` | `https://reports.sponsorapurpose.org,https://sdefries.github.io` | Comma-separated sites allowed to call the Worker |
 | `DAILY_LIMIT` | `10` | Live checks + actions per client per day |
 
 ## Cost
