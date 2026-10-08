@@ -50,3 +50,46 @@ def package_of(section):
         if section in p["sections"]:
             return p["label"]
     return ""
+
+
+# ── Size, price and check frequency ───────────────────────────────────────────
+
+def size(client):
+    """small / mid / large from clients.json "size"; None if not set yet."""
+    s = client.get("size")
+    return s if s in PLANS.get("sizes", {}) else None
+
+
+def check_days(client):
+    """How often paid checks (AI answers, keyword ranks, map, competitors) run.
+    Monthly for small and mid-size nonprofits keeps their cost low."""
+    s = size(client)
+    return 28 if s and PLANS["sizes"][s].get("checks") == "monthly" else 6
+
+
+def due(client, last_iso):
+    """True when a check last run on last_iso (ISO date or datetime) is due again."""
+    import datetime
+    if not last_iso:
+        return True
+    try:
+        last = datetime.date.fromisoformat(str(last_iso)[:10])
+    except ValueError:
+        return True
+    return (datetime.date.today() - last).days >= check_days(client)
+
+
+def monthly_price(client):
+    """Monthly price in dollars for the client's size, plan and add-ons, or None
+    when size or plan isn't set. Essentials is free for sizes listed in
+    free_with_processing when the client processes donations with us."""
+    s, plan = size(client), client.get("plan")
+    table = (PLANS.get("prices") or {}).get(s or "")
+    if not table or not plan or plan not in table["plans"]:
+        return None
+    price = table["plans"][plan]
+    if client.get("processing") and "essentials" in table.get("free_with_processing", []):
+        price -= table["plans"].get("essentials", 0)
+    in_plan = set(PLANS["plans"][plan])
+    price += sum(table["addons"].get(a, 0) for a in client.get("addons") or [] if a not in in_plan)
+    return max(0, price)

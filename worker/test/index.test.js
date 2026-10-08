@@ -160,16 +160,19 @@ test("admin: lists clients with their plans", async () => {
   const d = await r.json();
   assert.equal(r.status, 200);
   assert.ok(d.plans.plans.growth);
-  assert.deepEqual(d.clients[0], { slug: "pup-profile", name: "Pup Profile", plan: null, addons: [], demo: false, competitors: 1 });
+  assert.deepEqual(d.clients[0], { slug: "pup-profile", name: "Pup Profile", plan: null, addons: [], size: null, processing: false, demo: false, competitors: 1 });
 });
 
 test("admin: sets a plan and add-ons without using the client's daily limit", async () => {
   env.LIMITS = kv();
-  const r = await call("/admin/plan", { admin_key: "admin-key-0123456789", slug: "pup-profile", plan: "growth", addons: ["local"] });
+  const r = await call("/admin/plan", { admin_key: "admin-key-0123456789", slug: "pup-profile", plan: "growth", addons: ["local"], size: "small", processing: true });
   assert.equal(r.status, 200);
   const written = JSON.parse(Buffer.from(committed.content, "base64").toString());
   assert.equal(written[0].plan, "growth");
   assert.deepEqual(written[0].addons, ["local"]);
+  assert.equal(written[0].size, "small");
+  assert.equal(written[0].processing, true);
+  assert.equal((await call("/admin/plan", { admin_key: "admin-key-0123456789", slug: "pup-profile", size: "huge" })).status, 400);
   const bad = await call("/admin/plan", { admin_key: "admin-key-0123456789", slug: "pup-profile", plan: "platinum" });
   assert.equal(bad.status, 400);
 });

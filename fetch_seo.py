@@ -551,7 +551,9 @@ def rank_snapshot(rankings):
 
 # ── MAIN CLIENT FETCHER ───────────────────────────────────────────────────────
 
-def fetch_client_seo(client, dry_run=False):
+def fetch_client_seo(client, dry_run=False, keep_ranks=None):
+    """keep_ranks: last run's keyword rankings, reused when this client's
+    checks are monthly and they aren't due yet (plans.check_days)."""
     name      = client["name"]
     slug      = client["slug"]
     website   = client.get("website", "")
@@ -588,13 +590,17 @@ def fetch_client_seo(client, dry_run=False):
     if keywords and not has(client, "keywords"):
         print("    Keyword tracking isn't in their plan — skipping rankings")
         keywords = []
-    if keywords:
+    if keywords and keep_ranks is not None:
+        print("    Keyword rankings not due yet (monthly checks) — keeping last results")
+        result["keyword_rankings"] = keep_ranks
+        keywords = []
+    elif keywords:
         print(f"    Fetching keyword rankings ({len(keywords)} keywords)...")
         result["keyword_rankings"] = fetch_keyword_rankings(
             keywords, domain.removeprefix("www."), seo_location(client),
             [{"name": c.get("name"), "domain": _domain(c.get("domain", ""))}
              for c in client.get("competitors", [])])
-    else:
+    elif "keyword_rankings" not in result:
         print("    No seo_keywords defined — skipping rankings")
         result["keyword_rankings"] = []
 
@@ -673,10 +679,17 @@ def run(slug_filter=None, dry_run=False, pagespeed_only=False):
             cache[slug]["client"]  = client["name"]
             cache[slug]["website"] = website
         else:
-            data = fetch_client_seo(client, dry_run=dry_run)
+            prev = cache.get(slug) or {}
+            from plans import due
+            old = prev.get("keyword_rankings") or []
+            last = max((r.get("checked_at") or "" for r in old), default="") or None
+            # New or removed keywords are checked right away, not at the next monthly run
+            same = {r.get("keyword") for r in old} == set(client.get("seo_keywords") or [])
+            ranks_due = not same or due(client, last)
+            data = fetch_client_seo(client, dry_run=dry_run, keep_ranks=None if ranks_due else prev.get("keyword_rankings"))
             # Ranking history powers the Classic SEO trend charts — carry it forward
-            history = (cache.get(slug) or {}).get("rank_history", [])
-            snap = rank_snapshot(data.get("keyword_rankings", [])) if not dry_run else None
+            history = prev.get("rank_history", [])
+            snap = rank_snapshot(data.get("keyword_rankings", [])) if not dry_run and ranks_due else None
             if snap:
                 history = [h for h in history if h.get("date") != snap["date"]] + [snap]
             data["rank_history"] = history[-26:]

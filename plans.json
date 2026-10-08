@@ -1,5 +1,5 @@
 {
-  "_about": "Which report sections each plan includes. A client's plan is set in clients.json with \"plan\" (and optional \"addons\": [package keys]). A client with no plan sees everything. Sections not in the plan show an 'isn't in your plan yet' card, and their data is left out of the report.",
+  "_about": "Which report sections each plan includes, what each plan costs by nonprofit size, and how often each size's checks run. Set a client's \"plan\", \"size\" (small / mid / large) and optional \"addons\" in clients.json or on the admin page. A client with no plan sees everything. Sections not in the plan show an 'isn't in your plan yet' card and their data is left out of the report. Prices are for the admin page and proposals only; nothing is charged from here.",
   "packages": {
     "ads": {
       "label": "Google Ads & GA4",
@@ -7,24 +7,108 @@
     },
     "search": {
       "label": "SEO & AEO",
-      "sections": ["overview", "ai", "aeo", "keywords", "organic", "site_health"]
+      "sections": [
+        "overview",
+        "ai",
+        "aeo",
+        "keywords",
+        "organic",
+        "site_health"
+      ]
     },
     "authority": {
       "label": "Authority",
-      "sections": ["authority"]
+      "sections": [
+        "authority"
+      ]
     },
     "competitors": {
       "label": "Competitor tracking",
-      "sections": ["competitors"]
+      "sections": [
+        "competitors"
+      ]
     },
     "local": {
       "label": "Local map",
-      "sections": ["local"]
+      "sections": [
+        "local"
+      ]
     }
   },
   "plans": {
-    "essentials": ["ads"],
-    "growth": ["ads", "search"],
-    "pro": ["ads", "search", "authority", "competitors", "local"]
+    "essentials": [
+      "ads"
+    ],
+    "growth": [
+      "ads",
+      "search"
+    ],
+    "pro": [
+      "ads",
+      "search",
+      "authority",
+      "competitors",
+      "local"
+    ]
+  },
+  "sizes": {
+    "small": {
+      "label": "Under $250k a year",
+      "checks": "monthly"
+    },
+    "mid": {
+      "label": "$250k\u2013$1M a year",
+      "checks": "monthly"
+    },
+    "large": {
+      "label": "Over $1M a year",
+      "checks": "weekly"
+    }
+  },
+  "prices": {
+    "_about": "Monthly price in dollars by size: plan price plus each add-on. free_with_processing: plans that are free for that size when the client processes donations through Sponsor a Purpose (\"processing\": true).",
+    "small": {
+      "plans": {
+        "essentials": 49,
+        "growth": 79,
+        "pro": 119
+      },
+      "addons": {
+        "authority": 15,
+        "competitors": 15,
+        "local": 15
+      },
+      "free_with_processing": [
+        "essentials"
+      ]
+    },
+    "mid": {
+      "plans": {
+        "essentials": 99,
+        "growth": 149,
+        "pro": 229
+      },
+      "addons": {
+        "authority": 25,
+        "competitors": 25,
+        "local": 25
+      },
+      "free_with_processing": [
+        "essentials"
+      ]
+    },
+    "large": {
+      "plans": {
+        "essentials": 400,
+        "growth": 750,
+        "pro": 1250
+      },
+      "addons": {
+        "authority": 100,
+        "competitors": 125,
+        "local": 125
+      },
+      "free_with_processing": []
+    }
   }
 }

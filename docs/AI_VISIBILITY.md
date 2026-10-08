@@ -41,7 +41,17 @@ Score bands for AI and keyword visibility: **Poor** < 20% · **Moderate** 20–5
 
 Set a client's plan in `clients.json` (`"plan": "growth"`, optional `"addons": ["local"]`), or on the admin page. A client with no plan sees everything. Sections outside a plan show an "isn't in your plan yet" card, their data is left out of the page, and the weekly jobs skip the paid API calls for them. Edit `plans.json` to change what each plan includes.
 
-**Admin page.** `reports/admin.html` (built with the reports). Enter the admin key to see every client, pick a plan and add-ons, save, and press **Rebuild reports now** to apply changes in a few minutes. It needs the Worker with `ADMIN_KEY` set (see `worker/README.md`); the page itself holds no client data.
+**Size and price.** Prices slide with the nonprofit's yearly revenue (`"size"` in `clients.json`, or the admin page). Monthly, in dollars:
+
+| Size | Essentials | Growth | Pro | Each add-on | Checks |
+|---|---|---|---|---|---|
+| Under $250k a year (`small`) | 49 | 79 | 119 | 15 | Monthly |
+| $250k–$1M a year (`mid`) | 99 | 149 | 229 | 25 | Monthly |
+| Over $1M a year (`large`) | 400 | 750 | 1,250 | 100–125 | Weekly |
+
+Small and mid-size clients who process donations with us (`"processing": true`) get Essentials free, so Growth costs the difference. Their paid checks (AI answers, keyword ranks, local map, competitors) run every 4 weeks instead of weekly, which keeps their API cost in line with the lower price; Google Ads, GA4 and site data still refresh weekly. A client with no size set runs weekly. Prices live in `plans.json` and only show on the admin page; nothing is charged from here.
+
+**Admin page.** `reports/admin.html` (built with the reports). Enter the admin key to see every client, set their size, plan, add-ons and whether they process donations with us, see each client's monthly price and the total, save, and press **Rebuild reports now** to apply changes in a few minutes. It needs the Worker with `ADMIN_KEY` set (see `worker/README.md`); the page itself holds no client data.
 
 **Demo.** The client with `"demo": true` (Maplewood Paws Rescue, a fictional rescue in Denver) is built from `demo_data.py`: realistic sample data for every section, run through the real scoring code, dated relative to today. It's at `reports/demo.html`. Change its plan on the admin page to show prospects what each plan looks like. Every fetcher, alert and digest skips demo clients, and live checks are off for it.
 

@@ -186,6 +186,10 @@ def fetch_client(client, cache, dry_run=False):
     if not has(client, "local"):
         print(f"  ⏭  {client['name']} — the local map isn't in their plan")
         return False
+    from plans import due
+    if not due(client, ((cache.get(client["slug"]) or {}).get("runs") or [{}])[-1].get("date")):
+        print(f"  ⏭  {client['name']} — monthly checks, not due yet")
+        return False
     cfg = client.get("local_tracking") or {}
     slug = client["slug"]
     cfg.setdefault("business_name", client["name"])

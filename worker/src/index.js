@@ -460,7 +460,8 @@ async function routeAdmin(env, path, body) {
   if (path === "/admin/clients") {
     const { clients } = await githubFile(env);
     return [200, { plans, clients: clients.map((c) => ({ slug: c.slug, name: c.name, plan: c.plan || null,
-      addons: c.addons || [], demo: !!c.demo, competitors: (c.competitors || []).length })) }];
+      addons: c.addons || [], size: c.size || null, processing: !!c.processing,
+      demo: !!c.demo, competitors: (c.competitors || []).length })) }];
   }
   if (path === "/admin/plan") {
     const plan = body.plan || null;
@@ -468,11 +469,17 @@ async function routeAdmin(env, path, body) {
     const addons = [...new Set((Array.isArray(body.addons) ? body.addons : []).map(String))];
     const bad = addons.filter((a) => !plans.packages[a]);
     if (bad.length) return [400, { error: `Unknown add-on: ${bad.join(", ")}.` }];
+    const size = body.size || null;
+    if (size && !(plans.sizes || {})[size]) return [400, { error: `Unknown size "${size}".` }];
+    const processing = body.processing === true;
     return updateClient(env, body.slug, (c) => {
-      if ((c.plan || null) === plan && JSON.stringify(c.addons || []) === JSON.stringify(addons)) return { noop: { saved: true, message: "No change." } };
+      if ((c.plan || null) === plan && JSON.stringify(c.addons || []) === JSON.stringify(addons)
+          && (c.size || null) === size && !!c.processing === processing) return { noop: { saved: true, message: "No change." } };
       if (plan) c.plan = plan; else delete c.plan;
       if (addons.length) c.addons = addons; else delete c.addons;
-      return { message: `Set ${c.slug} plan to ${plan || "everything"}${addons.length ? " + " + addons.join(", ") : ""} (admin)`,
+      if (size) c.size = size; else delete c.size;
+      if (processing) c.processing = true; else delete c.processing;
+      return { message: `Set ${c.slug} to ${plan || "everything"}${addons.length ? " + " + addons.join(", ") : ""}${size ? ", " + size : ""}${processing ? ", processing" : ""} (admin)`,
                result: () => ({ saved: true }) };
     }, { charge: false });
   }

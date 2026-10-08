@@ -262,6 +262,10 @@ def fetch_client(client, cache, fetcher=fetch):
     if not has(client, "competitors"):
         print(f"  ⏭  {client['name']} — competitor tracking isn't in their plan")
         return False
+    from plans import due
+    if not due(client, (cache.get(client["slug"]) or {}).get("checked_at")):
+        print(f"  ⏭  {client['name']} — monthly checks, not due yet")
+        return False
     comps = [(c.get("name") or domain_of(c.get("domain", "")), domain_of(c.get("domain", "")))
              for c in client.get("competitors") or []]
     comps = [(n, d) for n, d in comps if d]
