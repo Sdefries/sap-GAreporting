@@ -157,6 +157,17 @@ GAQL_HOUR_OF_DAY = """
 """
 
 # Device performance (real split; replaces the old fixed 65/32/3 estimate)
+GAQL_DAILY = """
+    SELECT
+        segments.date,
+        metrics.clicks,
+        metrics.impressions,
+        metrics.cost_micros,
+        metrics.conversions
+    FROM customer
+    WHERE segments.date DURING LAST_30_DAYS
+"""
+
 GAQL_DEVICES = """
     SELECT
         segments.device,
@@ -363,6 +374,24 @@ def fetch_day_of_week(client, customer_id_clean: str, original_id: str) -> list:
 DEVICE_NAMES = {"DESKTOP": "Desktop", "MOBILE": "Mobile", "TABLET": "Tablet", "CONNECTED_TV": "TV", "OTHER": "Other"}
 
 
+def fetch_daily(client, customer_id_clean: str, original_id: str) -> list:
+    """Real day-by-day clicks / impressions / cost / conversions, last 30 days."""
+    ga_service = client.get_service("GoogleAdsService")
+    days = []
+    try:
+        for row in ga_service.search(customer_id=customer_id_clean, query=GAQL_DAILY):
+            days.append({"date": row.segments.date,
+                         "cl": int(row.metrics.clicks), "im": int(row.metrics.impressions),
+                         "cost": round(float(row.metrics.cost_micros) / 1_000_000, 2),
+                         "cv": round(float(row.metrics.conversions), 2)})
+    except GoogleAdsException as ex:
+        for error in ex.failure.errors:
+            print(f"    daily error: {error.message}")
+    except Exception as e:
+        print(f"    daily unexpected: {e}")
+    return sorted(days, key=lambda d: d["date"])
+
+
 def fetch_devices(client, customer_id_clean: str, original_id: str) -> dict:
     """Clicks / impressions / cost / conversions per device, for 30d and 7d."""
     ga_service = client.get_service("GoogleAdsService")
@@ -517,6 +546,10 @@ def run():
         devices = fetch_devices(client, clean_id, original_id)
         print(f"    Devices: {len(devices.get('30d', []))} (30d)")
 
+        # Day-by-day totals for the trend charts
+        daily = fetch_daily(client, clean_id, original_id)
+        print(f"    Daily: {len(daily)} days")
+
         # Search terms
         search_terms = fetch_search_terms(client, clean_id, original_id)
         print(f"    Search terms: {len(search_terms)}")
@@ -530,6 +563,7 @@ def run():
         cache[f"{original_id}_hour_of_day"] = hour_of_day
         cache[f"{original_id}_search_terms"] = search_terms
         cache[f"{original_id}_devices"] = devices
+        cache[f"{original_id}_daily"] = daily
 
     with open("google_ads_cache.json", "w") as f:
         json.dump(cache, f, indent=2)

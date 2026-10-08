@@ -102,24 +102,24 @@ def campaigns(rows):
         })
     return sorted(out, key=lambda c: c["cl"], reverse=True)
 
-def daily(rows, n):
-    today  = datetime.date.today()
-    cl_tot = sum(r.get("clicks",0) or 0 for r in rows)
-    co_tot = sum(r.get("cost",0) or 0 for r in rows)
-    cv_tot = sum(r.get("conversions",0) or 0 for r in rows)
-    w30 = [0.02,0.03,0.04,0.03,0.03,0.04,0.03,0.03,0.03,0.04,0.03,0.03,0.04,0.03,0.03,
-           0.04,0.03,0.03,0.03,0.04,0.03,0.03,0.04,0.03,0.03,0.04,0.03,0.03,0.04,0.03]
-    w7  = [0.12,0.16,0.13,0.14,0.15,0.13,0.17]
-    weights = w30 if n==30 else w7
-    labels,clicks,convs,spend,cpc = [],[],[],[],[]
+def daily(days, n):
+    """Real day-by-day Google Ads numbers for the last n days (fetch_google_ads.py
+    "<acct>_daily"). A day with no row had no activity, so it counts as 0.
+    Returns None until the daily data has been fetched — never an estimate."""
+    if not days:
+        return None
+    by_date = {d["date"]: d for d in days}
+    end = max(datetime.date.fromisoformat(d["date"]) for d in days)
+    labels, dates, clicks, convs, spend, cpc = [], [], [], [], [], []
     for i in range(n):
-        d = today - datetime.timedelta(days=n-1-i)
-        w = weights[i] if i<len(weights) else 1/n
-        cl = round(cl_tot*w); sp = round(co_tot*w,2); cv = round(cv_tot*w)
-        labels.append(d.strftime("%b %d"))
-        clicks.append(cl); spend.append(sp); convs.append(cv)
-        cpc.append(round(sp/max(cl,1),2))
-    return {"labels":labels,"clicks":clicks,"convs":convs,"spend":spend,"cpc":cpc}
+        day = end - datetime.timedelta(days=n - 1 - i)
+        dates.append(day.isoformat())
+        d = by_date.get(day.isoformat(), {})
+        cl, sp = int(d.get("cl", 0)), round(float(d.get("cost", 0)), 2)
+        labels.append(day.strftime("%b %d"))
+        clicks.append(cl); spend.append(sp); convs.append(round(float(d.get("cv", 0)), 1))
+        cpc.append(round(sp / cl, 2) if cl else None)
+    return {"labels": labels, "dates": dates, "clicks": clicks, "convs": convs, "spend": spend, "cpc": cpc}
 
 def gps(t, client):
     if not t: return 0, {}
@@ -410,8 +410,8 @@ def build_client_data(client, rows30, rows7, extended_data, ga4, seo):
     camps7  = campaigns(rows7)
     score, gc = gps(t30, client)
     ins     = insights(client, t30, camps30)
-    d30     = daily(rows30, 30)
-    d7      = daily(rows7,  7)
+    d30     = daily(extended_data.get("daily"), 30)
+    d7      = daily(extended_data.get("daily"), 7)
     ctr     = t30.get("ctr",0)
     imps    = t30.get("im",0)
     compliance = "low_activity" if imps<50 else ("compliant" if ctr>=5 else "at_risk")
@@ -546,7 +546,9 @@ def build_report_data(cd):
             for c in camps
         ) + "]"
     def daily_js(d):
-        return (f"{{labels:{json.dumps(d['labels'])},clicks:{json.dumps(d['clicks'])},"
+        if not d:
+            return "null"
+        return (f"{{labels:{json.dumps(d['labels'])},dates:{json.dumps(d['dates'])},clicks:{json.dumps(d['clicks'])},"
                 f"convs:{json.dumps(d['convs'])},spend:{json.dumps(d['spend'])},cpc:{json.dumps(d['cpc'])}}}")
     def dev(key):
         # Real per-device rows from Google Ads (fetch_google_ads.py); empty until fetched
@@ -698,6 +700,7 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
             "day_of_week": GOOGLE_ADS_CACHE.get(f"{acct}_day_of_week", []),
             "hour_of_day": GOOGLE_ADS_CACHE.get(f"{acct}_hour_of_day", []),
             "search_terms":GOOGLE_ADS_CACHE.get(f"{acct}_search_terms",[]),
+            "daily":       GOOGLE_ADS_CACHE.get(f"{acct}_daily",       []),
         }
         devices = GOOGLE_ADS_CACHE.get(f"{acct}_devices", {})
         ga4 = GA4_CACHE.get(slug)

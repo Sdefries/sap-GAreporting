@@ -249,7 +249,7 @@ tr:hover td{background:#F5F9FF}
 .utm-bar-fill{height:100%;border-radius:3px}
 
 /* ── GA4 DEVICE PERFORMANCE ── */
-.device-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.device-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:6px}
 .device-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px 20px;position:relative;overflow:hidden}
 .device-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0}
 .device-card.mobile::before{background:var(--blue)}
@@ -579,7 +579,7 @@ button.st{cursor:pointer}
 .acc-row{border-top:1px solid var(--border);padding:12px 0 4px}
 .acc-claim{font-size:12px;color:var(--navy-dark);margin:6px 0 2px;font-style:italic}
 .kit-pre{background:var(--gray-100);border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;margin-top:8px;color:var(--navy-dark)}
-#mainContent>.pg-off,.section>[hidden]{display:none!important}
+#mainContent>.pg-off,[hidden]{display:none!important}
 .section.pg-on{animation:pgIn .25s ease-out}
 @keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.section.pg-on{animation:none}}
@@ -742,6 +742,13 @@ td{border-bottom:1px solid var(--border)}
 th,table th,.kw-table th,.lp-table th,.st-table th{text-transform:none!important;letter-spacing:0!important}
 .ga4-charts-row>*,.device-charts-row>*{min-width:0}
 .chart-card{overflow:hidden}
+.dv-card{display:flex;flex-direction:column;gap:6px;min-width:0}
+.dv-head{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--primary-900,#001d31)}.dv-head i{font-size:18px;color:var(--blue)}
+.dv-share{font-size:18px;font-weight:600;color:var(--primary-900,#001d31);font-variant-numeric:tabular-nums}.dv-share small{font-size:12px;font-weight:500;color:var(--gray-600)}
+.dv-bar{height:6px;border-radius:3px;background:var(--gray-100);overflow:hidden}.dv-bar>span{display:block;height:100%;background:var(--blue);border-radius:3px}
+.dv-sub{font-size:12px;color:var(--gray-600)}
+.dv-stats{display:flex;flex-direction:column;gap:6px;margin-top:6px;padding-top:10px;border-top:1px solid var(--border)}
+.dv-stat{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--gray-600)}.dv-stat b{font-size:14px;font-weight:600;color:var(--primary-900,#001d31);font-variant-numeric:tabular-nums}
 .age-tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
 @media(max-width:900px){.age-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .age-tile{position:relative;padding:14px 12px 16px;border-radius:10px;background:rgba(7,124,191,calc(0.05 + var(--s) * 0.18));text-align:center;overflow:hidden}
@@ -952,6 +959,7 @@ table.vt th{text-transform:none;letter-spacing:0}
     <!-- TRENDS -->
     <div class="section" id="sec-trends">
       <div class="sh"><div class="sh-title">Performance trends</div><div class="sh-sub" id="trendsLabel">Daily · Last 30 days</div></div>
+      <div id="trendsSummary"></div>
       <div class="chart-card" style="margin-bottom:14px">
         <div class="chart-header">
           <div class="chart-title">Clicks &amp; conversions</div>
@@ -1352,32 +1360,41 @@ function renderGA4Devices(){
   }
 
   const devices = ga4.devices;
-  const devConf = [
-    {key:'mobile',  cls:'mobile',  accentSessions:'accent-blue',  accentConv:'accent-green', accentBounce:'accent-red',  barColor:'#077cbf'},
-    {key:'desktop', cls:'desktop', accentSessions:'accent-green', accentConv:'accent-green', accentBounce:'accent-blue', barColor:'#3DAA69'},
-    {key:'tablet',  cls:'tablet',  accentSessions:'accent-amber', accentConv:'accent-green', accentBounce:'accent-red',  barColor:'#E8A020'},
-  ];
-
-  container.innerHTML=`
+  const names={mobile:'Phones',desktop:'Computers',tablet:'Tablets'}, icons={mobile:'ph-device-mobile',desktop:'ph-desktop',tablet:'ph-device-tablet'};
+  const secs=t=>{const m=String(t||'').match(/(?:(\d+)m)?\s*(?:(\d+)s)?/);return m?(+m[1]||0)*60+(+m[2]||0):0};
+  const rows=['mobile','desktop','tablet'].map(k=>{const d=devices[k]||{};return {k,...d,secs:secs(d.avg_time),
+    rate:d.sessions&&d.conversions!=null&&d.conversions<=d.sessions?Math.round(d.conversions/d.sessions*1000)/10:null}}).filter(r=>r.sessions);
+  const best=key=>{const v=rows.map(r=>r[key]).filter(x=>x!=null);return v.length>1?Math.max(...v):null};
+  const bTime=best('secs'), bEng=best('engagement_rate'), bRate=best('rate');
+  const sorted=[...rows].sort((a,b)=>b.sessions-a.sessions);
+  const parts=sorted.map((r,i)=>`<b>${Math.round(r.share)}%</b> ${i?'':'of visits come '}from ${names[r.k].toLowerCase()}`);
+  const sum=[(parts.length>1?parts.slice(0,-1).join(', ')+' and '+parts.at(-1):parts[0])+'.'];
+  const longest=rows.find(r=>r.secs===bTime);
+  if(longest&&rows.length>1)sum.push(`People on ${names[longest.k].toLowerCase()} stay longest, about <b>${longest.avg_time}</b> per visit.`);
+  const tracked=rows.every(r=>r.rate!=null);
+  if(tracked&&bRate){const top=rows.find(r=>r.rate===bRate);sum.push(`${names[top.k]} convert best: <b>${top.rate}%</b> of visits.`)}
+  let opp='';
+  const mob=rows.find(r=>r.k==='mobile'), desk=rows.find(r=>r.k==='desktop');
+  if(mob&&desk&&mob.share>=50){
+    if(tracked&&mob.rate<desk.rate*0.7)opp=`Most visitors are on phones, but phones convert at ${mob.rate}% against ${desk.rate}% on computers. Try the donate or sign-up path on a phone: big buttons, short forms and Apple Pay / Google Pay make the biggest difference.`;
+    else if(mob.secs<desk.secs*0.7)opp=`Most visitors are on phones, but they leave sooner than people on computers. Make sure the key pages load fast and read well on a small screen.`;
+  }
+  const stat=(lbl,val,isBest,help)=>`<div class="dv-stat"><span>${lbl}${help?' '+tip(help):''}</span><b class="${isBest?'lead':''}">${val}</b></div>`;
+  container.innerHTML=summaryBlock(sum,opp)+`
     <div class="device-cards">
-      ${devConf.map(dc=>{
-        const d = devices[dc.key]||{};
-        const bounceHigh = (d.bounce_rate||0)>50;
-        return`<div class="device-card ${dc.cls}">
-          <div class="device-name">${dc.key.charAt(0).toUpperCase()+dc.key.slice(1)}</div>
-          <div class="device-stats">
-            <div><div class="device-stat-lbl">Sessions</div><div class="device-stat-val ${dc.accentSessions}">${fmtN(d.sessions)}</div></div>
-            <div><div class="device-stat-lbl">Users</div><div class="device-stat-val">${fmtN(d.users)}</div></div>
-            <div><div class="device-stat-lbl">Conv.</div><div class="device-stat-val accent-green">${fmtN(d.conversions)}</div></div>
-            <div><div class="device-stat-lbl">Eng.</div><div class="device-stat-val">${fmtPct(d.engagement_rate)}</div></div>
-            <div><div class="device-stat-lbl">Avg Time</div><div class="device-stat-val">${d.avg_time||'—'}</div></div>
-            <div><div class="device-stat-lbl">Bounce</div><div class="device-stat-val ${bounceHigh?'accent-red':'accent-blue'}">${fmtPct(d.bounce_rate)}</div></div>
+      ${rows.map(r=>`<div class="card dv-card">
+          <div class="dv-head"><i class="ph ${icons[r.k]}" aria-hidden="true"></i><span>${names[r.k]}</span></div>
+          <div class="dv-share">${Math.round(r.share)}%<small> of visits</small></div>
+          <div class="dv-bar"><span style="width:${r.share}%"></span></div>
+          <div class="dv-sub">${fmtN(r.sessions)} visits · ${fmtN(r.users)} people</div>
+          <div class="dv-stats">
+            ${stat('Time per visit',r.avg_time||'—',r.secs===bTime)}
+            ${stat('Engaged visits',fmtPct(r.engagement_rate),r.engagement_rate===bEng,'Visits that lasted 10+ seconds, viewed 2+ pages or converted.')}
+            ${tracked?stat('Visits that converted',r.rate+'%',r.rate===bRate):stat('Conversions',fmtN(r.conversions),false)}
           </div>
-          <div class="device-share-bar"><div class="device-share-fill" style="width:${d.share||0}%;background:${dc.barColor}"></div></div>
-          <div class="device-share-lbl">${d.share||0}% of sessions</div>
-        </div>`;
-      }).join('')}
+        </div>`).join('')}
     </div>
+    <div class="vfoot" style="margin:6px 0 14px"><span class="lead">Green</span> marks the best device for that number.</div>
     <div class="device-charts-row">
       <div class="chart-card">
         <div class="chart-header">
@@ -1498,6 +1515,24 @@ function renderGA4Demographics(){
     gRow.prepend(...devRow.children); devRow.remove(); gRow.classList.add('four-up');
     const lbl=container.querySelector('.demo-section-lbl'); if(lbl)lbl.textContent='Devices & gender';
   }
+}
+
+// ── TRENDS SUMMARY ── (always from the 30-day series, whatever the range)
+function trendsSummary(){
+  const dy=window.REPORT_DATA['30d']?.daily; if(!dy)return '';
+  const sum=a=>a.reduce((n,v)=>n+(v||0),0), n=dy.clicks.length;
+  const last=sum(dy.clicks.slice(n-7)), prev=sum(dy.clicks.slice(n-14,n-7));
+  const lastCv=sum(dy.convs.slice(n-7)), prevCv=sum(dy.convs.slice(n-14,n-7));
+  const pct=(a,b)=>b?Math.round((a-b)/b*100):null;
+  const peak=dy.clicks.indexOf(Math.max(...dy.clicks));
+  const dow=['Sundays','Mondays','Tuesdays','Wednesdays','Thursdays','Fridays','Saturdays'], byDow=Array(7).fill(0), cnt=Array(7).fill(0);
+  (dy.dates||[]).forEach((iso,i)=>{const d=new Date(iso+'T12:00:00').getDay();byDow[d]+=dy.clicks[i];cnt[d]++});
+  const avg=byDow.map((v,i)=>cnt[i]?v/cnt[i]:0), bestDow=avg.indexOf(Math.max(...avg));
+  const chg=(a,b,unit)=>{const p=pct(a,b);return p==null?`${fmtN(Math.round(a))} ${unit}`:`${fmtN(Math.round(a))} ${unit}, <b class="${p>=0?'up':'down'}">${p>=0?'up':'down'} ${Math.abs(p)}%</b> on the week before`};
+  const lines=[`Last 7 days: ${chg(last,prev,'clicks')}; ${chg(lastCv,prevCv,'conversions')}.`,
+    `Busiest day: <b>${dy.labels[peak]}</b> with ${fmtN(dy.clicks[peak])} clicks.`];
+  if(Math.max(...avg)>0)lines.push(`${dow[bestDow]} get the most clicks on average.`);
+  return `<div class="vis-summary" style="margin-bottom:14px"><h4>Summary</h4><ul>${lines.map(l=>`<li>${l}</li>`).join('')}</ul></div>`;
 }
 
 // ── IMPRESSION SHARE EXPLAINER ──
@@ -1683,9 +1718,13 @@ function render(){
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmt$(ctx.parsed.x)}}},scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{...tk,callback:v=>fmt$(v)}},y:{grid:{display:false},ticks:{...tk,autoSkip:false,maxTicksLimit:undefined}}}}
   });
 
-  // Trend charts
-  buildMain('bar');
+  // Trend charts: real day-by-day Google Ads data only
   const dy=d.daily;
+  const trendCards=document.querySelectorAll('#sec-trends .chart-card, #sec-trends .g2, #sec-trends .chart-row');
+  trendCards.forEach(c=>c.hidden=!dy);
+  document.getElementById('trendsSummary').innerHTML=dy?trendsSummary():emptyBlock('Daily trends are on their way','Day-by-day clicks, spend and conversions appear after the next Google Ads update.');
+  if(dy){
+  buildMain('bar');
   charts.spend=new Chart(document.getElementById('spendChart'),{
     type:'bar',
     data:{labels:dy.labels,datasets:[
@@ -1701,6 +1740,7 @@ function render(){
     data:{labels:dy.labels,datasets:[{label:'Conversions',data:dy.convs,backgroundColor:CC.green,...barMark}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,precision:0},grid:gl,beginAtZero:true}}}
   });
+  }
 
   // Landing pages
   const lpData=window.LP_DATA||[];
@@ -1906,6 +1946,7 @@ function buildMain(type){
   if(charts.main)charts.main.destroy();
   if(!window.REPORT_DATA)return;
   const dy=window.REPORT_DATA[range].daily;
+  if(!dy)return;
   charts.main=new Chart(document.getElementById('mainChart'),{
     type,
     data:{labels:dy.labels,datasets:[
