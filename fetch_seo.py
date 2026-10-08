@@ -405,7 +405,7 @@ def fetch_keyword_rankings(keywords, domain, location="United States", competito
             "language_code":        "en",
             "device":               "desktop",
             "os":                   "windows",
-            "depth":                20,
+            "depth":                50,
             "calculate_rectangles": False,
             "load_async_ai_overview": True,
         }
@@ -440,6 +440,8 @@ def fetch_keyword_rankings(keywords, domain, location="United States", competito
             ai_overview_cited = False
             paa = []
             comp_positions = {c["domain"]: None for c in competitors if c.get("domain")}
+            top_domains = []          # page-one domains, for competitor suggestions
+            ai_sources = []           # domains the AI Overview cites
 
             for item in items:
                 item_type = item.get("type", "")
@@ -454,6 +456,10 @@ def fetch_keyword_rankings(keywords, domain, location="United States", competito
 
                 if item_type == "ai_overview":
                     ai_overview = True
+                    for ref in re.findall(r'"domain": "([^"]+)"', json.dumps(item)):
+                        d = _domain(ref)
+                        if d and d not in ai_sources:
+                            ai_sources.append(d)
                     refs = json.dumps(item)
                     ai_overview_cited = bool(re.search(
                         r'"(?:url|domain)": "(?:https?://)?(?:www\.)?' + re.escape(domain), refs))
@@ -464,6 +470,8 @@ def fetch_keyword_rankings(keywords, domain, location="United States", competito
                 # Organic result
                 if item_type == "organic":
                     item_url = item.get("url") or ""
+                    if (item.get("rank_group") or 99) <= 10 and _domain(item_url) not in top_domains:
+                        top_domains.append(_domain(item_url))
                     if position is None and _matches(domain, item_url):
                         position = item.get("rank_group") or item.get("rank_absolute")
                         url      = item_url
@@ -482,6 +490,8 @@ def fetch_keyword_rankings(keywords, domain, location="United States", competito
                 "ai_overview_cited": ai_overview_cited,
                 "competitors":       comp_positions,
                 "people_also_ask":   paa[:8],
+                "top_domains":       top_domains,
+                "ai_sources":        ai_sources[:10],
                 "checked_at":        datetime.datetime.now().isoformat(),
             })
             print(f"    '{keyword}': position {position or 'not found'}" +
@@ -491,6 +501,20 @@ def fetch_keyword_rankings(keywords, domain, location="United States", competito
         except Exception as e:
             print(f"    DataForSEO error for '{keyword}': {e}")
             results.append({"keyword": keyword, "position": None, "error": str(e)})
+
+    # Monthly US search volume for every tracked keyword (one call)
+    try:
+        req = urllib.request.Request(
+            f"{DATAFORSEO_BASE}/keywords_data/google_ads/search_volume/live",
+            data=json.dumps([{"keywords": keywords[:10], "location_name": "United States", "language_code": "en"}]).encode(),
+            headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            task = json.loads(resp.read()).get("tasks", [{}])[0]
+        vols = {(i.get("keyword") or "").lower(): i.get("search_volume") for i in (task.get("result") or [])}
+        for r in results:
+            r["volume"] = vols.get(r["keyword"].lower())
+    except Exception as e:
+        print(f"    Search volume lookup failed: {e}")
 
     return results
 

@@ -488,7 +488,7 @@ b.up,.up{color:#1A6E3E}b.down,.down{color:#A02020}
 .vbtn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
 .vbtn:disabled{opacity:0.45;cursor:not-allowed}
 .vsearch{flex:1;min-width:180px;max-width:320px;padding:8px 12px;border-radius:7px;border:1px solid var(--border);font-family:var(--font-body);font-size:12px;background:#fff}
-.vchips{display:flex;gap:4px}
+.vchips{display:flex;gap:4px;flex-wrap:wrap}
 .vchip{padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;color:var(--gray-600);background:#fff;border:1px solid var(--border);cursor:pointer;font-family:var(--font-body)}
 .vchip.active{background:var(--navy-dark);color:#fff;border-color:var(--navy-dark)}
 .vt-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto}
@@ -2375,31 +2375,31 @@ function renderClassic(V){
     return;
   }
   document.getElementById('classicSub').textContent=`${s.tracked} keywords · checked from ${(s.location||'United States').replace(/,/g,', ')} · Google desktop · ${s.checked}`;
-  const kpi=(lbl,val,of,d,opts,bar,note)=>`<div class="card"><div class="kpi4-lbl">${lbl}</div>
+  const kpi=(lbl,val,of,d,opts,bar,note,jump)=>`<div class="card"><div class="kpi4-lbl">${lbl}</div>
     <div class="kpi4-val">${val??'—'}${of?`<small> / ${of}</small>`:''}</div><div class="kpi4-d">${dHTML(d,opts)}</div>
-    <div class="mini-bar"><span style="width:${bar}%;background:var(--navy)"></span></div>${note?`<div class="vfoot">${note}</div>`:''}</div>`;
+    <div class="mini-bar"><span style="width:${bar}%;background:var(--navy)"></span></div>${note?`<div class="vfoot">${note}</div>`:''}
+    ${jump?`<button class="vt-read" onclick="seoJump('${jump}')">View ›</button>`:''}</div>`;
   box.innerHTML=summaryBlock(s.summary,s.opportunity)+
     scoreBlock('Search visibility score',s.score,s.band,s.score_delta,
       `${s.top10} of ${s.tracked} keywords are on page 1 (top 10), ${s.top3} of them in the top 3. Keywords on page 2 or lower get almost no clicks.`)+
     `<div class="kpi4">
-      ${kpi('Average position',s.avg_position,null,s.avg_delta,{lowerIsBetter:true,pctOf:s.avg_position&&s.avg_delta?s.avg_position-s.avg_delta:null,none:'First update'},s.avg_position?Math.max(5,100-(s.avg_position-1)*5):0)}
-      ${kpi('Top 3',s.top3,s.tracked,s.top3_delta,{pctOf:s.top3_delta?Math.max(s.top3-s.top3_delta,1):null,none:'First update'},s.top3/s.tracked*100)}
-      ${kpi('Top 10',s.top10,s.tracked,s.top10_delta,{pctOf:s.top10_delta?Math.max(s.top10-s.top10_delta,1):null,none:'First update'},s.top10/s.tracked*100)}
-      ${kpi('AI Overview citations',s.ai_cited,s.ai_shown,s.ai_cited_delta,{none:'First update'},s.ai_shown?s.ai_cited/s.ai_shown*100:0,`AI Overview shows on ${s.ai_shown} of ${s.tracked} keywords`)}
+      ${kpi('Average position '+tip('The average Google position of your keywords that rank in the top 50. Lower is better. Keywords outside the top 50 are left out, so read it together with Top 10.'),s.avg_position,null,s.avg_delta,{lowerIsBetter:true,pctOf:s.avg_position&&s.avg_delta?s.avg_position-s.avg_delta:null,none:'First update'},s.avg_position?Math.max(5,100-(s.avg_position-1)*2):0,'','top50')}
+      ${kpi('Top 3 '+tip('The top 3 results get most of the clicks.'),s.top3,s.tracked,s.top3_delta,{pctOf:s.top3_delta?Math.max(s.top3-s.top3_delta,1):null,none:'First update'},s.top3/s.tracked*100,'','top3')}
+      ${kpi('Top 10 '+tip('Keywords on page 1 of Google. Page 2 and lower get almost no clicks.'),s.top10,s.tracked,s.top10_delta,{pctOf:s.top10_delta?Math.max(s.top10-s.top10_delta,1):null,none:'First update'},s.top10/s.tracked*100,'','top10')}
+      ${kpi('AI Overview citations '+tip('Of the keywords that show a Google AI Overview, how many cite your site as a source.'),s.ai_cited,s.ai_shown,s.ai_cited_delta,{none:'First update'},s.ai_shown?s.ai_cited/s.ai_shown*100:0,`AI Overview shows on ${s.ai_shown} of ${s.tracked} keywords`,'aio')}
     </div>
     <div class="g2" style="margin-bottom:14px">
       <div class="chart-card"><div class="chart-title">Average position over time</div><div class="cw" style="height:190px;margin-top:12px"><canvas id="seoAvgChart"></canvas></div>
-        <div class="vfoot">Average of keywords in the top 20. The line rises as rankings improve.</div></div>
+        <div class="vfoot">Average of keywords in the top 50. The line rises as rankings improve.</div></div>
       <div class="chart-card"><div class="chart-title">Keywords in the top 3 and top 10</div><div class="cw" style="height:190px;margin-top:12px"><canvas id="seoTopChart"></canvas></div></div>
     </div>
-    <div class="vtools"><button class="vbtn" onclick="seoExportCSV()">↓ Export CSV</button></div>
-    <div class="vt-wrap"><table class="vt"><thead><tr><th>Keyword</th><th>Position</th><th>Change</th><th>AI Overview</th><th class="l">Ranking page</th></tr></thead><tbody>
-      ${s.keywords.map(k=>`<tr><td>${esc(k.kw)}${k.local_pack?' <span class="site you">Map pack</span>':''}</td>
-        <td><b>${k.pos?'#'+k.pos:'—'}</b>${k.pos?'':'<div class="vfoot" style="margin:0">Not in top 20</div>'}</td>
-        <td>${k.new?'<span class="up">New</span>':k.change?`<span class="${k.change>0?'up':'down'}">${k.change>0?'↑':'↓'} ${Math.abs(k.change)}</span>`:'<span class="vfoot">—</span>'}</td>
-        <td>${k.ai_overview?(k.ai_cited?'<span class="yn yes">Cites you</span>':'<span class="yn">Shown, not cited</span>'):'<span class="vfoot">None</span>'}</td>
-        <td class="l">${k.url?`<a href="${esc(k.url)}" target="_blank" rel="noopener" style="color:var(--blue);font-size:12px">${esc(k.url.replace(/^https?:\/\/(www\.)?/,''))}</a>`:'—'}</td></tr>`).join('')}
-    </tbody></table></div>`;
+    <div class="vtabs" id="seoTabs"><button class="vtab" data-t="rank">Keyword rankings</button><button class="vtab" data-t="aio">AI Overviews</button></div>
+    <div id="seoTable"></div>
+    ${s.suggested?.length?`<div class="card" style="margin-top:14px"><div class="chart-title">On page one with you</div>
+      <div class="vfoot" style="margin:2px 0 10px">Sites that show up most often in the top 10 for your keywords. Track them as competitors to compare head to head.</div>
+      ${s.suggested.map(x=>`<div class="now-top" style="margin:6px 0"><span class="site">${esc(x.domain)}</span><span>${x.count} keyword${x.count>1?'s':''}</span></div>`).join('')}</div>`:''}`;
+  box.querySelectorAll('#seoTabs .vtab').forEach(b=>b.onclick=()=>{seoTab=b.dataset.t;seoChip='all';drawSeoTable()});
+  drawSeoTable();
   const T=s.trend;
   ['seoAvg','seoTop'].forEach(k=>{if(visCharts[k])visCharts[k].destroy()});
   visCharts.seoAvg=new Chart(document.getElementById('seoAvgChart'),{type:'line',
@@ -2414,10 +2414,58 @@ function renderClassic(V){
       plugins:{legend:{position:'bottom',labels:{boxWidth:8,boxHeight:8,font:{size:10,family:"'Montserrat',sans-serif"},color:'#5A6A82'}}},
       scales:{x:{ticks:tk,grid:{display:false}},y:{min:0,suggestedMax:s.tracked,ticks:{...tk,precision:0},grid:gl}}}});
 }
+
+// Keyword rankings table (RDT-style: filter, sort, chips, competition, sparkline)
+let seoTab='rank', seoChip='all', seoQuery='', seoSort='best', seoComp=false;
+window.seoJump=chip=>{seoTab=chip==='aio'?'aio':'rank';seoChip=chip==='aio'?'shown':chip;drawSeoTable();document.getElementById('seoTabs').scrollIntoView({behavior:'smooth',block:'start'})};
+function spark(vals){
+  const v=vals.map(x=>x||51); if(v.filter(x=>x<51).length<2)return '<span class="vfoot">—</span>';
+  const max=Math.max(...v),min=Math.min(...v),w=64,h=18,st=w/(v.length-1||1);
+  const y=x=>max===min?h/2:2+(x-min)/(max-min)*(h-4); // rank 1 at the top
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline fill="none" stroke="#B08A3E" stroke-width="1.5" points="${v.map((x,i)=>`${(i*st).toFixed(1)},${y(x).toFixed(1)}`).join(' ')}"/></svg>`;
+}
+function drawSeoTable(){
+  const s=window.VISIBILITY_DATA.seo, el=document.getElementById('seoTable'); if(!el)return;
+  document.querySelectorAll('#seoTabs .vtab').forEach(b=>b.classList.toggle('active',b.dataset.t===seoTab));
+  const comps=Object.keys(s.comp_names||{});
+  const chips=seoTab==='rank'?[['all','All'],['n1','#1'],['top3','Top 3'],['top10','Top 10'],['top50','In top 50'],['out','Not in top 50'],['up','Moved up'],['down','Moved down']]
+    :[['all','All'],['shown','AI Overview shown'],['cited','Cited'],['notcited','Shown, not cited']];
+  const test={all:()=>true,n1:k=>k.pos===1,top3:k=>k.pos&&k.pos<=3,top10:k=>k.pos&&k.pos<=10,top50:k=>!!k.pos,out:k=>!k.pos,up:k=>k.change>0||k.new,down:k=>k.change<0,
+    shown:k=>k.ai_overview,cited:k=>k.ai_cited,notcited:k=>k.ai_overview&&!k.ai_cited};
+  const sorts={best:(a,b)=>(a.pos||99)-(b.pos||99),worst:(a,b)=>(b.pos||99)-(a.pos||99),gain:(a,b)=>(b.change||0)-(a.change||0),drop:(a,b)=>(a.change||0)-(b.change||0),vol:(a,b)=>(b.volume||0)-(a.volume||0),az:(a,b)=>a.kw.localeCompare(b.kw)};
+  const q=seoQuery.toLowerCase();
+  const rows=s.keywords.filter(k=>(!q||k.kw.toLowerCase().includes(q))&&(test[seoChip]||test.all)(k)).sort(sorts[seoSort]);
+  const posCell=p=>p?`<b>${p}</b>`:'<span class="vfoot">50+</span>';
+  const compHead=seoComp?comps.map(d=>`<th>${esc(s.comp_names[d]||d)}</th>`).join(''):'';
+  const compCells=k=>seoComp?comps.map(d=>`<td>${k.comps?.[d]?k.comps[d]:'<span class="vfoot">50+</span>'}</td>`).join(''):'';
+  const gUrl=kw=>`https://www.google.com/search?q=${encodeURIComponent(kw)}`;
+  el.innerHTML=`<div class="vtools"><button class="vbtn ${seoComp?'primary':''}" id="seoCompBtn">${seoComp?'<i class="ph ph-check"></i> ':''}Competition</button><button class="vbtn" onclick="seoExportCSV()">↓ Export CSV</button></div>
+    <div class="vtools"><input class="vsearch" id="seoSearch" placeholder="Filter keywords" value="${esc(seoQuery)}">
+      ${seoTab==='rank'?`<select class="vsearch loc-sel" id="seoSort">${[['best','Best position first'],['worst','Worst position first'],['gain','Biggest gains'],['drop','Biggest drops'],['vol','Highest search volume'],['az','A–Z']].map(([k,l])=>`<option value="${k}" ${k===seoSort?'selected':''}>${l}</option>`).join('')}</select>`:''}</div>
+    <div class="vtools"><div class="vchips">${chips.map(([k,l])=>`<button class="vchip ${seoChip===k?'active':''}" data-c="${k}">${l}</button>`).join('')}</div></div>
+    ${seoComp&&!comps.length?'<div class="vempty" style="margin-bottom:10px;padding:16px">No competitors are being tracked for this report.</div>':''}
+    <div class="vt-wrap">${!rows.length?'<div class="vfoot" style="padding:18px">No keywords match.</div>':seoTab==='rank'?`<table class="vt"><thead><tr><th>Keyword</th><th>Volume ${tip('Average monthly Google searches in the US.')}</th><th>Position</th><th>Change</th><th>Best ${tip('Best position since tracking started.')}</th><th>Trend</th>${compHead}<th class="l">Ranking page</th><th></th></tr></thead><tbody>
+      ${rows.map(k=>`<tr><td>${esc(k.kw)}${k.local_pack?' <span class="site you">Map pack</span>':''}</td><td>${k.volume!=null?fmtN(k.volume):'<span class="vfoot">—</span>'}</td><td>${posCell(k.pos)}</td>
+        <td>${k.new?'<span class="band band-good">New</span>':k.change?`<span class="band ${k.change>0?'band-good':'band-poor'}">${k.change>0?'+':''}${k.change}</span>`:'<span class="vfoot">0</span>'}</td>
+        <td>${k.best??'—'}</td><td>${spark([...k.trend,k.pos])}</td>${compCells(k)}
+        <td class="l">${k.url?`<a href="${esc(k.url)}" target="_blank" rel="noopener" style="color:var(--blue)">${esc(k.url.replace(/^https?:\/\/[^/]+/,'')||'/')}</a>`:k.top?`<span class="vfoot">#1 is ${esc(k.top)}</span>`:'—'}</td>
+        <td><a class="vt-read" href="${gUrl(k.kw)}" target="_blank" rel="noopener">Google ↗</a></td></tr>`).join('')}</tbody></table>
+      <div class="vfoot" style="padding:8px 14px"><span class="band band-good">+2</span> moved up · <span class="band band-poor">−2</span> moved down · “Google ↗” opens the search; results there are personalized</div>`
+    :`<table class="vt"><thead><tr><th>Keyword</th><th>AI Overview</th><th>${esc(window.VISIBILITY_DATA.brand||'You')}</th>${compHead}<th class="l">Sources Google cited</th></tr></thead><tbody>
+      ${rows.map(k=>`<tr><td>${esc(k.kw)}</td><td>${k.ai_overview?'<span class="yn yes">Shown</span>':'<span class="yn">None</span>'}</td>
+        <td>${k.ai_overview?(k.ai_cited?'<span class="yn yes">Cited</span>':'<span class="yn">Not cited</span>'):'<span class="vfoot">—</span>'}</td>
+        ${seoComp?comps.map(d=>`<td>${k.ai_sources.includes(d)?'<span class="yn yes">Cited</span>':'<span class="vfoot">—</span>'}</td>`).join(''):''}
+        <td class="l">${k.ai_sources.length?k.ai_sources.map(d=>`<span class="site ${comps.includes(d)?'comp':''}">${esc(d)}</span>`).join(''):'<span class="vfoot">—</span>'}</td></tr>`).join('')}</tbody></table>
+      <div class="vfoot" style="padding:8px 14px">Red = a tracked competitor.</div>`}</div>`;
+  const inp=document.getElementById('seoSearch'); inp.oninput=()=>{seoQuery=inp.value;const pos=inp.selectionStart;drawSeoTable();const n=document.getElementById('seoSearch');n.focus();n.setSelectionRange(pos,pos)};
+  const so=document.getElementById('seoSort'); if(so)so.onchange=()=>{seoSort=so.value;drawSeoTable()};
+  el.querySelectorAll('.vchip').forEach(c=>c.onclick=()=>{seoChip=c.dataset.c;drawSeoTable()});
+  document.getElementById('seoCompBtn').onclick=()=>{seoComp=!seoComp;drawSeoTable()};
+}
 window.seoExportCSV=()=>{
   const s=window.VISIBILITY_DATA.seo;
-  downloadCSV(`${slugName()}-keyword-rankings.csv`,[['Keyword','Position','Change','AI Overview','AI Overview cites you','Map pack','URL'],
-    ...s.keywords.map(k=>[k.kw,k.pos||'',k.change||'',k.ai_overview?'Yes':'No',k.ai_cited?'Yes':'No',k.local_pack?'Yes':'No',k.url||''])]);
+  downloadCSV(`${slugName()}-keyword-rankings.csv`,[['Keyword','Volume','Position','Change','Best','AI Overview','AI Overview cites you','Map pack','URL','#1 result'],
+    ...s.keywords.map(k=>[k.kw,k.volume??'',k.pos||'50+',k.change||'',k.best??'',k.ai_overview?'Yes':'No',k.ai_cited?'Yes':'No',k.local_pack?'Yes':'No',k.url||'',k.top||''])]);
 };
 
 // ── ORGANIC SEARCH (SEMrush-style) ──

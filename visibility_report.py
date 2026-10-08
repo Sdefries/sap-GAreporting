@@ -288,6 +288,7 @@ def build_seo(client, seo_entry):
     if not rankings:
         return None
     brand = brand_names(client)[0]
+    own_domain = domain_of((seo_entry or {}).get("website") or client.get("website", ""))
     n = len(rankings)
     ranked = [k for k in rankings if k.get("position")]
     top3 = len([k for k in ranked if k["position"] <= 3])
@@ -311,10 +312,16 @@ def build_seo(client, seo_entry):
         if change:
             up += change > 0
             down += change < 0
+        trend = [h.get("positions", {}).get(k["keyword"]) for h in history]
+        seen = [x for x in trend + [p1] if x]
+        top = (k.get("top_domains") or [None])[0]
         keywords.append({
             "kw": k["keyword"], "pos": p1, "change": change, "new": bool(p1 and prev and not p0),
             "url": k.get("url"), "ai_overview": bool(k.get("ai_overview")),
             "ai_cited": bool(k.get("ai_overview_cited")), "local_pack": bool(k.get("in_local_pack")),
+            "volume": k.get("volume"), "best": min(seen) if seen else None, "trend": trend[-12:],
+            "top": top if top and top != own_domain else None, "ai_sources": k.get("ai_sources") or [],
+            "comps": {cd: p for cd, p in (k.get("competitors") or {}).items()},
         })
 
     summary = [
@@ -337,7 +344,7 @@ def build_seo(client, seo_entry):
     p2 = [k for k in keywords if k["pos"] and k["pos"] > 10]
     missing = [k for k in keywords if not k["pos"]]
     if p2 or missing:
-        summary.append(f"{len(p2)} keyword{'s' if len(p2) != 1 else ''} on page two and {len(missing)} not in the top 20"
+        summary.append(f"{len(p2)} keyword{'s' if len(p2) != 1 else ''} on pages 2–5 and {len(missing)} not in the top 50"
                        + (f" (e.g. {join_quoted([missing[0]['kw']], 1)})" if missing else "") + ".")
     if ai_shown:
         summary.append(f"Google shows an AI Overview for {ai_shown} of {n} keywords; it cites you on {ai_cited}.")
@@ -350,6 +357,12 @@ def build_seo(client, seo_entry):
                        "usually reaches page one faster than adding them to an existing page.")
     else:
         opportunity = "defend the top spots — keep these pages fresh and keep earning local links and reviews."
+
+    # Who's on page one for your keywords (suggested competitors)
+    tracked = {domain_of(c.get("domain", "")) for c in client.get("competitors", [])}
+    page1 = Counter(d for k in rankings for d in (k.get("top_domains") or []))
+    serp_suggest = [{"domain": d, "count": c} for d, c in page1.most_common()
+                    if d and d != own_domain and d not in tracked and not is_directory(d)][:6]
 
     # Competitors (Google rankings, latest check)
     comp_rows = [{"name": brand, "domain": (seo_entry or {}).get("website", ""), "you": True,
@@ -378,6 +391,8 @@ def build_seo(client, seo_entry):
             "top10": [h.get("top10") for h in history],
         },
         "competitors": comp_rows,
+        "suggested": serp_suggest,
+        "comp_names": {domain_of(c.get("domain", "")): c.get("name") for c in client.get("competitors", [])},
     }
 
 
