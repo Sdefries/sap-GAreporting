@@ -25,7 +25,10 @@ ENGINE_COLORS = {
     "ai_overviews": "#2a78d6", "ai_mode": "#e0603c", "chatgpt": "#1fa67a",
     "claude": "#d9a01c", "gemini": "#e05c94", "perplexity": "#7b55d6",
 }
-ANSWERED = ("ok", "no_answer")
+# Only real answers count toward visibility. When Google shows no AI answer for
+# a search nobody can be recommended there, so it's left out of the score
+# (for competitors too) and reported separately.
+ANSWERED = ("ok",)
 
 # Sites AI cites that are directories / platforms rather than peer organizations.
 # They aren't competitors — they're places worth being listed on.
@@ -96,7 +99,8 @@ def run_stats(run):
     for eng in engines:
         cells = [p.get(eng, {}) for p in run["results"].values()]
         answered = [c for c in cells if c.get("status") in ANSWERED]
-        per[eng] = {"visible": sum(1 for c in answered if visible(c)), "total": len(answered)}
+        per[eng] = {"visible": sum(1 for c in answered if visible(c)), "total": len(answered),
+                    "no_answer": sum(1 for c in cells if c.get("status") == "no_answer")}
     v = sum(e["visible"] for e in per.values())
     t = sum(e["total"] for e in per.values())
     return {"score": pct(v, t), "visible": v, "total": t, "per": per}
@@ -141,6 +145,7 @@ def build_ai(entry, seo_entry=None):
             "visible": es["visible"] if es else 0, "total": es["total"] if es else 0,
             "pct": p, "band": band(p),
             "delta": (es["visible"] - prev_es["visible"]) if es and prev_es and prev_es["total"] else None,
+            "no_answer": es.get("no_answer", 0) if es else 0,
         })
 
     # Prompt table
@@ -181,6 +186,11 @@ def build_ai(entry, seo_entry=None):
         worst = min(tracked, key=lambda e: (e["pct"] or 0))
         summary.append(f"Strongest in <b>{best['label']}</b> ({best['pct']}% of prompts) and weakest in "
                        f"<b>{worst['label']}</b> ({worst['pct']}%).")
+    no_ans = [e for e in engine_stats if e["tracked"] and e.get("no_answer")]
+    if no_ans:
+        summary.append("Not counted in the score: " + "; ".join(
+            f"{e['label']} showed no AI answer for <b>{e['no_answer']} of {len(rows)}</b> prompt{'s' if len(rows) != 1 else ''}"
+            for e in no_ans) + ". Nobody can be recommended where Google gives no AI answer.")
     if uncovered:
         summary.append(f"<b>{len(uncovered)} of {len(rows)} prompts</b> get no mention from any AI, for example "
                        f"{join_quoted(uncovered)}.")

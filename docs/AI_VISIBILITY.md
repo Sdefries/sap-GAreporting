@@ -36,7 +36,7 @@ Each AI's answer to a prompt is checked for two things:
 - **Named**: the answer mentions one of the client's `brand_names` (or its domain).
 - **Cited**: the answer cites or links the client's website.
 
-An answer counts as *visible* if it's named or cited. The AI visibility score is visible answers ÷ all answers (prompts × AIs). When Google shows no AI Overview / AI Mode answer, that cell reads "No AI answer" and counts as not visible.
+An answer counts as *visible* if it's named or cited. The AI visibility score is visible answers ÷ answers given. When Google shows no AI Overview / AI Mode answer for a search, that cell reads "No AI answer" and is **left out of the score** (for competitors too), because nobody can be recommended there. The summary and each AI's card say how many were left out.
 
 ## Setup: GitHub secrets and variables
 

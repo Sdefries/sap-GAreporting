@@ -509,7 +509,7 @@ def build_action_plan(client, cfg, run, audit):
     engines = run.get("live_engines") or []
     gaps = []
     for prompt, per in run["results"].items():
-        answered = [e for e in engines if per.get(e, {}).get("status") in ("ok", "no_answer")]
+        answered = [e for e in engines if per.get(e, {}).get("status") == "ok"]
         vis = [e for e in answered if per[e].get("named") or per[e].get("cited")]
         if answered and len(vis) < max(1, len(answered) / 2):
             gaps.append((len(vis), prompt, per, answered, vis))
@@ -649,7 +649,7 @@ def visibility_alerts(entry, client_name):
             v = t = 0
             for per in run["results"].values():
                 for cell in per.values():
-                    if cell.get("status") in ("ok", "no_answer"):
+                    if cell.get("status") == "ok":
                         t += 1
                         cc = (cell.get("competitors") or {}).get(c["domain"], {})
                         v += 1 if (cc.get("named") or cc.get("cited")) else 0

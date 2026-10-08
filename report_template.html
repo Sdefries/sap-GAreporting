@@ -2263,7 +2263,8 @@ function renderAI(V){
       <div class="eng-name">${e.label}</div>${e.tracked?bandPill(e.band).replace(' visibility',''):'<span class="band" style="background:var(--gray-100);color:var(--gray-400)">Not tracked</span>'}
       <div class="eng-val">${e.tracked?e.visible:'—'}<small> / ${e.tracked?e.total:ai.prompts_n}</small></div>
       <div class="eng-d">${e.tracked?dHTML(e.delta,{pctOf:e.delta?Math.max(e.visible-e.delta,1):null}):''}</div>
-      <div class="eng-note">prompts where you're cited or named ${tip('Out of every prompt this AI answered this week. Click the card to see each answer.')}</div>
+      <div class="eng-note">prompts where you're cited or named ${tip('Out of every prompt this AI answered this week. Prompts where Google showed no AI answer aren\'t counted. Click the card to see each answer.')}</div>
+      ${e.tracked&&e.no_answer?`<div class="eng-note" style="margin-top:2px">No AI answer for ${e.no_answer}, not counted</div>`:''}
       <div class="mini-bar"><span style="width:${e.pct||0}%;background:${e.color}"></span></div></div>`).join('');
   const nowRows=ai.engine_stats.filter(e=>e.tracked).map(e=>`<div class="now-row click" role="button" tabindex="0" onclick="aiJump('${e.key}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();aiJump('${e.key}')}">
       <div class="now-top"><span><span class="sq" style="background:${e.color}"></span>${e.label}</span><span><b>${e.visible} / ${e.total}</b> prompts · ${e.pct}%</span></div>
@@ -2271,7 +2272,7 @@ function renderAI(V){
   box.innerHTML=
     summaryBlock(ai.summary,ai.opportunity)+
     scoreBlock('AI visibility score',ai.score,ai.band,ai.score_delta,
-      `You show up in <b>${ai.visible_answers} of ${ai.total_answers}</b> AI answers (${ai.prompts_n} prompts × ${tracked.length} AIs) and in at least one AI for <b>${ai.prompts_any} of ${ai.prompts_n}</b> prompts.`)+
+      `You show up in <b>${ai.visible_answers} of ${ai.total_answers}</b> AI answers${(()=>{const n=ai.engine_stats.reduce((t,e)=>t+(e.tracked?e.no_answer||0:0),0);return n?` (${n} search${n>1?'es':''} with no AI answer not counted)`:` (${ai.prompts_n} prompts × ${tracked.length} AIs)`})()} and in at least one AI for <b>${ai.prompts_any} of ${ai.prompts_n}</b> prompts.`)+
     `<div class="eng-grid">${engCards}</div>${referralsBlock()}${accuracyBlock()}
     <div class="g2" style="margin-bottom:14px">
       <div class="chart-card"><div class="chart-title">AI visibility over time ${tip('One line per AI: the share of your prompts where it cited or named you, at each weekly check.')}</div>

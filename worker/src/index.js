@@ -295,7 +295,8 @@ async function routeCheck(env, client, body) {
       cells[e] = { state: "error", named: false, cited: false, sites: [], excerpt: "", comps: {}, error: "This AI didn't answer this time." };
     }
   }));
-  const answered = engines.filter((e) => !["untracked", "error"].includes(cells[e].state));
+  // "No AI answer" isn't counted, same as the weekly score
+  const answered = engines.filter((e) => !["untracked", "error", "no_answer"].includes(cells[e].state));
   const visible = answered.filter((e) => ["cited_named", "cited", "named"].includes(cells[e].state));
   return [200, { prompt, cells, visible_in: visible.length, of: answered.length, checked: new Date().toISOString(), quota }];
 }
