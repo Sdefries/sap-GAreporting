@@ -1,0 +1,30 @@
+{
+  "_about": "Which report sections each plan includes. A client's plan is set in clients.json with \"plan\" (and optional \"addons\": [package keys]). A client with no plan sees everything. Sections not in the plan show an 'isn't in your plan yet' card, and their data is left out of the report.",
+  "packages": {
+    "ads": {
+      "label": "Google Ads & GA4",
+      "sections": []
+    },
+    "search": {
+      "label": "SEO & AEO",
+      "sections": ["overview", "ai", "aeo", "keywords", "organic", "site_health"]
+    },
+    "authority": {
+      "label": "Authority",
+      "sections": ["authority"]
+    },
+    "competitors": {
+      "label": "Competitor tracking",
+      "sections": ["competitors"]
+    },
+    "local": {
+      "label": "Local map",
+      "sections": ["local"]
+    }
+  },
+  "plans": {
+    "essentials": ["ads"],
+    "growth": ["ads", "search"],
+    "pro": ["ads", "search", "authority", "competitors", "local"]
+  }
+}

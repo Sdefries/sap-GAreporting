@@ -584,7 +584,7 @@ button.st{cursor:pointer}
 .acc-row{border-top:1px solid var(--border);padding:12px 0 4px}
 .acc-claim{font-size:12px;color:var(--navy-dark);margin:6px 0 2px;font-style:italic}
 .kit-pre{background:var(--gray-100);border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;margin-top:8px;color:var(--navy-dark)}
-#mainContent>.pg-off,[hidden]{display:none!important}
+#mainContent>.pg-off,[hidden],#mainContent>.section.lock-dup{display:none!important}
 .section.pg-on{animation:pgIn .25s ease-out}
 @keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.section.pg-on{animation:none}}
@@ -596,6 +596,7 @@ button.st{cursor:pointer}
 .pg-btn small{display:block;font-size:12px;color:var(--gray-400);font-weight:500}.pg-btn.next{text-align:right;margin-left:auto}.pg-btn i{color:var(--blue)}
 .lock-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:40px 24px;border:1px dashed var(--border);border-radius:12px;background:var(--card)}
 .lock-card>i{font-size:28px;color:var(--blue)}.lock-card h4{margin:0;font-size:18px;font-weight:600;color:var(--primary-900,#001d31)}
+.lock-list{text-align:left;max-width:560px;margin:4px 0 10px;padding-left:18px;font-size:14px;color:var(--gray-600);display:flex;flex-direction:column;gap:6px}
 .lock-card p{margin:0 0 8px;max-width:520px;font-size:14px;color:var(--gray-600)}
 .sb-nav a.locked{opacity:.65}
 .sb-group-head span{display:flex;align-items:center;gap:8px}.sb-group-head span i{font-size:14px;color:var(--blue)}
@@ -2100,13 +2101,15 @@ function pgSpy(){
   const page=PG.pages.find(p=>p.key===PG.cur); if(!page)return;
   let cur=page.ids[0];
   page.ids.forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=90)cur=id});
-  if(innerHeight+scrollY>=document.documentElement.scrollHeight-4){const vis=page.ids.filter(id=>document.getElementById(id)&&!document.getElementById(id).classList.contains('pg-off'));if(location.hash.slice(1)===vis.at(-1)||scrollY>0)cur=vis.at(-1)||cur}
+  if(innerHeight+scrollY>=document.documentElement.scrollHeight-4){const vis=page.ids.filter(id=>{const el=document.getElementById(id);return el&&!el.classList.contains('pg-off')&&!el.classList.contains('lock-dup')});if(location.hash.slice(1)===vis.at(-1)||scrollY>0)cur=vis.at(-1)||cur}
   PG.links.forEach(a=>{const on=a.getAttribute('href')==='#'+cur;a.classList.toggle('active',on);if(on)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')});
 }
 
 // Sections the client's plan doesn't include: data is left out of the report
 // when it's generated; here they get a lock in the sidebar and an upgrade card.
 const LOCK_COPY={
+  'sec-vis-overview':['Visibility overview','Your three headline scores in one place: how often AI recommends you, how well you rank on Google, and how trusted your website looks.'],
+  'sec-seo':['Site health','Website speed scores and the Google searches people use to find you (Search Console), checked every week.'],
   'sec-ai':['AI tracking','See whether ChatGPT, Claude, Gemini, Perplexity and Google\'s AI answers recommend you, prompt by prompt, and how many visits AI sends you.'],
   'sec-aeo-plan':['AEO action plan','Get a plan for each question AI answers without you: the pages to publish and the sites to get listed on.'],
   'sec-aeo-audit':['AEO readiness','Check whether your website is set up for AI to find, read and cite, with ready-to-paste fixes.'],
@@ -2121,11 +2124,29 @@ function renderLocks(V){
     const sec=document.getElementById(id); if(!sec)return;
     const [name,what]=LOCK_COPY[id]||['This section',''];
     [...sec.children].forEach(c=>{if(!c.classList.contains('sh'))c.hidden=true});
-    sec.insertAdjacentHTML('beforeend',`<div class="lock-card"><i class="ph ph-lock-simple" aria-hidden="true"></i><h4>${name} isn't in your plan yet</h4><p>${what}</p>
+    const pkg=(V.locked_packages||{})[id];
+    sec.insertAdjacentHTML('beforeend',`<div class="lock-card"><i class="ph ph-lock-simple" aria-hidden="true"></i><h4>${name} isn't in your plan yet</h4><p>${what}</p>${pkg?`<p class="vfoot" style="margin:-4px 0 8px">Part of the <b>${esc(pkg)}</b> package.</p>`:''}
       <a class="vbtn primary" href="mailto:${VIS_CONTACT}?subject=${encodeURIComponent('Add '+name+' for '+(window.CLIENT_DATA?.name||''))}">Ask about adding it</a>
       <div class="vfoot" style="margin:8px 0 0">${VIS_CONTACT}</div></div>`);
     const a=document.querySelector(`.sb-nav a[href="#${id}"]`);
     if(a){a.classList.add('locked');a.querySelector('.sb-badge')?.remove();a.insertAdjacentHTML('beforeend','<i class="ph ph-lock-simple sb-lock" aria-label="Locked"></i>')}
+  });
+  // A page where every section is locked gets one card instead of one per section
+  const lockedSet=new Set(V.locked||[]);
+  document.querySelectorAll('.sb-group[data-page]').forEach(g=>{
+    const ids=[...g.querySelectorAll('a[href^="#sec-"]')].map(a=>a.getAttribute('href').slice(1));
+    if(ids.length<2||!ids.every(id=>lockedSet.has(id)))return;
+    const pkgs=[...new Set(ids.map(id=>(V.locked_packages||{})[id]).filter(Boolean))];
+    const label=g.querySelector('.sb-group-head span').textContent.trim();
+    ids.slice(1).forEach(id=>document.getElementById(id)?.classList.add('lock-dup'));
+    const first=document.getElementById(ids[0]);
+    first.querySelector('.sh-title').textContent=label;
+    const sub=first.querySelector('.sh-sub'); if(sub)sub.textContent='';
+    first.querySelector('.lock-card').outerHTML=`<div class="lock-card"><i class="ph ph-lock-simple" aria-hidden="true"></i><h4>${esc(label)} isn't in your plan yet</h4>
+      <ul class="lock-list">${ids.map(id=>`<li><b>${esc((LOCK_COPY[id]||[id])[0])}</b>: ${esc((LOCK_COPY[id]||['',''])[1])}</li>`).join('')}</ul>
+      ${pkgs.length?`<p class="vfoot" style="margin:0 0 8px">Included in ${pkgs.map(x=>`<b>${esc(x)}</b>`).join(' and ')}.</p>`:''}
+      <a class="vbtn primary" href="mailto:${VIS_CONTACT}?subject=${encodeURIComponent('Add '+label+' for '+(window.CLIENT_DATA?.name||''))}">Ask about adding it</a>
+      <div class="vfoot" style="margin:8px 0 0">${VIS_CONTACT}</div></div>`;
   });
 }
 
@@ -2463,7 +2484,7 @@ function accuracyBlock(){
 const COMP_MAX=3;
 function compList(){if(!window._comps)window._comps=[...(window.VISIBILITY_DATA?.competitors_config||[])];return window._comps}
 function compTrackBtn(domain){
-  if(!liveOn())return '';
+  if(!liveOn()||(window.VISIBILITY_DATA?.locked||[]).includes('sec-competitors'))return '';
   if(compList().some(c=>c.domain===domain))return '<span class="vfoot" style="margin:0">Tracked</span>';
   return compList().length<COMP_MAX?`<button class="vbtn comp-track" data-comp-add="${esc(domain)}" aria-label="Track ${esc(domain)} as a competitor">+ Track</button>`:'';
 }

@@ -691,6 +691,10 @@ def fetch_client(client, cache, engines_filter=None, dry_run=False, ideas_only=F
     if not cfg["enabled"]:
         print(f"\n  ⏭  {client['name']} — ai_tracking disabled")
         return False
+    from plans import has
+    if not has(client, "ai"):
+        print(f"  ⏭  {client['name']} — AI tracking isn't in their plan")
+        return False
 
     engines = [e for e in cfg["engines"] if e in ENGINES and (not engines_filter or e in engines_filter)]
     live    = [e for e in engines if engine_available(e)]

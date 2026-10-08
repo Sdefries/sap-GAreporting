@@ -258,6 +258,10 @@ def add_notes(client, events):
 
 
 def fetch_client(client, cache, fetcher=fetch):
+    from plans import has
+    if not has(client, "competitors"):
+        print(f"  ⏭  {client['name']} — competitor tracking isn't in their plan")
+        return False
     comps = [(c.get("name") or domain_of(c.get("domain", "")), domain_of(c.get("domain", "")))
              for c in client.get("competitors") or []]
     comps = [(n, d) for n, d in comps if d]

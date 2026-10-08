@@ -182,6 +182,10 @@ def city_locations(client, cfg):
 
 
 def fetch_client(client, cache, dry_run=False):
+    from plans import has
+    if not has(client, "local"):
+        print(f"  ⏭  {client['name']} — the local map isn't in their plan")
+        return False
     cfg = client.get("local_tracking") or {}
     slug = client["slug"]
     cfg.setdefault("business_name", client["name"])

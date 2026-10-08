@@ -144,6 +144,10 @@ def competitors_table(client, own):
 
 
 def fetch_client(client, cache, force=False):
+    from plans import has
+    if not has(client, "authority"):
+        print(f"  ⏭  {client['name']} — authority isn't in their plan")
+        return False
     domain = domain_of(client.get("website", ""))
     if not domain:
         return False

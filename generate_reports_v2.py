@@ -6,6 +6,7 @@ The template has zero client data — all values come from cache files.
 import json, os, sys, datetime, argparse, urllib.request, hmac, hashlib
 from html import escape
 
+from plans import locked as plan_locked
 from visibility_report import apply_locks, build_overview, build_visibility_data
 
 # ── LOAD ──────────────────────────────────────────────────────────────────────
@@ -638,7 +639,7 @@ def render(cd):
     ga4_json = json.dumps(ga4_obj, default=str) if ga4_obj else "null"
 
     vis_json = json.dumps(cd.get("_visibility"), default=str)
-    live_json = json.dumps(live_api(cd["slug"]))
+    live_json = json.dumps(live_api(cd["slug"]) if cd.get("_live", True) else None)
     # Search terms, UTM values, page titles etc. come from outsiders; keep them
     # from closing the <script> block.
     safe = lambda js: js.replace("</", "<\\/").replace("<!--", "<\\!--")
@@ -708,8 +709,12 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
         try:
             cd  = build_client_data(client, rows30, rows7, extended_data, ga4, seo)
             cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4, LOCAL_CACHE.get(slug), ORGANIC_CACHE.get(slug), AUTHORITY_CACHE.get(slug), WATCH_CACHE.get(slug))
-            apply_locks(cd["_visibility"], client.get("locked_sections"))
-            cd["_visibility"]["overview"] = build_overview(cd["_visibility"])
+            locked = plan_locked(client)  # plans.json + clients.json "plan" / "addons"
+            apply_locks(cd["_visibility"], locked)
+            cd["_visibility"]["overview"] = [] if "overview" in locked else build_overview(cd["_visibility"])
+            if "site_health" in locked:
+                cd["seo"] = None  # PageSpeed / Search Console data stays out of the page
+            cd["_live"] = "ai" not in locked  # live AI checks are part of SEO & AEO
             cd["_devices"] = devices
             t30 = cd["totals_30d"]
             print(f"    GPS:{cd['gps']}/100 | Clicks:{t30.get('cl',0):.0f} | Spend:${t30.get('cost',0):,.0f} | Convs:{t30.get('cv',0):.0f} | GA4:{'✓' if cd['has_ga4'] else '✗'}")

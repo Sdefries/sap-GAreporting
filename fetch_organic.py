@@ -141,6 +141,10 @@ def top_pages(ranking):
 
 
 def fetch_client(client, cache, force=False, dry_run=False):
+    from plans import has
+    if not has(client, "organic"):
+        print(f"  ⏭  {client['name']} — organic search isn't in their plan")
+        return False
     domain = domain_of(client.get("website", ""))
     if not domain or (client.get("organic_tracking") or {}).get("enabled") is False:
         return False

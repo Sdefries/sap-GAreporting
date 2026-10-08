@@ -583,7 +583,11 @@ def fetch_client_seo(client, dry_run=False):
     print("    Fetching Search Console...")
     result["search_console"] = fetch_search_console(sc_prop)
 
-    # DataForSEO keyword rankings
+    # DataForSEO keyword rankings (paid) only for plans with keyword tracking
+    from plans import has
+    if keywords and not has(client, "keywords"):
+        print("    Keyword tracking isn't in their plan — skipping rankings")
+        keywords = []
     if keywords:
         print(f"    Fetching keyword rankings ({len(keywords)} keywords)...")
         result["keyword_rankings"] = fetch_keyword_rankings(

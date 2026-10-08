@@ -796,6 +796,8 @@ def build_health(client, ai_entry, seo_entry, local_entry, organic_entry, author
 # Sections a client's plan can lock: key in clients.json "locked_sections" →
 # (report sections, VISIBILITY_DATA keys removed so the data never reaches the page)
 LOCKABLE = {
+    "overview": (["sec-vis-overview"], []),
+    "site_health": (["sec-seo"], []),
     "ai": (["sec-ai"], ["ai", "referrals"]),
     "aeo": (["sec-aeo-plan", "sec-aeo-audit"], ["aeo"]),
     "keywords": (["sec-classic-seo"], ["seo"]),
@@ -807,14 +809,19 @@ LOCKABLE = {
 
 
 def apply_locks(vis, locked):
-    """Strip locked sections' data and record which report sections to lock."""
-    sections = []
+    """Strip locked sections' data and record which report sections to lock,
+    with the package that would unlock each one (plans.json)."""
+    from plans import package_of
+    sections, packages = [], {}
     for key in locked or []:
         secs, data_keys = LOCKABLE.get(key, ([], []))
         sections += secs
+        for sec in secs:
+            packages[sec] = package_of(key)
         for k in data_keys:
             vis[k] = None
     vis["locked"] = sections
+    vis["locked_packages"] = packages
     vis["health"] = [h["text"] for h in vis.get("health") or [] if h["area"] not in (locked or [])][:6]
     return vis
 
