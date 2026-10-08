@@ -380,9 +380,42 @@ def build_aeo(client, ai_entry):
     return out
 
 
-def build_visibility_data(client, ai_entry, seo_entry):
+REFERRAL_COLORS = {"ChatGPT": "#1fa67a", "Perplexity": "#7b55d6", "Gemini": "#e05c94",
+                   "Copilot": "#2a78d6", "Claude": "#d9a01c", "Other AI": "#94a3b8"}
+
+
+def build_referrals(ga4_entry):
+    """Visits sent by AI assistants (GA4) — the outcome AEO work is meant to move."""
+    r = (ga4_entry or {}).get("ai_referrals")
+    if r is None:
+        return None
+    total, prior = r.get("total_30d", 0), r.get("prior_total_30d", 0)
+    labels = sorted({k for w in r.get("weekly", []) for k in w if k != "week"},
+                    key=lambda k: list(REFERRAL_COLORS).index(k) if k in REFERRAL_COLORS else 99)
+
+    def week_label(iso):
+        try:
+            return datetime.date.fromisocalendar(int(iso[:4]), int(iso[4:]), 1).strftime("%b %-d")
+        except Exception:
+            return iso
+    return {
+        "total": total, "prior": prior,
+        "delta_pct": round((total - prior) / prior * 100) if prior else None,
+        "sources": [{**x, "color": REFERRAL_COLORS.get(x["source"], "#94a3b8"),
+                     "prior": (r.get("prior_by_source_30d") or {}).get(x["source"], 0)}
+                    for x in r.get("by_source_30d", [])],
+        "conversions": sum(x.get("conversions", 0) for x in r.get("by_source_30d", [])),
+        "weekly": {"labels": [week_label(w["week"]) for w in r.get("weekly", [])],
+                   "series": [{"label": l, "color": REFERRAL_COLORS.get(l, "#94a3b8"),
+                               "data": [w.get(l, 0) for w in r.get("weekly", [])]} for l in labels]},
+        "top_pages": r.get("top_pages", []),
+    }
+
+
+def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None):
     seo_enrolled = bool(client.get("local_seo_enrolled"))
     return {
+        "referrals": build_referrals(ga4_entry),
         "aeo": build_aeo(client, ai_entry),
         "ai":  build_ai(ai_entry, seo_entry if seo_enrolled else None),
         "seo": build_seo(client, seo_entry) if seo_enrolled else None,

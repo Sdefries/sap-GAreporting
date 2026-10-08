@@ -541,6 +541,10 @@ button.st{cursor:pointer}
 .live-q{font-weight:700;font-size:13px;color:var(--navy);margin-bottom:8px}
 .live-cells{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px}
 @media(max-width:960px){.live-cells{grid-template-columns:repeat(2,1fr)}}
+.ref-card{margin-bottom:14px;border-left:4px solid var(--green)}
+.vempty+.ref-card{margin-top:14px}
+.ref-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.ref-kpis{display:flex;gap:28px}
 /* ── AEO readiness + action plan ── */
 .aeo-list{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .aeo-row{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:14px 18px;border-top:1px solid var(--border)}
@@ -1451,13 +1455,14 @@ function render(){
   });
 
   // Devices (Ad Grants donut)
-  const devs=d.devices;
+  const devs=d.devices||[];
   const totDev=devs.reduce((s,dv)=>s+dv.cl,0)||1;
-  document.getElementById('devRows').innerHTML=devs.map((dv,i)=>{
+  document.getElementById('devRows').innerHTML=devs.length?'':'<div class="vfoot" style="padding:12px 0">Device breakdown appears after the next Google Ads update.</div>';
+  if(devs.length)document.getElementById('devRows').innerHTML=devs.map((dv,i)=>{
     const p=Math.round(dv.cl/totDev*100);
     return`<div class="drow"><div class="dn">${dv.n}</div><div class="dbb"><div class="dbf" style="width:${p}%;background:${dc[i]}"></div></div><div class="dpct">${p}%</div><div class="ddet">${fmtN(dv.cl)} clicks</div></div>`;
   }).join('');
-  charts.device=new Chart(document.getElementById('deviceDonut'),{
+  if(devs.length)charts.device=new Chart(document.getElementById('deviceDonut'),{
     type:'doughnut',
     data:{labels:devs.map(d=>d.n),datasets:[{data:devs.map(d=>d.cl),backgroundColor:dc,borderWidth:0,hoverOffset:4}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'right',labels:{font:{size:11,family:"'Montserrat',sans-serif"},color:'#6B7FA3',boxWidth:10,padding:10}}}}
@@ -1905,8 +1910,8 @@ function renderAI(V){
   if(!ai){
     box.innerHTML=emptyBlock('AI tracking is being set up',
       `We're adding the questions people ask ChatGPT, Gemini, Claude, Perplexity and Google's AI answers when they're looking for an organization like yours.
-       Your first AI visibility check appears here after the next weekly run.`)+liveBox();
-    wireLiveBox();
+       Your first AI visibility check appears here after the next weekly run.`)+referralsBlock()+liveBox();
+    wireLiveBox();drawReferralChart();
     return;
   }
   const tracked=ai.engines.filter(e=>e.tracked).map(e=>e.label);
@@ -1924,7 +1929,7 @@ function renderAI(V){
     summaryBlock(ai.summary,ai.opportunity)+
     scoreBlock('AI visibility score',ai.score,ai.band,ai.score_delta,
       `You show up in <b>${ai.visible_answers} of ${ai.total_answers}</b> AI answers (${ai.prompts_n} prompts × ${tracked.length} AIs) and in at least one AI for <b>${ai.prompts_any} of ${ai.prompts_n}</b> prompts.`)+
-    `<div class="eng-grid">${engCards}</div>
+    `<div class="eng-grid">${engCards}</div>${referralsBlock()}
     <div class="g2" style="margin-bottom:14px">
       <div class="chart-card"><div class="chart-title">AI visibility over time</div>
         <div class="vfoot" style="margin:2px 0 12px">Share of prompts where each AI cites or names ${esc(ai.brand)}</div>
@@ -1944,6 +1949,7 @@ function renderAI(V){
   document.querySelectorAll('#aiTabs .vtab').forEach(b=>b.onclick=()=>{aiTab=b.dataset.tab;aiFilter='all';aiQuery='';renderAITab()});
   renderAITab();
   wireLiveBox();
+  drawReferralChart();
   // Trend chart
   if(visCharts.aiTrend)visCharts.aiTrend.destroy();
   const T=ai.trend;
@@ -2052,6 +2058,34 @@ function renderIdeas(body){
     try{const d=await liveCall('/ideas',{});const have=new Set(I.ai.map(p=>p.toLowerCase()));
       I.ai=[...d.prompts.filter(p=>!have.has(p.toLowerCase())),...I.ai];ai.ideas=I;renderIdeas(body);}
     catch(e){alert(e.message);gen.disabled=false;gen.textContent='✦ Generate AI ideas';}};
+}
+
+// ── VISITS FROM AI (GA4 referrals) ──
+function referralsBlock(){
+  const R=window.VISIBILITY_DATA?.referrals;
+  if(!R)return '';
+  if(!R.total&&!R.prior)return `<div class="card ref-card"><div class="chart-title">Visits from AI</div>
+    <div class="vfoot" style="margin-top:4px">No visits from ChatGPT, Perplexity, Gemini, Copilot or Claude in the last 60 days yet. As AI starts recommending you, those visits show up here, straight from your Google Analytics.</div></div>`;
+  const d=R.delta_pct, max=Math.max(...R.sources.map(s=>s.sessions),1);
+  return `<div class="card ref-card"><div class="ref-top"><div>
+      <div class="chart-title">Visits from AI</div>
+      <div class="vfoot" style="margin:2px 0 0">People who clicked through to your website from an AI answer · last 30 days · Google Analytics</div></div>
+      <div class="ref-kpis"><div><div class="kpi4-val" style="margin:0">${fmtN(R.total)}</div><div class="vfoot" style="margin:0">visits ${d===null?'':`<span class="${d>=0?'up':'down'}">${d>=0?'↑':'↓'} ${Math.abs(d)}%</span> vs prior 30 days`}</div></div>
+      <div><div class="kpi4-val" style="margin:0">${fmtN(R.conversions)}</div><div class="vfoot" style="margin:0">conversions</div></div></div></div>
+    <div class="g2" style="margin-top:14px">
+      <div>${R.sources.map(s=>`<div class="now-row"><div class="now-top"><span><span class="sq" style="background:${s.color}"></span>${esc(s.source)}</span><span><b>${fmtN(s.sessions)}</b> visits${s.conversions?` · ${s.conversions} conv.`:''}</span></div>
+        <div class="now-bar"><span style="width:${s.sessions/max*100}%;background:${s.color}"></span></div></div>`).join('')}
+        ${R.top_pages.length?`<div class="vis-score-lbl" style="margin-top:14px">Pages AI sends people to</div>${R.top_pages.slice(0,5).map(p=>`<div class="now-top" style="margin:4px 0"><span class="lp-page">${esc(p.page)}</span><span>${fmtN(p.sessions)}</span></div>`).join('')}`:''}</div>
+      <div><div class="cw" style="height:200px"><canvas id="refChart"></canvas></div></div>
+    </div></div>`;
+}
+function drawReferralChart(){
+  const R=window.VISIBILITY_DATA?.referrals, el=document.getElementById('refChart');
+  if(!R||!el)return;
+  if(visCharts.ref)visCharts.ref.destroy();
+  visCharts.ref=new Chart(el,{type:'bar',data:{labels:R.weekly.labels,datasets:R.weekly.series.map(s=>({label:s.label,data:s.data,backgroundColor:s.color,borderRadius:3,stack:'a'}))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:8,boxHeight:8,font:{size:10,family:"'Montserrat',sans-serif"},color:'#475569'}}},
+      scales:{x:{stacked:true,ticks:tk,grid:{display:false}},y:{stacked:true,beginAtZero:true,ticks:{...tk,precision:0},grid:gl}}}});
 }
 
 // ── AEO ACTION PLAN + READINESS ──

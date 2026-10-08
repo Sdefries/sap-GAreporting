@@ -27,7 +27,9 @@ USAGE
   python fetch_seo.py --pagespeed-only      # just PageSpeed (always free)
 
 ENV VARS
-  GOOGLE_ADS_YAML        — OAuth credentials (Search Console uses same auth)
+  GA_SERVICE_ACCOUNT     — service account JSON (same as GA4); add its email as a
+                           user on each client's Search Console property
+  PAGESPEED_API_KEY      — Google API key with PageSpeed Insights API enabled
   DATAFORSEO_LOGIN       — DataForSEO account login email
   DATAFORSEO_PASSWORD    — DataForSEO account password
 """
@@ -38,6 +40,8 @@ import sys
 import datetime
 import argparse
 import urllib.request
+import urllib.error
+import time
 import urllib.parse
 import base64
 import re
@@ -86,8 +90,19 @@ def fetch_pagespeed(url, strategy="mobile"):
         api_url += f"&key={PAGESPEED_API_KEY}"
 
     try:
-        with urllib.request.urlopen(api_url, timeout=30) as resp:
-            data = json.loads(resp.read())
+        data = None
+        for attempt in range(4):
+            try:
+                with urllib.request.urlopen(api_url, timeout=60) as resp:
+                    data = json.loads(resp.read())
+                break
+            except urllib.error.HTTPError as e:
+                if e.code != 429 or attempt == 3:
+                    raise
+                wait = 15 * (attempt + 1)
+                print(f"    PageSpeed rate-limited (429) — retrying in {wait}s"
+                      + ("" if PAGESPEED_API_KEY else " (set PAGESPEED_API_KEY to avoid this)"))
+                time.sleep(wait)
 
         cats     = data.get("lighthouseResult", {}).get("categories", {})
         audits   = data.get("lighthouseResult", {}).get("audits", {})
@@ -155,36 +170,16 @@ def fetch_pagespeed(url, strategy="mobile"):
 def fetch_search_console(property_url, days=30):
     """
     Pulls organic search performance from Google Search Console API.
-    Uses service account credentials from google-ads.yaml.
+    Credentials: see search_console_credentials().
     Falls back gracefully if not configured.
     """
     if not property_url:
         return {}
 
     try:
-        from google.oauth2.credentials import Credentials
-        from google.auth.transport.requests import Request
-        import google.auth
-        import yaml
-
-        # Load credentials from google-ads.yaml
-        if not os.path.exists("google-ads.yaml"):
-            print("    google-ads.yaml not found — skipping Search Console")
+        creds = search_console_credentials()
+        if creds is None:
             return {}
-
-        with open("google-ads.yaml") as f:
-            creds_data = yaml.safe_load(f)
-
-        creds = Credentials(
-            token=None,
-            refresh_token=creds_data.get("refresh_token"),
-            token_uri="https://oauth2.googleapis.com/token",
-            client_id=creds_data.get("client_id"),
-            client_secret=creds_data.get("client_secret"),
-            scopes=["https://www.googleapis.com/auth/webmasters.readonly"]
-        )
-        creds.refresh(Request())
-
         end_date   = datetime.date.today()
         start_date = end_date - datetime.timedelta(days=days)
 
@@ -201,12 +196,32 @@ def fetch_search_console(property_url, days=30):
             "rowLimit":   1
         }).encode()
 
-        encoded_url = urllib.parse.quote(property_url, safe="")
-        api_url = f"https://searchconsole.googleapis.com/webmasters/v3/sites/{encoded_url}/searchAnalytics/query"
-
-        req  = urllib.request.Request(api_url, data=payload, headers=headers, method="POST")
-        resp = urllib.request.urlopen(req, timeout=15)
-        totals = json.loads(resp.read()).get("rows", [{}])[0]
+        # Search Console properties are either URL-prefix ("https://site.org/")
+        # or domain ("sc-domain:site.org"); try what's configured, then both forms.
+        host = urllib.parse.urlparse(property_url if "//" in property_url else "https://" + property_url).netloc
+        bare = host[4:] if host.startswith("www.") else host
+        candidates = list(dict.fromkeys([
+            property_url, property_url.rstrip("/") + "/", f"sc-domain:{bare}",
+            f"https://{host}/", f"https://www.{bare}/",
+        ]))
+        api_url, totals, last_err = None, None, None
+        for prop in candidates:
+            url = ("https://searchconsole.googleapis.com/webmasters/v3/sites/"
+                   f"{urllib.parse.quote(prop, safe='')}/searchAnalytics/query")
+            try:
+                req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
+                totals = json.loads(urllib.request.urlopen(req, timeout=20).read()).get("rows", [{}])[0]
+                api_url = url
+                print(f"    Search Console property: {prop}")
+                break
+            except urllib.error.HTTPError as e:
+                last_err = e
+                if e.code not in (403, 404):
+                    raise
+        if api_url is None:
+            print(f"    Search Console: no access to {property_url} ({last_err}). Add the GA service account "
+                  "as a user on the property in Search Console → Settings → Users and permissions.")
+            return {"error": "no_access"}
 
         result = {
             "clicks":      totals.get("clicks", 0),
@@ -303,6 +318,43 @@ def fetch_search_console(property_url, days=30):
     except Exception as e:
         print(f"    Search Console error: {e}")
         return {}
+
+
+def search_console_credentials():
+    """
+    Credentials for the Search Console API, in order of preference:
+      1. GA_SERVICE_ACCOUNT (the same service account fetch_ga4.py uses) — add its
+         email as a user on each Search Console property.
+      2. google-ads.yaml OAuth refresh token — only works if that token was
+         granted the webmasters.readonly scope.
+    """
+    scope = ["https://www.googleapis.com/auth/webmasters.readonly"]
+    try:
+        from google.auth.transport.requests import Request
+    except ImportError:
+        print("    google-auth not installed — pip install google-auth")
+        return None
+
+    sa = os.environ.get("GA_SERVICE_ACCOUNT", "")
+    if sa:
+        from google.oauth2 import service_account
+        creds = service_account.Credentials.from_service_account_info(json.loads(sa), scopes=scope)
+        creds.refresh(Request())
+        return creds
+
+    if os.path.exists("google-ads.yaml"):
+        import yaml
+        from google.oauth2.credentials import Credentials
+        with open("google-ads.yaml") as f:
+            y = yaml.safe_load(f)
+        creds = Credentials(token=None, refresh_token=y.get("refresh_token"),
+                            token_uri="https://oauth2.googleapis.com/token",
+                            client_id=y.get("client_id"), client_secret=y.get("client_secret"), scopes=scope)
+        creds.refresh(Request())
+        return creds
+
+    print("    No Search Console credentials (set GA_SERVICE_ACCOUNT) — skipping")
+    return None
 
 
 # ── DATAFORSEO KEYWORD RANKINGS ───────────────────────────────────────────────

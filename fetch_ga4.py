@@ -188,6 +188,76 @@ def fetch_utm_sources(client, property_id):
     return result
 
 
+# ── AI REFERRALS (visits sent by AI assistants) ──────────────────────────────
+# GA4 records these as referral traffic from the assistant's domain.
+AI_SOURCES = [
+    ("ChatGPT",    ("chatgpt.com", "chat.openai.com", "openai.com")),
+    ("Perplexity", ("perplexity.ai", "perplexity")),
+    ("Gemini",     ("gemini.google.com", "bard.google.com")),
+    ("Copilot",    ("copilot.microsoft.com", "copilot.cloud.microsoft", "edgeservices.bing.com", "bing.com/chat")),
+    ("Claude",     ("claude.ai",)),
+    ("Other AI",   ("you.com", "phind.com", "poe.com", "meta.ai", "deepseek.com", "chat.mistral.ai", "grok.com", "x.ai")),
+]
+
+
+def ai_source(source):
+    s = (source or "").lower()
+    for label, needles in AI_SOURCES:
+        if any(n in s for n in needles):
+            return label
+    return None
+
+
+def fetch_ai_referrals(client, property_id):
+    """
+    Sessions that arrived from AI assistants — the traffic AEO work is meant to grow.
+    Returns totals by assistant (30d vs prior 30d), a 12-week weekly trend and the
+    pages AI sends people to.
+    """
+    def by_source(start, end):
+        rows = run_report(client, property_id, ["sessionSource"],
+                          ["sessions", "engagedSessions", "conversions"], (start, end), limit=1000)
+        out = {}
+        for r in rows:
+            label = ai_source(r.get("sessionSource"))
+            if not label:
+                continue
+            o = out.setdefault(label, {"source": label, "sessions": 0, "engaged": 0, "conversions": 0})
+            o["sessions"] += safe_int(r.get("sessions"))
+            o["engaged"] += safe_int(r.get("engagedSessions"))
+            o["conversions"] += safe_int(safe_float(r.get("conversions")))
+        return out
+
+    cur = by_source("30daysAgo", "today")
+    prior = by_source("60daysAgo", "31daysAgo")
+
+    weekly = {}
+    for r in run_report(client, property_id, ["isoYearIsoWeek", "sessionSource"], ["sessions"],
+                        ("83daysAgo", "today"), limit=10000):
+        label = ai_source(r.get("sessionSource"))
+        if label:
+            w = weekly.setdefault(r["isoYearIsoWeek"], {})
+            w[label] = w.get(label, 0) + safe_int(r.get("sessions"))
+
+    pages = {}
+    for r in run_report(client, property_id, ["sessionSource", "landingPage"], ["sessions"],
+                        ("30daysAgo", "today"), limit=2000):
+        label = ai_source(r.get("sessionSource"))
+        if label:
+            p = pages.setdefault(r.get("landingPage") or "/", {"page": r.get("landingPage") or "/", "sessions": 0, "sources": {}})
+            p["sessions"] += safe_int(r.get("sessions"))
+            p["sources"][label] = p["sources"].get(label, 0) + safe_int(r.get("sessions"))
+
+    return {
+        "by_source_30d": sorted(cur.values(), key=lambda x: x["sessions"], reverse=True),
+        "total_30d": sum(v["sessions"] for v in cur.values()),
+        "prior_total_30d": sum(v["sessions"] for v in prior.values()),
+        "prior_by_source_30d": {k: v["sessions"] for k, v in prior.items()},
+        "weekly": [{"week": k, **v} for k, v in sorted(weekly.items())],
+        "top_pages": sorted(pages.values(), key=lambda x: x["sessions"], reverse=True)[:8],
+    }
+
+
 def fetch_devices(client, property_id):
     """Fetch sessions/users/conversions/engagement by device category."""
     rows = run_report(
@@ -481,6 +551,10 @@ def main():
             cities        = fetch_cities(client, ga4_id)
             channels      = fetch_channels(client, ga4_id)
 
+            # ── Visits from AI assistants (AEO results) ──────────────────────
+            print("  AI referrals...")
+            ai_referrals  = fetch_ai_referrals(client, ga4_id)
+
             cache[slug] = {
                 "ga4_id":        ga4_id,
                 "client":        slug,
@@ -499,6 +573,7 @@ def main():
                 "states":         states,
                 "cities":         cities,
                 "channels":       channels,
+                "ai_referrals":   ai_referrals,
             }
 
             clients_fetched += 1

@@ -208,11 +208,17 @@ jobs:
           python-version: '3.12'
  
       - name: Install dependencies
-        run: pip install requests
- 
+        run: pip install requests google-auth pyyaml
+
+      - name: Write google-ads.yaml
+        run: echo "$GOOGLE_ADS_YAML" > google-ads.yaml
+        env:
+          GOOGLE_ADS_YAML: ${{ secrets.GOOGLE_ADS_YAML }}
+
       - name: Fetch SEO data
         env:
           PAGESPEED_API_KEY:   ${{ secrets.PAGESPEED_API_KEY }}
+          GA_SERVICE_ACCOUNT:  ${{ secrets.GA_SERVICE_ACCOUNT }}
           DATAFORSEO_LOGIN:    ${{ secrets.DATAFORSEO_LOGIN }}
           DATAFORSEO_PASSWORD: ${{ secrets.DATAFORSEO_PASSWORD }}
         run: python fetch_seo.py

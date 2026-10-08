@@ -442,7 +442,7 @@ def build_client_data(client, rows30, rows7, extended_data, ga4, seo):
             "organic_impressions":sc.get("impressions", 0),
             "organic_ctr":        sc.get("ctr", 0),
             "avg_position":       sc.get("position"),
-            "top_queries":        sc.get("top_queries", [])[:5],
+            "top_queries":        (sc.get("top_queries") or sc.get("top_keywords") or [])[:5],
             "top_pages":          sc.get("top_pages", [])[:5],
             "keywords_tracked":   summary.get("keywords_tracked", 0),
             "keywords_top10":     summary.get("keywords_top10", 0),
@@ -507,11 +507,9 @@ def build_report_data(cd):
     def daily_js(d):
         return (f"{{labels:{json.dumps(d['labels'])},clicks:{json.dumps(d['clicks'])},"
                 f"convs:{json.dumps(d['convs'])},spend:{json.dumps(d['spend'])},cpc:{json.dumps(d['cpc'])}}}")
-    def dev(t):
-        cl = t.get("cl",0)
-        return (f"[{{n:'Desktop',cl:{round(cl*0.65)},im:{round(t.get('im',0)*0.65)},cost:{round(t.get('cost',0)*0.65,2)},cv:{round(t.get('cv',0)*0.68)},cvRate:0}},"
-                f"{{n:'Mobile',cl:{round(cl*0.32)},im:{round(t.get('im',0)*0.32)},cost:{round(t.get('cost',0)*0.32,2)},cv:{round(t.get('cv',0)*0.29)},cvRate:0}},"
-                f"{{n:'Tablet',cl:{round(cl*0.03)},im:{round(t.get('im',0)*0.03)},cost:{round(t.get('cost',0)*0.03,2)},cv:{round(t.get('cv',0)*0.03)},cvRate:0}}]")
+    def dev(key):
+        # Real per-device rows from Google Ads (fetch_google_ads.py); empty until fetched
+        return json.dumps((cd.get("_devices") or {}).get(key, []))
     t30 = cd["totals_30d"]; t7 = cd["totals_7d"]
     return (
         f"{{'30d':{{totals:{{cl:{t30.get('cl',0)},im:{t30.get('im',0)},ctr:{t30.get('ctr',0)},"
@@ -520,14 +518,14 @@ def build_report_data(cd):
         f"impressionShare:{t30.get('impressionShare') or 'null'},"
         f"lostIsRank:{t30.get('lostIsRank') or 'null'},"
         f"lostIsBudget:{t30.get('lostIsBudget') or 'null'}}},"
-        f"campaigns:{camp_js(cd['_camps30'])},daily:{daily_js(cd['_daily30'])},devices:{dev(t30)}}},"
+        f"campaigns:{camp_js(cd['_camps30'])},daily:{daily_js(cd['_daily30'])},devices:{dev('30d')}}},"
         f"'7d':{{totals:{{cl:{t7.get('cl',0)},im:{t7.get('im',0)},ctr:{t7.get('ctr',0)},"
         f"cost:{t7.get('cost',0)},cv:{t7.get('cv',0)},cpc:{t7.get('cpc',0)},"
         f"costPerConv:{t7.get('costPerConv') or 0},convRate:{t7.get('convRate',0)},"
         f"impressionShare:{t7.get('impressionShare') or 'null'},"
         f"lostIsRank:{t7.get('lostIsRank') or 'null'},"
         f"lostIsBudget:{t7.get('lostIsBudget') or 'null'}}},"
-        f"campaigns:{camp_js(cd['_camps7'])},daily:{daily_js(cd['_daily7'])},devices:{dev(t7)}}}}}"
+        f"campaigns:{camp_js(cd['_camps7'])},daily:{daily_js(cd['_daily7'])},devices:{dev('7d')}}}}}"
     )
 
 def build_lp_data(ga4_pages):
@@ -649,11 +647,13 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
             "hour_of_day": GOOGLE_ADS_CACHE.get(f"{acct}_hour_of_day", []),
             "search_terms":GOOGLE_ADS_CACHE.get(f"{acct}_search_terms",[]),
         }
+        devices = GOOGLE_ADS_CACHE.get(f"{acct}_devices", {})
         ga4 = GA4_CACHE.get(slug)
         seo = SEO_CACHE.get(slug) if client.get("local_seo_enrolled") else None
 
         cd  = build_client_data(client, rows30, rows7, extended_data, ga4, seo)
-        cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug))
+        cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4)
+        cd["_devices"] = devices
         t30 = cd["totals_30d"]
         print(f"    GPS:{cd['gps']}/100 | Clicks:{t30.get('cl',0):.0f} | Spend:${t30.get('cost',0):,.0f} | Convs:{t30.get('cv',0):.0f} | GA4:{'✓' if cd['has_ga4'] else '✗'}")
 

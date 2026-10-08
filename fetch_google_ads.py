@@ -156,6 +156,19 @@ GAQL_HOUR_OF_DAY = """
     AND campaign.status = 'ENABLED'
 """
 
+# Device performance (real split; replaces the old fixed 65/32/3 estimate)
+GAQL_DEVICES = """
+    SELECT
+        segments.device,
+        metrics.clicks,
+        metrics.impressions,
+        metrics.cost_micros,
+        metrics.conversions
+    FROM campaign
+    WHERE segments.date DURING {range}
+    AND campaign.status = 'ENABLED'
+"""
+
 # Search terms (actual queries)
 GAQL_SEARCH_TERMS = """
     SELECT
@@ -347,6 +360,41 @@ def fetch_day_of_week(client, customer_id_clean: str, original_id: str) -> list:
         return []
 
 
+DEVICE_NAMES = {"DESKTOP": "Desktop", "MOBILE": "Mobile", "TABLET": "Tablet", "CONNECTED_TV": "TV", "OTHER": "Other"}
+
+
+def fetch_devices(client, customer_id_clean: str, original_id: str) -> dict:
+    """Clicks / impressions / cost / conversions per device, for 30d and 7d."""
+    ga_service = client.get_service("GoogleAdsService")
+    out = {}
+    for key, rng in (("30d", "LAST_30_DAYS"), ("7d", "LAST_7_DAYS")):
+        devices = {}
+        try:
+            for row in ga_service.search(customer_id=customer_id_clean, query=GAQL_DEVICES.format(range=rng)):
+                name = DEVICE_NAMES.get(row.segments.device.name)
+                if not name:
+                    continue
+                d = devices.setdefault(name, {"n": name, "cl": 0, "im": 0, "cost": 0.0, "cv": 0.0})
+                d["cl"] += int(row.metrics.clicks)
+                d["im"] += int(row.metrics.impressions)
+                d["cost"] += float(row.metrics.cost_micros) / 1_000_000
+                d["cv"] += float(row.metrics.conversions)
+        except GoogleAdsException as ex:
+            for error in ex.failure.errors:
+                print(f"    devices error: {error.message}")
+            continue
+        except Exception as e:
+            print(f"    devices unexpected: {e}")
+            continue
+        rows = sorted(devices.values(), key=lambda d: d["cl"], reverse=True)
+        for d in rows:
+            d["cost"] = round(d["cost"], 2)
+            d["cv"] = round(d["cv"], 1)
+            d["cvRate"] = round(d["cv"] / d["cl"] * 100, 1) if d["cl"] else 0
+        out[key] = rows
+    return out
+
+
 def fetch_hour_of_day(client, customer_id_clean: str, original_id: str) -> list:
     """Fetch hour of day performance breakdown."""
     ga_service = client.get_service("GoogleAdsService")
@@ -465,6 +513,10 @@ def run():
         hour_of_day = fetch_hour_of_day(client, clean_id, original_id)
         print(f"    Hour of day: {len(hour_of_day)} hours")
         
+        # Devices
+        devices = fetch_devices(client, clean_id, original_id)
+        print(f"    Devices: {len(devices.get('30d', []))} (30d)")
+
         # Search terms
         search_terms = fetch_search_terms(client, clean_id, original_id)
         print(f"    Search terms: {len(search_terms)}")
@@ -477,6 +529,7 @@ def run():
         cache[f"{original_id}_day_of_week"] = day_of_week
         cache[f"{original_id}_hour_of_day"] = hour_of_day
         cache[f"{original_id}_search_terms"] = search_terms
+        cache[f"{original_id}_devices"] = devices
 
     with open("google_ads_cache.json", "w") as f:
         json.dump(cache, f, indent=2)
