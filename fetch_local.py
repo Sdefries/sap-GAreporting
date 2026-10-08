@@ -22,14 +22,16 @@ CONFIG (clients.json)
   "local_tracking": {
     "business_name": "Humane Society of Northwest Montana",
     "keywords": ["animal shelter", "adopt a dog", "humane society"],
-    "grid": 5,                 # 5 → 5×5 = 25 points (3, 5 or 7)
-    "radius_miles": 5,         # center to edge
+    "grid": 7,                 # 7 → 7×7 = 49 points (odd, 3–9)
+    "spacing_miles": 1,        # distance between grid points
+    "cities": ["Kalispell, MT"],   # map pack / Google Maps checks; default geo.locations
+    "modes": ["heat_map", "map_pack", "google_maps"],
     "lat": 48.19, "lng": -114.3,   # optional; found automatically
     "place_id": "ChIJ..."          # optional; makes matching exact
   }
 
-COST  ~$0.002 per grid point per keyword: 25 points × 3 keywords ≈ $0.15
-      per client per run, plus ~$0.004 for the business lookup.
+COST  ~$0.002 per grid point per keyword: 49 points × 3 keywords ≈ $0.30 per
+      client per run, plus ~$0.004 per city per keyword for map pack / Maps.
 
 OUTPUT  local_cache.json — read by generate_reports_v2.py (history kept, 26 runs)
 
@@ -127,22 +129,29 @@ def is_us(item, biz, cfg, want_domain):
     return norm(item.get("title")) == norm(cfg["business_name"])
 
 
-def rank_at(keyword, lat, lng, zoom, biz, cfg, want_domain):
-    items = dfs("serp/google/maps/live/advanced", {
-        "keyword": keyword, "location_coordinate": f"{lat},{lng},{zoom}z",
-        "language_code": "en", "depth": 20,
-    })
-    rank, top = None, []
+def maps_results(keyword, task_location, biz, cfg, want_domain):
+    """Top 20 Google Maps results: [{title, place_id, rating, reviews, you}] in rank order."""
+    items = dfs("serp/google/maps/live/advanced", {"keyword": keyword, "language_code": "en", "depth": 20, **task_location})
+    out = []
     for it in items:
         if it.get("type") not in ("maps_search", "local_pack"):
             continue
-        r = it.get("rank_group") or it.get("rank_absolute")
-        if len(top) < 3:
-            top.append({"title": it.get("title"), "rating": (it.get("rating") or {}).get("value"),
-                        "reviews": (it.get("rating") or {}).get("votes_count")})
-        if rank is None and is_us(it, biz, cfg, want_domain):
-            rank = r
-    return rank, top
+        out.append({"title": it.get("title") or "", "place_id": it.get("place_id") or it.get("cid") or "",
+                    "rating": (it.get("rating") or {}).get("value"),
+                    "reviews": (it.get("rating") or {}).get("votes_count"),
+                    "you": is_us(it, biz, cfg, want_domain)})
+    return out[:20]
+
+
+def map_pack(keyword, location_name, biz, cfg, want_domain):
+    """Position in the Google search map pack (the 3-business box) for a city: 1–3 or None."""
+    items = dfs("serp/google/organic/live/advanced", {"keyword": keyword, "location_name": location_name,
+                                                      "language_code": "en", "device": "desktop"})
+    pack = [it for it in items if it.get("type") == "local_pack"]
+    if not pack:
+        return {"shown": False, "rank": None, "top": []}
+    rank = next((i + 1 for i, it in enumerate(pack) if is_us(it, biz, cfg, want_domain)), None)
+    return {"shown": True, "rank": rank, "top": [it.get("title") for it in pack[:3]]}
 
 
 def keyword_stats(grid):
@@ -156,13 +165,30 @@ def keyword_stats(grid):
     }
 
 
+def city_locations(client, cfg):
+    """DataForSEO location names for the cities to check map pack / Google Maps from."""
+    from fetch_ai_visibility import US_STATES
+    out = []
+    for loc in cfg.get("cities") or (client.get("geo") or {}).get("locations", []):
+        if "," in loc:
+            city, st = [p.strip() for p in loc.split(",", 1)]
+            if st.upper() in US_STATES:
+                out.append((loc, f"{city},{US_STATES[st.upper()]},United States"))
+                continue
+        out.append((loc, loc if "," in loc else f"{loc},United States"))
+    return out[:5]
+
+
 def fetch_client(client, cache, dry_run=False):
     cfg = client.get("local_tracking") or {}
     slug = client["slug"]
     cfg.setdefault("business_name", client["name"])
     keywords = (cfg.get("keywords") or [])[:5]
-    n, radius = cfg.get("grid", 5), cfg.get("radius_miles", 5)
-    print(f"\n  📍 {client['name']} — {len(keywords)} keywords · {n}×{n} grid · {radius} mi")
+    n = max(3, min(9, int(cfg.get("grid", 7)) | 1))
+    spacing = float(cfg.get("spacing_miles") or (2 * float(cfg["radius_miles"]) / (n - 1) if cfg.get("radius_miles") else 1))
+    radius = spacing * (n - 1) / 2
+    modes = cfg.get("modes") or ["heat_map", "map_pack", "google_maps"]
+    print(f"\n  📍 {client['name']} — {len(keywords)} keywords · {n}×{n} grid, {spacing:g} mi apart · {', '.join(modes)}")
     if dry_run:
         for k in keywords:
             print(f"     • {k}")
@@ -179,35 +205,66 @@ def fetch_client(client, cache, dry_run=False):
     if biz:
         entry["profile"] = {**biz, "checked_at": datetime.datetime.now().isoformat(timespec="seconds")}
 
+    want_domain = domain_of(client.get("website", ""))
+    run = {"date": datetime.date.today().isoformat(), "keywords": {}, "cities": {}}
+
+    # Map pack + Google Maps, from each target city
+    cities = city_locations(client, cfg)
+    for label, loc in cities:
+        run["cities"][label] = {}
+        for kw in keywords:
+            row = {}
+            if "map_pack" in modes:
+                try:
+                    row["map_pack"] = map_pack(kw, loc, biz, cfg, want_domain)
+                except Exception as e:
+                    print(f"     map pack {kw} @ {label}: {str(e)[:80]}")
+            if "google_maps" in modes:
+                try:
+                    res = maps_results(kw, {"location_name": loc}, biz, cfg, want_domain)
+                    row["google_maps"] = {"rank": next((i + 1 for i, r in enumerate(res) if r["you"]), None),
+                                          "top": [r["title"] for r in res[:3]]}
+                except Exception as e:
+                    print(f"     maps {kw} @ {label}: {str(e)[:80]}")
+            run["cities"][label][kw] = row
+        if cities:
+            print(f"     ✓ {label}: map pack + Google Maps for {len(keywords)} keywords")
+
+    # Heat map grid
     lat = cfg.get("lat") or (biz or {}).get("lat")
     lng = cfg.get("lng") or (biz or {}).get("lng")
-    if not (lat and lng):
-        print("     No coordinates (add lat/lng to local_tracking) — skipping map grid")
-        cache[slug] = entry
-        return True
-
-    points = grid_points(float(lat), float(lng), n, float(radius))
-    zoom = zoom_for(float(radius))
-    want_domain = domain_of(client.get("website", ""))
-    run = {"date": datetime.date.today().isoformat(), "center": [lat, lng], "radius_miles": radius,
-           "points": points, "keywords": {}}
-    for kw in keywords:
-        grid, center_top = [], []
-        for i, row in enumerate(points):
-            out_row = []
-            for j, (plat, plng) in enumerate(row):
-                try:
-                    rank, top = rank_at(kw, plat, plng, zoom, biz, cfg, want_domain)
-                except Exception as e:
-                    print(f"     {kw} @ {plat},{plng}: {str(e)[:80]}")
-                    rank, top = None, []
-                out_row.append(rank)
-                if i == len(points) // 2 and j == len(row) // 2:
-                    center_top = top
-            grid.append(out_row)
-        stats = keyword_stats(grid)
-        run["keywords"][kw] = {"grid": grid, "center_top3": center_top, **stats}
-        print(f"     {kw:<30} SoLV {stats['solv']}% · ARP {stats['arp']} · found at {stats['found']}/{stats['points']}")
+    if "heat_map" in modes and lat and lng:
+        points = grid_points(float(lat), float(lng), n, radius)
+        zoom = zoom_for(radius)
+        run.update({"center": [lat, lng], "radius_miles": radius, "spacing_miles": spacing, "points": points})
+        for kw in keywords:
+            businesses, index, grid, pts = [], {}, [], []
+            for row in points:
+                g_row, p_row = [], []
+                for plat, plng in row:
+                    try:
+                        res = maps_results(kw, {"location_coordinate": f"{plat},{plng},{zoom}z"}, biz, cfg, want_domain)
+                    except Exception as e:
+                        print(f"     {kw} @ {plat},{plng}: {str(e)[:80]}")
+                        res = []
+                    ids = []
+                    for r in res:
+                        key = r["place_id"] or norm(r["title"])
+                        if key not in index:
+                            index[key] = len(businesses)
+                            businesses.append({k: r[k] for k in ("title", "rating", "reviews", "you")})
+                        ids.append(index[key])
+                    g_row.append(next((i + 1 for i, r in enumerate(res) if r["you"]), None))
+                    p_row.append(ids)
+                grid.append(g_row)
+                pts.append(p_row)
+            stats = keyword_stats(grid)
+            center = pts[len(pts) // 2][len(pts) // 2] if pts else []
+            run["keywords"][kw] = {"grid": grid, "pts": pts, "businesses": businesses,
+                                   "center_top3": [businesses[i] for i in center[:3]], **stats}
+            print(f"     {kw:<30} top-3 coverage {stats['solv']}% · avg rank {stats['atrp']} · found {stats['found']}/{stats['points']}")
+    elif "heat_map" in modes:
+        print("     No coordinates (add lat/lng to local_tracking) — skipping heat map")
 
     entry["runs"] = ([r for r in entry.get("runs", []) if r["date"] != run["date"]] + [run])[-26:]
     cache[slug] = entry

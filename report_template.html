@@ -586,6 +586,9 @@ button.st{cursor:pointer}
 .ov-opp{grid-column:1/-1;margin-top:0}
 .tip{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid var(--border);font-size:9px;font-weight:700;color:var(--gray-400);cursor:help;position:relative;vertical-align:middle;margin-left:4px;font-family:var(--font-body)}
 .tip:hover::after,.tip:focus::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);width:260px;background:#0f172a;color:#fff;font-size:11px;font-weight:500;line-height:1.5;padding:9px 11px;border-radius:8px;z-index:60;white-space:normal;text-align:left;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.loc-sel{max-width:280px;flex:0 1 auto;min-width:160px}
+.loc-dot{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 4px;border-radius:11px;color:#fff;font-size:10px;font-weight:700;margin-right:6px;vertical-align:middle}
+.loc-star{color:#f59e0b;font-size:20px;line-height:22px;text-align:center;text-shadow:0 0 3px #fff,0 0 6px #fff}
 /* ── AEO readiness + action plan ── */
 .aeo-list{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .aeo-row{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:14px 18px;border-top:1px solid var(--border)}
@@ -2191,8 +2194,14 @@ window.kitCopy=(k,btn)=>{const t=window.VISIBILITY_DATA.aeo.kit[k];const done=()
 window.kitSave=(k,name)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([window.VISIBILITY_DATA.aeo.kit[k]],{type:'text/plain'}));a.download=name;document.body.appendChild(a);a.click();a.remove()};
 
 // ── LOCAL MAP + BUSINESS PROFILE ──
-let localKw=0, localMap=null;
-function rankColor(r){return !r?'#94a3b8':r<=3?'#16a34a':r<=7?'#65a30d':r<=10?'#f59e0b':r<=15?'#ea580c':'#dc2626'}
+let localKw=0, localBiz=null, localMode='heat', localMap=null;
+// Same bands as the RDT heat map: 1–3 green · 4–10 orange · 11–20 red · not in top 20 dark red
+function rankColor(r){return !r?'#7f1d1d':r<=3?'#16a34a':r<=10?'#ea8a0c':'#dc2626'}
+function bizGrid(k,bi){ // rank of business index bi at every point
+  return k.pts.map(row=>row.map(ids=>{const i=ids.indexOf(bi);return i<0?null:i+1}));
+}
+function gridStats(g){const f=g.flat(),found=f.filter(Boolean);
+  return {avg:f.length?(f.reduce((a,r)=>a+(r||21),0)/f.length).toFixed(1):'—',top3:found.filter(r=>r<=3).length,found:found.length,points:f.length};}
 function renderLocal(){
   const L=window.VISIBILITY_DATA.local, box=document.getElementById('gbpContent'), P=L.profile;
   const stars=v=>v?'★'.repeat(Math.round(v))+'☆'.repeat(5-Math.round(v)):'';
@@ -2208,34 +2217,59 @@ function renderLocal(){
       ${P.hours?.length?`<div class="loc-hours">${P.hours.map(h=>`<div><span>${esc(h.day.slice(0,3))}</span><span>${h.spans.length?esc(h.spans.join(', ')):'Closed'}</span></div>`).join('')}</div>`:''}
     </div></div>`;
   }
-  if(!L.keywords.length){
-    box.innerHTML=html+emptyBlock('Your first map scan is on its way',`We'll check ${L.keywords_configured.length?esc(L.keywords_configured.join(', ')):'your keywords'} from a grid of points around your location and show where you rank on Google Maps.`);
+  if(!L.keywords.length&&!L.cities.length){
+    box.innerHTML=html+emptyBlock('Your first map scan is on its way',`We'll check ${L.keywords_configured.length?esc(L.keywords_configured.join(', ')):'your keywords'} on Google Maps from a grid around your location and from each city you serve.`);
     return;
   }
-  document.getElementById('gbpSubtitle').textContent=`${L.keywords.length} keyword${L.keywords.length>1?'s':''} · ${L.points.length}×${L.points.length} grid · ${L.radius_miles} mi radius · ${L.checked}`;
-  document.getElementById('sbLocalBadge').textContent=Math.round(L.keywords.reduce((a,k)=>a+k.solv,0)/L.keywords.length)+'%';
-  const k=L.keywords[Math.min(localKw,L.keywords.length-1)];
-  html+=`<div class="vtabs" id="locTabs">${L.keywords.map((x,i)=>`<button class="vtab ${i===localKw?'active':''}" data-i="${i}">${esc(x.keyword)}</button>`).join('')}</div>
-    <div class="loc-grid">
-      <div class="card" style="padding:0;overflow:hidden"><div id="locMap" class="loc-map"></div></div>
-      <div>
-        <div class="card" style="margin-bottom:12px"><div class="kpi4-lbl">Share of local voice</div>
-          <div class="kpi4-val">${k.solv}%</div><div class="kpi4-d">${dHTML(k.solv_delta,{unit:' pts',none:'First scan'})}</div>
-          <div class="vfoot" style="margin:0">Grid points where you're in the top 3 on Google Maps (the map pack people see)</div></div>
-        <div class="card" style="margin-bottom:12px"><div class="kpi4-lbl">Average map rank</div>
-          <div class="kpi4-val">${k.arp??'—'}</div><div class="vfoot" style="margin:0">Where you appear (${k.found} of ${k.points} points) · ${k.atrp} counting “not found” as 21</div></div>
-        ${k.center_top3?.length?`<div class="card"><div class="kpi4-lbl">Top 3 at your location</div>${k.center_top3.map((t,i)=>`<div class="now-top" style="margin:8px 0 0"><span>${i+1}. ${esc(t.title||'')}</span><span>${t.rating?t.rating+'★':''}${t.reviews?` (${fmtN(t.reviews)})`:''}</span></div>`).join('')}</div>`:''}
-      </div>
-    </div>
-    <div class="loc-legend">${[['1–3','#16a34a'],['4–7','#65a30d'],['8–10','#f59e0b'],['11–15','#ea580c'],['16–20','#dc2626'],['Not in top 20','#94a3b8']].map(([l,c])=>`<span><span class="sq" style="background:${c}"></span>${l}</span>`).join('')}</div>`;
+  const kwNames=L.keywords.length?L.keywords.map(k=>k.keyword):[...new Set(L.cities.map(c=>c.keyword))];
+  document.getElementById('gbpSubtitle').textContent=`Map pack and Google Maps positions${L.checked?' · '+L.checked:''}`;
+  if(L.keywords.length)document.getElementById('sbLocalBadge').textContent=Math.round(L.keywords.reduce((a,k)=>a+k.solv,0)/L.keywords.length)+'%';
+  html+=`<div class="vtabs" id="locModes">${[['heat','Heat map'],['pack','Map pack'],['maps','Google Maps']].map(([m,l])=>`<button class="vtab ${m===localMode?'active':''}" data-m="${m}">${l}</button>`).join('')}</div><div id="locBody"></div>`;
   box.innerHTML=html;
-  box.querySelectorAll('#locTabs .vtab').forEach(b=>b.onclick=()=>{localKw=+b.dataset.i;renderLocal()});
-  drawLocalMap(k);
+  box.querySelectorAll('#locModes .vtab').forEach(b=>b.onclick=()=>{localMode=b.dataset.m;renderLocal()});
+  const body=document.getElementById('locBody');
+  if(localMode==='heat'){
+    if(!L.keywords.length){body.innerHTML=emptyBlock('No heat map yet','The heat map needs your location; it runs with the next weekly scan.');return;}
+    const k=L.keywords[Math.min(localKw,L.keywords.length-1)];
+    const you=k.businesses.findIndex(b=>b.you);
+    const bi=localBiz!=null&&k.businesses[localBiz]?localBiz:(you>=0?you:k.picker[0]);
+    const g=bi===you&&you>=0?k.grid:bizGrid(k,bi), st=gridStats(g), n=L.points.length;
+    body.innerHTML=`<div class="vtools">
+        <select class="vsearch loc-sel" id="locKw">${L.keywords.map((x,i)=>`<option value="${i}" ${i===localKw?'selected':''}>${esc(x.keyword)}</option>`).join('')}</select>
+        <select class="vsearch loc-sel" id="locBiz">${k.picker.map(i=>`<option value="${i}" ${i===bi?'selected':''}>${esc(k.businesses[i].title)}${k.businesses[i].you?' (you)':''}</option>`).join('')}</select>
+        <button class="vbtn" onclick="localCSV()">↓ Export CSV</button></div>
+      <div class="kpi4">
+        <div class="card"><div class="kpi4-lbl">Average rank ${tip('Average Google Maps position across every grid point. Points where the business isn’t in the top 20 count as 21. Lower is better.')}</div><div class="kpi4-val">${st.avg}</div><div class="vfoot" style="margin:0">across ${st.points} points</div></div>
+        <div class="card"><div class="kpi4-lbl">Top 3 coverage ${tip('Share of grid points where the business is in the top 3 — the map pack people actually see.')}</div><div class="kpi4-val">${st.points?Math.round(st.top3/st.points*100):0}%</div><div class="vfoot" style="margin:0">${st.top3} of ${st.points} points${bi===you&&k.solv_delta!=null?` · ${k.solv_delta>=0?'+':''}${k.solv_delta} pts`:''}</div></div>
+        <div class="card"><div class="kpi4-lbl">Found in top 20 ${tip('Grid points where the business shows up anywhere in the top 20 Google Maps results.')}</div><div class="kpi4-val">${st.found}</div><div class="vfoot" style="margin:0">of ${st.points} points</div></div>
+        <div class="card"><div class="kpi4-lbl">Grid ${tip('How many points we search from, and how far apart they are, centered on your location.')}</div><div class="kpi4-val">${n}×${n}</div><div class="vfoot" style="margin:0">${L.spacing_miles??'—'} mi apart · ${L.checked}</div></div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden"><div id="locMap" class="loc-map"></div></div>
+      <div class="loc-legend">${[['3','1–3','#16a34a'],['7','4–10','#ea8a0c'],['15','11–20','#dc2626'],['20+','Not in top 20','#7f1d1d']].map(([v,l,c])=>`<span><span class="loc-dot" style="background:${c}">${v}</span>${l}</span>`).join('')}<span>★ ${esc(P?.title||'Your location')}</span></div>`;
+    document.getElementById('locKw').onchange=e=>{localKw=+e.target.value;localBiz=null;renderLocal()};
+    document.getElementById('locBiz').onchange=e=>{localBiz=+e.target.value;renderLocal()};
+    window._locGrid={g,k,bi};
+    drawLocalMap(g);
+    return;
+  }
+  // Map pack / Google Maps by city
+  const isPack=localMode==='pack', rows=L.cities.filter(c=>isPack?c.has_pack:c.has_maps);
+  if(!rows.length){body.innerHTML=emptyBlock('Nothing checked yet',`${isPack?'Map pack':'Google Maps'} positions from each city you serve appear after the next weekly scan.`);return;}
+  const chg=(cur,prev)=>cur&&prev&&cur!==prev?`<span class="${cur<prev?'up':'down'}">${cur<prev?'↑':'↓'} ${Math.abs(prev-cur)}</span>`:'<span class="vfoot">—</span>';
+  body.innerHTML=`<div class="vfoot" style="margin-bottom:8px">${isPack?'Your spot in the 3-business map box on a regular Google search, searched from each city.':'Your position in Google Maps results (top 20), searched from each city.'}</div>
+    <div class="vt-wrap"><table class="vt"><thead><tr><th>Keyword</th><th class="l">City</th><th>${isPack?'Map pack':'Maps position'}</th><th>Change</th><th class="l">${isPack?'In the map pack':'Top 3 in Google Maps'}</th></tr></thead><tbody>
+    ${rows.map(r=>{const rank=isPack?r.pack_rank:r.maps_rank, prev=isPack?r.pack_prev:r.maps_prev, top=isPack?r.pack_top:r.maps_top;
+      return `<tr><td>${esc(r.keyword)}</td><td class="l">${esc(r.city)}</td>
+        <td>${isPack&&!r.pack_shown?'<span class="vfoot">No map pack</span>':rank?`<span class="loc-dot" style="background:${rankColor(rank)}">${rank}</span>`:`<span class="loc-dot" style="background:${rankColor(null)}">${isPack?'—':'20+'}</span>`}</td>
+        <td>${chg(rank,prev)}</td><td class="l">${top.map(t=>`<span class="site">${esc(t)}</span>`).join('')||'—'}</td></tr>`}).join('')}</tbody></table></div>`;
 }
-function drawLocalMap(k){
+window.localCSV=()=>{const {g,k,bi}=window._locGrid, L=window.VISIBILITY_DATA.local, rows=[['Keyword','Business','Row','Column','Lat','Lng','Rank']];
+  g.forEach((row,i)=>row.forEach((r,j)=>rows.push([k.keyword,k.businesses[bi]?.title||'',i+1,j+1,L.points[i][j][0],L.points[i][j][1],r||'20+'])));
+  downloadCSV(`${slugName()}-heat-map.csv`,rows)};
+function drawLocalMap(g){
   const L=window.VISIBILITY_DATA.local, el=document.getElementById('locMap');
   if(localMap){localMap.remove();localMap=null;}
-  const pts=L.points.flat(), ranks=k.grid.flat();
+  const pts=L.points.flat(), ranks=g.flat();
   if(!window.L){ // map library unavailable: plain grid fallback
     el.innerHTML=`<div class="loc-fallback" style="grid-template-columns:repeat(${L.points.length},1fr)">${ranks.map(r=>`<span style="background:${rankColor(r)}">${r||'20+'}</span>`).join('')}</div>`;
     return;
@@ -2245,12 +2279,11 @@ function drawLocalMap(k){
   pts.forEach(([la,ln],i)=>{
     const r=ranks[i];
     window.L.marker([la,ln],{icon:window.L.divIcon({className:'',html:`<div class="loc-pin" style="background:${rankColor(r)}">${r||'20+'}</div>`,iconSize:[30,30],iconAnchor:[15,15]})})
-      .bindTooltip(r?`Rank #${r} here`:'Not in the top 20 here').addTo(localMap);
+      .bindTooltip(r?`#${r} here`:'Not in the top 20 here').addTo(localMap);
   });
-  window.L.circleMarker(L.center,{radius:5,color:'#001d31',weight:2,fillColor:'#fff',fillOpacity:1}).bindTooltip('Your location').addTo(localMap);
+  window.L.marker(L.center,{icon:window.L.divIcon({className:'',html:'<div class="loc-star">★</div>',iconSize:[22,22],iconAnchor:[11,11]})}).bindTooltip(L.profile?.title||'Your location').addTo(localMap);
   localMap.fitBounds(pts,{padding:[24,24]});
 }
-
 // ── AEO ACTION PLAN + READINESS ──
 function renderAEO(V){
   const A=V.aeo||{}, audit=A.audit, plan=A.plan, ai=V.ai;

@@ -500,28 +500,47 @@ def build_referrals(ga4_entry):
 
 
 def build_local(client, local_entry):
-    """Business Profile details + map-grid rankings (fetch_local.py)."""
+    """Business Profile + heat map grids + map pack / Google Maps by city (fetch_local.py)."""
     if not client.get("local_tracking"):
         return None
     e = local_entry or {}
     runs = e.get("runs") or []
     cur, prev = (runs[-1] if runs else None), (runs[-2] if len(runs) > 1 else None)
     kws = []
-    if cur:
-        for kw, k in cur["keywords"].items():
-            p = (prev or {}).get("keywords", {}).get(kw) or {}
-            kws.append({**k, "keyword": kw,
-                        "solv_delta": (k["solv"] - p["solv"]) if p else None,
-                        "history": [{"date": short_date(r["date"]), "solv": r["keywords"].get(kw, {}).get("solv")}
-                                    for r in runs if kw in r.get("keywords", {})]})
+    for kw, k in ((cur or {}).get("keywords") or {}).items():
+        p = (prev or {}).get("keywords", {}).get(kw) or {}
+        # Businesses that show up most across the grid, for the business picker
+        seen = Counter(i for row in k.get("pts", []) for ids in row for i in ids[:20])
+        top = [i for i, _ in seen.most_common(8)]
+        you = next((i for i, b in enumerate(k.get("businesses", [])) if b.get("you")), None)
+        if you is not None and you not in top:
+            top.insert(0, you)
+        kws.append({**{x: k[x] for x in ("grid", "solv", "arp", "atrp", "found", "points") if x in k},
+                    "keyword": kw, "pts": k.get("pts", []), "businesses": k.get("businesses", []),
+                    "picker": sorted(top, key=lambda i: (i != you, -seen[i])),
+                    "center_top3": k.get("center_top3", []),
+                    "solv_delta": (k["solv"] - p["solv"]) if p else None,
+                    "atrp_delta": (k["atrp"] - p["atrp"]) if p and p.get("atrp") is not None else None})
+    cities = []
+    for city, per in ((cur or {}).get("cities") or {}).items():
+        for kw, row in per.items():
+            pv = ((prev or {}).get("cities") or {}).get(city, {}).get(kw, {})
+            mp, gm = row.get("map_pack") or {}, row.get("google_maps") or {}
+            cities.append({"city": city, "keyword": kw,
+                           "pack_shown": mp.get("shown"), "pack_rank": mp.get("rank"), "pack_top": mp.get("top", []),
+                           "pack_prev": (pv.get("map_pack") or {}).get("rank"),
+                           "maps_rank": gm.get("rank"), "maps_top": gm.get("top", []),
+                           "maps_prev": (pv.get("google_maps") or {}).get("rank"),
+                           "has_pack": "map_pack" in row, "has_maps": "google_maps" in row})
     prof = e.get("profile")
+    cfg = client.get("local_tracking") or {}
     return {
         "configured": True,
-        "keywords_configured": (client.get("local_tracking") or {}).get("keywords") or [],
+        "keywords_configured": cfg.get("keywords") or [],
         "profile": {**prof, "checked": fmt_date(prof.get("checked_at", ""))} if prof else None,
         "checked": fmt_date(cur["date"]) if cur else None,
-        "center": cur["center"] if cur else None, "radius_miles": cur.get("radius_miles") if cur else None,
-        "points": cur["points"] if cur else None, "keywords": kws,
+        "center": (cur or {}).get("center"), "spacing_miles": (cur or {}).get("spacing_miles"),
+        "points": (cur or {}).get("points"), "keywords": kws, "cities": cities,
     }
 
 
