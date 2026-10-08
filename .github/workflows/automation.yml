@@ -26,6 +26,7 @@ on:
           - fetch_ai
           - fetch_local
           - fetch_organic
+          - fetch_authority
           - all
  
 jobs:
@@ -332,3 +333,36 @@ jobs:
           git config --global user.name "SAP Automation"
           git add organic_cache.json || true
           git diff --staged --quiet && echo "No changes" || (git commit -m "Update organic search $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)
+
+  # ── FETCH AUTHORITY (backlinks, monthly) ──────────────────────────────
+  # Only runs when the DATAFORSEO_BACKLINKS variable is 1 (needs the
+  # DataForSEO Backlinks API subscription). Skips clients fetched < 25 days ago.
+  fetch_authority:
+    name: Fetch authority
+    runs-on: ubuntu-latest
+    if: |
+      vars.DATAFORSEO_BACKLINKS == '1' && (
+      (github.event_name == 'schedule' && github.event.schedule == '0 12 * * 1') ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.job == 'fetch_authority' || github.event.inputs.job == 'all')))
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch authority
+        env:
+          DATAFORSEO_LOGIN:     ${{ secrets.DATAFORSEO_LOGIN }}
+          DATAFORSEO_PASSWORD:  ${{ secrets.DATAFORSEO_PASSWORD }}
+          DATAFORSEO_BACKLINKS: ${{ vars.DATAFORSEO_BACKLINKS }}
+        run: python fetch_authority.py
+
+      - name: Commit authority cache
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "SAP Automation"
+          git add authority_cache.json || true
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update authority $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)

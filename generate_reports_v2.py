@@ -6,7 +6,7 @@ The template has zero client data — all values come from cache files.
 import json, os, sys, datetime, argparse, urllib.request, hmac, hashlib
 from html import escape
 
-from visibility_report import build_visibility_data
+from visibility_report import build_overview, build_visibility_data
 
 # ── LOAD ──────────────────────────────────────────────────────────────────────
 with open("clients.json") as f:
@@ -24,6 +24,7 @@ SEO_CACHE        = load_cache("seo_cache.json")
 AI_CACHE         = load_cache("ai_visibility_cache.json")
 LOCAL_CACHE      = load_cache("local_cache.json")
 ORGANIC_CACHE    = load_cache("organic_cache.json")
+AUTHORITY_CACHE  = load_cache("authority_cache.json")
 TEMPLATE         = open("report_template.html").read()
 REPORT_DATE      = datetime.date.today().strftime("%B %d, %Y")
 REPO_BASE        = "https://sdefries.github.io/sap-GAreporting/reports"
@@ -689,7 +690,8 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
         seo = SEO_CACHE.get(slug) if client.get("local_seo_enrolled") else None
 
         cd  = build_client_data(client, rows30, rows7, extended_data, ga4, seo)
-        cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4, LOCAL_CACHE.get(slug), ORGANIC_CACHE.get(slug))
+        cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4, LOCAL_CACHE.get(slug), ORGANIC_CACHE.get(slug), AUTHORITY_CACHE.get(slug))
+        cd["_visibility"]["overview"] = build_overview(cd["_visibility"])
         cd["_devices"] = devices
         t30 = cd["totals_30d"]
         print(f"    GPS:{cd['gps']}/100 | Clicks:{t30.get('cl',0):.0f} | Spend:${t30.get('cost',0):,.0f} | Convs:{t30.get('cv',0):.0f} | GA4:{'✓' if cd['has_ga4'] else '✗'}")

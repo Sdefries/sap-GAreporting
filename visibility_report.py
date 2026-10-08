@@ -546,9 +546,111 @@ def build_organic(entry):
     }
 
 
-def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None, local_entry=None, organic_entry=None):
+def auth_band(v):
+    if v is None:
+        return None
+    return "Great" if v >= 50 else "Good" if v >= 30 else "Moderate" if v >= 10 else "Poor"
+
+
+def build_authority(client, entry):
+    """Backlink authority (fetch_authority.py) with a plain-English summary."""
+    if not entry or not entry.get("summary"):
+        return None
+    brand = brand_names(client)[0]
+    sm, hist, prev = entry["summary"], entry.get("history") or [], entry.get("previous") or {}
+    a, rd = sm["authority"], sm["referring_domains"]
+    best, back = entry.get("best_links") or [], entry.get("links_to_get_back") or []
+    nl = entry.get("new_lost_30d_clean") or {"new": 0, "lost": 0}
+    raw = entry.get("new_lost_30d") or {}
+    a_delta = (a - prev["authority"]) if prev.get("authority") is not None else None
+    rd_delta = (rd - prev["referring_domains"]) if prev.get("referring_domains") else None
+    best_delta = (len(best) - prev["best_links"]) if prev.get("best_links") is not None else None
+
+    bullets = [f'<b>Authority is <span class="band band-{auth_band(a).lower()}">{auth_band(a)}</span>: {escape(brand)} '
+               f'has an authority score of {a} out of 100.</b> Under 10 is Poor, 10–30 Moderate, 30–50 Good, 50+ Great.']
+    if len(hist) > 1:
+        first = hist[0]
+        word = "risen" if a > first["authority"] else "fallen" if a < first["authority"] else "held steady"
+        cls = "up" if a > first["authority"] else "down" if a < first["authority"] else ""
+        bullets.append(f'Authority has <b class="{cls}">{word}' +
+                       (f' from {first["authority"]} to {a}' if word != "held steady" else f' at {a}') +
+                       '</b> over the last 12 months.')
+        bullets.append(f'Linking sites went from {first["referring_domains"]:,} to {rd:,} this year, but '
+                       f'<b>only {len(best)} are best links</b> ({round(len(best) / rd * 100, 1) if rd else 0}%): '
+                       f'authority 20+, real traffic, followed and not spam.')
+    if back:
+        top = max(back, key=lambda r: r["authority"])
+        bullets.append(f'<b>{len(back)} best link{"s were" if len(back) != 1 else " was"} lost in the last 12 months</b>, '
+                       f'including {escape(top["domain"])} (authority {top["authority"]}). See <b>Links to get back</b>.')
+    if entry.get("spam_count"):
+        bullets.append(f'<b>{entry["spam_count"]} linking sites are flagged as spam.</b> Spam links are left out of these counts; '
+                       f'a lot of them usually means bought link packages, which can hold rankings back.')
+    extra = ""
+    if raw.get("new") or raw.get("lost"):
+        sn, sl = max(0, raw.get("new", 0) - nl["new"]), max(0, raw.get("lost", 0) - nl["lost"])
+        if sn or sl:
+            extra = f", plus {sn} spam sites gained and {sl} lost that don't count"
+    bullets.append(f'In the last 30 days {escape(brand)} gained {nl["new"]} real linking site{"s" if nl["new"] != 1 else ""} '
+                   f'and lost {nl["lost"]}{extra}.')
+    target = 10 if a < 10 else 30 if a < 30 else 50 if a < 50 else a + 5
+    comps = [c for c in entry.get("competitors") or [] if not c.get("you")]
+    nxt = (f"keep adding best links every month, focused on sites competitors already have, to push authority past {target}."
+           if comps else f"earn a few best links every month (local news, partner organizations, directories AI trusts) "
+                         f"to push authority past {target}. Add competitors to see which sites link to them but not you.")
+    if back:
+        nxt = f"win back the {len(back)} lost best link{'s' if len(back) != 1 else ''} first (fastest gain), then " + nxt
+    return {
+        "checked": fmt_date(entry.get("fetched_at", "")), "domain": entry.get("domain"),
+        "score": a, "band": auth_band(a), "delta": a_delta,
+        "referring_domains": rd, "rd_delta": rd_delta, "best": len(best), "best_delta": best_delta,
+        "new_lost": nl, "spam_count": entry.get("spam_count", 0),
+        "summary": bullets, "next_step": nxt[:1].upper() + nxt[1:],
+        "history": [{"label": datetime.date.fromisoformat(h["date"]).strftime("%b %-d") if h.get("date") else "",
+                     "authority": h["authority"], "referring_domains": h["referring_domains"]} for h in hist],
+        "tables": {"best": best, "get_back": back, "highest": entry.get("highest") or [],
+                   "new": entry.get("new_links") or [], "lost": entry.get("lost_links") or [],
+                   "anchors": entry.get("anchors") or [], "competitors": entry.get("competitors") or []},
+    }
+
+
+def build_overview(vis):
+    """The three headline scores (AI · keyword · authority), each with one opportunity."""
+    ai, seo, org, auth = vis.get("ai"), vis.get("seo"), vis.get("organic"), vis.get("authority")
+    cards = []
+    if ai and ai.get("score") is not None:
+        cards.append({"key": "ai", "title": "AI visibility score", "value": ai["score"], "unit": "%", "band": ai["band"],
+                      "delta": ai["score_delta"], "href": "#sec-ai",
+                      "note": f"You show up in {ai['visible_answers']} of {ai['total_answers']} AI answers and in at "
+                              f"least one AI for {ai['prompts_any']} of {ai['prompts_n']} prompts.",
+                      "opportunity": ai.get("opportunity")})
+    if seo:
+        cards.append({"key": "seo", "title": "Keyword visibility score", "value": seo["score"], "unit": "%",
+                      "band": seo["band"], "delta": seo.get("score_delta"), "href": "#sec-classic-seo",
+                      "note": f"{seo['top10']} of {seo['tracked']} tracked keywords are on page 1, {seo['top3']} in the top 3.",
+                      "opportunity": seo.get("opportunity")})
+    elif org:
+        o = org["overview"]
+        p1 = o["pos_1"] + o["pos_2_3"] + o["pos_4_10"]
+        sc = round(p1 / o["keywords"] * 100) if o["keywords"] else 0
+        cards.append({"key": "seo", "title": "Keyword visibility score", "value": sc, "unit": "%", "band": band(sc),
+                      "delta": None, "href": "#sec-organic",
+                      "note": f"{p1:,} of the {o['keywords']:,} keywords your site ranks for are on page 1 of Google.",
+                      "opportunity": f"{o['pos_11_20']:,} keywords sit on page 2. Improving those pages is the quickest "
+                                     f"way to grow visits." if o.get("pos_11_20") else None})
+    if auth:
+        cards.append({"key": "authority", "title": "Authority score", "value": auth["score"], "unit": "",
+                      "band": auth["band"], "delta": auth["delta"], "href": "#sec-authority", "scale": "authority",
+                      "note": f"0–100: the strength of the sites linking here. {auth['best']} of "
+                              f"{auth['referring_domains']:,} linking sites are best links.",
+                      "opportunity": auth["next_step"], "opportunity_label": "Next step"})
+    return cards
+
+
+def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None, local_entry=None, organic_entry=None,
+                          authority_entry=None):
     seo_enrolled = bool(client.get("local_seo_enrolled"))
     return {
+        "authority": build_authority(client, authority_entry),
         "organic": build_organic(organic_entry),
         "local": build_local(client, local_entry),
         "referrals": build_referrals(ga4_entry),

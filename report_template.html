@@ -579,6 +579,13 @@ button.st{cursor:pointer}
 @media(max-width:960px){.loc-prof,.loc-grid{grid-template-columns:1fr}.loc-map{height:320px}}
 .org-dist{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:12px 0 4px;background:var(--gray-100)}
 .org-dist span{display:block;height:100%}
+.ov-link{display:block;text-decoration:none;color:inherit;margin-bottom:12px}
+.ov-link .vis-score{margin-bottom:0;flex-wrap:wrap;transition:box-shadow .15s}
+.ov-link:hover .vis-score{box-shadow:0 4px 14px rgba(2,6,23,.08)}
+.ov-link .vis-score{grid-template-columns:minmax(220px,300px) 1fr}
+.ov-opp{grid-column:1/-1;margin-top:0}
+.tip{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid var(--border);font-size:9px;font-weight:700;color:var(--gray-400);cursor:help;position:relative;vertical-align:middle;margin-left:4px;font-family:var(--font-body)}
+.tip:hover::after,.tip:focus::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);width:260px;background:#0f172a;color:#fff;font-size:11px;font-weight:500;line-height:1.5;padding:9px 11px;border-radius:8px;z-index:60;white-space:normal;text-align:left;box-shadow:0 6px 18px rgba(0,0,0,.2)}
 /* ── AEO readiness + action plan ── */
 .aeo-list{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .aeo-row{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:14px 18px;border-top:1px solid var(--border)}
@@ -752,11 +759,13 @@ td{border-bottom:1px solid var(--border)}
     <div class="sb-group open">
       <button class="sb-group-head" onclick="toggleGroup(this)"><span>Search &amp; AI visibility</span><span class="sb-chev">⌄</span></button>
       <div class="sb-group-links">
+        <a href="#sec-vis-overview"><span class="ico">▦</span>Visibility overview</a>
         <a href="#sec-ai"><span class="ico">✦</span>AI tracking<span class="sb-badge" id="sbAiBadge"></span></a>
         <a href="#sec-aeo-plan"><span class="ico">✎</span>AEO action plan<span class="sb-badge" id="sbPlanBadge"></span></a>
         <a href="#sec-aeo-audit"><span class="ico">✓</span>AEO readiness<span class="sb-badge" id="sbAuditBadge"></span></a>
         <a href="#sec-classic-seo"><span class="ico">↗</span>Classic SEO<span class="sb-badge" id="sbSeoBadge"></span></a>
         <a href="#sec-organic"><span class="ico">≋</span>Organic search<span class="sb-badge" id="sbOrgBadge"></span></a>
+        <a href="#sec-authority"><span class="ico">⛨</span>Authority<span class="sb-badge" id="sbAuthBadge"></span></a>
         <a href="#sec-competitors"><span class="ico">⚑</span>Competitors<span class="sb-badge" id="sbCompBadge"></span></a>
         <a href="#sec-seo"><span class="ico">⚡</span>Site health</a>
         <a href="#sec-gbp"><span class="ico">⌖</span>Local map &amp; profile<span class="sb-badge" id="sbLocalBadge"></span></a>
@@ -1052,6 +1061,11 @@ td{border-bottom:1px solid var(--border)}
     <!-- ═══════════════════════════════════════════════════════════════
          SEARCH & AI VISIBILITY — rendered by renderVisibility()
     ════════════════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-vis-overview">
+      <div class="sh"><div class="sh-title">Visibility overview</div><div class="sh-sub">The scores that sum up where you stand. Click one to see the detail.</div></div>
+      <div id="visOverview"></div>
+    </div>
+
     <div class="section" id="sec-ai">
       <div class="sh"><div class="sh-title">AI tracking</div><div class="sh-sub" id="aiSub">AI Overviews, AI Mode, ChatGPT, Claude, Gemini, Perplexity</div></div>
       <div id="aiContent"></div>
@@ -1075,6 +1089,11 @@ td{border-bottom:1px solid var(--border)}
     <div class="section" id="sec-organic">
       <div class="sh"><div class="sh-title">Organic search</div><div class="sh-sub" id="orgSub">Every keyword you rank for on Google</div></div>
       <div id="orgContent"></div>
+    </div>
+
+    <div class="section" id="sec-authority">
+      <div class="sh"><div class="sh-title">Authority</div><div class="sh-sub" id="authSub">The strength of the sites linking to you</div></div>
+      <div id="authContent"></div>
     </div>
 
     <div class="section" id="sec-competitors">
@@ -1902,19 +1921,21 @@ function dHTML(d,{unit='',pctOf=null,lowerIsBetter=false,none='No earlier update
   const rel=pctOf?` (${d>0?'+':''}${(d/pctOf*100).toFixed(1)}%)`:'';
   return `<span class="${good?'up':'down'}">${arrow} ${d>0?'+':''}${Math.round(d*10)/10}${unit}${rel}</span>`;
 }
-function gauge(score){
-  const segs=[['Poor','0–20%',20,'#F4A6A0'],['Moderate','20–50%',30,'#F5D06A'],['Good','50–80%',30,'#8FDDAA'],['Great','80%+',20,'#2DA05A']];
+function gauge(score,scale){
+  const segs=scale==='authority'
+    ?[['Poor','0–10',10,'#F4A6A0'],['Moderate','10–30',20,'#F5D06A'],['Good','30–50',20,'#8FDDAA'],['Great','50+',50,'#2DA05A']]
+    :[['Poor','0–20%',20,'#F4A6A0'],['Moderate','20–50%',30,'#F5D06A'],['Good','50–80%',30,'#8FDDAA'],['Great','80%+',20,'#2DA05A']];
   return `<div class="gauge"><div class="gauge-bar">${segs.map(s=>`<span style="width:${s[2]}%;background:${s[3]}"></span>`).join('')}</div>
     <div class="gauge-mark" style="left:${Math.max(0,Math.min(100,score||0))}%"></div>
     <div class="gauge-lbls">${segs.map(s=>`<div style="width:${s[2]}%">${s[0]}<small>${s[1]}</small></div>`).join('')}</div></div>`;
 }
-function scoreBlock(title,score,band,delta,note){
+function scoreBlock(title,score,band,delta,note,opts={}){
   return `<div class="vis-score" style="border-left-color:${bandColor(band)}">
     <div><div class="vis-score-lbl">${title}</div>
-      <div class="vis-score-big">${score??'—'}%${bandPill(band)}</div>
-      <div class="vis-score-d">${dHTML(delta,{unit:' points',none:'First update'})}${delta?' since the last update':''}</div>
+      <div class="vis-score-big">${score??'—'}${opts.unit??'%'}${bandPill(band).replace(' visibility',opts.word??' visibility')}</div>
+      <div class="vis-score-d">${dHTML(delta,{unit:' points',none:'First update'})}${delta?(opts.since??' since the last update'):''}</div>
       <div class="vis-score-note">${note}</div></div>
-    ${gauge(score)}</div>`;
+    ${gauge(score,opts.scale)}${opts.after||''}</div>`;
 }
 function summaryBlock(items,opp){
   return `<div class="vis-summary"><h4>Summary</h4><ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul>
@@ -1940,7 +1961,7 @@ function renderVisibility(){
   if(seo)document.getElementById('sbSeoBadge').textContent=seo.tracked;
   const nComp=Math.max((ai?.competitors||[]).length,(seo?.competitors||[]).length)-1;
   if(nComp>0)document.getElementById('sbCompBadge').textContent=nComp;
-  renderAI(V);renderAEO(V);renderClassic(V);renderOrganic(V);renderCompetitors(V);
+  renderOverviewCards(V);renderAI(V);renderAEO(V);renderClassic(V);renderOrganic(V);renderAuthority(V);renderCompetitors(V);
 }
 
 // ── AI TRACKING ──
@@ -2396,6 +2417,87 @@ function drawOrganicTab(){
 }
 window.orgCSV=()=>{const O=window.VISIBILITY_DATA.organic;downloadCSV(`${slugName()}-organic-keywords.csv`,[['Keyword','Position','Change','Volume','Difficulty','Visits/mo','URL'],
   ...O.keywords.map(k=>[k.keyword,k.position,k.new?'new':(k.change??''),k.volume??'',k.difficulty??'',k.traffic,k.url||''])])};
+
+// ── VISIBILITY OVERVIEW (three headline scores) ──
+function renderOverviewCards(V){
+  const box=document.getElementById('visOverview'), cards=V.overview||[];
+  if(!cards.length){box.innerHTML=emptyBlock('Your visibility scores are on their way','AI visibility, keyword visibility and authority appear here after the first weekly checks.');return;}
+  box.innerHTML=cards.map(c=>`<a class="ov-link" href="${c.href}">${scoreBlock(c.title,c.value,c.band,c.delta,esc(c.note),
+      {unit:c.unit,scale:c.scale,word:c.key==='authority'?' authority':' visibility',
+       after:c.opportunity?`<div class="vis-opp ov-opp"><strong>${c.opportunity_label||'Biggest opportunity'}:</strong> ${c.opportunity}</div>`:''})}</a>`).join('');
+}
+
+// ── AUTHORITY (backlinks) ──
+let authTab='best';
+function renderAuthority(V){
+  const box=document.getElementById('authContent'), A=V.authority;
+  if(!A){
+    box.innerHTML=emptyBlock('Authority tracking',`See how strong the sites linking to you are: an authority score from 0 to 100, your best links, links you've lost and can win back, and how you compare with competitors. Updates monthly.
+      <div style="margin-top:14px"><a class="vbtn primary" href="mailto:${VIS_CONTACT}?subject=Authority%20tracking">Turn on authority tracking →</a></div>`);
+    return;
+  }
+  document.getElementById('authSub').textContent=`Backlink data · checked ${A.checked} · updates monthly`;
+  document.getElementById('sbAuthBadge').textContent=A.score;
+  const pctOf=(d,v)=>d&&v-d?Math.max(v-d,1):null;
+  box.innerHTML=`<div class="vis-summary"><h4>Summary</h4><ul>${A.summary.map(b=>`<li>${b}</li>`).join('')}</ul>
+      <div class="vis-opp"><strong>Next step:</strong> ${esc(A.next_step)}</div></div>`+
+    scoreBlock('Authority score',A.score,A.band,A.delta,`0–100: the strength of the sites linking here. <b>${A.best} of ${fmtN(A.referring_domains)}</b> linking sites are best links.`,
+      {unit:'',scale:'authority',word:' authority',since:' since last month'})+
+    `<div class="kpi4" style="grid-template-columns:repeat(3,1fr)">
+      <div class="card"><div class="kpi4-lbl">Referring domains ${tip('Unique websites linking to your site. A site counts once, however many links it has.')}</div><div class="kpi4-val">${fmtN(A.referring_domains)}</div>
+        <div class="kpi4-d">${dHTML(A.rd_delta,{pctOf:pctOf(A.rd_delta,A.referring_domains),none:'First month'})}</div><div class="vfoot" style="margin:0">Unique websites linking to the site</div></div>
+      <div class="card"><div class="kpi4-lbl">Best links ${tip('Linking sites that pass every quality check: authority 20+, 100+ visits a month, at least one followed link, and not spam. These are the links that build authority.')}</div><div class="kpi4-val">${A.best}<small> / ${fmtN(A.referring_domains)}</small></div>
+        <div class="kpi4-d">${dHTML(A.best_delta,{none:'First month'})}</div><div class="vfoot" style="margin:0">Linking sites that pass every quality check (${A.referring_domains?(A.best/A.referring_domains*100).toFixed(1):0}% of all)</div>
+        <button class="vt-read" onclick="authJump('best')">View ›</button></div>
+      <div class="card"><div class="kpi4-lbl">New vs lost (30 days) ${tip('Real linking sites gained and lost in the last 30 days. Spam sites appear and vanish by the hundred, so they are left out.')}</div>
+        <div class="kpi4-val"><span class="up">${A.new_lost.new}</span> / <span class="down">${A.new_lost.lost}</span></div>
+        <div class="kpi4-d">net ${A.new_lost.new-A.new_lost.lost>=0?'+':''}${A.new_lost.new-A.new_lost.lost}</div><div class="vfoot" style="margin:0">Real sites gained / lost${A.spam_count?` · ${fmtN(A.spam_count)} spam sites not counted`:''}</div>
+        <button class="vt-read" onclick="authJump('new')">View ›</button></div>
+    </div>
+    ${A.history.length>1?`<div class="g2" style="margin-bottom:14px">
+      <div class="chart-card"><div class="chart-title">Authority, last 12 months</div><div class="cw" style="height:200px;margin-top:12px"><canvas id="authChart"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Referring domains, last 12 months</div><div class="cw" style="height:200px;margin-top:12px"><canvas id="rdChart"></canvas></div></div></div>`:''}
+    <div class="vtabs" id="authTabs">${[['best',`Best links (${A.tables.best.length})`],['get_back',`Links to get back (${A.tables.get_back.length})`],['competitors','Vs competitors'],['highest','Highest authority sites'],['new','New links'],['lost','Lost links'],['anchors','Anchor text']]
+      .map(([k,l])=>`<button class="vtab" data-t="${k}">${l}</button>`).join('')}</div><div id="authBody"></div>`;
+  box.querySelectorAll('#authTabs .vtab').forEach(b=>b.onclick=()=>{authTab=b.dataset.t;drawAuthTab()});
+  drawAuthTab();
+  if(A.history.length>1){
+    ['auth','rd'].forEach(k=>{if(visCharts[k])visCharts[k].destroy()});
+    const mk=(id,key,color,fill)=>new Chart(document.getElementById(id),{type:'line',data:{labels:A.history.map(h=>h.label),datasets:[{data:A.history.map(h=>h[key]),borderColor:color,backgroundColor:fill,fill:'start',borderWidth:2,pointRadius:3,cubicInterpolationMode:'monotone'}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{beginAtZero:true,ticks:{...tk,precision:0},grid:gl}}}});
+    visCharts.auth=mk('authChart','authority','#B08A3E','rgba(176,138,62,0.15)');
+    visCharts.rd=mk('rdChart','referring_domains','#077cbf','rgba(7,124,191,0.12)');
+  }
+}
+window.authJump=t=>{authTab=t;drawAuthTab();document.getElementById('authTabs').scrollIntoView({behavior:'smooth',block:'start'})};
+function drawAuthTab(){
+  const A=window.VISIBILITY_DATA.authority, T=A.tables, el=document.getElementById('authBody');
+  document.querySelectorAll('#authTabs .vtab').forEach(b=>b.classList.toggle('active',b.dataset.t===authTab));
+  const site=d=>`<a href="https://${esc(d)}" target="_blank" rel="noopener" style="color:var(--blue)">${esc(d)}</a>`;
+  const defs={
+    best:{note:'Linking sites that pass every quality check: authority 20+, 100+ visits a month, followed, not spam. Highest authority first.',
+      cols:['Linking site','Authority','Traffic / mo','Followed links','First seen'],row:r=>[site(r.domain),r.authority,fmtN(r.traffic),fmtN(r.followed),r.first_seen],rows:T.best},
+    get_back:{note:'Best links lost in the last 12 months. Win them back by asking the site to restore the link, or by fixing the page it pointed to if that page moved or broke.',
+      cols:['Linking site','Authority','Traffic / mo','Followed links lost','Lost on'],row:r=>[site(r.domain),r.authority,fmtN(r.traffic),fmtN(r.followed),r.lost],rows:T.get_back},
+    competitors:{note:T.competitors.length?'Authority and links for you and each tracked competitor.':'Add competitors to compare authority.',
+      cols:['Site','Authority','Referring domains','Backlinks'],row:r=>[`<b>${esc(r.name)}</b><div class="vfoot" style="margin:0">${esc(r.domain)}</div>`,r.authority,fmtN(r.referring_domains),fmtN(r.backlinks)],rows:T.competitors,you:true},
+    highest:{note:'Every site linking to you, including nofollow links, strongest first.',
+      cols:['Linking site','Authority','Links','Followed','First seen'],row:r=>[site(r.domain)+(r.spam?' <span class="band band-poor">spam</span>':''),r.authority,fmtN(r.links),fmtN(r.followed),r.first_seen],rows:T.highest},
+    new:{note:'Sites that started linking in the last 30 days, strongest first (spam left out).',
+      cols:['Linking site','Authority','Links','Followed','First seen'],row:r=>[site(r.domain),r.authority,fmtN(r.links),fmtN(r.followed),r.first_seen],rows:T.new},
+    lost:{note:'Sites that stopped linking in the last 30 days (spam left out).',
+      cols:['Linking site','Authority','Links','Followed','Lost'],row:r=>[site(r.domain),r.authority,fmtN(r.links),fmtN(r.followed),r.lost],rows:T.lost},
+    anchors:{note:'The clickable text other sites use when they link to you.',
+      cols:['Anchor text','Sites','Share','Links'],row:r=>[esc(r.anchor),fmtN(r.sites),r.share+'%',fmtN(r.links)],rows:T.anchors},
+  };
+  const d=defs[authTab];
+  el.innerHTML=`<div class="vtools"><span class="vfoot" style="margin:0;flex:1">${d.note}</span><button class="vbtn" onclick="authCSV()">↓ Export CSV</button></div>`+
+    (d.rows.length?`<div class="vt-wrap"><table class="vt"><thead><tr>${d.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>
+      ${d.rows.map(r=>`<tr class="${d.you&&r.you?'you':''}">${d.row(r).map(v=>`<td>${v??'—'}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:emptyBlock('Nothing here yet',''));
+  window._authCSV=[d.cols,...d.rows.map(r=>d.row(r).map(v=>String(v??'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()))];
+}
+window.authCSV=()=>downloadCSV(`${slugName()}-authority-${authTab}.csv`,window._authCSV);
+function tip(text){return `<span class="tip" tabindex="0" data-tip="${esc(text)}">?</span>`}
 
 // ── COMPETITORS ──
 function renderCompetitors(V){
