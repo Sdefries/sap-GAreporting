@@ -716,36 +716,37 @@ def _build_index(slugs, summaries=None):
             f'<td><span class="comp comp-{cd.get("compliance","")}">{comp}</span></td>'
             f'<td>{pill(ai.get("score"), ai.get("band"))}</td>'
             f'<td>{pill(seo.get("score"), seo.get("band"))}</td>'
-            f'<td><a href="{s}.html#sec-ai">AI tracking →</a></td></tr>')
+            f'<td><a class="go" href="{s}.html#sec-ai">AI tracking →</a></td></tr>')
         nav.append(f'<a href="{s}.html">{name}</a>')
     html = f'''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SAP Client Reports</title>
-<link href="https://fonts.googleapis.com/css2?family=Karla:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{{--navy:#0F2B5B;--blue:#0083C6;--gray:#9EABBE;--bg:#F4F6FA;--border:rgba(15,43,91,0.1)}}
+:root{{--ink:#020617;--navy:#001d31;--blue:#077cbf;--muted:#64748b;--muted2:#475569;--page:#f8fafc;--border:#e2e8f0;--accent:#e8f2ff}}
 *{{box-sizing:border-box;margin:0;padding:0}}
-body{{font-family:Montserrat,sans-serif;background:var(--bg);color:#0a1628;font-size:13px;display:flex;min-height:100vh}}
-nav{{width:230px;background:var(--navy);padding:22px 0;position:fixed;top:0;bottom:0;overflow-y:auto}}
-nav img{{height:28px;margin:0 20px 18px}}
-nav .lbl{{padding:14px 20px 6px;font-size:10px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em}}
-nav a{{display:block;padding:7px 20px;color:rgba(255,255,255,.6);text-decoration:none;font-size:12px;font-weight:600}}
-nav a:hover{{color:#fff;background:rgba(255,255,255,.05)}}
-nav a.on{{color:#fff;background:rgba(0,131,198,.2);border-left:3px solid var(--blue);padding-left:17px}}
-main{{margin-left:230px;flex:1;padding:32px}}
-h1{{font-family:Karla,sans-serif;font-weight:800;color:var(--navy);font-size:22px}}
-.sub{{color:var(--gray);font-size:12px;margin:4px 0 22px}}
-table{{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--border)}}
-th{{background:var(--bg);font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);text-align:left;padding:10px 14px}}
-td{{padding:12px 14px;border-top:1px solid var(--border);vertical-align:middle}}
-td a{{color:var(--navy);font-weight:700;text-decoration:none}} td a:hover{{color:var(--blue)}}
-.muted{{color:var(--gray);font-size:11px}}
-.score{{font-family:Karla,sans-serif;font-weight:800;font-size:16px;color:var(--navy)}}
-.band,.comp{{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}}
-.band-poor,.comp-at_risk{{background:#FDEAEA;color:#A02020}} .band-moderate,.comp-low_activity{{background:#FEF6E6;color:#9A6010}}
-.band-good,.comp-compliant{{background:#E4F7ED;color:#1A6E3E}} .band-great{{background:#1A6E3E;color:#fff}}
+body{{font-family:Montserrat,sans-serif;background:var(--page);color:var(--ink);font-size:13px;display:flex;min-height:100vh}}
+nav{{width:256px;background:#fff;border-right:1px solid var(--border);box-shadow:0 1px 2px rgba(0,0,0,.05);position:fixed;top:0;bottom:0;overflow-y:auto}}
+nav .brand{{height:56px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid var(--border);margin-bottom:8px}}
+nav .brand img{{height:20px;max-width:172px}}
+nav .lbl{{padding:14px 16px 6px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}}
+nav a{{display:block;margin:1px 8px;padding:8px 12px;border-radius:16px;color:var(--muted);text-decoration:none;font-size:13px;font-weight:500}}
+nav a:hover,nav a.on{{color:var(--navy);background:var(--accent)}}
+main{{margin-left:256px;flex:1;padding:24px 32px}}
+h1{{font-family:Karla,sans-serif;font-weight:600;letter-spacing:-.025em;color:var(--ink);font-size:20px}}
+.sub{{color:var(--muted);font-size:12px;margin:4px 0 20px}}
+table{{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 1px 2px rgba(0,0,0,.05)}}
+th{{background:var(--page);font-size:11px;font-weight:600;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border)}}
+td{{padding:12px 14px;border-top:1px solid var(--border);vertical-align:middle;font-size:14px}}
+td a{{color:var(--ink);font-weight:600;text-decoration:none}} td a:hover{{color:var(--blue)}}
+td a.go{{color:var(--blue);font-weight:500;font-size:13px}}
+.muted{{color:var(--muted);font-size:12px}}
+.score{{font-family:Karla,sans-serif;font-weight:600;font-size:16px;color:var(--ink)}}
+.band,.comp{{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid}}
+.band-poor,.comp-at_risk{{background:#fef2f2;color:#dc2626;border-color:#ef4444}} .band-moderate,.comp-low_activity{{background:#fffbeb;color:#b45309;border-color:#f59e0b}}
+.band-good,.comp-compliant{{background:#dcfce7;color:#16a34a;border-color:#22c55e}} .band-great{{background:#16a34a;color:#fff;border-color:#16a34a}}
 @media(max-width:860px){{nav{{display:none}}main{{margin-left:0;padding:16px}}.wrap{{overflow-x:auto}}table{{min-width:720px}}}}
 </style></head><body>
-<nav><img src="../logo.png" alt="Sponsor a Purpose"><a class="on" href="index.html">Dashboard</a>
+<nav><div class="brand"><img src="../assets/sap-logo.svg" alt="Sponsor a Purpose"></div><a class="on" href="index.html">Dashboard</a>
 <div class="lbl">Accounts · {len(slugs)}</div>{"".join(nav)}</nav>
 <main><h1>Client reports</h1><div class="sub">Generated {REPORT_DATE} · Ad Grants, AI visibility &amp; search visibility</div>
 <div class="wrap"><table><thead><tr><th>Client</th><th>Grant score</th><th>Compliance</th><th>AI visibility</th><th>Search visibility</th><th></th></tr></thead>

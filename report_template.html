@@ -4,14 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="pageTitle">Client Report — SAP Ad Grants</title>
-<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 :root{
-  --navy:#0F2B5B;--navy-dark:#0a1628;--blue:#0083C6;--blue-lt:#5BC8F0;
-  --green:#3DAA69;--red:#D94F3D;--amber:#E8A020;--purple:#7C3AED;
-  --gray-100:#F4F6F9;--gray-200:#E8ECF2;--gray-400:#9EABBE;--gray-600:#5A6A82;
-  --border:rgba(15,43,91,0.1);--card:#fff;
+  /* Sponsor a Purpose CRM design system (packages/ui globals.css) */
+  --navy:#00314a;--navy-dark:#020617;--blue:#077cbf;--blue-lt:#3db0ff;
+  --green:#3daa69;--red:#dc2626;--amber:#f59e0b;--purple:#7c3aed;
+  --gray-100:#f1f5f9;--gray-200:#e2e8f0;--gray-400:#64748b;--gray-600:#475569;
+  --border:#e2e8f0;--card:#fff;
+  --primary-50:#e8f2ff;--primary-100:#cfe4ff;--primary-600:#006193;--primary-900:#001d31;
+  --cream:#fdf8ee;--page:#f8fafc;
   --font-head:'Karla',sans-serif;--font-body:'Montserrat',sans-serif;
   --radius:12px;--radius-sm:8px;
 }
@@ -39,7 +42,7 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy-da
 .sb-nav-lbl{padding:10px 20px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.1em}
 .sb-nav a{display:flex;align-items:center;gap:9px;padding:9px 20px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.45);text-decoration:none;border-left:3px solid transparent;transition:all 0.15s}
 .sb-nav a:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.05)}
-.sb-nav a.active{color:#fff;background:rgba(0,131,198,0.2);border-left-color:var(--blue)}
+.sb-nav a.active{color:#fff;background:rgba(7,124,191,0.2);border-left-color:var(--blue)}
 .sb-nav a .dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
 .sb-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,0.07);font-size:10px;color:rgba(255,255,255,0.28);font-weight:500}
 .main{margin-left:230px;flex:1;min-width:0;display:flex;flex-direction:column;min-height:100vh}
@@ -306,7 +309,7 @@ tr:hover td{background:#F5F9FF}
 .seo-query-stat{font-size:11px;color:var(--gray-600)}
 .seo-query-stat strong{color:var(--navy)}
 .seo-locked{position:relative;min-height:280px}
-.seo-locked-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,43,91,0.03) 0%,rgba(0,131,198,0.06) 100%);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:10;backdrop-filter:blur(2px)}
+.seo-locked-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,43,91,0.03) 0%,rgba(7,124,191,0.06) 100%);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:10;backdrop-filter:blur(2px)}
 .seo-locked-icon{font-size:48px;margin-bottom:16px;opacity:0.6}
 .seo-locked-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--navy);margin-bottom:8px}
 .seo-locked-desc{font-size:13px;color:var(--gray-600);max-width:360px;line-height:1.6;margin-bottom:20px}
@@ -314,7 +317,7 @@ tr:hover td{background:#F5F9FF}
 .seo-locked-feature{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-600)}
 .seo-locked-feature::before{content:'✓';color:var(--green);font-weight:700}
 .seo-unlock-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s}
-.seo-unlock-btn:hover{background:#006AA3;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,131,198,0.3)}
+.seo-unlock-btn:hover{background:#006AA3;transform:translateY(-1px);box-shadow:0 4px 12px rgba(7,124,191,0.3)}
 .kw-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .kw-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px}
 .kw-card-title{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:8px}
@@ -378,7 +381,7 @@ tr:hover td{background:#F5F9FF}
 .st-term{font-weight:600;color:var(--navy);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .st-negative{background:#FDEAEA;color:#A02020;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
 .gbp-locked{position:relative;min-height:200px}
-.gbp-locked-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,43,91,0.03) 0%,rgba(0,131,198,0.06) 100%);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:10}
+.gbp-locked-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,43,91,0.03) 0%,rgba(7,124,191,0.06) 100%);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:10}
 .gbp-locked-icon{font-size:48px;margin-bottom:16px;opacity:0.6}
 .gbp-locked-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--navy);margin-bottom:8px}
 .gbp-locked-desc{font-size:13px;color:var(--gray-600);max-width:400px;line-height:1.6;margin-bottom:16px}
@@ -564,6 +567,77 @@ button.st{cursor:pointer}
 .prio-high{background:#FDEAEA;color:#A02020}.prio-medium{background:#FEF6E6;color:#9A6010}.prio-low{background:var(--gray-100);color:var(--gray-600)}
 @media(max-width:960px){.plan-grid{grid-template-columns:1fr}}
 @media(max-width:960px){.kw-grid,.timing-grid{grid-template-columns:1fr}.seo-grid{grid-template-columns:repeat(2,1fr)}.seo-grid>*{min-width:0}}
+
+/* ═══ CRM theme — matches the Sponsor a Purpose dashboard (sap-payment-platform) ═══
+   White sidebar with rounded light-blue active pills, white cards with slate
+   borders, Montserrat body / Karla medium headings, outlined status badges. */
+body{background:var(--page);color:var(--navy-dark)}
+h1,h2,h3,.sh-title,.chart-title,.topbar-title{font-family:var(--font-head);font-weight:500;letter-spacing:-0.025em}
+.sidebar{width:256px;background:#fff;border-right:1px solid var(--border);box-shadow:0 1px 2px rgba(0,0,0,0.05)}
+.main{margin-left:256px}
+.sb-head{padding:12px 16px;min-height:64px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--border)}
+.sb-client,.sb-gps,.sb-vis{flex-shrink:0}
+.sb-logo{height:20px;max-width:172px}
+.sb-tag{color:var(--gray-400);font-size:11px;margin-top:4px!important}
+.sb-client,.sb-gps,.sb-vis{border-bottom:1px solid var(--border);padding-left:16px;padding-right:16px}
+.sb-client-lbl,.sb-gps-lbl,.sb-group-head{color:var(--gray-400);letter-spacing:0.06em}
+.sb-client-name{color:var(--primary-900);font-weight:600}
+.sb-client-id,.sb-gps-sub{color:var(--gray-400)}
+.sb-gps-score,.sb-vis-val{color:var(--primary-900);font-weight:600}
+.sb-gps-score span{color:var(--gray-400)!important}
+.sb-vis-val small{color:var(--gray-400)}
+.gps-bar{background:var(--gray-100)}
+.sb-group-head{padding:12px 16px 4px}
+.sb-group-head:hover{color:var(--primary-900)}
+.sb-group-links{padding:0 8px}
+.sb-nav a{border-left:none;border-radius:16px;padding:8px 12px;margin:1px 0;font-size:13px;font-weight:500;color:var(--gray-400)}
+.sb-nav a:hover{color:var(--primary-900);background:var(--primary-50)}
+.sb-nav a.active{color:var(--primary-900);background:var(--primary-50)}
+.sb-nav a .dot{width:6px;height:6px;opacity:0.6}
+.sb-nav a .ico{color:var(--blue)}
+.sb-badge{background:var(--gray-100);color:var(--gray-600)}
+.sb-nav a.active .sb-badge{background:#fff;color:var(--primary-600)}
+.sb-foot{border-top:1px solid var(--border);color:var(--gray-400)}
+.topbar{height:56px;border-bottom:1px solid var(--border);box-shadow:none}
+.topbar-title{font-size:20px;font-weight:600;color:var(--navy-dark)}
+.sh{border-bottom:1px solid var(--border)}
+.sh-title{font-size:18px;color:var(--navy-dark)}
+.sh-sub{color:var(--gray-400)}
+.card,.chart-card,.kpi-card,.kw-card,.ads-card,.st-card,.timing-card,.seo-card,.isc,.eng-card,.vis-summary,.vis-score,.plan-card,.aeo-list,.vt-wrap,.insight-card,.action-card{border-radius:12px;border:1px solid var(--border);box-shadow:0 1px 2px rgba(0,0,0,0.05)}
+.kpi-card:hover{box-shadow:0 4px 12px rgba(2,6,23,0.06)}
+.kpi-value,.si-val,.fs-value,.isv,.tsi-val,.ga4-stat-val,.seo-value,.eng-val,.kpi4-val,.vis-score-big{font-weight:600;color:var(--navy-dark)}
+.kpi-label,.isl{color:var(--gray-400)}
+.gps-card{background:linear-gradient(135deg,var(--primary-900) 0%,#01486f 100%);border-radius:12px}
+.vis-summary{border-left:4px solid var(--blue)}
+th{background:var(--page);color:var(--gray-400);border-bottom:1px solid var(--border)}
+td{border-bottom:1px solid var(--border)}
+/* Badges — outlined pills, CRM badge variants */
+.band,.st,.yn,.prio,.vis-in,.compliance-pill,.insight-tag{border:1px solid transparent;border-radius:999px}
+.band-poor,.prio-high,.vis-in.zero,.pill-red{background:#fef2f2;color:#dc2626;border-color:#ef4444}
+.band-moderate,.prio-medium,.vis-in.some,.pill-amber{background:#fffbeb;color:#b45309;border-color:#f59e0b}
+.band-good,.st-ok,.yn.yes,.vis-in.ok,.pill-green{background:#dcfce7;color:#16a34a;border-color:#22c55e}
+.band-great{background:#16a34a;color:#fff;border-color:#16a34a}
+.st-no,.yn,.prio-low{background:var(--gray-100);color:#1e293b;border-color:#94a3b8}
+.st-na{border-color:transparent}
+.site{border-radius:999px}
+.site.you{background:#dcfce7;color:#16a34a;border-color:#22c55e}
+.site.comp{background:#fef2f2;color:#dc2626;border-color:#ef4444}
+.lead{background:#dcfce7;color:#16a34a}
+/* Buttons & tabs — primary #077cbf, outline white */
+.vbtn,.vtab,.vchip,.ctab,.dt-btn{border-radius:8px;font-weight:500}
+.vbtn.primary,.vtab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.vbtn.primary:hover{background:#01486f;border-color:#01486f;color:#fff}
+.vbtn:hover,.vtab:hover{border-color:var(--blue);color:var(--blue)}
+.vtab.active:hover{color:#fff}
+.vchip.active{background:var(--primary-50);color:var(--primary-900);border-color:var(--primary-100)}
+.dt-btn.active{color:var(--primary-900)}
+.vsearch{border-radius:8px}
+.vsearch:focus{outline:2px solid var(--primary-100);border-color:var(--blue)}
+.pf{background:#fff;border-top:1px solid var(--border)}
+.pf-l{color:var(--gray-400)}
+.pf-logo{height:18px;opacity:1}
+.live-box{border-left:4px solid var(--blue)}
+@media(max-width:960px){.main{margin-left:0}}
 </style>
 </head>
 <body>
@@ -587,7 +661,7 @@ button.st{cursor:pointer}
 <nav class="sidebar">
   <div class="sb-head">
     <div class="sb-brand">
-      <img src="../logo.png" alt="Sponsor a Purpose" class="sb-logo">
+      <img src="../assets/sap-logo.svg" alt="Sponsor a Purpose" class="sb-logo">
     </div>
     <div class="sb-tag" style="margin-top:8px">Ad Grants Reporting</div>
   </div>
@@ -734,7 +808,7 @@ button.st{cursor:pointer}
           <div class="chart-title">Clicks &amp; conversions</div>
           <div style="display:flex;align-items:center;gap:16px">
             <div class="chart-legend">
-              <span><span class="legend-dot" style="background:#0083C6"></span>Clicks</span>
+              <span><span class="legend-dot" style="background:#077cbf"></span>Clicks</span>
               <span><span class="legend-dot" style="background:#3DAA69"></span>Conversions</span>
             </div>
             <div class="ctabs">
@@ -999,7 +1073,7 @@ button.st{cursor:pointer}
 
   <div class="pf">
     <div class="pf-l" id="pfDate">Data via Google Ads API &amp; GA4</div>
-    <img src="../logo.png" alt="Sponsor a Purpose" class="pf-logo">
+    <img src="../assets/sap-logo.svg" alt="Sponsor a Purpose" class="pf-logo">
   </div>
 </div>
 </div>
@@ -1010,7 +1084,7 @@ let range = '30d';
 let charts = {};
 const tk={maxTicksLimit:8,maxRotation:0,font:{size:10,family:"'Montserrat',sans-serif"},color:'#9EABBE'};
 const gl={color:'rgba(0,0,0,0.04)'};
-const dc=['#0083C6','#3DAA69','#F5A623','#E8A020','#7C3AED','#D94F3D','#5BC8F0','#0F2B5B'];
+const dc=['#077cbf','#3DAA69','#F5A623','#E8A020','#7C3AED','#D94F3D','#5BC8F0','#0F2B5B'];
 
 function fmt$(v){if(!v&&v!==0)return'—';return'$'+(+v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
 function fmtN(v){if(!v&&v!==0)return'—';return(+v).toLocaleString()}
@@ -1079,15 +1153,15 @@ function renderGA4Traffic(){
       labels: trend.map(d=>d.date),
       datasets:[{
         label:'Sessions', data:trend.map(d=>d.sessions),
-        borderColor:'#0083C6', backgroundColor:'rgba(0,131,198,0.08)',
-        borderWidth:2.5, fill:true, tension:0.35, pointRadius:2, pointBackgroundColor:'#0083C6'
+        borderColor:'#077cbf', backgroundColor:'rgba(7,124,191,0.08)',
+        borderWidth:2.5, fill:true, tension:0.35, pointRadius:2, pointBackgroundColor:'#077cbf'
       }]
     },
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 
   // UTM sources list
-  const utmColors=['#0083C6','#3DAA69','#5BC8F0','#E8A020','#7C3AED','#D94F3D','#0BADA8','#9EABBE','#0F2B5B'];
+  const utmColors=['#077cbf','#3DAA69','#5BC8F0','#E8A020','#7C3AED','#D94F3D','#0BADA8','#9EABBE','#0F2B5B'];
   const sources = ga4.utm_sources || [];
   document.getElementById('utmList').innerHTML = sources.map((s,i)=>`
     <div>
@@ -1119,7 +1193,7 @@ function renderGA4Devices(){
 
   const devices = ga4.devices;
   const devConf = [
-    {key:'mobile',  cls:'mobile',  accentSessions:'accent-blue',  accentConv:'accent-green', accentBounce:'accent-red',  barColor:'#0083C6'},
+    {key:'mobile',  cls:'mobile',  accentSessions:'accent-blue',  accentConv:'accent-green', accentBounce:'accent-red',  barColor:'#077cbf'},
     {key:'desktop', cls:'desktop', accentSessions:'accent-green', accentConv:'accent-green', accentBounce:'accent-blue', barColor:'#3DAA69'},
     {key:'tablet',  cls:'tablet',  accentSessions:'accent-amber', accentConv:'accent-green', accentBounce:'accent-red',  barColor:'#E8A020'},
   ];
@@ -1177,7 +1251,7 @@ function renderGA4Devices(){
   });
 
   // Browser breakdown
-  const browserColors=['#0083C6','#3DAA69','#E8A020','#7C3AED','#9EABBE'];
+  const browserColors=['#077cbf','#3DAA69','#E8A020','#7C3AED','#9EABBE'];
   const browsers = ga4.browsers || [];
   document.getElementById('browserList').innerHTML = browsers.map((b,i)=>`
     <div class="browser-row">
@@ -1198,8 +1272,8 @@ function renderGA4Demographics(){
   }
 
   const demo = ga4.demographics;
-  const genderColors={'Female':'#0083C6','Male':'#3DAA69','Other':'#9EABBE'};
-  const ageColors=['#A78BFA','#0083C6','#3DAA69','#E8A020','#D94F3D','#9EABBE'];
+  const genderColors={'Female':'#077cbf','Male':'#3DAA69','Other':'#9EABBE'};
+  const ageColors=['#A78BFA','#077cbf','#3DAA69','#E8A020','#D94F3D','#9EABBE'];
 
   container.innerHTML=`
     <div class="demo-section-lbl">Gender</div>
@@ -1258,7 +1332,7 @@ function renderGA4Demographics(){
     data:{
       labels: gEngagement.map(g=>g.metric),
       datasets:[
-        {label:'Female', data:gEngagement.map(g=>g.female||0), backgroundColor:'#0083C6', borderRadius:4},
+        {label:'Female', data:gEngagement.map(g=>g.female||0), backgroundColor:'#077cbf', borderRadius:4},
         {label:'Male',   data:gEngagement.map(g=>g.male||0),   backgroundColor:'#3DAA69', borderRadius:4},
       ]
     },
@@ -1432,7 +1506,7 @@ function render(){
   // Location
   const stateData=window.STATE_DATA||[];
   const cityData=window.CITY_DATA||[];
-  const stateColors=['#0F2B5B','#0083C6','#1A5F9E','#3DAA69','#2E9E60','#5B8DB8','#6DBF90','#9EABBE','#C5D4E3','#E8ECF2'];
+  const stateColors=['#0F2B5B','#077cbf','#1A5F9E','#3DAA69','#2E9E60','#5B8DB8','#6DBF90','#9EABBE','#C5D4E3','#E8ECF2'];
   document.getElementById('stateRows').innerHTML=stateData.map((s,i)=>`
     <div class="drow" style="margin-bottom:10px">
       <div class="dn" style="width:120px;font-size:11px">${s.state}</div>
@@ -1568,7 +1642,7 @@ function render(){
       const maxClicks=Math.max(...hourData.map(h=>h.clicks||0))||1;
       document.getElementById('hourHeatmap').innerHTML=hourData.map(h=>{
         const intensity=(h.clicks||0)/maxClicks;
-        const bg=intensity>0.7?'var(--blue)':intensity>0.4?'rgba(0,131,198,0.5)':intensity>0.1?'rgba(0,131,198,0.2)':'var(--gray-100)';
+        const bg=intensity>0.7?'var(--blue)':intensity>0.4?'rgba(7,124,191,0.5)':intensity>0.1?'rgba(7,124,191,0.2)':'var(--gray-100)';
         const label=fmtHour(h.hour);
         const tooltip=label+' — '+fmtN(h.clicks)+' clicks';
         return`<div class="hour-cell" style="background:${bg};color:${intensity>0.5?'#fff':'var(--navy)'}" data-tooltip="${tooltip}">${label}</div>`;
@@ -1628,7 +1702,7 @@ function buildMain(type){
   charts.main=new Chart(document.getElementById('mainChart'),{
     type,
     data:{labels:dy.labels,datasets:[
-      {label:'Clicks',data:dy.clicks,backgroundColor:type==='bar'?'rgba(0,131,198,0.4)':'transparent',borderColor:'#0083C6',borderWidth:type==='line'?2.5:1,borderRadius:type==='bar'?3:0,fill:type==='line',tension:0.35,pointRadius:type==='line'?2:0,yAxisID:'y',order:2},
+      {label:'Clicks',data:dy.clicks,backgroundColor:type==='bar'?'rgba(7,124,191,0.4)':'transparent',borderColor:'#077cbf',borderWidth:type==='line'?2.5:1,borderRadius:type==='bar'?3:0,fill:type==='line',tension:0.35,pointRadius:type==='line'?2:0,yAxisID:'y',order:2},
       {label:'Conversions',data:dy.convs,type:'line',borderColor:'#3DAA69',backgroundColor:'rgba(61,170,105,0.08)',borderWidth:2.5,pointRadius:2,pointBackgroundColor:'#3DAA69',fill:true,tension:0.35,yAxisID:'y',order:1}
     ]},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
