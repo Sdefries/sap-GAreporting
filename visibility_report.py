@@ -769,22 +769,48 @@ def build_health(client, ai_entry, seo_entry, local_entry, organic_entry, author
     if runs:
         cur = runs[-1]
         if (_age(cur.get("date")) or 0) > 14:
-            out.append(f"AI tracking last updated {fmt_date(cur['date'])}.")
+            out.append(("ai", f"AI tracking last updated {fmt_date(cur['date'])}."))
         fails = Counter(e for per in cur["results"].values() for e, c in per.items() if c.get("status") == "error")
         for e, n in fails.most_common():
-            out.append(f"{ENGINE_LABELS.get(e, e)} checks failed for {n} of {len(cur['results'])} prompts. They're retried next week.")
+            out.append(("ai", f"{ENGINE_LABELS.get(e, e)} checks failed for {n} of {len(cur['results'])} prompts. They're retried next week."))
     if client.get("local_seo_enrolled") and seo_entry and (_age(seo_entry.get("fetched_at")) or 0) > 14:
-        out.append(f"Keyword rankings last updated {fmt_date(seo_entry['fetched_at'])}.")
+        out.append(("keywords", f"Keyword rankings last updated {fmt_date(seo_entry['fetched_at'])}."))
     lr = (local_entry or {}).get("runs") or []
     if lr and (_age(lr[-1].get("date")) or 0) > 14:
-        out.append(f"Local map last updated {fmt_date(lr[-1]['date'])}.")
-    for label, e in (("Organic search", organic_entry), ("Authority", authority_entry)):
+        out.append(("local", f"Local map last updated {fmt_date(lr[-1]['date'])}."))
+    for key, label, e in (("organic", "Organic search", organic_entry), ("authority", "Authority", authority_entry)):
         if e and (_age(e.get("fetched_at")) or 0) > 45:
-            out.append(f"{label} last updated {fmt_date(e['fetched_at'])}.")
+            out.append((key, f"{label} last updated {fmt_date(e['fetched_at'])}."))
     for d, site in ((watch_entry or {}).get("sites") or {}).items():
         if site.get("error"):
-            out.append(f"Couldn't load {escape(d)} to check for changes.")
-    return out[:6]
+            out.append(("competitors", f"Couldn't load {escape(d)} to check for changes."))
+    return [{"area": k, "text": t} for k, t in out]
+
+
+# Sections a client's plan can lock: key in clients.json "locked_sections" →
+# (report sections, VISIBILITY_DATA keys removed so the data never reaches the page)
+LOCKABLE = {
+    "ai": (["sec-ai"], ["ai", "referrals"]),
+    "aeo": (["sec-aeo-plan", "sec-aeo-audit"], ["aeo"]),
+    "keywords": (["sec-classic-seo"], ["seo"]),
+    "organic": (["sec-organic"], ["organic"]),
+    "authority": (["sec-authority"], ["authority"]),
+    "competitors": (["sec-competitors"], ["watch"]),
+    "local": (["sec-gbp"], ["local"]),
+}
+
+
+def apply_locks(vis, locked):
+    """Strip locked sections' data and record which report sections to lock."""
+    sections = []
+    for key in locked or []:
+        secs, data_keys = LOCKABLE.get(key, ([], []))
+        sections += secs
+        for k in data_keys:
+            vis[k] = None
+    vis["locked"] = sections
+    vis["health"] = [h["text"] for h in vis.get("health") or [] if h["area"] not in (locked or [])][:6]
+    return vis
 
 
 def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None, local_entry=None, organic_entry=None,

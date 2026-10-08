@@ -570,7 +570,22 @@ button.st{cursor:pointer}
 .acc-row{border-top:1px solid var(--border);padding:12px 0 4px}
 .acc-claim{font-size:12px;color:var(--navy-dark);margin:6px 0 2px;font-style:italic}
 .kit-pre{background:var(--gray-100);border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;margin-top:8px;color:var(--navy-dark)}
-@media print{
+#mainContent>.pg-off,.section>[hidden]{display:none!important}
+.section.pg-on{animation:pgIn .25s ease-out}
+@keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.section.pg-on{animation:none}}
+.pg-mobile{display:none;width:100%;max-width:none;margin-bottom:14px;font-size:14px}
+@media(max-width:960px){.pg-mobile{display:block}}
+.pg-nav{display:flex;justify-content:space-between;gap:12px;margin-top:8px;padding-top:16px;border-top:1px solid var(--border)}
+.pg-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--primary-900,#001d31);text-decoration:none;font-size:14px;font-weight:500;min-width:0;transition:border-color .15s,background .15s}
+.pg-btn:hover{border-color:var(--blue);background:var(--primary-50,#e8f2ff)}.pg-btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.pg-btn small{display:block;font-size:12px;color:var(--gray-400);font-weight:500}.pg-btn.next{text-align:right;margin-left:auto}.pg-btn i{color:var(--blue)}
+.lock-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:40px 24px;border:1px dashed var(--border);border-radius:12px;background:var(--card)}
+.lock-card>i{font-size:28px;color:var(--blue)}.lock-card h4{margin:0;font-size:18px;font-weight:600;color:var(--primary-900,#001d31)}
+.lock-card p{margin:0 0 8px;max-width:520px;font-size:14px;color:var(--gray-600)}
+.sb-nav a.locked{opacity:.65}.sb-lock{margin-left:auto;font-size:12px}
+@media print{#mainContent>.pg-off{display:block!important}#mainContent>.section>[hidden]{display:none!important}
+
   @page{margin:12mm}
   body{background:#fff}
   .sidebar,.no-print,.date-toggle,.live-box,.vtools,.vtabs,.ans-modal,.loading-overlay,.vt-read,.vbtn{display:none!important}
@@ -1487,7 +1502,7 @@ function render(){
   document.getElementById('rangeLabel').textContent=range==='30d'?'Last 30 days':'Last 7 days';
   document.getElementById('trendsLabel').textContent=range==='30d'?'Daily · Last 30 days':'Daily · Last 7 days';
   document.getElementById('funnelSub').textContent='Campaign performance · '+(range==='30d'?'30':'7')+' days';
-  document.getElementById('pfDate').textContent='Data via Google Ads API &amp; GA4 · '+(window.CLIENT_DATA?.report_date||'');
+  document.getElementById('pfDate').textContent='Data via Google Ads API & GA4 · '+(window.CLIENT_DATA?.report_date||'');
   document.getElementById('ga4TrafficSub').textContent='GA4 · '+(range==='30d'?'Last 30 days':'Last 7 days');
 
   destroyCharts();
@@ -1804,7 +1819,6 @@ function render(){
   if(next.title)document.getElementById('actionNextTitle').textContent=next.title;
   if(next.body)document.getElementById('actionNextBody').textContent=next.body;
 
-  updateSidebarActive();
 }
 
 function buildMain(type){
@@ -1878,18 +1892,71 @@ function initClient(){
   }
 }
 
+// One section per page: the sidebar (or the section menu on phones) picks it,
+// #sec-… in the URL deep-links to it, Previous / Next step through in order.
+const PG={ids:[],links:[],group:{}};
 function updateSidebarActive(){
-  const ids=[...document.querySelectorAll('.sb-nav a')].map(a=>a.getAttribute('href').slice(1));
-  const links=document.querySelectorAll('.sb-nav a');
-  function check(){
-    let cur=ids[0];
-    ids.forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=80)cur=id;});
-    links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
-  }
-  window.removeEventListener('scroll',window._spy);
-  window._spy=check;
-  window.addEventListener('scroll',check,{passive:true});
-  check();
+  PG.links=[...document.querySelectorAll('.sb-nav a[href^="#sec-"]')];
+  PG.ids=PG.links.map(a=>a.getAttribute('href').slice(1));
+  document.querySelectorAll('.sb-group').forEach((g,gi)=>g.querySelectorAll('a[href^="#sec-"]').forEach(a=>PG.group[a.getAttribute('href').slice(1)]=gi));
+  const content=document.getElementById('mainContent'), label=pgLabel;
+  const sel=document.createElement('select');
+  sel.id='pgSelect';sel.className='vsearch pg-mobile no-print';sel.setAttribute('aria-label','Report section');
+  sel.innerHTML=[...document.querySelectorAll('.sb-group')].map(g=>`<optgroup label="${esc(g.querySelector('.sb-group-head span').textContent)}">${
+    [...g.querySelectorAll('a[href^="#sec-"]')].map(a=>`<option value="${a.getAttribute('href').slice(1)}">${esc(label(a))}${a.classList.contains('locked')?' (locked)':''}</option>`).join('')}</optgroup>`).join('');
+  sel.onchange=()=>showSection(sel.value,true);
+  content.prepend(sel);
+  const pager=document.createElement('nav');
+  pager.id='pgNav';pager.className='pg-nav no-print';pager.setAttribute('aria-label','Sections');
+  content.append(pager);
+  document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#sec-"]');if(!a||!PG.ids.includes(a.getAttribute('href').slice(1)))return;
+    e.preventDefault();showSection(a.getAttribute('href').slice(1),true)});
+  window.addEventListener('popstate',()=>showSection(pgCurrent(),false));
+  showSection(pgCurrent(),false);
+}
+function pgLabel(a){if(!a)return '';const c=a.cloneNode(true);c.querySelectorAll('.sb-badge,.sb-lock').forEach(x=>x.remove());return c.textContent.trim()}
+function pgCurrent(){const h=location.hash.slice(1);return PG.ids.includes(h)?h:PG.ids[0]}
+function showSection(id,push){
+  if(!PG.ids.includes(id))id=PG.ids[0];
+  document.querySelectorAll('#mainContent>.section').forEach(sec=>{const on=sec.id===id;sec.classList.toggle('pg-off',!on);sec.classList.toggle('pg-on',on)});
+  PG.links.forEach(a=>{const on=a.getAttribute('href')==='#'+id;a.classList.toggle('active',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
+    if(on){a.closest('.sb-group')?.classList.add('open');a.scrollIntoView({block:'nearest'})}});
+  document.getElementById('compBanner').classList.toggle('pg-off',PG.group[id]!==0);
+  document.getElementById('pgSelect').value=id;
+  const i=PG.ids.indexOf(id), link=k=>pgLabel(PG.links[k]);
+  document.getElementById('pgNav').innerHTML=
+    (i>0?`<a class="pg-btn" href="#${PG.ids[i-1]}"><i class="ph ph-arrow-left" aria-hidden="true"></i><span><small>Previous</small>${esc(link(i-1))}</span></a>`:'<span></span>')+
+    (i<PG.ids.length-1?`<a class="pg-btn next" href="#${PG.ids[i+1]}"><span><small>Next</small>${esc(link(i+1))}</span><i class="ph ph-arrow-right" aria-hidden="true"></i></a>`:'');
+  if(push&&location.hash!=='#'+id){try{history.pushState(null,'','#'+id)}catch(e){}}
+  window.scrollTo(0,0);
+  // Charts and the map were drawn while hidden; let them measure their new size
+  requestAnimationFrame(()=>{window.dispatchEvent(new Event('resize'));
+    if(id==='sec-gbp'&&localMap){localMap.invalidateSize();const L=window.VISIBILITY_DATA.local;if(L?.points)localMap.fitBounds(L.points.flat(),{padding:[24,24]})}});
+}
+
+// Sections the client's plan doesn't include: data is left out of the report
+// when it's generated; here they get a lock in the sidebar and an upgrade card.
+const LOCK_COPY={
+  'sec-ai':['AI tracking','See whether ChatGPT, Claude, Gemini, Perplexity and Google\'s AI answers recommend you, prompt by prompt, and how many visits AI sends you.'],
+  'sec-aeo-plan':['AEO action plan','Get a plan for each question AI answers without you: the pages to publish and the sites to get listed on.'],
+  'sec-aeo-audit':['AEO readiness','Check whether your website is set up for AI to find, read and cite, with ready-to-paste fixes.'],
+  'sec-classic-seo':['Keyword tracking','Track your Google positions for the searches that matter, with competitors and Google\'s AI Overviews.'],
+  'sec-organic':['Organic search','Every keyword your site ranks for, your top pages, and new keyword opportunities, updated monthly.'],
+  'sec-authority':['Authority','How strong the sites linking to you are, your best links, and links you can win back.'],
+  'sec-competitors':['Competitor tracking','Compare yourself head to head with similar organizations and see when they publish or change pages.'],
+  'sec-gbp':['Local map','See where you rank on Google Maps across your area, plus your Google Business Profile.'],
+};
+function renderLocks(V){
+  (V.locked||[]).forEach(id=>{
+    const sec=document.getElementById(id); if(!sec)return;
+    const [name,what]=LOCK_COPY[id]||['This section',''];
+    [...sec.children].forEach(c=>{if(!c.classList.contains('sh'))c.hidden=true});
+    sec.insertAdjacentHTML('beforeend',`<div class="lock-card"><i class="ph ph-lock-simple" aria-hidden="true"></i><h4>${name} isn't in your plan yet</h4><p>${what}</p>
+      <a class="vbtn primary" href="mailto:${VIS_CONTACT}?subject=${encodeURIComponent('Add '+name+' for '+(window.CLIENT_DATA?.name||''))}">Ask about adding it</a>
+      <div class="vfoot" style="margin:8px 0 0">${VIS_CONTACT}</div></div>`);
+    const a=document.querySelector(`.sb-nav a[href="#${id}"]`);
+    if(a){a.classList.add('locked');a.querySelector('.sb-badge')?.remove();a.insertAdjacentHTML('beforeend','<i class="ph ph-lock-simple sb-lock" aria-label="Locked"></i>')}
+  });
 }
 
 // ── SEARCH & AI VISIBILITY ────────────────────────────────────────────────────
@@ -2001,13 +2068,14 @@ function renderVisibility(){
   const V=window.VISIBILITY_DATA||{};
   const ai=V.ai, seo=V.seo;
   const sbAi=document.getElementById('sbAiScore'), sbSeo=document.getElementById('sbSeoScore');
-  sbAi.innerHTML=ai&&ai.score!=null?`${ai.score}%<small>${ai.band.toUpperCase()}</small>`:'—<small>SETTING UP</small>';
-  sbSeo.innerHTML=seo?`${seo.score}%<small>${seo.band.toUpperCase()}</small>`:(V.seo_enrolled?'—<small>PENDING</small>':'—<small>SEO PACKAGE</small>');
+  const lk=V.locked||[];
+  sbAi.innerHTML=ai&&ai.score!=null?`${ai.score}%<small>${ai.band.toUpperCase()}</small>`:lk.includes('sec-ai')?'—<small>LOCKED</small>':'—<small>SETTING UP</small>';
+  sbSeo.innerHTML=seo?`${seo.score}%<small>${seo.band.toUpperCase()}</small>`:lk.includes('sec-classic-seo')?'—<small>LOCKED</small>':(V.seo_enrolled?'—<small>PENDING</small>':'—<small>SEO PACKAGE</small>');
   if(ai)document.getElementById('sbAiBadge').textContent=ai.prompts_n;
   if(seo)document.getElementById('sbSeoBadge').textContent=seo.tracked;
   const nComp=Math.max((ai?.competitors||[]).length,(seo?.competitors||[]).length)-1;
   if(nComp>0)document.getElementById('sbCompBadge').textContent=nComp;
-  renderOverviewCards(V);renderAI(V);renderAEO(V);renderClassic(V);renderOrganic(V);renderAuthority(V);renderCompetitors(V);
+  renderOverviewCards(V);renderAI(V);renderAEO(V);renderClassic(V);renderOrganic(V);renderAuthority(V);renderCompetitors(V);renderLocks(V);
 }
 
 // ── AI TRACKING ──
@@ -2670,7 +2738,7 @@ function drawComp(){
   const sel=document.getElementById('compSel'); if(sel)sel.onchange=()=>{compSite=sel.value;drawComp()};
   const f=document.getElementById('compFilter'); if(f)f.onchange=()=>{compFilter=f.value;drawComp()};
 }
-window.compJump=t=>{compTab=t;drawComp();document.getElementById('sec-competitors').scrollIntoView({behavior:'smooth',block:'start'})};
+window.compJump=t=>{compTab=t;drawComp();showSection('sec-competitors',true)};
 function compOverview(V){
   const seoRows=V.seo?.competitors||[], aiRows=V.ai?.competitors||[], W=V.watch;
   const lead=(rows,key,lowerIsBetter)=>{const vals=rows.map(r=>r[key]).filter(v=>v!==null&&v!==undefined&&v!==0);
@@ -2697,9 +2765,9 @@ function compOverview(V){
       </tbody></table></div>`;
   }
   if(W)html+=`<div class="card" style="margin-top:14px"><div class="chart-title">Websites we watch ${tip('Each week we read these sites\' sitemaps and their homepage and top-level pages, and flag new pages and real content edits. Small edits like dates are ignored.')}</div>
-    <table class="vt"><thead><tr><th>Site</th><th>Pages found</th><th>Pages checked for edits</th><th>Status</th></tr></thead><tbody>
+    <div style="overflow-x:auto"><table class="vt"><thead><tr><th>Site</th><th>Pages found</th><th>Pages checked for edits</th><th>Status</th></tr></thead><tbody>
     ${W.sites.map(x=>`<tr><td><b>${esc(x.name)}</b><div class="vfoot" style="margin:0">${esc(x.domain)}</div></td><td>${fmtN(x.pages)}<span class="vfoot"> from ${esc(x.source||'—')}</span></td><td>${x.watched}</td>
-      <td>${x.error?`<span class="yn">Couldn't load</span>`:x.baseline?'<span class="yn">First check</span>':'<span class="yn yes">Watching</span>'}</td></tr>`).join('')}</tbody></table></div>`;
+      <td>${x.error?`<span class="yn">Couldn't load</span>`:x.baseline?'<span class="yn">First check</span>':'<span class="yn yes">Watching</span>'}</td></tr>`).join('')}</tbody></table></div></div>`;
   return html;
 }
 function compPicker(V,id,val,all){

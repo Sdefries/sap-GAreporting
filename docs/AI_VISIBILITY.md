@@ -19,6 +19,8 @@ When the latest weekly data has gaps (an AI's checks failed, a data source is ov
 
 **Live features** (test a prompt now, track prompts, generate ideas) run through a small Cloudflare Worker that keeps the API keys private. See [`worker/README.md`](../worker/README.md). Until it's set up, those buttons are hidden.
 
+The report shows **one section at a time**: pick it in the sidebar (or the section menu on phones), use Previous / Next at the bottom, or link straight to one with `#sec-…` (for example `pup-profile.html#sec-ai`). The browser Back button works, and the PDF button still prints every section.
+
 Other report changes: the **device breakdown** is now real Google Ads data, **What we did / What's next** is written from each month's data, and there's a **↓ PDF** button. `reports/index.html` is an all-clients dashboard.
 
 Score bands for AI and keyword visibility: **Poor** < 20% · **Moderate** 20–50% · **Good** 50–80% · **Great** 80%+. Authority: **Poor** < 10 · **Moderate** 10–30 · **Good** 30–50 · **Great** 50+.
@@ -92,7 +94,8 @@ After each AI run, `#google-ads` (the existing `SLACK_WEBHOOK`) gets a message w
 },
 "report_notes": {"did": "Launched the spring adoption campaign...", "next": "..."},
 "seo_location": "Los Angeles,California,United States",
-"organic_tracking": {"enabled": false}
+"organic_tracking": {"enabled": false},
+"locked_sections": ["authority", "competitors"]
 ```
 
 - `ai_tracking.prompts`: up to 10. Every current client is seeded with 5. **New clients without prompts get 5 starter prompts written by Claude automatically.**
@@ -100,6 +103,7 @@ After each AI run, `#google-ads` (the existing `SLACK_WEBHOOK`) gets a message w
 - `local_tracking`: only for organizations people visit in person. It's seeded for the Humane Society of Northwest Montana and ScienceWorks. Coordinates are found automatically; add `lat`/`lng` or `place_id` if the wrong listing matches.
 - `report_notes`: your team's own "What we did / What's next" text. It overrides the automatic text.
 - `organic_tracking.enabled: false` skips a client in the organic report.
+- `locked_sections`: sections the client's plan doesn't include. Choose from `ai`, `aeo`, `keywords`, `organic`, `authority`, `competitors`, `local`. Their data is left out of the generated report (so it can't be read from the page source), the sidebar shows a lock, and the page shows an "isn't in your plan yet" card with a button to ask about adding it.
 - Classic SEO still requires `local_seo_enrolled: true` and `seo_keywords`.
 
 ## Cost (rough, per month, all 13 clients)

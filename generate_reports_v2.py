@@ -6,7 +6,7 @@ The template has zero client data — all values come from cache files.
 import json, os, sys, datetime, argparse, urllib.request, hmac, hashlib
 from html import escape
 
-from visibility_report import build_overview, build_visibility_data
+from visibility_report import apply_locks, build_overview, build_visibility_data
 
 # ── LOAD ──────────────────────────────────────────────────────────────────────
 with open("clients.json") as f:
@@ -692,6 +692,7 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
 
         cd  = build_client_data(client, rows30, rows7, extended_data, ga4, seo)
         cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4, LOCAL_CACHE.get(slug), ORGANIC_CACHE.get(slug), AUTHORITY_CACHE.get(slug), WATCH_CACHE.get(slug))
+        apply_locks(cd["_visibility"], client.get("locked_sections"))
         cd["_visibility"]["overview"] = build_overview(cd["_visibility"])
         cd["_devices"] = devices
         t30 = cd["totals_30d"]
