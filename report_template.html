@@ -160,7 +160,8 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy-da
 .chart-legend{display:flex;gap:14px;font-size:12px;font-weight:600;color:var(--gray-600)}
 .legend-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:middle}
 .ctabs{display:flex;gap:3px}
-.ctab{padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;color:var(--gray-400);cursor:pointer;background:var(--gray-100);border:1px solid transparent;transition:all 0.15s;user-select:none}
+.ctab{font-family:var(--font-body);padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;color:var(--gray-400);cursor:pointer;background:var(--gray-100);border:1px solid transparent;transition:all 0.15s;user-select:none}
+.ctab:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .ctab.active{background:#fff;color:var(--navy);border-color:var(--border);box-shadow:0 1px 4px rgba(0,0,0,0.06)}
 .tscroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12px;min-width:800px}
@@ -599,7 +600,7 @@ button.st{cursor:pointer}
 .sb-nav a.locked{opacity:.65}
 .sb-group-head span{display:flex;align-items:center;gap:8px}.sb-group-head span i{font-size:14px;color:var(--blue)}
 .sb-group.current>.sb-group-head{color:var(--primary-900,#001d31)}.sb-lock{margin-left:auto;font-size:12px}
-@media print{#mainContent>.pg-off{display:block!important}#mainContent>.section>[hidden]{display:none!important}
+@media print{.fade,.section.pg-on{opacity:1!important;transform:none!important;animation:none!important}#mainContent>.pg-off{display:block!important}#mainContent>.section>[hidden]{display:none!important}
 
   @page{margin:12mm}
   body{background:#fff}
@@ -969,8 +970,8 @@ table.vt th{text-transform:none;letter-spacing:0}
           <div class="chart-title">Clicks &amp; conversions</div>
           <div style="display:flex;align-items:center;gap:16px">
             <div class="ctabs">
-              <div class="ctab active" onclick="swapMain('bar',this)">Bar</div>
-              <div class="ctab" onclick="swapMain('line',this)">Line</div>
+              <button type="button" class="ctab active" aria-pressed="true" onclick="swapMain('bar',this)">Bar</button>
+              <button type="button" class="ctab" aria-pressed="false" onclick="swapMain('line',this)">Line</button>
             </div>
           </div>
         </div>
@@ -1260,6 +1261,10 @@ const lineMark={borderWidth:2,pointRadius:3,cubicInterpolationMode:'monotone'};
 const dc=['#077cbf','#16a34a','#f59e0b','#7c3aed','#e0603c','#5bc8f0','#e05c94','#0d9488'];
 
 function fmt$(v){if(!v&&v!==0)return'—';return'$'+(+v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
+// Per-click and per-conversion costs need cents (Ad Grants CPCs are often $1–2)
+// Ad Grants: $10,000 a month; the 7-day view compares with 7 days' worth
+function grantBudget(){return range==='7d'?10000*7/30:10000}
+function fmtC(v){if(!v&&v!==0)return'—';return'$'+(+v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function fmtN(v){if(!v&&v!==0)return'—';return(+v).toLocaleString()}
 function fmtPct(v){if(v===null||v===undefined)return'—';return(+v).toFixed(1)+'%'}
 function colorBar(pct){return pct>=80?'#3DAA69':pct>=50?'#E8A020':'#D94F3D'}
@@ -1442,7 +1447,7 @@ function renderGA4Devices(){
   const browsers = ga4.browsers || [];
   document.getElementById('browserList').innerHTML = browsers.map((b,i)=>`
     <div class="browser-row">
-      <span class="browser-name">${b.name}</span>
+      <span class="browser-name">${esc(b.name)}</span>
       <div class="browser-bar-wrap"><div class="browser-bar-fill" style="width:${b.pct}%;background:${browserColors[i]||'#9EABBE'}"></div></div>
       <span class="browser-pct" style="color:${browserColors[i]||'#9EABBE'}">${b.pct}%</span>
     </div>`).join('');
@@ -1484,7 +1489,7 @@ function renderGA4Demographics(){
     <div class="chart-card" style="margin-top:14px">
       <div class="chart-header"><div class="chart-title">Age</div></div>
       <div class="age-tiles">${ages.map(a=>`<div class="age-tile${a.known_share===maxShare?' top':''}" style="--s:${(a.known_share/maxShare).toFixed(2)}">
-        <div class="age-tile-lbl">${a.age}</div>
+        <div class="age-tile-lbl">${esc(a.age)}</div>
         <div class="age-tile-val">${a.known_share}%</div>
         <div class="age-tile-sub">${fmtN(a.sessions||0)} visits</div>
         ${a.conv_rate!=null?`<div class="age-tile-conv">${a.conv_rate}% convert</div>`:''}
@@ -1506,7 +1511,7 @@ function renderGA4Demographics(){
   document.getElementById('genderLegend').innerHTML = genders.map(g=>`
     <div class="donut-legend-item">
       <span class="donut-dot" style="background:${genderColors[g.name]||'#9EABBE'}"></span>
-      ${g.name} <strong>${g.value}%</strong>
+      ${esc(g.name)} <strong>${g.value}%</strong>
     </div>`).join('');
 
   // Gender engagement grouped bar
@@ -1530,6 +1535,11 @@ function renderGA4Demographics(){
     const lbl=container.querySelector('.demo-section-lbl'); if(lbl)lbl.textContent='Devices & gender';
   }
 }
+
+// Charts drawn on hidden pages (or at screen width) re-measure for print
+function resizeAllCharts(){[...Object.values(charts||{}),...Object.values(visCharts||{})].forEach(c=>{try{c&&c.resize&&c.resize()}catch(e){}})}
+addEventListener('beforeprint',resizeAllCharts);
+try{matchMedia('print').addEventListener('change',e=>{if(e.matches)resizeAllCharts()})}catch(e){}
 
 // ── TRENDS SUMMARY ── (always from the 30-day series, whatever the range)
 function trendsSummary(){
@@ -1647,9 +1657,9 @@ function render(){
     {icon:'<i class="ph ph-chart-bar"></i>',bg:'#E3F2FF',lbl:'Total clicks',val:fmtN(t.cl),sub:'paid ad clicks',cls:'kpi-blue'},
     {icon:'<i class="ph ph-eye"></i>',bg:'#E3F2FF',lbl:'Impressions',val:fmtN(t.im),sub:'ad views',cls:'kpi-blue'},
     {icon:'<i class="ph ph-lightning"></i>',bg:'#E4F7ED',lbl:'Avg. CTR',val:fmtPct(t.ctr),sub:t.ctr>=5?'Above 5% minimum':'Below 5% — at risk',subCls:t.ctr>=5?'ok':'danger',cls:t.ctr>=5?'kpi-green':'kpi-red'},
-    {icon:'<i class="ph ph-currency-dollar"></i>',bg:'#FEF6E6',lbl:'Total spend',val:fmt$(t.cost),sub:'of $10,000 grant',cls:'kpi-amber'},
-    {icon:'<i class="ph ph-target"></i>',bg:'#E0F7F5',lbl:'Conversions',val:fmtN(Math.round(t.cv||0)),sub:t.costPerConv?fmt$(t.costPerConv)+' / conv.':'No conversions tracked',subCls:t.cv>0?'ok':'warn',cls:t.cv>0?'kpi-green':'kpi-amber'},
-    {icon:'<i class="ph ph-trend-up"></i>',bg:'#E3F2FF',lbl:'Avg. CPC',val:fmt$(t.cpc),sub:'cost per click',cls:'kpi-blue'},
+    {icon:'<i class="ph ph-currency-dollar"></i>',bg:'#FEF6E6',lbl:'Total spend',val:fmt$(t.cost),sub:range==='7d'?`of ~${fmt$(grantBudget())} (7 days of the grant)`:'of $10,000 grant',cls:'kpi-amber'},
+    {icon:'<i class="ph ph-target"></i>',bg:'#E0F7F5',lbl:'Conversions',val:fmtN(Math.round(t.cv||0)),sub:t.costPerConv?fmtC(t.costPerConv)+' / conv.':'No conversions tracked',subCls:t.cv>0?'ok':'warn',cls:t.cv>0?'kpi-green':'kpi-amber'},
+    {icon:'<i class="ph ph-trend-up"></i>',bg:'#E3F2FF',lbl:'Avg. CPC',val:fmtC(t.cpc),sub:'cost per click',cls:'kpi-blue'},
   ];
   document.getElementById('kpiGrid').innerHTML=kpis.map((k,i)=>`
     <div class="kpi-card ${k.cls} fade" style="animation-delay:${i*.06}s">
@@ -1663,8 +1673,8 @@ function render(){
   const funnelSteps=[
     {icon:'<i class="ph ph-cursor-click"></i>',lbl:'Ad clicks',val:fmtN(t.cl),rate:'100%',cls:'fs-ok',sub:'from Google Ads'},
     {icon:'<i class="ph ph-target"></i>',lbl:'Conversions',val:fmtN(Math.round(t.cv||0)),rate:fmtPct(t.convRate),cls:t.cv>0?'fs-ok':'fs-warn',sub:'tracked conversions'},
-    {icon:'<i class="ph ph-currency-dollar"></i>',lbl:'Cost / conv.',val:t.costPerConv?fmt$(t.costPerConv):'—',rate:t.costPerConv&&t.costPerConv<25?'Good':'Review',cls:t.costPerConv&&t.costPerConv<25?'fs-ok':'fs-warn',sub:'avg cost per conversion'},
-    {icon:'<i class="ph ph-chart-bar"></i>',lbl:'Grant used',val:fmtPct(Math.min(100,t.cost/10000*100)),rate:t.cost>=8000?'Strong':'Building',cls:t.cost>=8000?'fs-ok':'fs-warn',sub:'of $10,000/month'},
+    {icon:'<i class="ph ph-currency-dollar"></i>',lbl:'Cost / conv.',val:t.costPerConv?fmtC(t.costPerConv):'—',rate:t.costPerConv&&t.costPerConv<25?'Good':'Review',cls:t.costPerConv&&t.costPerConv<25?'fs-ok':'fs-warn',sub:'avg cost per conversion'},
+    {icon:'<i class="ph ph-chart-bar"></i>',lbl:'Grant used',val:fmtPct(Math.min(100,t.cost/grantBudget()*100)),rate:t.cost>=grantBudget()*0.8?'Strong':'Building',cls:t.cost>=grantBudget()*0.8?'fs-ok':'fs-warn',sub:range==='7d'?'of 7 days of the grant':'of $10,000/month'},
   ];
   document.getElementById('funnelSteps').innerHTML=funnelSteps.map(s=>`
     <div class="funnel-step"><div class="fs-inner">
@@ -1681,13 +1691,13 @@ function render(){
   document.getElementById('metricsGrid').innerHTML=`
     <div class="card"><div class="sh-title" style="font-size:14px;margin-bottom:12px">Cost efficiency</div>
       <div class="sp">
-        <div class="si"><div class="si-lbl">Avg. CPC</div><div class="si-val">${fmt$(t.cpc)}</div><div class="si-sub">per click</div></div>
-        <div class="si"><div class="si-lbl">Cost/Conv.</div><div class="si-val">${t.costPerConv?fmt$(t.costPerConv):'—'}</div><div class="si-sub">blended avg.</div></div>
+        <div class="si"><div class="si-lbl">Avg. CPC</div><div class="si-val">${fmtC(t.cpc)}</div><div class="si-sub">per click</div></div>
+        <div class="si"><div class="si-lbl">Cost/Conv.</div><div class="si-val">${t.costPerConv?fmtC(t.costPerConv):'—'}</div><div class="si-sub">blended avg.</div></div>
       </div></div>
     <div class="card"><div class="sh-title" style="font-size:14px;margin-bottom:12px">Conversion rate</div>
       <div class="sp">
         <div class="si"><div class="si-lbl">Conv. Rate</div><div class="si-val">${fmtPct(t.convRate)}</div><div class="si-sub">clicks → conv.</div></div>
-        <div class="si"><div class="si-lbl">Grant used</div><div class="si-val">${fmtPct(Math.min(100,t.cost/10000*100))}</div><div class="si-sub">of $10k/mo</div></div>
+        <div class="si"><div class="si-lbl">Grant used</div><div class="si-val">${fmtPct(Math.min(100,t.cost/grantBudget()*100))}</div><div class="si-sub">${range==='7d'?'of 7 days of the grant':'of $10k/mo'}</div></div>
       </div></div>
     <div class="card"><div class="sh-title" style="font-size:14px;margin-bottom:12px">PMax vs Search</div>
       <div class="sp">
@@ -1706,17 +1716,18 @@ function render(){
       <td><span class="ctag ${ctrCls}">${fmtPct(c.ctr)}</span></td>
       <td>${fmtN(c.cl)}</td><td>${fmtN(c.im)}</td><td>${fmt$(c.cost)}</td>
       <td class="${c.cv===0&&c.s==='ENABLED'?'flag':''}">${c.cv===0?'0 <i class="ph ph-warning"></i>':fmtN(c.cv)}</td>
-      <td>${c.cpa?fmt$(c.cpa):'—'}</td><td>${fmt$(c.cpc)}</td>`;
+      <td>${c.cpa?fmtC(c.cpa):'—'}</td><td>${fmtC(c.cpc)}</td>`;
     tb.appendChild(tr);
   });
 
   // Devices (Ad Grants donut)
-  const devs=d.devices||[];
+  const devs=(d.devices||[]).filter(dv=>dv.cl>0);  // no clicks = nothing to split
+  document.getElementById('deviceDonut').parentElement.hidden=!devs.length;
   const totDev=devs.reduce((s,dv)=>s+dv.cl,0)||1;
   document.getElementById('devRows').innerHTML=devs.length?'':'<div class="vfoot" style="padding:12px 0">Device breakdown appears after the next Google Ads update.</div>';
   if(devs.length)document.getElementById('devRows').innerHTML=devs.map((dv,i)=>{
     const p=Math.round(dv.cl/totDev*100);
-    return`<div class="drow"><div class="dn">${dv.n}</div><div class="dbb"><div class="dbf" style="width:${p}%;background:${dc[i]}"></div></div><div class="dpct">${p}%</div><div class="ddet">${fmtN(dv.cl)} clicks</div></div>`;
+    return`<div class="drow"><div class="dn">${esc(dv.n)}</div><div class="dbb"><div class="dbf" style="width:${p}%;background:${dc[i]}"></div></div><div class="dpct">${p}%</div><div class="ddet">${fmtN(dv.cl)} clicks</div></div>`;
   }).join('');
   if(devs.length)charts.device=new Chart(document.getElementById('deviceDonut'),{
     type:'doughnut',
@@ -1738,17 +1749,17 @@ function render(){
   trendCards.forEach(c=>c.hidden=!dy);
   document.getElementById('trendsSummary').innerHTML=dy?trendsSummary():emptyBlock('Daily trends are on their way','Day-by-day clicks, spend and conversions appear after the next Google Ads update.');
   if(dy){
-  buildMain('bar');
+  buildMain(mainType);
   charts.spend=new Chart(document.getElementById('spendChart'),{
     type:'bar',
     data:{labels:dy.labels,datasets:[
       {label:'Spend',data:dy.spend,backgroundColor:CC.blue,...barMark}
     ]},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},
-      tooltip:{callbacks:{label:c=>`Spend: ${fmt$(c.parsed.y)}`,afterLabel:c=>dy.cpc?.[c.dataIndex]!=null?`CPC: ${fmt$(dy.cpc[c.dataIndex])}`:''}}},
+      tooltip:{callbacks:{label:c=>`Spend: ${fmt$(c.parsed.y)}`,afterLabel:c=>dy.cpc?.[c.dataIndex]!=null?`CPC: ${fmtC(dy.cpc[c.dataIndex])}`:''}}},
       scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>fmt$(v)},grid:gl,beginAtZero:true}}}
   });
-  document.getElementById('cpcNote').textContent=`Avg. CPC ${fmt$(t.cpc)} · hover a day for its CPC`;
+  document.getElementById('cpcNote').textContent=`Avg. CPC ${fmtC(t.cpc)} · hover a day for its CPC`;
   charts.conv=new Chart(document.getElementById('convChart'),{
     type:'bar',
     data:{labels:dy.labels,datasets:[{label:'Conversions',data:dy.convs,backgroundColor:CC.green,...barMark}]},
@@ -1772,7 +1783,7 @@ function render(){
   const stateColors=[]; // one brand hue: these bars show size, not category
   document.getElementById('stateRows').innerHTML=stateData.map((s,i)=>`
     <div class="drow" style="margin-bottom:10px">
-      <div class="dn" style="width:120px;font-size:12px">${s.state}</div>
+      <div class="dn" style="width:120px;font-size:12px">${esc(s.state)}</div>
       <div class="dbb"><div class="dbf" style="width:${s.pct}%;background:${CC.blue}"></div></div>
       <div class="dpct" style="width:40px">${s.pct}%</div>
       <div style="width:40px;text-align:right;font-size:12px;color:var(--gray-400)">${s.sessions}</div>
@@ -1781,7 +1792,7 @@ function render(){
   const maxCity=cityData[0]?.sessions||1;
   document.getElementById('cityRows').innerHTML=cityData.map((c,i)=>`
     <div class="drow" style="margin-bottom:10px">
-      <div class="dn" style="width:130px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.city}</div>
+      <div class="dn" style="width:130px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.city)}</div>
       <div style="font-size:12px;color:var(--gray-400);width:28px;flex-shrink:0">${c.state}</div>
       <div class="dbb"><div class="dbf" style="width:${Math.round(c.sessions/maxCity*100)}%;background:${CC.blue}"></div></div>
       <div style="width:30px;text-align:right;font-size:12px;color:var(--gray-400)">${c.sessions}</div>
@@ -1831,7 +1842,7 @@ function render(){
     const cwvColor=cwvPass===null?'var(--gray-400)':(cwvPass?'var(--green)':'var(--amber)');
     let queriesHTML='';
     if(topQueries.length>0){
-      queriesHTML='<div class="seo-queries">'+topQueries.slice(0,5).map(q=>`<div class="seo-query-row"><span class="seo-query-term">${q.query||q.keyword||''}</span><div class="seo-query-stats"><span class="seo-query-stat"><strong>${fmtN(q.clicks||0)}</strong> clicks</span><span class="seo-query-stat"><strong>${fmtN(q.impressions||0)}</strong> impr</span><span class="seo-query-stat">Pos <strong>${(q.position||0).toFixed(1)}</strong></span></div></div>`).join('')+'</div>';
+      queriesHTML='<div class="seo-queries">'+topQueries.slice(0,5).map(q=>`<div class="seo-query-row"><span class="seo-query-term">${esc(q.query||q.keyword||'')}</span><div class="seo-query-stats"><span class="seo-query-stat"><strong>${fmtN(q.clicks||0)}</strong> clicks</span><span class="seo-query-stat"><strong>${fmtN(q.impressions||0)}</strong> impr</span><span class="seo-query-stat">Pos <strong>${(q.position||0).toFixed(1)}</strong></span></div></div>`).join('')+'</div>';
     }
     seoContainer.innerHTML=`<div class="seo-grid">
       <div class="seo-card"><div class="seo-icon"><i class="ph ph-device-mobile"></i></div><div class="seo-label">Mobile speed</div><div class="seo-value ${psColor}">${valOrNA(ps)}</div><div class="seo-bar"><div class="seo-fill ${psColor}" style="width:${hasData(ps)?ps:0}%"></div></div></div>
@@ -1943,7 +1954,7 @@ function render(){
   const ig=document.getElementById('insightsGrid');
   if(window.CLIENT_DATA?.insights?.length){
     const tagLabel={win:'Performing well',action:'Action required',watch:'Under review'};
-    ig.innerHTML=window.CLIENT_DATA.insights.map((ins,i)=>`<div class="insight-card fade" style="animation-delay:${i*.06}s"><div class="insight-bar ${ins.color||'blue'}"></div><div><div class="insight-title">${ins.title||''}</div><div class="insight-body">${ins.body||''}</div><span class="insight-tag tag-${ins.tag||'watch'}">${tagLabel[ins.tag]||'Under review'}</span></div></div>`).join('');
+    ig.innerHTML=window.CLIENT_DATA.insights.map((ins,i)=>`<div class="insight-card fade" style="animation-delay:${i*.06}s"><div class="insight-bar ${ins.color||'blue'}"></div><div><div class="insight-title">${esc(ins.title||'')}</div><div class="insight-body">${esc(ins.body||'')}</div><span class="insight-tag tag-${ins.tag||'watch'}">${tagLabel[ins.tag]||'Under review'}</span></div></div>`).join('');
   }
 
   // Actions
@@ -1971,7 +1982,8 @@ function buildMain(type){
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{...legendBottom,labels:{...legendBottom.labels,sort:(x,y)=>x.datasetIndex-y.datasetIndex}}},scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:tk,grid:gl,beginAtZero:true}}}
   });
 }
-window.swapMain=(t,el)=>{buildMain(t);document.querySelectorAll('.ctab').forEach(x=>x.classList.remove('active'));el.classList.add('active')};
+let mainType='bar';
+window.swapMain=(t,el)=>{mainType=t;buildMain(t);document.querySelectorAll('.ctab').forEach(x=>{const on=x===el;x.classList.toggle('active',on);x.setAttribute('aria-pressed',on)})};
 
 function setRange(r,btn){
   range=r;
@@ -1987,7 +1999,7 @@ function initClient(){
   if(!cd)return;
   document.title=cd.name+' — Google Ads Report';
   document.getElementById('sbClientName').textContent=cd.name;
-  document.getElementById('sbClientId').textContent='Account '+cd.account_id;
+  document.getElementById('sbClientId').textContent='Account '+(cd.account_id||'—');
   document.getElementById('topbarTitle').textContent=cd.name;
   document.getElementById('sbFoot').textContent='Data via Google Ads API · '+cd.report_date;
   document.getElementById('gpsDateSub').textContent='Calculated '+cd.report_date;
@@ -2056,6 +2068,7 @@ function updateSidebarActive(){
   window.addEventListener('scroll',pgSpy,{passive:true});
   pgFromHash();
 }
+try{history.scrollRestoration='manual'}catch(e){}
 function pgFromHash(){
   const h=location.hash.slice(1);
   if(PG.secPage[h])showPage(PG.secPage[h],h,false);
@@ -2076,8 +2089,9 @@ function showPage(key,secId,push){
   const target=secId||page.key;
   if(push&&location.hash!=='#'+target){try{history.pushState(null,'','#'+target)}catch(e){}}
   const behavior=changed?'instant':'smooth';
-  if(secId&&secId!==page.ids[0])document.getElementById(secId)?.scrollIntoView({block:'start',behavior});else window.scrollTo({top:0,behavior});
-  pgSpy();
+  const place=()=>{if(secId&&secId!==page.ids[0])document.getElementById(secId)?.scrollIntoView({block:'start',behavior});else window.scrollTo({top:0,behavior});pgSpy()};
+  place();
+  if(changed)requestAnimationFrame(()=>requestAnimationFrame(place));  // again once charts have their size
   // Charts and the map were drawn while hidden; let them measure their new size
   if(changed)requestAnimationFrame(()=>{window.dispatchEvent(new Event('resize'));
     if(page.ids.includes('sec-gbp')&&localMap){localMap.invalidateSize();const L=window.VISIBILITY_DATA.local;if(L?.points)localMap.fitBounds(L.points.flat(),{padding:[24,24]})}});
@@ -2086,6 +2100,7 @@ function pgSpy(){
   const page=PG.pages.find(p=>p.key===PG.cur); if(!page)return;
   let cur=page.ids[0];
   page.ids.forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=90)cur=id});
+  if(innerHeight+scrollY>=document.documentElement.scrollHeight-4){const vis=page.ids.filter(id=>document.getElementById(id)&&!document.getElementById(id).classList.contains('pg-off'));if(location.hash.slice(1)===vis.at(-1)||scrollY>0)cur=vis.at(-1)||cur}
   PG.links.forEach(a=>{const on=a.getAttribute('href')==='#'+cur;a.classList.toggle('active',on);if(on)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')});
 }
 
@@ -2244,13 +2259,13 @@ function renderAI(V){
   }
   const tracked=ai.engines.filter(e=>e.tracked).map(e=>e.label);
   document.getElementById('aiSub').textContent=`${ai.prompts_n} prompts · ${tracked.join(', ')||'no engines yet'} · checked ${ai.checked}`;
-  const engCards=ai.engine_stats.map(e=>`<div class="eng-card ${e.tracked?'click':'off'}" style="--c:${e.color}" ${e.tracked?`role="button" tabindex="0" onclick="aiJump('${e.key}')" onkeydown="if(event.key==='Enter')aiJump('${e.key}')" aria-label="Show ${e.label} answers"`:''}>
+  const engCards=ai.engine_stats.map(e=>`<div class="eng-card ${e.tracked?'click':'off'}" style="--c:${e.color}" ${e.tracked?`role="button" tabindex="0" onclick="aiJump('${e.key}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();aiJump('${e.key}')}" aria-label="Show ${e.label} answers"`:''}>
       <div class="eng-name">${e.label}</div>${e.tracked?bandPill(e.band).replace(' visibility',''):'<span class="band" style="background:var(--gray-100);color:var(--gray-400)">Not tracked</span>'}
       <div class="eng-val">${e.tracked?e.visible:'—'}<small> / ${e.tracked?e.total:ai.prompts_n}</small></div>
       <div class="eng-d">${e.tracked?dHTML(e.delta,{pctOf:e.delta?Math.max(e.visible-e.delta,1):null}):''}</div>
       <div class="eng-note">prompts where you're cited or named ${tip('Out of every prompt this AI answered this week. Click the card to see each answer.')}</div>
       <div class="mini-bar"><span style="width:${e.pct||0}%;background:${e.color}"></span></div></div>`).join('');
-  const nowRows=ai.engine_stats.filter(e=>e.tracked).map(e=>`<div class="now-row click" role="button" tabindex="0" onclick="aiJump('${e.key}')" onkeydown="if(event.key==='Enter')aiJump('${e.key}')">
+  const nowRows=ai.engine_stats.filter(e=>e.tracked).map(e=>`<div class="now-row click" role="button" tabindex="0" onclick="aiJump('${e.key}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();aiJump('${e.key}')}">
       <div class="now-top"><span><span class="sq" style="background:${e.color}"></span>${e.label}</span><span><b>${e.visible} / ${e.total}</b> prompts · ${e.pct}%</span></div>
       <div class="now-bar"><span style="width:${e.pct}%;background:${e.color}"></span></div></div>`).join('');
   box.innerHTML=
@@ -2303,7 +2318,7 @@ function aiToolbar(engine){
   const lbl=engine?['Visible','Not visible']:['Visible somewhere','Not visible anywhere'];
   const hasComp=(window.VISIBILITY_DATA.ai.competitors||[]).length>1;
   return `<div class="vtools">${hasComp?`<button class="vbtn ${aiComp?'primary':''}" onclick="aiComp=!aiComp;renderAITab()">${aiComp?'<i class="ph ph-check"></i> ':''}Competition</button>`:''}<button class="vbtn" onclick="aiExportCSV()">↓ Export CSV</button></div>
-    <div class="vtools"><input class="vsearch" id="aiSearch" placeholder="Filter prompts" value="${esc(aiQuery)}">
+    <div class="vtools"><input class="vsearch" id="aiSearch" aria-label="Filter prompts" placeholder="Filter prompts" value="${esc(aiQuery)}">
       <div class="vchips">${[['all','All'],['visible',lbl[0]],['hidden',lbl[1]]].map(([k,l])=>`<button class="vchip ${aiFilter===k?'active':''}" data-f="${k}">${l}</button>`).join('')}</div></div>`;
 }
 function renderAITab(){
@@ -2366,9 +2381,18 @@ function showAnswer(prompt,engine,c,checked){
       c.state==='error'?`<div class="ans-text">This check failed${c.error?': '+esc(c.error):''}. It will be retried.</div>`:
       `<div class="ans-text">${text||'No answer text was saved for this check.'}${(c.excerpt||'').length>=1800?'…':''}</div>`}
     ${c.sites.length?`<div class="vis-score-lbl">Sites cited</div>${c.sites.map(s=>`<span class="site ${s===domain?'you':compDomains.has(s)?'comp':''}">${esc(s)}</span>`).join('')}`:''}`;
-  document.getElementById('ansModal').classList.add('show');
+  const modal=document.getElementById('ansModal');
+  window._ansOpener=document.activeElement;
+  modal.classList.add('show'); document.body.style.overflow='hidden';
+  modal.querySelector('.ans-q')?.setAttribute('id','ansTitle'); modal.querySelector('[role=dialog]')?.setAttribute('aria-labelledby','ansTitle');
+  modal.querySelector('.ans-close')?.focus();
 }
-window.closeAnswer=()=>document.getElementById('ansModal').classList.remove('show');
+window.closeAnswer=()=>{const m=document.getElementById('ansModal');if(!m.classList.contains('show'))return;
+  m.classList.remove('show');document.body.style.overflow='';window._ansOpener?.focus?.()};
+// keep Tab inside the open answer popup
+document.addEventListener('keydown',e=>{const m=document.getElementById('ansModal');if(e.key!=='Tab'||!m?.classList.contains('show'))return;
+  const f=[...m.querySelectorAll('button,a[href],[tabindex]:not([tabindex="-1"])')];if(!f.length)return;
+  const first=f[0],last=f.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAnswer()});
 
 function renderIdeas(body){
@@ -2724,7 +2748,7 @@ function drawSeoTable(){
   const compCells=k=>seoComp?comps.map(d=>`<td>${k.comps?.[d]?k.comps[d]:'<span class="vfoot">50+</span>'}</td>`).join(''):'';
   const gUrl=kw=>`https://www.google.com/search?q=${encodeURIComponent(kw)}`;
   el.innerHTML=`<div class="vtools"><button class="vbtn ${seoComp?'primary':''}" id="seoCompBtn">${seoComp?'<i class="ph ph-check"></i> ':''}Competition</button><button class="vbtn" onclick="seoExportCSV()">↓ Export CSV</button></div>
-    <div class="vtools"><input class="vsearch" id="seoSearch" placeholder="Filter keywords" value="${esc(seoQuery)}">
+    <div class="vtools"><input class="vsearch" id="seoSearch" aria-label="Filter keywords" placeholder="Filter keywords" value="${esc(seoQuery)}">
       ${seoTab==='rank'?`<select class="vsearch loc-sel" id="seoSort">${[['best','Best position first'],['worst','Worst position first'],['gain','Biggest gains'],['drop','Biggest drops'],['vol','Highest search volume'],['az','A–Z']].map(([k,l])=>`<option value="${k}" ${k===seoSort?'selected':''}>${l}</option>`).join('')}</select>`:''}</div>
     <div class="vtools"><div class="vchips">${chips.map(([k,l])=>`<button class="vchip ${seoChip===k?'active':''}" data-c="${k}">${l}</button>`).join('')}</div></div>
     ${seoComp&&!comps.length?'<div class="vempty" style="margin-bottom:10px;padding:16px">No competitors are being tracked for this report.</div>':''}
@@ -2786,7 +2810,7 @@ function drawOrganicTab(){
   document.querySelectorAll('#orgTabs .vtab').forEach(b=>b.classList.toggle('active',b.dataset.t===orgTab));
   const short=u=>esc((u||'').replace(/^https?:\/\/(www\.)?[^/]+/,'')||'/');
   if(orgTab==='keywords'){
-    el.innerHTML=`<div class="vtools"><input class="vsearch" id="orgSearch" placeholder="Filter keywords" value="${esc(orgQuery)}"><button class="vbtn" onclick="orgCSV()">↓ Export CSV</button></div><div class="vt-wrap" id="orgTable"></div>`;
+    el.innerHTML=`<div class="vtools"><input class="vsearch" id="orgSearch" aria-label="Filter keywords" placeholder="Filter keywords" value="${esc(orgQuery)}"><button class="vbtn" onclick="orgCSV()">↓ Export CSV</button></div><div class="vt-wrap" id="orgTable"></div>`;
     const inp=document.getElementById('orgSearch');inp.oninput=()=>{orgQuery=inp.value;drawRows()};
     const drawRows=()=>{const q=orgQuery.toLowerCase(), rows=O.keywords.filter(k=>!q||(k.keyword||'').toLowerCase().includes(q));
       document.getElementById('orgTable').innerHTML=rows.length?`<table class="vt"><thead><tr><th>Keyword</th><th>Position</th><th>Change</th><th>Volume</th><th>Difficulty</th><th>Visits/mo</th><th class="l">Ranking page</th></tr></thead><tbody>
@@ -2936,6 +2960,7 @@ const HELP={
   'Missed: ad rank':'Searches where your ad didn\'t show because its ad rank was too low. Ad rank combines your bid, ad quality, expected click-through and landing page experience.',
   'Missed: budget':'Searches where your ad didn\'t show because the daily budget had run out. For an Ad Grant this usually means the grant is being fully used.',
   'Landing pages':'The website pages people land on first, with how engaged they are and whether they convert. From Google Analytics.',
+  'GA4 Conversions':'Key events GA4 recorded on the website from every source (donations, sign-ups or whatever is marked as a key event in GA4).',
   'Sessions':'Visits to the website. One person can make several visits.',
   'Users':'Different people who visited (as best GA4 can tell, per device and browser).',
   'New users':'People visiting for the first time in this period.',
@@ -2989,7 +3014,7 @@ function addTips(){
   document.querySelectorAll('.ga4-stat-lbl,.sh-title,.chart-title,.kw-card-title,.ads-card-title,.timing-title,.st-card-title,.kpi-label,.fs-label,.isl,.kpi4-lbl').forEach(el=>{
     if(el.querySelector('.tip'))return;
     const key=el.textContent.replace(/\s+/g,' ').trim();
-    const t=HELP[key]||HELP[key.charAt(0).toUpperCase()+key.slice(1).toLowerCase()];
+    const t=(el.classList.contains('ga4-stat-lbl')&&HELP['GA4 '+key])||HELP[key]||HELP[key.charAt(0).toUpperCase()+key.slice(1).toLowerCase()];
     if(t)el.insertAdjacentHTML('beforeend',' '+tip(t));
   });
 }
