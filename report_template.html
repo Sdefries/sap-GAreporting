@@ -509,6 +509,9 @@ b.up,.up{color:#1A6E3E}b.down,.down{color:#A02020}
 .lp-cell{min-width:200px}.lp-path{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--primary-900,#001d31);overflow-wrap:anywhere}
 .lp-open{color:var(--blue);text-decoration:none;font-size:12px;margin-left:4px}
 .lp-bar{display:inline-block;width:70px;height:6px;border-radius:3px;background:var(--gray-100);vertical-align:middle;overflow:hidden}.lp-bar>span{display:block;height:100%;background:var(--blue);border-radius:3px}
+.is-explain{margin-bottom:14px}.is-lead{font-size:14px;color:var(--primary-900,#001d31);margin-bottom:12px}
+.is-stack{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;background:var(--card)}.is-stack>span{display:block;height:100%}
+.is-key{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;font-size:12px;color:var(--gray-600)}.is-key i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle}
 .wc-q{margin:4px 0 0;padding:4px 10px;border-left:3px solid var(--primary-100,#cfe4ff);color:var(--gray-600)}
 .vchip{padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;color:var(--gray-600);background:#fff;border:1px solid var(--border);cursor:pointer;font-family:var(--font-body)}
 .vchip.active{background:var(--navy-dark);color:#fff;border-color:var(--navy-dark)}
@@ -1062,7 +1065,8 @@ table.vt th{text-transform:none;letter-spacing:0}
 
     <!-- VISIBILITY -->
     <div class="section" id="sec-visibility">
-      <div class="sh"><div class="sh-title">Impression share</div><div class="sh-sub">Impression share &amp; top-of-page</div></div>
+      <div class="sh"><div class="sh-title">Impression share</div><div class="sh-sub">How often your ads showed when they could have</div></div>
+      <div id="isExplain"></div>
       <div class="isg" id="visibilityGrid"></div>
     </div>
 
@@ -1497,6 +1501,26 @@ function renderGA4Demographics(){
     </div>`).join('');
 }
 
+// ── IMPRESSION SHARE EXPLAINER ──
+function isExplain(shown,rank,budget,impr){
+  rank=rank||0; budget=budget||0;
+  const other=Math.max(0,100-shown-rank-budget);
+  const oneIn=shown>0?Math.max(1,Math.round(100/shown)):null;
+  const missed=shown>0&&impr?Math.round(impr/(shown/100)-impr):null;
+  const big=rank>=budget?'rank':'budget';
+  const fix=big==='rank'
+    ?`Most missed showings are down to <b>ad rank</b>: Google's mix of bid, ad quality and landing page. Ad Grants bids are capped at $2 unless the campaign uses Maximize Conversions, so the levers are tighter keyword-to-ad matching, stronger headlines, faster and more relevant landing pages, and Maximize Conversions bidding.`
+    :`Most missed showings are down to <b>budget</b>: the grant runs out before the day does. That's a good sign. It means there's more demand than grant money, so focus spend on the campaigns that convert best.`;
+  return `<div class="card is-explain">
+    <div class="is-lead">Your ads showed for <b>${shown.toFixed(0)}%</b> of the Google searches they were eligible for${oneIn&&oneIn>1?`, about <b>1 in ${oneIn}</b>`:''}.${missed?` That's roughly <b>${fmtN(missed)}</b> showings missed in this period.`:''}</div>
+    <div class="is-stack" role="img" aria-label="Shown ${shown.toFixed(1)}%, missed because of ad rank ${rank.toFixed(1)}%, missed because of budget ${budget.toFixed(1)}%">
+      <span style="width:${shown}%;background:var(--blue)"></span><span style="width:${rank}%;background:#f59e0b"></span><span style="width:${budget}%;background:#94a3b8"></span>${other>0.5?`<span style="width:${other}%;background:var(--gray-100)"></span>`:''}
+    </div>
+    <div class="is-key"><span><i style="background:var(--blue)"></i>Shown ${shown.toFixed(1)}%</span><span><i style="background:#f59e0b"></i>Missed: ad rank ${rank.toFixed(1)}%</span><span><i style="background:#94a3b8"></i>Missed: budget ${budget.toFixed(1)}%</span></div>
+    <div class="vis-opp" style="margin-top:12px"><strong>What it means:</strong> ${fix} Ad Grants ads only show after paid ads, so 10–30% is a typical share for a grant account.</div>
+  </div>`;
+}
+
 // ── LANDING PAGES ──
 let lpQuery='', lpChip='all', lpSort='sessions', lpAll=false;
 function renderLanding(rows){
@@ -1722,18 +1746,19 @@ function render(){
   let visCards='';
   if(impShare!==null&&impShare!==undefined){
     const isColor=impShare>=20?'var(--green)':impShare>=10?'var(--amber)':'var(--red)';
-    visCards+=`<div class="isc"><div class="isl">Search impression share</div><div class="isbb"><div class="isbf" style="width:${Math.min(impShare,100)}%;background:${isColor}"></div></div><div class="isv">${impShare.toFixed(1)}%</div><div class="isn">${impShare>=30?'Strong visibility.':impShare>=15?'Moderate — room for growth.':'Low visibility — significant opportunity.'}</div></div>`;
+    visCards+=`<div class="isc"><div class="isl">Shown</div><div class="isbb"><div class="isbf" style="width:${Math.min(impShare,100)}%;background:${isColor}"></div></div><div class="isv">${impShare.toFixed(1)}%</div><div class="isn">${impShare>=30?'Strong for a grant account.':impShare>=10?'Typical for a grant account.':'Low, even for a grant account.'}</div></div>`;
   }
   if(lostRank!==null&&lostRank!==undefined){
     const lrColor=lostRank<=20?'var(--green)':lostRank<=50?'var(--amber)':'var(--red)';
-    visCards+=`<div class="isc"><div class="isl">Lost IS — Ad Rank</div><div class="isbb"><div class="isbf" style="width:${Math.min(lostRank,100)}%;background:${lrColor}"></div></div><div class="isv">${lostRank.toFixed(1)}%</div><div class="isn">${lostRank<=20?'Excellent ad quality.':lostRank<=40?'Moderate — improve relevance.':'High loss — focus on quality score.'}</div></div>`;
+    visCards+=`<div class="isc"><div class="isl">Missed: ad rank</div><div class="isbb"><div class="isbf" style="width:${Math.min(lostRank,100)}%;background:${lrColor}"></div></div><div class="isv">${lostRank.toFixed(1)}%</div><div class="isn">${lostRank<=20?'Excellent ad quality.':lostRank<=40?'Moderate — improve relevance.':'High loss — focus on quality score.'}</div></div>`;
   }
   if(lostBudget!==null&&lostBudget!==undefined){
     const lbColor=lostBudget<=10?'var(--green)':lostBudget<=30?'var(--amber)':'var(--red)';
-    visCards+=`<div class="isc"><div class="isl">Lost IS — Budget</div><div class="isbb"><div class="isbf" style="width:${Math.min(lostBudget,100)}%;background:${lbColor}"></div></div><div class="isv">${lostBudget.toFixed(1)}%</div><div class="isn">${lostBudget<=10?'Budget not primary constraint.':lostBudget<=30?'Some budget constraints.':'Significant budget limitation.'}</div></div>`;
+    visCards+=`<div class="isc"><div class="isl">Missed: budget</div><div class="isbb"><div class="isbf" style="width:${Math.min(lostBudget,100)}%;background:${lbColor}"></div></div><div class="isv">${lostBudget.toFixed(1)}%</div><div class="isn">${lostBudget<=10?'Budget isn\'t holding the ads back.':lostBudget<=30?'The grant runs out on some days.':'The grant is fully used. More demand than budget.'}</div></div>`;
   }
   if(!visCards)visCards=`<div class="isc" style="grid-column:1/-1;text-align:center;padding:24px;color:#666"><div>Impression share data not available for this period.</div></div>`;
   document.getElementById('visibilityGrid').innerHTML=visCards;
+  document.getElementById('isExplain').innerHTML=impShare!=null?isExplain(impShare,lostRank,lostBudget,t.im):'';
 
   // SEO
   const seoContainer=document.getElementById('seoContent');
@@ -2813,6 +2838,9 @@ const HELP={
   'Clicks by device':'Ad clicks from mobile, desktop and tablet.',
   'Spend by campaign':'How the grant is split across campaigns.',
   'Impression share':'How often your ads showed out of all the times they could have. Lost share is due to ad rank (quality and bids) or budget.',
+  'Shown':'Search impression share: of all the searches your ads were eligible to show for, the share where they actually showed.',
+  'Missed: ad rank':'Searches where your ad didn\'t show because its ad rank was too low. Ad rank combines your bid, ad quality, expected click-through and landing page experience.',
+  'Missed: budget':'Searches where your ad didn\'t show because the daily budget had run out. For an Ad Grant this usually means the grant is being fully used.',
   'Landing pages':'The website pages people land on first, with how engaged they are and whether they convert. From Google Analytics.',
   'Website traffic overview':'All website visits from Google Analytics, from every source, not only ads.',
   'Sessions Over Time':'Website visits per day.',
