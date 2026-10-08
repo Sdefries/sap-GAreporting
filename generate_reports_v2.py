@@ -22,6 +22,7 @@ GOOGLE_ADS_CACHE = load_cache("google_ads_cache.json")
 GA4_CACHE        = load_cache("ga4_cache.json")
 SEO_CACHE        = load_cache("seo_cache.json")
 AI_CACHE         = load_cache("ai_visibility_cache.json")
+LOCAL_CACHE      = load_cache("local_cache.json")
 TEMPLATE         = open("report_template.html").read()
 REPORT_DATE      = datetime.date.today().strftime("%B %d, %Y")
 REPO_BASE        = "https://sdefries.github.io/sap-GAreporting/reports"
@@ -687,7 +688,7 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
         seo = SEO_CACHE.get(slug) if client.get("local_seo_enrolled") else None
 
         cd  = build_client_data(client, rows30, rows7, extended_data, ga4, seo)
-        cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4)
+        cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug), ga4, LOCAL_CACHE.get(slug))
         cd["_devices"] = devices
         t30 = cd["totals_30d"]
         print(f"    GPS:{cd['gps']}/100 | Clicks:{t30.get('cl',0):.0f} | Spend:${t30.get('cost',0):,.0f} | Convs:{t30.get('cv',0):.0f} | GA4:{'✓' if cd['has_ga4'] else '✗'}")
@@ -753,7 +754,7 @@ def _build_index(slugs, summaries=None):
             f'<td>{pill(seo.get("score"), seo.get("band"))}</td>'
             f'<td><a class="go" href="{s}.html#sec-ai">AI tracking →</a></td></tr>')
         nav.append(f'<a href="{s}.html">{name}</a>')
-    html = f'''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    html = f'''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow">
 <title>SAP Client Reports</title>
 <link href="https://fonts.googleapis.com/css2?family=Karla:wght@500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>

@@ -499,9 +499,36 @@ def build_referrals(ga4_entry):
     }
 
 
-def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None):
+def build_local(client, local_entry):
+    """Business Profile details + map-grid rankings (fetch_local.py)."""
+    if not client.get("local_tracking"):
+        return None
+    e = local_entry or {}
+    runs = e.get("runs") or []
+    cur, prev = (runs[-1] if runs else None), (runs[-2] if len(runs) > 1 else None)
+    kws = []
+    if cur:
+        for kw, k in cur["keywords"].items():
+            p = (prev or {}).get("keywords", {}).get(kw) or {}
+            kws.append({**k, "keyword": kw,
+                        "solv_delta": (k["solv"] - p["solv"]) if p else None,
+                        "history": [{"date": short_date(r["date"]), "solv": r["keywords"].get(kw, {}).get("solv")}
+                                    for r in runs if kw in r.get("keywords", {})]})
+    prof = e.get("profile")
+    return {
+        "configured": True,
+        "keywords_configured": (client.get("local_tracking") or {}).get("keywords") or [],
+        "profile": {**prof, "checked": fmt_date(prof.get("checked_at", ""))} if prof else None,
+        "checked": fmt_date(cur["date"]) if cur else None,
+        "center": cur["center"] if cur else None, "radius_miles": cur.get("radius_miles") if cur else None,
+        "points": cur["points"] if cur else None, "keywords": kws,
+    }
+
+
+def build_visibility_data(client, ai_entry, seo_entry, ga4_entry=None, local_entry=None):
     seo_enrolled = bool(client.get("local_seo_enrolled"))
     return {
+        "local": build_local(client, local_entry),
         "referrals": build_referrals(ga4_entry),
         "aeo": build_aeo(client, ai_entry, ga4_entry),
         "ai":  build_ai(ai_entry, seo_entry if seo_enrolled else None),

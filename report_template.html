@@ -3,9 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title id="pageTitle">Client Report — SAP Ad Grants</title>
 <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
 :root{
   /* Sponsor a Purpose CRM design system (packages/ui globals.css) */
@@ -562,6 +565,18 @@ button.st{cursor:pointer}
   table{min-width:0!important}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+.loc-prof{display:grid;grid-template-columns:1fr auto auto;gap:24px;align-items:start}
+.loc-rating{text-align:center;min-width:110px}
+.loc-stars{color:#f59e0b;font-size:15px;letter-spacing:1px}
+.loc-hours{font-size:11px;color:var(--gray-600);min-width:170px}
+.loc-hours div{display:flex;justify-content:space-between;gap:12px;padding:1px 0}
+.loc-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
+.loc-map{height:420px;width:100%}
+.loc-pin{width:30px;height:30px;border-radius:50%;color:#fff;font:700 11px/30px var(--font-body);text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.35);border:2px solid #fff}
+.loc-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11px;color:var(--gray-600);margin-top:10px}
+.loc-fallback{display:grid;gap:6px;padding:16px;height:100%;align-content:center}
+.loc-fallback span{aspect-ratio:1;width:100%;max-width:40px;justify-self:center;border-radius:50%;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+@media(max-width:960px){.loc-prof,.loc-grid{grid-template-columns:1fr}.loc-map{height:320px}}
 /* ── AEO readiness + action plan ── */
 .aeo-list{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .aeo-row{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:14px 18px;border-top:1px solid var(--border)}
@@ -741,7 +756,7 @@ td{border-bottom:1px solid var(--border)}
         <a href="#sec-classic-seo"><span class="ico">↗</span>Classic SEO<span class="sb-badge" id="sbSeoBadge"></span></a>
         <a href="#sec-competitors"><span class="ico">⚑</span>Competitors<span class="sb-badge" id="sbCompBadge"></span></a>
         <a href="#sec-seo"><span class="ico">⚡</span>Site health</a>
-        <a href="#sec-gbp"><span class="ico">⌖</span>Business profile</a>
+        <a href="#sec-gbp"><span class="ico">⌖</span>Local map &amp; profile<span class="sb-badge" id="sbLocalBadge"></span></a>
       </div>
     </div>
     <div class="sb-group open">
@@ -1067,7 +1082,7 @@ td{border-bottom:1px solid var(--border)}
 
     <!-- GOOGLE BUSINESS PROFILE -->
     <div class="section" id="sec-gbp">
-      <div class="sh"><div class="sh-title">Google Business Profile</div><div class="sh-sub" id="gbpSubtitle">Local presence &amp; reviews</div></div>
+      <div class="sh"><div class="sh-title">Local map &amp; Business Profile</div><div class="sh-sub" id="gbpSubtitle">Where you show up on Google Maps</div></div>
       <div id="gbpContent"></div>
     </div>
 
@@ -1693,14 +1708,12 @@ function render(){
   }
 
   // GBP
-  const gbpEnrolled=window.CLIENT_DATA?.gbp_enrolled||window.CLIENT_DATA?.seo_enrolled||false;
-  const gbpData=window.CLIENT_DATA?.gbp||null;
   const gbpContainer=document.getElementById('gbpContent');
-  if(gbpEnrolled&&gbpData&&!gbpData.pending_access){
-    gbpContainer.innerHTML=`<div>GBP data coming soon...</div>`;
+  if(window.VISIBILITY_DATA?.local){
+    renderLocal();
   } else {
-    gbpContainer.innerHTML=`<div class="gbp-locked"><div class="gbp-locked-overlay"><div class="gbp-locked-icon">📍</div><div class="gbp-locked-title">Google Business Profile Insights</div><div class="gbp-locked-desc">Track your local presence, reviews, direction requests, and phone calls from your Google Business Profile.</div><div class="gbp-features"><span class="gbp-feature">Direction Requests</span><span class="gbp-feature">Phone Calls</span><span class="gbp-feature">Reviews & Rating</span><span class="gbp-feature">Photo Views</span><span class="gbp-feature">Discovery Searches</span></div><a href="mailto:scott@sponsorapurpose.org?subject=GBP%20Insights%20Interest" class="gbp-unlock-btn">Learn More →</a></div></div>`;
-    document.getElementById('gbpSubtitle').textContent='Available with SEO package';
+    gbpContainer.innerHTML=`<div class="gbp-locked"><div class="gbp-locked-overlay"><div class="gbp-locked-icon">📍</div><div class="gbp-locked-title">Local map tracking</div><div class="gbp-locked-desc">See where you rank on Google Maps across your area — a heat map of every block — plus your rating, reviews and profile details.</div><div class="gbp-features"><span class="gbp-feature">Map rankings heat map</span><span class="gbp-feature">Share of local voice</span><span class="gbp-feature">Reviews &amp; rating</span><span class="gbp-feature">Local competitors</span></div><a href="mailto:scott@sponsorapurpose.org?subject=Local%20map%20tracking" class="gbp-unlock-btn">Turn it on →</a></div></div>`;
+    document.getElementById('gbpSubtitle').textContent='For organizations people visit in person';
   }
 
   // Insights
@@ -2147,6 +2160,67 @@ function kitBlock(){
 window.kitCopy=(k,btn)=>{const t=window.VISIBILITY_DATA.aeo.kit[k];const done=()=>{btn.textContent='Copied ✓';setTimeout(()=>btn.textContent='Copy',1600)};
   try{navigator.clipboard.writeText(t).then(done,()=>prompt('Copy:',t))}catch(e){prompt('Copy:',t)}};
 window.kitSave=(k,name)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([window.VISIBILITY_DATA.aeo.kit[k]],{type:'text/plain'}));a.download=name;document.body.appendChild(a);a.click();a.remove()};
+
+// ── LOCAL MAP + BUSINESS PROFILE ──
+let localKw=0, localMap=null;
+function rankColor(r){return !r?'#94a3b8':r<=3?'#16a34a':r<=7?'#65a30d':r<=10?'#f59e0b':r<=15?'#ea580c':'#dc2626'}
+function renderLocal(){
+  const L=window.VISIBILITY_DATA.local, box=document.getElementById('gbpContent'), P=L.profile;
+  const stars=v=>v?'★'.repeat(Math.round(v))+'☆'.repeat(5-Math.round(v)):'';
+  let html='';
+  if(P){
+    html+=`<div class="card" style="margin-bottom:14px"><div class="loc-prof">
+      <div><div class="chart-title">${esc(P.title||'')}</div>
+        <div class="vfoot" style="margin:2px 0 8px">${esc(P.category||'')}${P.additional_categories?.length?' · '+esc(P.additional_categories.slice(0,3).join(', ')):''}</div>
+        <div class="aeo-detail">${esc(P.address||'')}${P.phone?' · '+esc(P.phone):''}</div>
+        ${P.url?`<a href="${esc(P.url)}" target="_blank" rel="noopener" class="vfoot" style="color:var(--blue)">${esc(P.url.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))}</a>`:''}
+        <div style="margin-top:8px">${P.is_claimed===false?'<span class="band band-poor">Not claimed — claim it on Google</span>':P.is_claimed?'<span class="band band-good">Claimed</span>':''}</div></div>
+      <div class="loc-rating"><div class="kpi4-val" style="margin:0">${P.rating??'—'}</div><div class="loc-stars">${stars(P.rating)}</div><div class="vfoot" style="margin:0">${P.reviews!=null?fmtN(P.reviews)+' Google reviews':''}</div></div>
+      ${P.hours?.length?`<div class="loc-hours">${P.hours.map(h=>`<div><span>${esc(h.day.slice(0,3))}</span><span>${h.spans.length?esc(h.spans.join(', ')):'Closed'}</span></div>`).join('')}</div>`:''}
+    </div></div>`;
+  }
+  if(!L.keywords.length){
+    box.innerHTML=html+emptyBlock('Your first map scan is on its way',`We'll check ${L.keywords_configured.length?esc(L.keywords_configured.join(', ')):'your keywords'} from a grid of points around your location and show where you rank on Google Maps.`);
+    return;
+  }
+  document.getElementById('gbpSubtitle').textContent=`${L.keywords.length} keyword${L.keywords.length>1?'s':''} · ${L.points.length}×${L.points.length} grid · ${L.radius_miles} mi radius · ${L.checked}`;
+  document.getElementById('sbLocalBadge').textContent=Math.round(L.keywords.reduce((a,k)=>a+k.solv,0)/L.keywords.length)+'%';
+  const k=L.keywords[Math.min(localKw,L.keywords.length-1)];
+  html+=`<div class="vtabs" id="locTabs">${L.keywords.map((x,i)=>`<button class="vtab ${i===localKw?'active':''}" data-i="${i}">${esc(x.keyword)}</button>`).join('')}</div>
+    <div class="loc-grid">
+      <div class="card" style="padding:0;overflow:hidden"><div id="locMap" class="loc-map"></div></div>
+      <div>
+        <div class="card" style="margin-bottom:12px"><div class="kpi4-lbl">Share of local voice</div>
+          <div class="kpi4-val">${k.solv}%</div><div class="kpi4-d">${dHTML(k.solv_delta,{unit:' pts',none:'First scan'})}</div>
+          <div class="vfoot" style="margin:0">Grid points where you're in the top 3 on Google Maps (the map pack people see)</div></div>
+        <div class="card" style="margin-bottom:12px"><div class="kpi4-lbl">Average map rank</div>
+          <div class="kpi4-val">${k.arp??'—'}</div><div class="vfoot" style="margin:0">Where you appear (${k.found} of ${k.points} points) · ${k.atrp} counting “not found” as 21</div></div>
+        ${k.center_top3?.length?`<div class="card"><div class="kpi4-lbl">Top 3 at your location</div>${k.center_top3.map((t,i)=>`<div class="now-top" style="margin:8px 0 0"><span>${i+1}. ${esc(t.title||'')}</span><span>${t.rating?t.rating+'★':''}${t.reviews?` (${fmtN(t.reviews)})`:''}</span></div>`).join('')}</div>`:''}
+      </div>
+    </div>
+    <div class="loc-legend">${[['1–3','#16a34a'],['4–7','#65a30d'],['8–10','#f59e0b'],['11–15','#ea580c'],['16–20','#dc2626'],['Not in top 20','#94a3b8']].map(([l,c])=>`<span><span class="sq" style="background:${c}"></span>${l}</span>`).join('')}</div>`;
+  box.innerHTML=html;
+  box.querySelectorAll('#locTabs .vtab').forEach(b=>b.onclick=()=>{localKw=+b.dataset.i;renderLocal()});
+  drawLocalMap(k);
+}
+function drawLocalMap(k){
+  const L=window.VISIBILITY_DATA.local, el=document.getElementById('locMap');
+  if(localMap){localMap.remove();localMap=null;}
+  const pts=L.points.flat(), ranks=k.grid.flat();
+  if(!window.L){ // map library unavailable: plain grid fallback
+    el.innerHTML=`<div class="loc-fallback" style="grid-template-columns:repeat(${L.points.length},1fr)">${ranks.map(r=>`<span style="background:${rankColor(r)}">${r||'20+'}</span>`).join('')}</div>`;
+    return;
+  }
+  localMap=window.L.map(el,{scrollWheelZoom:false,attributionControl:true});
+  window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(localMap);
+  pts.forEach(([la,ln],i)=>{
+    const r=ranks[i];
+    window.L.marker([la,ln],{icon:window.L.divIcon({className:'',html:`<div class="loc-pin" style="background:${rankColor(r)}">${r||'20+'}</div>`,iconSize:[30,30],iconAnchor:[15,15]})})
+      .bindTooltip(r?`Rank #${r} here`:'Not in the top 20 here').addTo(localMap);
+  });
+  window.L.circleMarker(L.center,{radius:5,color:'#001d31',weight:2,fillColor:'#fff',fillOpacity:1}).bindTooltip('Your location').addTo(localMap);
+  localMap.fitBounds(pts,{padding:[24,24]});
+}
 
 // ── AEO ACTION PLAN + READINESS ──
 function renderAEO(V){

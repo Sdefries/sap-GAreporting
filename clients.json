@@ -111,7 +111,17 @@
         "Kids birthday party venues in Ashland, Oregon"
       ]
     },
-    "competitors": []
+    "competitors": [],
+    "local_tracking": {
+      "business_name": "ScienceWorks Hands-On Museum",
+      "keywords": [
+        "science museum",
+        "things to do with kids",
+        "kids birthday party venue"
+      ],
+      "grid": 5,
+      "radius_miles": 5
+    }
   },
   {
     "slug": "justice-accountability-la",
@@ -731,7 +741,17 @@
         "Low cost spay and neuter in Flathead County"
       ]
     },
-    "competitors": []
+    "competitors": [],
+    "local_tracking": {
+      "business_name": "Humane Society of Northwest Montana",
+      "keywords": [
+        "animal shelter",
+        "adopt a dog",
+        "humane society"
+      ],
+      "grid": 5,
+      "radius_miles": 5
+    }
   },
   {
     "slug": "paws-and-claws",
