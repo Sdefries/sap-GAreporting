@@ -96,7 +96,22 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "ScienceWorks Grant Account \u2014 Ad Grants"
+    "mailerlite_group": "ScienceWorks Grant Account \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "ScienceWorks",
+        "ScienceWorks Hands-On Museum"
+      ],
+      "prompts": [
+        "What are fun things to do with kids in Ashland, Oregon?",
+        "Best science museum near Medford, Oregon",
+        "Summer STEM camps for kids in southern Oregon",
+        "Where can I book a school field trip in Ashland, OR?",
+        "Kids birthday party venues in Ashland, Oregon"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "justice-accountability-la",
@@ -185,7 +200,23 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Justice & Accountability Center of LA \u2014 Ad Grants"
+    "mailerlite_group": "Justice & Accountability Center of LA \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "Justice & Accountability Center",
+        "Justice and Accountability Center",
+        "JACLA"
+      ],
+      "prompts": [
+        "How can I get my criminal record expunged for free in Los Angeles?",
+        "Free record clearing legal help in LA",
+        "Nonprofits that help with expungement in California",
+        "Where can I find free legal aid in Los Angeles?",
+        "Best legal aid nonprofit to donate to in Los Angeles"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "city-dogs-kitties",
@@ -268,7 +299,23 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "City Dogs and City Kitties Rescue \u2014 Ad Grants"
+    "mailerlite_group": "City Dogs and City Kitties Rescue \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "City Dogs and City Kitties",
+        "City Dogs Rescue",
+        "City Kitties"
+      ],
+      "prompts": [
+        "Where can I adopt a dog in Washington DC?",
+        "Best cat rescues in DC",
+        "How do I become a dog foster in Washington DC?",
+        "Animal rescues in DC that need volunteers",
+        "Best animal rescue to donate to in Washington DC"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "guardian-pet-trust",
@@ -348,7 +395,21 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Guardian Pet Trust \u2014 Ad Grants"
+    "mailerlite_group": "Guardian Pet Trust \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "Guardian Pet Trust"
+      ],
+      "prompts": [
+        "Who can help seniors pay for vet care in California?",
+        "What happens to my pet if I die or move into a nursing home?",
+        "How do I set up a pet trust in California?",
+        "Financial help for low-income pet owners in California",
+        "Nonprofits that help seniors keep their pets"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "earth-organization",
@@ -415,7 +476,22 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "The Earth Organization \u2014 Ad Grants"
+    "mailerlite_group": "The Earth Organization \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "The Earth Organization",
+        "Earth Organization"
+      ],
+      "prompts": [
+        "Best environmental nonprofits to donate to",
+        "Which conservation charities make the biggest impact?",
+        "How can I take action on climate change in my community?",
+        "Environmental organizations that need volunteers",
+        "Most trusted nonprofits working on climate change"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "ziva",
@@ -466,7 +542,22 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "A Second Chance for Ziva \u2014 Ad Grants"
+    "mailerlite_group": "A Second Chance for Ziva \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "A Second Chance for Ziva",
+        "Second Chance for Ziva"
+      ],
+      "prompts": [
+        "Where can I adopt a rescue dog?",
+        "Dog rescues that need foster homes",
+        "Best small dog rescue organizations to donate to",
+        "How can I help dogs that are about to be euthanized?",
+        "Animal rescues that pay for emergency vet care"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "pink-paws",
@@ -532,7 +623,22 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Pink Paws For The Cause \u2014 Ad Grants"
+    "mailerlite_group": "Pink Paws For The Cause \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "Pink Paws For The Cause",
+        "Pink Paws"
+      ],
+      "prompts": [
+        "Where can I adopt a rescue cat?",
+        "Cat and dog rescues looking for foster volunteers",
+        "Best small animal rescue to donate to",
+        "How can I help homeless cats and dogs?",
+        "Rescues that place senior pets"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "humane-society-nw-montana",
@@ -610,7 +716,22 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Humane Society of Northwest Montana \u2014 Ad Grants"
+    "mailerlite_group": "Humane Society of Northwest Montana \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "Humane Society of Northwest Montana",
+        "Flathead Humane Society"
+      ],
+      "prompts": [
+        "Where can I adopt a dog in Kalispell, MT?",
+        "Animal shelters in the Flathead Valley",
+        "Where can I adopt a cat in Kalispell?",
+        "Where can I volunteer with animals in Kalispell, Montana?",
+        "Low cost spay and neuter in Flathead County"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "paws-and-claws",
@@ -662,7 +783,22 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Paws and Claws Animal Welfare Society \u2014 Ad Grants"
+    "mailerlite_group": "Paws and Claws Animal Welfare Society \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "Paws and Claws Animal Welfare Society",
+        "Paws and Claws"
+      ],
+      "prompts": [
+        "Where can I adopt a pet from a local rescue?",
+        "Low cost spay and neuter programs near me",
+        "Animal welfare charities worth donating to",
+        "How can I volunteer at an animal rescue?",
+        "Best rescues for adopting a cat"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "silver-linings",
@@ -746,7 +882,22 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Silver Linings Rescue Ranch \u2014 Ad Grants"
+    "mailerlite_group": "Silver Linings Rescue Ranch \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "Silver Linings Rescue Ranch",
+        "Silver Linings"
+      ],
+      "prompts": [
+        "Where can I adopt a rescued horse?",
+        "Best horse rescue organizations to donate to",
+        "Horse rescues that need volunteers",
+        "How can I sponsor a rescued horse?",
+        "Who helps unwanted or neglected horses?"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "straydog",
@@ -812,7 +963,22 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Straydog Inc \u2014 Ad Grants"
+    "mailerlite_group": "Straydog Inc \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "Straydog Inc",
+        "Straydog"
+      ],
+      "prompts": [
+        "Where can I adopt a rescued stray dog?",
+        "Best dog rescues to donate to",
+        "What should I do if I find a stray dog?",
+        "Dog rescues looking for foster homes",
+        "Organizations that rescue homeless dogs"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "red-clay-ranch",
@@ -897,7 +1063,22 @@
       }
     ],
     "contact_first_name": "",
-    "mailerlite_group": "Red Clay Ranch Equine Rescue & Sanctuary \u2014 Ad Grants"
+    "mailerlite_group": "Red Clay Ranch Equine Rescue & Sanctuary \u2014 Ad Grants",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "Red Clay Ranch",
+        "Red Clay Ranch Equine Rescue"
+      ],
+      "prompts": [
+        "Where can I adopt a rescue horse?",
+        "Equine sanctuaries that accept donations",
+        "Horse rescue volunteer opportunities",
+        "How can I sponsor a horse at a sanctuary?",
+        "Best horse rehabilitation rescues"
+      ]
+    },
+    "competitors": []
   },
   {
     "slug": "pup-profile",
@@ -985,6 +1166,20 @@
       }
     ],
     "mailerlite_group_id": "183135259834976217",
-    "mailerlite_subscriber_id": "137396765079897422"
+    "mailerlite_subscriber_id": "137396765079897422",
+    "ai_tracking": {
+      "enabled": true,
+      "brand_names": [
+        "Pup Profile"
+      ],
+      "prompts": [
+        "Where can I adopt a rescue dog in Los Angeles?",
+        "Which dogs at LA shelters urgently need homes?",
+        "How do I adopt a dog from a shelter in San Diego?",
+        "Dog rescues in Phoenix that need fosters",
+        "Best nonprofit to donate to for urgent dog rescue"
+      ]
+    },
+    "competitors": []
   }
 ]

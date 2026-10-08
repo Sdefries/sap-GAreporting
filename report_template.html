@@ -42,7 +42,9 @@ body{font-family:var(--font-body);background:var(--gray-100);color:var(--navy-da
 .sb-nav a.active{color:#fff;background:rgba(0,131,198,0.2);border-left-color:var(--blue)}
 .sb-nav a .dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
 .sb-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,0.07);font-size:10px;color:rgba(255,255,255,0.28);font-weight:500}
-.main{margin-left:230px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.main{margin-left:230px;flex:1;min-width:0;display:flex;flex-direction:column;min-height:100vh}
+.g2>*,.g3>*,.kw-grid>*,.isg>*,.timing-grid>*{min-width:0}
+.kw-card,.st-card,.ads-card,.card,.timing-card{overflow-x:auto}
 .topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .topbar-left{display:flex;align-items:center;gap:12px}
 .topbar-title{font-family:var(--font-head);font-weight:800;font-size:20px;color:var(--navy)}
@@ -414,6 +416,124 @@ tr:hover td{background:#F5F9FF}
   .gps-card{flex-direction:column;gap:20px}
   .gps-right{min-width:unset;width:100%}
 }
+/* ── Sidebar groups (Search & AI visibility) ── */
+.sb-vis{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-vis-val{font-family:var(--font-head);font-weight:800;font-size:20px;color:#fff;line-height:1}
+.sb-vis-val small{display:block;font-family:var(--font-body);font-size:9px;font-weight:700;margin-top:4px;color:rgba(255,255,255,0.45);letter-spacing:0.04em}
+.sb-group{margin-bottom:2px}
+.sb-group-head{width:100%;display:flex;align-items:center;justify-content:space-between;background:none;border:none;cursor:pointer;padding:10px 20px 4px;font-family:var(--font-body);font-size:10px;font-weight:700;color:rgba(255,255,255,0.32);text-transform:uppercase;letter-spacing:0.1em}
+.sb-group-head:hover{color:rgba(255,255,255,0.6)}
+.sb-chev{font-size:12px;transition:transform 0.15s}
+.sb-group:not(.open) .sb-chev{transform:rotate(-90deg)}
+.sb-group:not(.open) .sb-group-links{display:none}
+.sb-nav a{padding:7px 20px}
+.sb-nav a .ico{width:12px;text-align:center;font-size:11px;flex-shrink:0}
+.sb-badge{margin-left:auto;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7)}
+.sb-badge:empty{display:none}
+
+/* ── Visibility shared ── */
+.band{display:inline-block;letter-spacing:0;font-family:var(--font-body);line-height:1.4;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;vertical-align:middle;white-space:nowrap}
+.band-poor{background:#FDEAEA;color:#A02020}.band-moderate{background:#FEF6E6;color:#9A6010}
+.band-good{background:#E4F7ED;color:#1A6E3E}.band-great{background:#1A6E3E;color:#fff}
+b.up,.up{color:#1A6E3E}b.down,.down{color:#A02020}
+.vis-summary{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--navy);border-radius:var(--radius);padding:18px 22px;margin-bottom:14px}
+.vis-summary h4{font-family:var(--font-head);font-weight:800;font-size:13px;color:var(--navy);margin-bottom:8px}
+.vis-summary ul{padding-left:18px;font-size:12px;line-height:1.75;color:var(--gray-600)}
+.vis-summary ul b{color:var(--navy)}
+.vis-opp{margin-top:12px;background:var(--gray-100);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;line-height:1.6;color:var(--gray-600)}
+.vis-opp strong{color:var(--navy)}
+.vis-score{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--amber);border-radius:var(--radius);padding:18px 22px;margin-bottom:14px;display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:28px;align-items:center}
+.vis-score-lbl{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.vis-score-big{font-family:var(--font-head);font-weight:800;font-size:44px;color:var(--navy);line-height:1;letter-spacing:-1px;display:flex;align-items:center;gap:10px}
+.vis-score-d{font-size:11px;font-weight:600;color:var(--gray-400);margin-top:6px}
+.vis-score-note{font-size:11px;color:var(--gray-400);margin-top:8px;line-height:1.5}
+.gauge{position:relative;padding-top:6px}
+.gauge-bar{display:flex;height:8px;border-radius:4px;overflow:hidden}
+.gauge-bar span{display:block;height:100%}
+.gauge-mark{position:absolute;top:0;width:2px;height:20px;background:var(--navy-dark);border-radius:1px;transform:translateX(-1px)}
+.gauge-lbls{display:flex;margin-top:8px;font-size:10px;font-weight:700;color:var(--gray-600)}
+.gauge-lbls div{text-align:center}
+.gauge-lbls small{display:block;font-size:9px;font-weight:500;color:var(--gray-400)}
+.eng-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px}
+.eng-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 14px 12px;border-top:3px solid var(--c,var(--blue))}
+.eng-card.off{opacity:0.5}
+.eng-name{font-family:var(--font-head);font-weight:800;font-size:12px;color:var(--navy);margin-bottom:6px}
+.eng-val{font-family:var(--font-head);font-weight:800;font-size:24px;color:var(--navy);margin:8px 0 2px}
+.eng-val small{font-size:12px;color:var(--gray-400);font-weight:600}
+.eng-d{font-size:10px;font-weight:700;color:var(--gray-400);min-height:14px}
+.eng-note{font-size:10px;color:var(--gray-400);margin:4px 0 8px}
+.mini-bar{height:4px;background:var(--gray-200);border-radius:2px;overflow:hidden}
+.mini-bar span{display:block;height:100%;border-radius:2px}
+.now-row{margin-bottom:12px}
+.now-top{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:var(--gray-600);margin-bottom:5px}
+.now-top b{color:var(--navy)}
+.sq{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.now-bar{height:7px;background:var(--gray-200);border-radius:4px;overflow:hidden}
+.now-bar span{display:block;height:100%;border-radius:4px}
+.vtabs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.vtab{padding:7px 14px;border-radius:7px;font-size:11px;font-weight:700;color:var(--navy);background:#fff;border:1px solid var(--border);cursor:pointer;font-family:var(--font-body)}
+.vtab:hover{border-color:var(--blue)}
+.vtab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.vtools{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}
+.vbtn{padding:7px 13px;border-radius:7px;font-size:11px;font-weight:700;color:var(--navy);background:#fff;border:1px solid var(--border);cursor:pointer;font-family:var(--font-body);text-decoration:none;display:inline-block}
+.vbtn:hover{border-color:var(--blue);color:var(--blue)}
+.vbtn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.vbtn:disabled{opacity:0.45;cursor:not-allowed}
+.vsearch{flex:1;min-width:180px;max-width:320px;padding:8px 12px;border-radius:7px;border:1px solid var(--border);font-family:var(--font-body);font-size:12px;background:#fff}
+.vchips{display:flex;gap:4px}
+.vchip{padding:4px 10px;border-radius:12px;font-size:10px;font-weight:700;color:var(--gray-600);background:#fff;border:1px solid var(--border);cursor:pointer;font-family:var(--font-body)}
+.vchip.active{background:var(--navy-dark);color:#fff;border-color:var(--navy-dark)}
+.vt-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto}
+table.vt{min-width:720px}
+table.vt th,table.vt td{text-align:center}
+table.vt th:first-child,table.vt td:first-child{text-align:left}
+table.vt td.l,table.vt th.l{text-align:left}
+table.vt td{font-size:12px;color:var(--navy-dark)}
+table.vt tr.you td{background:#FBF6EA}
+table.vt tr.you td:first-child{box-shadow:inset 3px 0 0 var(--amber)}
+.vt-prompt{max-width:340px;line-height:1.45}
+.vt-read{display:block;margin-top:3px;font-size:10px;font-weight:700;color:var(--amber);cursor:pointer;background:none;border:none;padding:0;font-family:var(--font-body)}
+.st{display:inline-block;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;border:none;font-family:var(--font-body)}
+button.st{cursor:pointer}
+.st-ok{background:#E4F7ED;color:#1A6E3E}.st-no{background:var(--gray-100);color:var(--gray-600)}.st-na{background:transparent;color:var(--gray-400);font-weight:600}
+.vis-in{font-family:var(--font-head);font-weight:800;padding:3px 8px;border-radius:8px;font-size:12px}
+.vis-in.ok{background:#E4F7ED;color:#1A6E3E}.vis-in.zero{background:#FDEAEA;color:#A02020}.vis-in.some{background:#FEF6E6;color:#9A6010}
+.yn{font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;background:var(--gray-100);color:var(--gray-400)}
+.yn.yes{background:#E4F7ED;color:#1A6E3E}
+.site{display:inline-block;margin:2px 3px 2px 0;padding:2px 7px;border-radius:6px;font-size:10px;background:var(--gray-100);color:var(--gray-600);border:1px solid var(--border)}
+.site.you{background:#E4F7ED;color:#1A6E3E;border-color:#B3DFC6}.site.comp{background:#FDEAEA;color:#A02020;border-color:#F0B8B8}
+.lead{background:#E4F7ED;color:#1A6E3E;font-weight:800;padding:2px 7px;border-radius:6px}
+.vfoot{font-size:10px;color:var(--gray-400);margin-top:8px;line-height:1.5}
+.ideas-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.idea{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:12px;color:var(--navy-dark);cursor:pointer;line-height:1.4}
+.idea:hover{border-color:var(--blue)}
+.idea input{margin-top:2px}
+.idea small{display:block;font-size:10px;color:var(--gray-400);margin-top:2px}
+.vempty{background:var(--card);border:1px dashed rgba(15,43,91,0.2);border-radius:var(--radius);padding:28px;text-align:center;color:var(--gray-600);font-size:12px;line-height:1.7}
+.vempty h4{font-family:var(--font-head);font-weight:800;font-size:16px;color:var(--navy);margin-bottom:6px}
+.vempty ul{display:inline-block;text-align:left;margin:10px 0 0;padding-left:18px}
+.kpi4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.kpi4 .card{padding:16px 18px}
+.kpi4-lbl{font-size:11px;font-weight:700;color:var(--navy)}
+.kpi4-val{font-family:var(--font-head);font-weight:800;font-size:26px;color:var(--navy);margin:10px 0 4px}
+.kpi4-val small{font-size:12px;color:var(--gray-400);font-weight:600}
+.kpi4-d{font-size:10px;font-weight:700;color:var(--gray-400);margin-bottom:10px;min-height:14px}
+.ans-modal{position:fixed;inset:0;background:rgba(10,22,40,0.45);z-index:300;display:none;align-items:center;justify-content:center;padding:16px}
+.ans-modal.show{display:flex}
+.ans-box{background:#fff;border-radius:14px;max-width:680px;width:100%;max-height:85vh;overflow-y:auto;padding:24px 26px;position:relative;box-shadow:0 16px 48px rgba(0,0,0,0.2)}
+.ans-close{position:absolute;top:12px;right:14px;border:none;background:none;font-size:24px;color:var(--gray-400);cursor:pointer;line-height:1}
+.ans-eng{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-400)}
+.ans-q{font-family:var(--font-head);font-weight:800;font-size:17px;color:var(--navy);margin:4px 30px 10px 0;line-height:1.3}
+.ans-text{font-size:12.5px;line-height:1.7;color:var(--gray-600);white-space:pre-wrap;background:var(--gray-100);border-radius:8px;padding:14px 16px;margin:12px 0}
+.ans-text mark{background:#FFF1B8;color:var(--navy-dark);padding:0 2px;border-radius:2px}
+@media(max-width:1180px){.eng-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:960px){
+  .vis-score{grid-template-columns:1fr;gap:16px}
+  .kpi4{grid-template-columns:repeat(2,1fr)}
+  .ideas-grid{grid-template-columns:1fr}
+  .eng-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:960px){.kw-grid,.timing-grid{grid-template-columns:1fr}.seo-grid{grid-template-columns:repeat(2,1fr)}.seo-grid>*{min-width:0}}
 </style>
 </head>
 <body>
@@ -423,6 +543,13 @@ tr:hover td{background:#F5F9FF}
   <div class="loading-box">
     <div class="loading-spinner"></div>
     <div class="loading-text" id="loadingText">Loading report...</div>
+  </div>
+</div>
+
+<div class="ans-modal" id="ansModal" onclick="if(event.target===this)closeAnswer()">
+  <div class="ans-box" role="dialog" aria-modal="true">
+    <button class="ans-close" onclick="closeAnswer()" aria-label="Close">×</button>
+    <div id="ansBody"></div>
   </div>
 </div>
 
@@ -445,29 +572,55 @@ tr:hover td{background:#F5F9FF}
     <div class="sb-gps-sub" id="sbGpsSub">Loading...</div>
     <div class="gps-bar"><div class="gps-fill" id="sbGpsFill" style="width:0%"></div></div>
   </div>
+  <div class="sb-vis">
+    <div class="sb-vis-item"><div class="sb-gps-lbl">AI visibility</div><div class="sb-vis-val" id="sbAiScore">—</div></div>
+    <div class="sb-vis-item"><div class="sb-gps-lbl">Search visibility</div><div class="sb-vis-val" id="sbSeoScore">—</div></div>
+  </div>
   <div class="sb-nav">
-    <div class="sb-nav-lbl">Report sections</div>
-    <a href="#sec-score"><span class="dot"></span>Performance score</a>
-    <a href="#sec-overview"><span class="dot"></span>Overview</a>
-    <a href="#sec-funnel"><span class="dot"></span>Donor funnel</a>
-    <a href="#sec-metrics"><span class="dot"></span>Cost metrics</a>
-    <a href="#sec-trends"><span class="dot"></span>Trends</a>
-    <a href="#sec-campaigns"><span class="dot"></span>Campaigns</a>
-    <a href="#sec-keywords"><span class="dot"></span>Keywords</a>
-    <a href="#sec-ads"><span class="dot"></span>Ad Copy</a>
-    <a href="#sec-timing"><span class="dot"></span>Timing</a>
-    <a href="#sec-search-terms"><span class="dot"></span>Search Terms</a>
-    <a href="#sec-audience"><span class="dot"></span>Audience</a>
-    <a href="#sec-landing"><span class="dot"></span>Landing pages</a>
-    <a href="#sec-ga4-traffic"><span class="dot"></span>Traffic overview</a>
-    <a href="#sec-ga4-devices"><span class="dot"></span>Device performance</a>
-    <a href="#sec-ga4-demographics"><span class="dot"></span>Demographics</a>
-    <a href="#sec-location"><span class="dot"></span>Location</a>
-    <a href="#sec-visibility"><span class="dot"></span>Visibility</a>
-    <a href="#sec-seo"><span class="dot"></span>SEO</a>
-    <a href="#sec-gbp"><span class="dot"></span>Business Profile</a>
-    <a href="#sec-actions"><span class="dot"></span>What we did</a>
-    <a href="#sec-insights"><span class="dot"></span>Recommendations</a>
+    <div class="sb-group open">
+      <button class="sb-group-head" onclick="toggleGroup(this)"><span>Google Ad Grants</span><span class="sb-chev">⌄</span></button>
+      <div class="sb-group-links">
+        <a href="#sec-score"><span class="dot"></span>Performance score</a>
+        <a href="#sec-overview"><span class="dot"></span>Overview</a>
+        <a href="#sec-funnel"><span class="dot"></span>Donor funnel</a>
+        <a href="#sec-metrics"><span class="dot"></span>Cost metrics</a>
+        <a href="#sec-trends"><span class="dot"></span>Trends</a>
+        <a href="#sec-campaigns"><span class="dot"></span>Campaigns</a>
+        <a href="#sec-keywords"><span class="dot"></span>Keywords</a>
+        <a href="#sec-ads"><span class="dot"></span>Ad copy</a>
+        <a href="#sec-timing"><span class="dot"></span>Timing</a>
+        <a href="#sec-search-terms"><span class="dot"></span>Search terms</a>
+        <a href="#sec-audience"><span class="dot"></span>Audience</a>
+        <a href="#sec-visibility"><span class="dot"></span>Impression share</a>
+      </div>
+    </div>
+    <div class="sb-group open">
+      <button class="sb-group-head" onclick="toggleGroup(this)"><span>Website</span><span class="sb-chev">⌄</span></button>
+      <div class="sb-group-links">
+        <a href="#sec-landing"><span class="dot"></span>Landing pages</a>
+        <a href="#sec-ga4-traffic"><span class="dot"></span>Traffic overview</a>
+        <a href="#sec-ga4-devices"><span class="dot"></span>Devices</a>
+        <a href="#sec-ga4-demographics"><span class="dot"></span>Demographics</a>
+        <a href="#sec-location"><span class="dot"></span>Location</a>
+      </div>
+    </div>
+    <div class="sb-group open">
+      <button class="sb-group-head" onclick="toggleGroup(this)"><span>Search &amp; AI visibility</span><span class="sb-chev">⌄</span></button>
+      <div class="sb-group-links">
+        <a href="#sec-ai"><span class="ico">✦</span>AI tracking<span class="sb-badge" id="sbAiBadge"></span></a>
+        <a href="#sec-classic-seo"><span class="ico">↗</span>Classic SEO<span class="sb-badge" id="sbSeoBadge"></span></a>
+        <a href="#sec-competitors"><span class="ico">⚑</span>Competitors<span class="sb-badge" id="sbCompBadge"></span></a>
+        <a href="#sec-seo"><span class="ico">⚡</span>Site health</a>
+        <a href="#sec-gbp"><span class="ico">⌖</span>Business profile</a>
+      </div>
+    </div>
+    <div class="sb-group open">
+      <button class="sb-group-head" onclick="toggleGroup(this)"><span>Action plan</span><span class="sb-chev">⌄</span></button>
+      <div class="sb-group-links">
+        <a href="#sec-actions"><span class="dot"></span>What we did</a>
+        <a href="#sec-insights"><span class="dot"></span>Recommendations</a>
+      </div>
+    </div>
   </div>
   <div class="sb-foot" id="sbFoot">Data via Google Ads API</div>
 </nav>
@@ -673,6 +826,12 @@ tr:hover td{background:#F5F9FF}
       </div>
     </div>
 
+    <!-- VISIBILITY -->
+    <div class="section" id="sec-visibility">
+      <div class="sh"><div class="sh-title">Impression share</div><div class="sh-sub">Impression share &amp; top-of-page</div></div>
+      <div class="isg" id="visibilityGrid"></div>
+    </div>
+
     <!-- LANDING PAGES -->
     <div class="section" id="sec-landing">
       <div class="sh"><div class="sh-title">Landing pages</div><div class="sh-sub" id="lpSub">Top pages by sessions</div></div>
@@ -741,15 +900,27 @@ tr:hover td{background:#F5F9FF}
       <div id="locationCallout"></div>
     </div>
 
-    <!-- VISIBILITY -->
-    <div class="section" id="sec-visibility">
-      <div class="sh"><div class="sh-title">Visibility</div><div class="sh-sub">Impression share &amp; top-of-page</div></div>
-      <div class="isg" id="visibilityGrid"></div>
+    <!-- ═══════════════════════════════════════════════════════════════
+         SEARCH & AI VISIBILITY — rendered by renderVisibility()
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-ai">
+      <div class="sh"><div class="sh-title">AI tracking</div><div class="sh-sub" id="aiSub">AI Overviews, AI Mode, ChatGPT, Claude, Gemini, Perplexity</div></div>
+      <div id="aiContent"></div>
+    </div>
+
+    <div class="section" id="sec-classic-seo">
+      <div class="sh"><div class="sh-title">Classic SEO</div><div class="sh-sub" id="classicSub">Google keyword rankings</div></div>
+      <div id="classicContent"></div>
+    </div>
+
+    <div class="section" id="sec-competitors">
+      <div class="sh"><div class="sh-title">Competitors</div><div class="sh-sub">You vs. the organizations people find instead</div></div>
+      <div id="compContent"></div>
     </div>
 
     <!-- SEO -->
     <div class="section" id="sec-seo">
-      <div class="sh"><div class="sh-title">SEO Performance</div><div class="sh-sub" id="seoSubtitle">Organic search &amp; site speed</div></div>
+      <div class="sh"><div class="sh-title">Site health</div><div class="sh-sub" id="seoSubtitle">Organic search &amp; site speed</div></div>
       <div id="seoContent"></div>
     </div>
 
@@ -1480,7 +1651,7 @@ function initClient(){
 }
 
 function updateSidebarActive(){
-  const ids=['sec-score','sec-overview','sec-funnel','sec-metrics','sec-trends','sec-campaigns','sec-keywords','sec-ads','sec-timing','sec-search-terms','sec-audience','sec-landing','sec-ga4-traffic','sec-ga4-devices','sec-ga4-demographics','sec-location','sec-visibility','sec-seo','sec-gbp','sec-actions','sec-insights'];
+  const ids=[...document.querySelectorAll('.sb-nav a')].map(a=>a.getAttribute('href').slice(1));
   const links=document.querySelectorAll('.sb-nav a');
   function check(){
     let cur=ids[0];
@@ -1493,10 +1664,324 @@ function updateSidebarActive(){
   check();
 }
 
+// ── SEARCH & AI VISIBILITY ────────────────────────────────────────────────────
+// Rendered from window.VISIBILITY_DATA (built by visibility_report.py).
+const VIS_CONTACT='scott@sponsorapurpose.org';
+const VIS_STATES={
+  cited_named:['✓ Cited + named','ok'], cited:['✓ Cited','ok'], named:['✓ Named','ok'],
+  not_visible:['Not visible','no'], no_answer:['No AI answer','na'],
+  untracked:['Not tracked','na'], error:['Check failed','na']
+};
+const VIS_CSV_STATE={cited_named:'Cited + named',cited:'Cited',named:'Named',not_visible:'Not visible',no_answer:'No AI answer',untracked:'Not tracked',error:'Check failed'};
+let visCharts={}, aiTab='all', aiFilter='all', aiQuery='';
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function bandPill(b){return b?`<span class="band band-${b.toLowerCase()}">${b}${b==='Poor'||b==='Moderate'||b==='Good'||b==='Great'?' visibility':''}</span>`:''}
+function bandColor(b){return {Poor:'#D94F3D',Moderate:'#E8A020',Good:'#3DAA69',Great:'#1A6E3E'}[b]||'#9EABBE'}
+// lowerIsBetter: for average position, a negative change is good
+function dHTML(d,{unit='',pctOf=null,lowerIsBetter=false,none='No earlier update yet'}={}){
+  if(d===null||d===undefined)return `<span>${none}</span>`;
+  if(d===0)return '<span>No change</span>';
+  const good=lowerIsBetter?d<0:d>0, arrow=d>0?'↑':'↓';
+  const rel=pctOf?` (${d>0?'+':''}${(d/pctOf*100).toFixed(1)}%)`:'';
+  return `<span class="${good?'up':'down'}">${arrow} ${d>0?'+':''}${Math.round(d*10)/10}${unit}${rel}</span>`;
+}
+function gauge(score){
+  const segs=[['Poor','0–20%',20,'#F4A6A0'],['Moderate','20–50%',30,'#F5D06A'],['Good','50–80%',30,'#8FDDAA'],['Great','80%+',20,'#2DA05A']];
+  return `<div class="gauge"><div class="gauge-bar">${segs.map(s=>`<span style="width:${s[2]}%;background:${s[3]}"></span>`).join('')}</div>
+    <div class="gauge-mark" style="left:${Math.max(0,Math.min(100,score||0))}%"></div>
+    <div class="gauge-lbls">${segs.map(s=>`<div style="width:${s[2]}%">${s[0]}<small>${s[1]}</small></div>`).join('')}</div></div>`;
+}
+function scoreBlock(title,score,band,delta,note){
+  return `<div class="vis-score" style="border-left-color:${bandColor(band)}">
+    <div><div class="vis-score-lbl">${title}</div>
+      <div class="vis-score-big">${score??'—'}%${bandPill(band)}</div>
+      <div class="vis-score-d">${dHTML(delta,{unit:' points',none:'First update'})}${delta?' since the last update':''}</div>
+      <div class="vis-score-note">${note}</div></div>
+    ${gauge(score)}</div>`;
+}
+function summaryBlock(items,opp){
+  return `<div class="vis-summary"><h4>Summary</h4><ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul>
+    ${opp?`<div class="vis-opp"><strong>Biggest opportunity:</strong> ${opp}</div>`:''}</div>`;
+}
+function emptyBlock(title,body){return `<div class="vempty"><h4>${title}</h4>${body}</div>`}
+function downloadCSV(name,rows){
+  const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
+function slugName(){return (window.CLIENT_DATA?.slug||'client')}
+window.toggleGroup=btn=>btn.parentElement.classList.toggle('open');
+
+function renderVisibility(){
+  const V=window.VISIBILITY_DATA||{};
+  const ai=V.ai, seo=V.seo;
+  const sbAi=document.getElementById('sbAiScore'), sbSeo=document.getElementById('sbSeoScore');
+  sbAi.innerHTML=ai&&ai.score!=null?`${ai.score}%<small>${ai.band.toUpperCase()}</small>`:'—<small>SETTING UP</small>';
+  sbSeo.innerHTML=seo?`${seo.score}%<small>${seo.band.toUpperCase()}</small>`:(V.seo_enrolled?'—<small>PENDING</small>':'—<small>SEO PACKAGE</small>');
+  if(ai)document.getElementById('sbAiBadge').textContent=ai.prompts_n;
+  if(seo)document.getElementById('sbSeoBadge').textContent=seo.tracked;
+  const nComp=Math.max((ai?.competitors||[]).length,(seo?.competitors||[]).length)-1;
+  if(nComp>0)document.getElementById('sbCompBadge').textContent=nComp;
+  renderAI(V);renderClassic(V);renderCompetitors(V);
+}
+
+// ── AI TRACKING ──
+function renderAI(V){
+  const box=document.getElementById('aiContent'), ai=V.ai;
+  if(!ai){
+    box.innerHTML=emptyBlock('AI tracking is being set up',
+      `We're adding the questions people ask ChatGPT, Gemini, Claude, Perplexity and Google's AI answers when they're looking for an organization like yours.
+       Your first AI visibility check appears here after the next weekly run.`);
+    return;
+  }
+  const tracked=ai.engines.filter(e=>e.tracked).map(e=>e.label);
+  document.getElementById('aiSub').textContent=`${ai.prompts_n} prompts · ${tracked.join(', ')||'no engines yet'} · checked ${ai.checked}`;
+  const engCards=ai.engine_stats.map(e=>`<div class="eng-card ${e.tracked?'':'off'}" style="--c:${e.color}">
+      <div class="eng-name">${e.label}</div>${e.tracked?bandPill(e.band).replace(' visibility',''):'<span class="band" style="background:var(--gray-100);color:var(--gray-400)">Not tracked</span>'}
+      <div class="eng-val">${e.tracked?e.visible:'—'}<small> / ${e.tracked?e.total:ai.prompts_n}</small></div>
+      <div class="eng-d">${e.tracked?dHTML(e.delta,{pctOf:e.delta?Math.max(e.visible-e.delta,1):null}):''}</div>
+      <div class="eng-note">prompts where you're cited or named</div>
+      <div class="mini-bar"><span style="width:${e.pct||0}%;background:${e.color}"></span></div></div>`).join('');
+  const nowRows=ai.engine_stats.filter(e=>e.tracked).map(e=>`<div class="now-row">
+      <div class="now-top"><span><span class="sq" style="background:${e.color}"></span>${e.label}</span><span><b>${e.visible} / ${e.total}</b> prompts · ${e.pct}%</span></div>
+      <div class="now-bar"><span style="width:${e.pct}%;background:${e.color}"></span></div></div>`).join('');
+  box.innerHTML=
+    summaryBlock(ai.summary,ai.opportunity)+
+    scoreBlock('AI visibility score',ai.score,ai.band,ai.score_delta,
+      `You show up in <b>${ai.visible_answers} of ${ai.total_answers}</b> AI answers (${ai.prompts_n} prompts × ${tracked.length} AIs) and in at least one AI for <b>${ai.prompts_any} of ${ai.prompts_n}</b> prompts.`)+
+    `<div class="eng-grid">${engCards}</div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="chart-card"><div class="chart-title">AI visibility over time</div>
+        <div class="vfoot" style="margin:2px 0 12px">Share of prompts where each AI cites or names ${esc(ai.brand)}</div>
+        <div class="cw" style="height:200px"><canvas id="aiTrendChart"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">AI visibility right now</div>
+        <div class="vfoot" style="margin:2px 0 14px">Prompts where you show up, out of all ${ai.prompts_n} you track</div>${nowRows||'<div class="vfoot">No engines checked yet.</div>'}</div>
+    </div>
+    <div class="vtabs" id="aiTabs">
+      <button class="vtab" data-tab="all">All AIs</button>
+      ${ai.engines.filter(e=>e.tracked).map(e=>`<button class="vtab" data-tab="${e.key}">${e.label}</button>`).join('')}
+      <button class="vtab" data-tab="ideas">Prompt ideas</button>
+    </div>
+    <div id="aiTabBody"></div>
+    <div class="vfoot">Visible = the AI cites ${esc(ai.domain||'your website')} or names ${esc(ai.brand)}. Click any cell to read that answer.<br>
+      AI answers vary from one check to the next, so read them as a trend. Google results via DataForSEO.</div>`;
+  document.querySelectorAll('#aiTabs .vtab').forEach(b=>b.onclick=()=>{aiTab=b.dataset.tab;aiFilter='all';aiQuery='';renderAITab()});
+  renderAITab();
+  // Trend chart
+  if(visCharts.aiTrend)visCharts.aiTrend.destroy();
+  const T=ai.trend;
+  visCharts.aiTrend=new Chart(document.getElementById('aiTrendChart'),{type:'line',
+    data:{labels:T.labels,datasets:ai.engines.filter(e=>e.tracked).map(e=>({label:e.label,data:T.series[e.key],borderColor:e.color,backgroundColor:e.color,borderWidth:2,pointRadius:3,cubicInterpolationMode:'monotone',spanGaps:true}))},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:8,boxHeight:8,font:{size:10,family:"'Montserrat',sans-serif"},color:'#5A6A82'}},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y}%`}}},
+      scales:{x:{ticks:tk,grid:{display:false}},y:{ticks:{...tk,callback:v=>v+'%'},grid:gl,min:0,max:100}}}});
+}
+
+function aiRowsFiltered(engine){
+  const ai=window.VISIBILITY_DATA.ai, q=aiQuery.toLowerCase();
+  return ai.rows.map((r,i)=>({...r,idx:i})).filter(r=>{
+    if(q&&!r.prompt.toLowerCase().includes(q))return false;
+    const vis=engine?['cited_named','cited','named'].includes(r.cells[engine].state):r.visible_in>0;
+    return aiFilter==='all'||(aiFilter==='visible'?vis:!vis);
+  });
+}
+function aiToolbar(engine){
+  const lbl=engine?['Visible','Not visible']:['Visible somewhere','Not visible anywhere'];
+  return `<div class="vtools"><button class="vbtn" onclick="aiExportCSV()">↓ Export CSV</button></div>
+    <div class="vtools"><input class="vsearch" id="aiSearch" placeholder="Filter prompts" value="${esc(aiQuery)}">
+      <div class="vchips">${[['all','All'],['visible',lbl[0]],['hidden',lbl[1]]].map(([k,l])=>`<button class="vchip ${aiFilter===k?'active':''}" data-f="${k}">${l}</button>`).join('')}</div></div>`;
+}
+function renderAITab(){
+  const ai=window.VISIBILITY_DATA.ai, body=document.getElementById('aiTabBody');
+  document.querySelectorAll('#aiTabs .vtab').forEach(b=>b.classList.toggle('active',b.dataset.tab===aiTab));
+  if(aiTab==='ideas'){renderIdeas(body);return;}
+  const engine=aiTab==='all'?null:aiTab;
+  body.innerHTML=aiToolbar(engine)+'<div class="vt-wrap" id="aiTable"></div>';
+  const inp=document.getElementById('aiSearch');
+  inp.oninput=()=>{aiQuery=inp.value;drawAITable(engine)};
+  body.querySelectorAll('.vchip').forEach(c=>c.onclick=()=>{aiFilter=c.dataset.f;body.querySelectorAll('.vchip').forEach(x=>x.classList.toggle('active',x===c));drawAITable(engine)});
+  drawAITable(engine);
+}
+function drawAITable(engine){
+  const ai=window.VISIBILITY_DATA.ai, rows=aiRowsFiltered(engine), el=document.getElementById('aiTable');
+  if(!rows.length){el.innerHTML='<div class="vfoot" style="padding:18px">No prompts match.</div>';return;}
+  if(!engine){
+    const engs=ai.engines.filter(e=>e.tracked);
+    el.innerHTML=`<table class="vt"><thead><tr><th>Prompt</th>${engs.map(e=>`<th><span class="sq" style="background:${e.color}"></span>${e.label}</th>`).join('')}<th>Visible in</th></tr></thead><tbody>
+      ${rows.map(r=>`<tr><td class="vt-prompt">${esc(r.prompt)}</td>${engs.map(e=>{const c=r.cells[e.key],[t,k]=VIS_STATES[c.state];
+        return `<td>${c.state==='untracked'?`<span class="st st-na">${t}</span>`:`<button class="st st-${k}" onclick="openAnswer(${r.idx},'${e.key}')">${t}</button>`}</td>`}).join('')}
+        <td><span class="vis-in ${r.visible_in===0?'zero':r.visible_in===r.of?'ok':'some'}">${r.visible_in} / ${r.of}</span></td></tr>`).join('')}
+      </tbody></table>`;
+    return;
+  }
+  const label=ai.engines.find(e=>e.key===engine).label;
+  const compDomains=new Set(ai.competitors.filter(c=>!c.you).map(c=>c.domain));
+  el.innerHTML=`<div class="vfoot" style="padding:10px 14px 0">Checked ${ai.checked}. “Named” means the answer mentions ${esc(ai.brand)}; “Cited” means it cites ${esc(ai.domain||'your website')}.</div>
+    <table class="vt"><thead><tr><th>Prompt</th><th>Named</th><th>Cited</th><th class="l">Sites ${label} cited</th></tr></thead><tbody>
+    ${rows.map(r=>{const c=r.cells[engine];return `<tr><td class="vt-prompt">${esc(r.prompt)}<button class="vt-read" onclick="openAnswer(${r.idx},'${engine}')">Read answer ↗</button></td>
+      <td><span class="yn ${c.named?'yes':''}">${c.named?'Yes':'No'}</span></td><td><span class="yn ${c.cited?'yes':''}">${c.cited?'Yes':'No'}</span></td>
+      <td class="l">${c.state==='no_answer'?'<span class="vfoot">No AI answer for this search</span>':c.state==='error'?'<span class="vfoot">Check failed — retried next run</span>':
+        (c.sites.length?c.sites.map(s=>`<span class="site ${s===ai.domain?'you':compDomains.has(s)?'comp':''}">${esc(s)}</span>`).join(''):'—')}</td></tr>`}).join('')}
+    </tbody></table><div class="vfoot" style="padding:0 14px 10px">■ Green = you · red = a tracked competitor.</div>`;
+}
+window.aiExportCSV=()=>{
+  const ai=window.VISIBILITY_DATA.ai, engs=ai.engines.filter(e=>e.tracked);
+  const rows=[['Prompt',...engs.map(e=>e.label),'Visible in']];
+  ai.rows.forEach(r=>rows.push([r.prompt,...engs.map(e=>VIS_CSV_STATE[r.cells[e.key].state]),`${r.visible_in}/${r.of}`]));
+  downloadCSV(`${slugName()}-ai-visibility.csv`,rows);
+};
+window.openAnswer=(idx,engine)=>{
+  const ai=window.VISIBILITY_DATA.ai, r=ai.rows[idx], c=r.cells[engine], e=ai.engines.find(x=>x.key===engine);
+  const [t,k]=VIS_STATES[c.state];
+  let text=esc(c.excerpt||'')
+    .replace(/\[([^\]]+)\]\((?:[^)]+)\)/g,'$1')        // [label](url) → label
+    .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>')           // **bold**
+    .replace(/^#{1,6}\s*/gm,'');                         // markdown headings
+  [ai.brand,ai.domain].filter(Boolean).forEach(n=>{text=text.replace(new RegExp(esc(n).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),m=>`<mark>${m}</mark>`)});
+  const compDomains=new Set(ai.competitors.filter(x=>!x.you).map(x=>x.domain));
+  document.getElementById('ansBody').innerHTML=`<div class="ans-eng"><span class="sq" style="background:${e.color}"></span>${e.label} · checked ${ai.checked}</div>
+    <div class="ans-q">${esc(r.prompt)}</div><span class="st st-${k}">${t}</span>
+    ${c.state==='no_answer'?'<div class="ans-text">Google did not show an AI answer for this search.</div>':
+      c.state==='error'?`<div class="ans-text">This check failed and will be retried on the next run.</div>`:
+      `<div class="ans-text">${text||'No answer text was saved for this check.'}${(c.excerpt||'').length>=1800?'…':''}</div>`}
+    ${c.sites.length?`<div class="vis-score-lbl">Sites cited</div>${c.sites.map(s=>`<span class="site ${s===ai.domain?'you':compDomains.has(s)?'comp':''}">${esc(s)}</span>`).join('')}`:''}`;
+  document.getElementById('ansModal').classList.add('show');
+};
+window.closeAnswer=()=>document.getElementById('ansModal').classList.remove('show');
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAnswer()});
+
+function renderIdeas(body){
+  const ai=window.VISIBILITY_DATA.ai, I=ai.ideas||{paa:[],ai:[]};
+  const item=(q,from)=>`<label class="idea"><input type="checkbox" value="${esc(q)}"><div>${esc(q)}${from?`<small>From: ${esc(from)}</small>`:''}</div></label>`;
+  body.innerHTML=`<div class="vtools"><button class="vbtn primary" id="ideaTrack" disabled>Track selected prompts</button>
+      <span class="vfoot" style="margin:0">Pick questions you'd like us to start monitoring. We'll add them at the next weekly check.</span></div>
+    <div class="ideas-grid">
+      <div class="card"><div class="chart-title">People also ask on Google</div>
+        <div class="vfoot" style="margin:2px 0 12px">Questions Google shows for your keywords and prompts. Good signals of what people ask.</div>
+        ${I.paa.length?I.paa.map(p=>item(p.q,p.from)).join(''):'<div class="vfoot">None collected yet.</div>'}</div>
+      <div class="card"><div class="chart-title">AI-suggested prompts</div>
+        <div class="vfoot" style="margin:2px 0 12px">Questions donors, adopters and volunteers are likely to ask an AI, based on your programs and area.</div>
+        ${I.ai.length?I.ai.map(p=>item(p,'')).join(''):'<div class="vfoot">No suggestions yet. They refresh monthly.</div>'}</div>
+    </div>`;
+  const btn=document.getElementById('ideaTrack');
+  const boxes=[...body.querySelectorAll('input[type=checkbox]')];
+  boxes.forEach(b=>b.onchange=()=>{const n=boxes.filter(x=>x.checked).length;btn.disabled=!n;btn.textContent=n?`Track ${n} selected prompt${n>1?'s':''}`:'Track selected prompts'});
+  btn.onclick=()=>{
+    const picked=boxes.filter(x=>x.checked).map(x=>x.value);
+    const subj=`AI tracking: add prompts for ${window.CLIENT_DATA?.name||''}`;
+    const msg=`Please start tracking these prompts:\n\n${picked.map(p=>'• '+p).join('\n')}\n`;
+    location.href=`mailto:${VIS_CONTACT}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(msg)}`;
+  };
+}
+
+// ── CLASSIC SEO ──
+function renderClassic(V){
+  const box=document.getElementById('classicContent'), s=V.seo;
+  if(!s){
+    box.innerHTML=V.seo_enrolled
+      ?emptyBlock('Your first rankings check is on its way','Keyword positions, page-one visibility and trends appear here after the next weekly SEO run.')
+      :emptyBlock('Track where you rank on Google',`See exactly where you show up for the searches that matter: average position, how many keywords are on page one,
+        which ones are close to the top 3, whether Google's AI Overview cites you, and how you compare with similar organizations.
+        <div style="margin-top:14px"><a class="vbtn primary" href="mailto:${VIS_CONTACT}?subject=Classic%20SEO%20tracking">Add keyword tracking →</a></div>`);
+    document.getElementById('classicSub').textContent='Available with the SEO package';
+    return;
+  }
+  document.getElementById('classicSub').textContent=`${s.tracked} keywords · checked from ${(s.location||'United States').replace(/,/g,', ')} · Google desktop · ${s.checked}`;
+  const kpi=(lbl,val,of,d,opts,bar,note)=>`<div class="card"><div class="kpi4-lbl">${lbl}</div>
+    <div class="kpi4-val">${val??'—'}${of?`<small> / ${of}</small>`:''}</div><div class="kpi4-d">${dHTML(d,opts)}</div>
+    <div class="mini-bar"><span style="width:${bar}%;background:var(--navy)"></span></div>${note?`<div class="vfoot">${note}</div>`:''}</div>`;
+  box.innerHTML=summaryBlock(s.summary,s.opportunity)+
+    scoreBlock('Search visibility score',s.score,s.band,s.score_delta,
+      `${s.top10} of ${s.tracked} keywords are on page 1 (top 10), ${s.top3} of them in the top 3. Keywords on page 2 or lower get almost no clicks.`)+
+    `<div class="kpi4">
+      ${kpi('Average position',s.avg_position,null,s.avg_delta,{lowerIsBetter:true,pctOf:s.avg_position&&s.avg_delta?s.avg_position-s.avg_delta:null,none:'First update'},s.avg_position?Math.max(5,100-(s.avg_position-1)*5):0)}
+      ${kpi('Top 3',s.top3,s.tracked,s.top3_delta,{pctOf:s.top3_delta?Math.max(s.top3-s.top3_delta,1):null,none:'First update'},s.top3/s.tracked*100)}
+      ${kpi('Top 10',s.top10,s.tracked,s.top10_delta,{pctOf:s.top10_delta?Math.max(s.top10-s.top10_delta,1):null,none:'First update'},s.top10/s.tracked*100)}
+      ${kpi('AI Overview citations',s.ai_cited,s.ai_shown,s.ai_cited_delta,{none:'First update'},s.ai_shown?s.ai_cited/s.ai_shown*100:0,`AI Overview shows on ${s.ai_shown} of ${s.tracked} keywords`)}
+    </div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="chart-card"><div class="chart-title">Average position over time</div><div class="cw" style="height:190px;margin-top:12px"><canvas id="seoAvgChart"></canvas></div>
+        <div class="vfoot">Average of keywords in the top 20. The line rises as rankings improve.</div></div>
+      <div class="chart-card"><div class="chart-title">Keywords in the top 3 and top 10</div><div class="cw" style="height:190px;margin-top:12px"><canvas id="seoTopChart"></canvas></div></div>
+    </div>
+    <div class="vtools"><button class="vbtn" onclick="seoExportCSV()">↓ Export CSV</button></div>
+    <div class="vt-wrap"><table class="vt"><thead><tr><th>Keyword</th><th>Position</th><th>Change</th><th>AI Overview</th><th class="l">Ranking page</th></tr></thead><tbody>
+      ${s.keywords.map(k=>`<tr><td>${esc(k.kw)}${k.local_pack?' <span class="site you">Map pack</span>':''}</td>
+        <td><b>${k.pos?'#'+k.pos:'—'}</b>${k.pos?'':'<div class="vfoot" style="margin:0">Not in top 20</div>'}</td>
+        <td>${k.new?'<span class="up">New</span>':k.change?`<span class="${k.change>0?'up':'down'}">${k.change>0?'↑':'↓'} ${Math.abs(k.change)}</span>`:'<span class="vfoot">—</span>'}</td>
+        <td>${k.ai_overview?(k.ai_cited?'<span class="yn yes">Cites you</span>':'<span class="yn">Shown, not cited</span>'):'<span class="vfoot">None</span>'}</td>
+        <td class="l">${k.url?`<a href="${esc(k.url)}" target="_blank" rel="noopener" style="color:var(--blue);font-size:11px">${esc(k.url.replace(/^https?:\/\/(www\.)?/,''))}</a>`:'—'}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  const T=s.trend;
+  ['seoAvg','seoTop'].forEach(k=>{if(visCharts[k])visCharts[k].destroy()});
+  visCharts.seoAvg=new Chart(document.getElementById('seoAvgChart'),{type:'line',
+    data:{labels:T.labels,datasets:[{label:'Average position',data:T.avg,borderColor:'#B08A3E',backgroundColor:'rgba(176,138,62,0.15)',fill:'start',borderWidth:2,pointRadius:3,cubicInterpolationMode:'monotone'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:tk,grid:{display:false}},y:{reverse:true,suggestedMin:1,suggestedMax:20,ticks:tk,grid:gl}}}});
+  visCharts.seoTop=new Chart(document.getElementById('seoTopChart'),{type:'line',
+    data:{labels:T.labels,datasets:[
+      {label:'Top 3',data:T.top3,borderColor:'#2a78d6',backgroundColor:'#2a78d6',borderWidth:2,pointRadius:3,cubicInterpolationMode:'monotone'},
+      {label:'Top 10',data:T.top10,borderColor:'#e0603c',backgroundColor:'#e0603c',borderWidth:2,pointRadius:3,cubicInterpolationMode:'monotone'}]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:8,boxHeight:8,font:{size:10,family:"'Montserrat',sans-serif"},color:'#5A6A82'}}},
+      scales:{x:{ticks:tk,grid:{display:false}},y:{min:0,suggestedMax:s.tracked,ticks:{...tk,precision:0},grid:gl}}}});
+}
+window.seoExportCSV=()=>{
+  const s=window.VISIBILITY_DATA.seo;
+  downloadCSV(`${slugName()}-keyword-rankings.csv`,[['Keyword','Position','Change','AI Overview','AI Overview cites you','Map pack','URL'],
+    ...s.keywords.map(k=>[k.kw,k.pos||'',k.change||'',k.ai_overview?'Yes':'No',k.ai_cited?'Yes':'No',k.local_pack?'Yes':'No',k.url||''])]);
+};
+
+// ── COMPETITORS ──
+function renderCompetitors(V){
+  const box=document.getElementById('compContent');
+  const seoRows=V.seo?.competitors||[], aiRows=V.ai?.competitors||[];
+  if(seoRows.length<2&&aiRows.length<2){
+    box.innerHTML=emptyBlock('Compare yourself with similar organizations',
+      `Tell us 3–5 organizations people might find instead of you. We'll show how you stack up in Google rankings and in AI answers, prompt by prompt.
+       <div style="margin-top:14px"><a class="vbtn primary" href="mailto:${VIS_CONTACT}?subject=${encodeURIComponent('Competitor tracking for '+(window.CLIENT_DATA?.name||''))}">Suggest competitors →</a></div>`);
+    return;
+  }
+  const lead=(rows,key,lowerIsBetter)=>{const vals=rows.map(r=>r[key]).filter(v=>v!==null&&v!==undefined&&v!==0);
+    if(!vals.length)return null;return lowerIsBetter?Math.min(...vals):Math.max(...vals)};
+  const cell=(v,best,suffix='')=>v===null||v===undefined?'—':(v===best?`<span class="lead">${v}${suffix}</span>`:`${v}${suffix}`);
+  const name=r=>`<b>${esc(r.name)}</b>${r.you?' <span class="band band-moderate">You</span>':''}<div class="vfoot" style="margin:0">${esc(r.domain||'')}</div>`;
+  let html='<div class="vtools"><button class="vbtn" onclick="compExportCSV()">↓ Export CSV</button></div>';
+  if(seoRows.length>1){
+    const b={avg:lead(seoRows,'avg',true),n1:lead(seoRows,'n1'),top3:lead(seoRows,'top3'),top10:lead(seoRows,'top10'),ranking:lead(seoRows,'ranking')};
+    html+=`<div class="vt-wrap" style="margin-bottom:14px"><div class="chart-title" style="padding:14px 16px 4px">Classic SEO rankings</div>
+      <table class="vt"><thead><tr><th>Site</th><th>Avg position</th><th>#1</th><th>Top 3</th><th>Top 10</th><th>Ranking</th></tr></thead><tbody>
+      ${seoRows.map(r=>`<tr class="${r.you?'you':''}"><td>${name(r)}</td><td>${cell(r.avg,b.avg)}</td><td>${cell(r.n1,b.n1)}</td><td>${cell(r.top3,b.top3)}</td><td>${cell(r.top10,b.top10)}</td>
+        <td>${r.ranking===b.ranking?`<span class="lead">${r.ranking} / ${r.tracked}</span>`:`${r.ranking} / ${r.tracked}`}</td></tr>`).join('')}
+      </tbody></table><div class="vfoot" style="padding:0 16px 10px"><span class="lead">12</span> Leader in that column · same ${V.seo.tracked} keywords for everyone</div></div>`;
+  }
+  if(aiRows.length>1){
+    const engs=V.ai.engines.filter(e=>e.tracked);
+    const bs=lead(aiRows,'score'), be={};
+    engs.forEach(e=>{be[e.key]=lead(aiRows.map(r=>({v:r.per[e.key]?.visible})),'v')});
+    html+=`<div class="vt-wrap"><div class="chart-title" style="padding:14px 16px 4px">AI visibility <span class="vfoot">prompts where each site is cited or named</span></div>
+      <table class="vt"><thead><tr><th>Site</th><th>Score</th>${engs.map(e=>`<th>${e.label}</th>`).join('')}</tr></thead><tbody>
+      ${aiRows.map(r=>`<tr class="${r.you?'you':''}"><td>${name(r)}</td><td>${r.score==null?'—':(r.score===bs?`<span class="lead">${r.score}%</span>`:r.score+'%')} ${bandPill(r.band).replace(' visibility','')}</td>
+        ${engs.map(e=>{const p=r.per[e.key]||{visible:0,total:0};return `<td>${p.visible===be[e.key]?`<span class="lead">${p.visible}</span>`:p.visible}<span class="vfoot"> / ${p.total}</span></td>`}).join('')}</tr>`).join('')}
+      </tbody></table></div>`;
+  }
+  box.innerHTML=html;
+}
+window.compExportCSV=()=>{
+  const V=window.VISIBILITY_DATA, rows=[['Section','Site','Domain','Metric','Value']];
+  (V.seo?.competitors||[]).forEach(r=>['avg','n1','top3','top10','ranking'].forEach(k=>rows.push(['Classic SEO',r.name,r.domain,k,r[k]??''])));
+  (V.ai?.competitors||[]).forEach(r=>{rows.push(['AI visibility',r.name,r.domain,'score %',r.score??'']);
+    Object.entries(r.per).forEach(([e,p])=>rows.push(['AI visibility',r.name,r.domain,e,`${p.visible}/${p.total}`]))});
+  downloadCSV(`${slugName()}-competitors.csv`,rows);
+};
+
 // Boot
 const overlay=document.getElementById('loadingOverlay');
 overlay.classList.add('show');
-window.addEventListener('load',()=>{initClient();render();overlay.classList.remove('show');});
+window.addEventListener('load',()=>{initClient();render();renderVisibility();updateSidebarActive();overlay.classList.remove('show');});
 </script>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
@@ -1507,6 +1992,7 @@ window.addEventListener('load',()=>{initClient();render();overlay.classList.remo
      window.LP_DATA      — Landing page rows
      window.STATE_DATA   — State rows
      window.CITY_DATA    — City rows
+     window.VISIBILITY_DATA — AI tracking, Classic SEO, Competitors (visibility_report.py)
 
      window.GA4_DATA = {
        overview: {

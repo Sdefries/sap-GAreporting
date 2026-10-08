@@ -8,6 +8,7 @@ on:
     - cron: '0 13 * * *'    # Alert watcher 6am PST daily (posts only NEW critical issues)
     - cron: '0 14 * * 1'    # Monday digest 7am PST — the weekly all-client rollup
     - cron: '0 16 * * 1'    # Weekly reports Monday 9am PST
+    - cron: '0 12 * * 1'    # AI visibility + SEO rankings Monday 5am PST (before reports)
  
   workflow_dispatch:
     inputs:
@@ -22,6 +23,7 @@ on:
           - reports
           - fetch_ga4
           - fetch_seo
+          - fetch_ai
           - all
  
 jobs:
@@ -192,6 +194,7 @@ jobs:
     name: Fetch SEO data
     runs-on: ubuntu-latest
     if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 12 * * 1') ||
       (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.job == 'fetch_seo' || github.event.inputs.job == 'all'))
  
@@ -207,7 +210,9 @@ jobs:
  
       - name: Fetch SEO data
         env:
-          PAGESPEED_API_KEY: ${{ secrets.PAGESPEED_API_KEY }}
+          PAGESPEED_API_KEY:   ${{ secrets.PAGESPEED_API_KEY }}
+          DATAFORSEO_LOGIN:    ${{ secrets.DATAFORSEO_LOGIN }}
+          DATAFORSEO_PASSWORD: ${{ secrets.DATAFORSEO_PASSWORD }}
         run: python fetch_seo.py
  
       - name: Commit SEO cache
@@ -216,3 +221,41 @@ jobs:
           git config --global user.name "SAP Automation"
           git add seo_cache.json || true
           git diff --staged --quiet && echo "No changes" || (git commit -m "Update SEO cache" && git pull --rebase --autostash origin main && git push)
+
+  # ── FETCH AI VISIBILITY (Monday 5am PST) ──────────────────────────────
+  # Asks each client's tracked prompts in AI Overviews, AI Mode, ChatGPT,
+  # Claude, Gemini and Perplexity. Engines without a secret are skipped.
+  fetch_ai:
+    name: Fetch AI visibility
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 12 * * 1') ||
+      (github.event_name == 'workflow_dispatch' &&
+       (github.event.inputs.job == 'fetch_ai' || github.event.inputs.job == 'all'))
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install anthropic
+
+      - name: Fetch AI visibility
+        env:
+          DATAFORSEO_LOGIN:    ${{ secrets.DATAFORSEO_LOGIN }}
+          DATAFORSEO_PASSWORD: ${{ secrets.DATAFORSEO_PASSWORD }}
+          OPENAI_API_KEY:      ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY:      ${{ secrets.GEMINI_API_KEY }}
+          PERPLEXITY_API_KEY:  ${{ secrets.PERPLEXITY_API_KEY }}
+        run: python fetch_ai_visibility.py
+
+      - name: Commit AI visibility cache
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "SAP Automation"
+          git add ai_visibility_cache.json || true
+          git diff --staged --quiet && echo "No changes" || (git commit -m "Update AI visibility $(date +'%B %d, %Y')" && git pull --rebase --autostash origin main && git push)

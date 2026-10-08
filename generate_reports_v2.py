@@ -4,6 +4,9 @@ Builds one HTML report per client by injecting data into a clean template.
 The template has zero client data — all values come from cache files.
 """
 import json, os, sys, datetime, argparse, urllib.request
+from html import escape
+
+from visibility_report import build_visibility_data
 
 # ── LOAD ──────────────────────────────────────────────────────────────────────
 with open("clients.json") as f:
@@ -18,6 +21,7 @@ def load_cache(path):
 GOOGLE_ADS_CACHE = load_cache("google_ads_cache.json")
 GA4_CACHE        = load_cache("ga4_cache.json")
 SEO_CACHE        = load_cache("seo_cache.json")
+AI_CACHE         = load_cache("ai_visibility_cache.json")
 TEMPLATE         = open("report_template.html").read()
 REPORT_DATE      = datetime.date.today().strftime("%B %d, %Y")
 REPO_BASE        = "https://sdefries.github.io/sap-GAreporting/reports"
@@ -576,6 +580,8 @@ def render(cd):
     ga4_obj = build_ga4_data(cd.get("_ga4_raw"))
     ga4_json = json.dumps(ga4_obj, default=str) if ga4_obj else "null"
 
+    vis_json = json.dumps(cd.get("_visibility"), default=str).replace("</", "<\\/")
+
     injection = (
         f"\n<script>\n"
         f"// Injected by generate_reports_v2.py — {cd['name']} ({cd['account_id']}) — {datetime.datetime.now().strftime('%Y-%m-%d')}\n"
@@ -585,6 +591,7 @@ def render(cd):
         f"window.STATE_DATA  = {state_data};\n"
         f"window.CITY_DATA   = {city_data};\n"
         f"window.GA4_DATA    = {ga4_json};\n"
+        f"window.VISIBILITY_DATA = {vis_json};\n"
         f"</script>\n"
     )
     return TEMPLATE.replace("<!-- CLIENT DATA INJECTED HERE BY generate_reports_v2.py -->", injection)
@@ -602,7 +609,7 @@ def validate(slug, html):
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def run(slug_filter=None, dry_run=False, validate_only=False):
     print(f"\nGenerate Reports v2 — {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}")
-    generated=[]; failed=[]
+    generated=[]; failed=[]; summaries={}
 
     for client in CLIENTS:
         slug = client["slug"]
@@ -635,6 +642,7 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
         seo = SEO_CACHE.get(slug) if client.get("local_seo_enrolled") else None
 
         cd  = build_client_data(client, rows30, rows7, extended_data, ga4, seo)
+        cd["_visibility"] = build_visibility_data(client, AI_CACHE.get(slug), SEO_CACHE.get(slug))
         t30 = cd["totals_30d"]
         print(f"    GPS:{cd['gps']}/100 | Clicks:{t30.get('cl',0):.0f} | Spend:${t30.get('cost',0):,.0f} | Convs:{t30.get('cv',0):.0f} | GA4:{'✓' if cd['has_ga4'] else '✗'}")
 
@@ -654,9 +662,10 @@ def run(slug_filter=None, dry_run=False, validate_only=False):
         with open(f"reports/{slug}.html","w",encoding="utf-8") as f: f.write(html)
         print(f"    ✓ Saved")
         generated.append(slug)
+        summaries[slug] = cd
 
-    if not dry_run and not validate_only and generated:
-        _build_index(generated)
+    if not dry_run and not validate_only and generated and not slug_filter:
+        _build_index(generated, summaries)
 
     print(f"\n{'='*50}\nGenerated:{len(generated)} Failed:{len(failed)}\n{'='*50}")
     if failed:
@@ -672,20 +681,64 @@ def _slack_alert(slug, name, violations):
             headers={"Content-Type":"application/json"}), timeout=10)
     except: pass
 
-def _build_index(slugs):
+def _build_index(slugs, summaries=None):
+    """Agency hub: every client with Ad Grants, AI and search visibility at a glance."""
+    summaries = summaries or {}
     cmap = {c["slug"]:c for c in CLIENTS}
-    rows = "".join(
-        f'<tr><td><a href="{s}.html">{cmap.get(s,{}).get("name",s)}</a></td>'
-        f'<td>{cmap.get(s,{}).get("google_ads_id","")}</td></tr>\n'
-        for s in sorted(slugs)
-    )
-    html = (f'<!DOCTYPE html><html><head><meta charset="UTF-8"><title>SAP Reports</title>'
-            f'<style>body{{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;padding:0 20px}}'
-            f'table{{width:100%;border-collapse:collapse}}th,td{{padding:10px;border-bottom:1px solid #eee;text-align:left}}'
-            f'th{{background:#0F2B5B;color:white}}a{{color:#0083C6}}</style></head>'
-            f'<body><h1 style="color:#0F2B5B">SAP Ad Grants Reports</h1>'
-            f'<p style="font-size:12px;color:#666">Generated {REPORT_DATE} · {len(slugs)} clients</p>'
-            f'<table><thead><tr><th>Client</th><th>Account ID</th></tr></thead><tbody>{rows}</tbody></table></body></html>')
+
+    def pill(score, band):
+        if score is None: return '<span class="muted">—</span>'
+        return f'<span class="score">{score}%</span> <span class="band band-{(band or "").lower()}">{band}</span>'
+
+    rows = []
+    nav = []
+    for s in sorted(slugs, key=lambda s: cmap.get(s,{}).get("name",s).lower()):
+        name = escape(cmap.get(s,{}).get("name",s))
+        cd   = summaries.get(s) or {}
+        vis  = cd.get("_visibility") or {}
+        ai   = vis.get("ai") or {}
+        seo  = vis.get("seo") or {}
+        comp = {"compliant":"CTR compliant","at_risk":"CTR at risk","low_activity":"Low activity"}.get(cd.get("compliance"),"—")
+        rows.append(
+            f'<tr><td><a href="{s}.html">{name}</a><div class="muted">{escape(cmap.get(s,{}).get("google_ads_id",""))}</div></td>'
+            f'<td><span class="score">{cd.get("gps","—")}</span><span class="muted">/100</span></td>'
+            f'<td><span class="comp comp-{cd.get("compliance","")}">{comp}</span></td>'
+            f'<td>{pill(ai.get("score"), ai.get("band"))}</td>'
+            f'<td>{pill(seo.get("score"), seo.get("band"))}</td>'
+            f'<td><a href="{s}.html#sec-ai">AI tracking →</a></td></tr>')
+        nav.append(f'<a href="{s}.html">{name}</a>')
+    html = f'''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAP Client Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{{--navy:#0F2B5B;--blue:#0083C6;--gray:#9EABBE;--bg:#F4F6FA;--border:rgba(15,43,91,0.1)}}
+*{{box-sizing:border-box;margin:0;padding:0}}
+body{{font-family:Montserrat,sans-serif;background:var(--bg);color:#0a1628;font-size:13px;display:flex;min-height:100vh}}
+nav{{width:230px;background:var(--navy);padding:22px 0;position:fixed;top:0;bottom:0;overflow-y:auto}}
+nav img{{height:28px;margin:0 20px 18px}}
+nav .lbl{{padding:14px 20px 6px;font-size:10px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em}}
+nav a{{display:block;padding:7px 20px;color:rgba(255,255,255,.6);text-decoration:none;font-size:12px;font-weight:600}}
+nav a:hover{{color:#fff;background:rgba(255,255,255,.05)}}
+nav a.on{{color:#fff;background:rgba(0,131,198,.2);border-left:3px solid var(--blue);padding-left:17px}}
+main{{margin-left:230px;flex:1;padding:32px}}
+h1{{font-family:Karla,sans-serif;font-weight:800;color:var(--navy);font-size:22px}}
+.sub{{color:var(--gray);font-size:12px;margin:4px 0 22px}}
+table{{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--border)}}
+th{{background:var(--bg);font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);text-align:left;padding:10px 14px}}
+td{{padding:12px 14px;border-top:1px solid var(--border);vertical-align:middle}}
+td a{{color:var(--navy);font-weight:700;text-decoration:none}} td a:hover{{color:var(--blue)}}
+.muted{{color:var(--gray);font-size:11px}}
+.score{{font-family:Karla,sans-serif;font-weight:800;font-size:16px;color:var(--navy)}}
+.band,.comp{{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}}
+.band-poor,.comp-at_risk{{background:#FDEAEA;color:#A02020}} .band-moderate,.comp-low_activity{{background:#FEF6E6;color:#9A6010}}
+.band-good,.comp-compliant{{background:#E4F7ED;color:#1A6E3E}} .band-great{{background:#1A6E3E;color:#fff}}
+@media(max-width:860px){{nav{{display:none}}main{{margin-left:0;padding:16px}}.wrap{{overflow-x:auto}}table{{min-width:720px}}}}
+</style></head><body>
+<nav><img src="../logo.png" alt="Sponsor a Purpose"><a class="on" href="index.html">Dashboard</a>
+<div class="lbl">Accounts · {len(slugs)}</div>{"".join(nav)}</nav>
+<main><h1>Client reports</h1><div class="sub">Generated {REPORT_DATE} · Ad Grants, AI visibility &amp; search visibility</div>
+<div class="wrap"><table><thead><tr><th>Client</th><th>Grant score</th><th>Compliance</th><th>AI visibility</th><th>Search visibility</th><th></th></tr></thead>
+<tbody>{"".join(rows)}</tbody></table></div></main></body></html>'''
     with open("reports/index.html","w") as f: f.write(html)
     print("✓ Index: reports/index.html")
 

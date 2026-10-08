@@ -40,6 +40,9 @@ import argparse
 import urllib.request
 import urllib.parse
 import base64
+import re
+
+from fetch_ai_visibility import seo_location
 
 # ── LOAD CLIENTS ──────────────────────────────────────────────────────────────
 
@@ -304,10 +307,25 @@ def fetch_search_console(property_url, days=30):
 
 # ── DATAFORSEO KEYWORD RANKINGS ───────────────────────────────────────────────
 
-def fetch_keyword_rankings(keywords, domain, location="United States", language="en"):
+def _matches(domain, url):
+    host = _domain(url)
+    return bool(domain) and (host == domain or host.endswith("." + domain))
+
+
+def _domain(url):
+    host = urllib.parse.urlparse(url if "//" in (url or "") else "//" + (url or "")).netloc.lower()
+    return host[4:] if host.startswith("www.") else host
+
+
+def fetch_keyword_rankings(keywords, domain, location="United States", competitors=None):
     """
     Track keyword rankings using DataForSEO SERP API.
     Cost: ~$0.002 per keyword check.
+
+    One SERP call per keyword also gives us, for free:
+      - competitor positions (for the Competitors view)
+      - whether an AI Overview showed and whether it cited the client
+      - "People also ask" questions (prompt ideas for AI tracking)
     """
     if not keywords or not domain:
         return []
@@ -324,68 +342,128 @@ def fetch_keyword_rankings(keywords, domain, location="United States", language=
         "Authorization": f"Basic {credentials}",
         "Content-Type":  "application/json"
     }
+    competitors = competitors or []
 
     results = []
 
     for keyword in keywords[:10]:  # cap at 10 per client per run
-        payload = json.dumps([{
-            "keyword":           keyword,
-            "location_name":     location,
-            "language_name":     language,
-            "device":            "desktop",
-            "os":                "windows",
+        task_body = {
+            "keyword":              keyword,
+            "location_name":        location,
+            "language_code":        "en",
+            "device":               "desktop",
+            "os":                   "windows",
+            "depth":                20,
             "calculate_rectangles": False,
-        }]).encode()
+            "load_async_ai_overview": True,
+        }
 
         try:
-            req = urllib.request.Request(
-                f"{DATAFORSEO_BASE}/serp/google/organic/live/advanced",
-                data=payload,
-                headers=headers,
-                method="POST"
-            )
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                data     = json.loads(resp.read())
-                task     = data.get("tasks", [{}])[0]
-                task_res = task.get("result", [{}])[0] if task.get("result") else {}
-                items    = task_res.get("items", [])
+            items = None
+            for attempt_location in dict.fromkeys([location, "United States"]):
+                task_body["location_name"] = attempt_location
+                req = urllib.request.Request(
+                    f"{DATAFORSEO_BASE}/serp/google/organic/live/advanced",
+                    data=json.dumps([task_body]).encode(),
+                    headers=headers,
+                    method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    data = json.loads(resp.read())
+                task = data.get("tasks", [{}])[0]
+                if task.get("status_code") == 20000:
+                    task_res = task.get("result", [{}])[0] if task.get("result") else {}
+                    items = task_res.get("items") or []
+                    break
+                print(f"    DataForSEO task error ({attempt_location}): {task.get('status_message')}")
+            if items is None:
+                raise RuntimeError("DataForSEO task failed")
 
             # Find our domain in results
             position = None
+            url = None
             in_local_pack = False
             snippet = None
+            ai_overview = False
+            ai_overview_cited = False
+            paa = []
+            comp_positions = {c["domain"]: None for c in competitors if c.get("domain")}
 
             for item in items:
                 item_type = item.get("type", "")
 
                 # Local pack check
                 if item_type == "local_pack":
-                    for local_item in item.get("items", []):
-                        if domain.lower() in (local_item.get("url") or "").lower():
+                    if _matches(domain, item.get("url") or item.get("domain") or ""):
+                        in_local_pack = True
+                    for local_item in item.get("items", []) or []:
+                        if _matches(domain, local_item.get("url") or ""):
                             in_local_pack = True
+
+                if item_type == "ai_overview":
+                    ai_overview = True
+                    refs = json.dumps(item)
+                    ai_overview_cited = bool(re.search(
+                        r'"(?:url|domain)": "(?:https?://)?(?:www\.)?' + re.escape(domain), refs))
+
+                if item_type == "people_also_ask":
+                    paa += [el.get("title") for el in item.get("items") or [] if el.get("title")]
 
                 # Organic result
                 if item_type == "organic":
-                    if domain.lower() in (item.get("url") or "").lower():
-                        position = item.get("rank_absolute")
-                        snippet  = item.get("description", "")[:150]
-                        break
+                    item_url = item.get("url") or ""
+                    if position is None and _matches(domain, item_url):
+                        position = item.get("rank_group") or item.get("rank_absolute")
+                        url      = item_url
+                        snippet  = (item.get("description") or "")[:150]
+                    for cd in comp_positions:
+                        if comp_positions[cd] is None and _matches(cd, item_url):
+                            comp_positions[cd] = item.get("rank_group") or item.get("rank_absolute")
 
             results.append({
-                "keyword":       keyword,
-                "position":      position,
-                "in_local_pack": in_local_pack,
-                "snippet":       snippet,
-                "checked_at":    datetime.datetime.now().isoformat(),
+                "keyword":           keyword,
+                "position":          position,
+                "url":               url,
+                "in_local_pack":     in_local_pack,
+                "snippet":           snippet,
+                "ai_overview":       ai_overview,
+                "ai_overview_cited": ai_overview_cited,
+                "competitors":       comp_positions,
+                "people_also_ask":   paa[:8],
+                "checked_at":        datetime.datetime.now().isoformat(),
             })
             print(f"    '{keyword}': position {position or 'not found'}" +
-                  (" 🗺 local pack" if in_local_pack else ""))
+                  (" 🗺 local pack" if in_local_pack else "") +
+                  (" 🤖 AI overview" + (" (cited)" if ai_overview_cited else "") if ai_overview else ""))
 
         except Exception as e:
             print(f"    DataForSEO error for '{keyword}': {e}")
             results.append({"keyword": keyword, "position": None, "error": str(e)})
 
     return results
+
+
+def rank_snapshot(rankings):
+    """One point of ranking history: what the Classic SEO trend charts plot."""
+    checked = [k for k in rankings if "error" not in k]
+    if not checked:
+        return None
+    ranked = [k for k in checked if k.get("position")]
+    return {
+        "date":         datetime.date.today().isoformat(),
+        "tracked":      len(checked),
+        "top3":         len([k for k in ranked if k["position"] <= 3]),
+        "top10":        len([k for k in ranked if k["position"] <= 10]),
+        "top20":        len(ranked),
+        "avg_position": round(sum(k["position"] for k in ranked) / len(ranked), 1) if ranked else None,
+        "ai_cited":     len([k for k in checked if k.get("ai_overview_cited")]),
+        "ai_shown":     len([k for k in checked if k.get("ai_overview")]),
+        "positions":    {k["keyword"]: k.get("position") for k in checked},
+        "competitors":  {
+            cd: {k["keyword"]: (k.get("competitors") or {}).get(cd) for k in checked}
+            for cd in {cd for k in checked for cd in (k.get("competitors") or {})}
+        },
+    }
 
 
 # ── MAIN CLIENT FETCHER ───────────────────────────────────────────────────────
@@ -408,6 +486,7 @@ def fetch_client_seo(client, dry_run=False):
         "client":     name,
         "slug":       slug,
         "website":    website,
+        "location":   seo_location(client),
         "fetched_at": datetime.datetime.now().isoformat(),
     }
 
@@ -424,7 +503,10 @@ def fetch_client_seo(client, dry_run=False):
     # DataForSEO keyword rankings
     if keywords:
         print(f"    Fetching keyword rankings ({len(keywords)} keywords)...")
-        result["keyword_rankings"] = fetch_keyword_rankings(keywords, domain)
+        result["keyword_rankings"] = fetch_keyword_rankings(
+            keywords, domain.removeprefix("www."), seo_location(client),
+            [{"name": c.get("name"), "domain": _domain(c.get("domain", ""))}
+             for c in client.get("competitors", [])])
     else:
         print("    No seo_keywords defined — skipping rankings")
         result["keyword_rankings"] = []
@@ -505,6 +587,12 @@ def run(slug_filter=None, dry_run=False, pagespeed_only=False):
             cache[slug]["website"] = website
         else:
             data = fetch_client_seo(client, dry_run=dry_run)
+            # Ranking history powers the Classic SEO trend charts — carry it forward
+            history = (cache.get(slug) or {}).get("rank_history", [])
+            snap = rank_snapshot(data.get("keyword_rankings", [])) if not dry_run else None
+            if snap:
+                history = [h for h in history if h.get("date") != snap["date"]] + [snap]
+            data["rank_history"] = history[-26:]
             cache[slug] = data
 
         fetched += 1
